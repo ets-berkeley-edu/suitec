@@ -1,0 +1,9 @@
+.DS_STORE
+*.log
+logs/*.log
+
+node_modules/*
+!node_modules/col-core
+!node_modules/col-lti
+!node_modules/col-rest
+!node_modules/col-tests

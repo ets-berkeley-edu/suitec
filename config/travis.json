@@ -1,0 +1,8 @@
+{
+  "db": {
+    "database": "collabospheretravis",
+    "username": "postgres",
+    "password": "",
+    "dropOnStartup": true
+  }
+}

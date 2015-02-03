@@ -1,0 +1,21 @@
+{
+  "app": {
+    "port": 2000
+  },
+  "db": {
+    "database": "collabosphere",
+    "username": "collabosphere",
+    "password": "collabosphere",
+    "host": "localhost",
+    "port": 5432,
+    "dropOnStartup": false
+  },
+  "log": {
+    "level": "info",
+    "stream": "stdout"
+  },
+  "lti": {
+    "key": "FOOBAR",
+    "secret": "BARFOO"
+  }
+}
