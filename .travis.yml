@@ -1,0 +1,17 @@
+sudo: false
+language: node_js
+node_js:
+  - "0.10.30"
+
+addons:
+  postgresql: "9.3"
+
+before_install:
+  - cd $TRAVIS_BUILD_DIR
+
+  # Configure postgres
+  - psql -c 'create database collabospheretravis;' -U postgres
+  - psql collabospheretravis -c 'create extension pg_trgm;' -U postgres
+
+script:
+  - node_modules/.bin/gulp test-travis

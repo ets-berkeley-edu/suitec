@@ -1,0 +1,6 @@
+{
+  "db": {
+    "database": "collabospheretest",
+    "dropOnStartup": true
+  }
+}
