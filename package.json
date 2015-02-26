@@ -20,9 +20,12 @@
     "bunyan": "latest",
     "bunyan-prettystream": "latest",
     "config": "latest",
-    "cookie-session": "latest",
+    "cookie-parser": "latest",
     "express": "latest",
+    "ims-lti": "latest",
+    "joi": "latest",
     "lodash": "latest",
+    "oauth": "latest",
     "pg": "latest",
     "pg-hstore": "latest",
     "restjsdoc": "latest",
@@ -36,7 +39,8 @@
     "gulp-mocha": "latest",
     "jscs": "latest",
     "request": "latest",
-    "run-sequence": "latest"
+    "run-sequence": "latest",
+    "xml2js": "latest"
   },
   "bundleDependencies": [],
   "engines": {

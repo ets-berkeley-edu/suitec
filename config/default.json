@@ -2,6 +2,9 @@
   "app": {
     "port": 2000
   },
+  "cookie": {
+    "secret": "String to encrypt the cookies with. Change me in production"
+  },
   "db": {
     "database": "collabosphere",
     "username": "collabosphere",
