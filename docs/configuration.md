@@ -46,7 +46,7 @@ Collabosphere allows the following values to be configured:
 - `password`: The password with which Collabosphere should connect to the Postgres database
 - `host`: The host at which Collabosphere can connect to the Postgres database
 - `port`: The port at which Collabosphere can connect to the Postgres database
-- `dropOnStartup`: Whether Collabosphere should drop all existing database data when restarting the app server. CAUTION: This should never be used in a production environment.
+- `dropOnStartup`: Whether Collabosphere should drop all existing database data when restarting the app server. CAUTION: This should never be enabled in a production environment.
 
 ### `log` configuration
 
