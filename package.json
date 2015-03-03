@@ -26,6 +26,7 @@
     "joi": "latest",
     "lodash": "latest",
     "oauth": "latest",
+    "randomstring": "latest",
     "pg": "latest",
     "pg-hstore": "latest",
     "restjsdoc": "latest",
