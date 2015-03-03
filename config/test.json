@@ -2,5 +2,9 @@
   "db": {
     "database": "collabospheretest",
     "dropOnStartup": true
+  },
+  "log": {
+    "level": "trace",
+    "stream": "logs/test.log"
   }
 }

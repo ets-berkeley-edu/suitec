@@ -1,5 +1,5 @@
 {
-  "disallowDanglingUnderscores": true,
+  "disallowDanglingUnderscores": { "allExcept": ["_prepareParameters"] },
   "disallowEmptyBlocks": true,
   "disallowKeywords": ["with"],
   "disallowKeywordsOnNewLine": ["else"],

@@ -4,5 +4,9 @@
     "username": "postgres",
     "password": "",
     "dropOnStartup": true
+  },
+  "log": {
+    "level": "trace",
+    "stream": "logs/test.log"
   }
 }
