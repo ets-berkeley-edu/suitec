@@ -1,4 +1,4 @@
-/**
+/*!
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -13,13 +13,14 @@
  * permissions and limitations under the License.
  */
 
-var Constants = module.exports = {
-  'ACTIVITY': {
-    'ACTIVITY_TYPES': ['like', 'dislike', 'comment', 'submit_assignment'],
-    'OBJECT_TYPES': ['canvas_submission', 'canvas_discussion', 'asset', 'comment']
-  },
-  'ADMIN_ROLES': ['Instructor', 'ContentDeveloper', 'urn:lti:role:ims/lis/TeachingAssistant'],
-  'ASSET': {
-    'ASSET_TYPES': ['file', 'link', 'whiteboard', 'thought']
-  }
-};
+(function(angular) {
+
+  'use strict';
+
+  // Initialize the Collabosphere module
+  angular.module('collabosphere', [
+    'ngRoute',
+    'infinite-scroll'
+  ]);
+
+})(window.angular);

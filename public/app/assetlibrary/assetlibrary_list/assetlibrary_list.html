@@ -1,0 +1,28 @@
+<!-- <div data-ng-controller="AssetLibraryListController"> -->
+  <!-- Asset Library search -->
+  <!-- <div data-ng-include="'app/assetlibrary/assetlibrary_search/assetlibrary_search.html'"></div> -->
+
+<div data-ng-controller="AssetLibraryListController">
+
+  <div>
+    <a ng-href="javascript:
+              (function() {
+                var base_url = '{{baseUrl}}';
+                var bookmarklet_token = '{{me.bookmarklet_token}}';
+                var course_id = '{{me.course.canvas_course_id}}';
+                window.collabosphere = window.collabosphere || {
+                  'base_url': base_url,
+                  'bookmarklet_token': bookmarklet_token,
+                  'course_id': course_id
+                };
+                if (window.collabosphere.init !== undefined) {
+                  window.collabosphere.init();
+                } else {
+                  var bookmarklet = document.createElement('script');
+                  bookmarklet.src = base_url + '/assets/js/bookmarklet-init.js';
+                  document.body.appendChild(bookmarklet);
+                }
+              })();">I'm inspired</a>
+  </div>
+
+</div>

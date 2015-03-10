@@ -13,13 +13,18 @@
  * permissions and limitations under the License.
  */
 
-var Constants = module.exports = {
-  'ACTIVITY': {
-    'ACTIVITY_TYPES': ['like', 'dislike', 'comment', 'submit_assignment'],
-    'OBJECT_TYPES': ['canvas_submission', 'canvas_discussion', 'asset', 'comment']
-  },
-  'ADMIN_ROLES': ['Instructor', 'ContentDeveloper', 'urn:lti:role:ims/lis/TeachingAssistant'],
-  'ASSET': {
-    'ASSET_TYPES': ['file', 'link', 'whiteboard', 'thought']
-  }
-};
+(function(angular) {
+
+  'use strict';
+
+  angular.module('collabosphere').controller('AssetLibraryListController', function(userService, utilService, $location, $scope) {
+
+    userService.getMe().then(function(me) {
+      $scope.me = me;
+      // Set the domain that should be used by the Bookmarklet for requests
+      $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();
+    });
+
+  });
+
+}(window.angular));
