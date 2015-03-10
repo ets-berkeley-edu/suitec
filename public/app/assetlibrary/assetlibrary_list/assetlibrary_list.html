@@ -1,8 +1,6 @@
-<!-- <div data-ng-controller="AssetLibraryListController"> -->
-  <!-- Asset Library search -->
-  <!-- <div data-ng-include="'app/assetlibrary/assetlibrary_search/assetlibrary_search.html'"></div> -->
-
 <div data-ng-controller="AssetLibraryListController">
+
+  <h1>Asset Library</h1>
 
   <div>
     <a ng-href="javascript:
@@ -23,6 +21,20 @@
                   document.body.appendChild(bookmarklet);
                 }
               })();">I'm inspired</a>
+  </div>
+
+  <div>
+    <a href="/assetlibrary/addlink">Add link</a>
+  </div>
+
+  <div infinite-scroll='getAssets()' infinite-scroll-disabled='list.isLoading' infinite-scroll-distance='1'>
+    <ul ng-repeat='asset in assets'>
+      <li class="list-inline">
+        <div>
+          {{asset.title}} ({{asset.url}})
+        </div>
+      </li>
+    </ul>
   </div>
 
 </div>

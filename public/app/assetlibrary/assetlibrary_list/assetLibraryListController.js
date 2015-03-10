@@ -17,12 +17,42 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(userService, utilService, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userService, utilService, $location, $scope) {
+
+    $scope.assets = [];
+    $scope.list = {
+      'page': 0,
+      'isLoading': false
+    };
+
+    /**
+     * TODO
+     */
+    var loadAssetLibraryList = function() {
+      $scope.page = 0;
+      $scope.list.isLoading = false;
+    };
+
+    /**
+     * TODO
+     */
+    var getAssets = $scope.getAssets = function() {
+      $scope.list.isLoading = true;
+      assetLibraryListFactory.getAssets($scope.list.page).success(function(assets) {
+        $scope.assets = $scope.assets.concat(assets.results);
+        if (assets.results.length === 10) {
+          $scope.list.isLoading = false;
+        }
+      });
+      $scope.list.page++;
+    };
 
     userService.getMe().then(function(me) {
       $scope.me = me;
       // Set the domain that should be used by the Bookmarklet for requests
       $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();
+      // TODO
+      loadAssetLibraryList();
     });
 
   });
