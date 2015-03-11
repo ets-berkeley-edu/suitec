@@ -19,6 +19,10 @@ body {
 
 /* Boostrap overrides */
 
+h5:first-child {
+  margin-top: 0;
+}
+
 .modal-backdrop {
   position: fixed;                      /* Ensure that the backdrop remains visible when scrolling the parent page */
   bottom: 0;                            /* Ensure that the backdrop stretches until the bottom of the page */
@@ -30,10 +34,6 @@ body {
 
 .modal-body {
   padding-top: 0;
-}
-
-.modal-body h5:first-child {
-  margin-top: 0;
 }
 
 .modal-footer {
@@ -49,8 +49,8 @@ body {
 
 /* Select items from page */
 
-li.collabosphere-item-container {
-  padding: 10px 10px;
+.collabosphere-item-container {
+  padding: 10px;
 }
 
 .collabosphere-item {

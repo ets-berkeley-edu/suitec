@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-(function(){
+(function() {
 
   // The minimum width and height an image on the page should have before
   // being listed as a website asset that can be added to the Asset Library
@@ -24,9 +24,7 @@
   // user and the user id
   var collabosphere = window.parent.collabosphere;
 
-  ///////////
-  // MODAL //
-  ///////////
+  /* MODAL */
 
   /**
    * Get the HTML for the Bookmarklet and add it to the current document.
@@ -51,9 +49,7 @@
     showPane('overview');
   };
 
-  /////////////////////////
-  // MODAL STATE CHANGES //
-  /////////////////////////
+  /* MODAL STATE CHANGES */
 
   /**
    * Show the correct step in the add workflow
@@ -94,9 +90,7 @@
     }
   };
 
-  //////////////////
-  // ADD BOOKMARK //
-  //////////////////
+  /* ADD BOOKMARK */
 
   /**
    * When he user has chosen to add the entire page as a bookmark to the Asset Library,
@@ -147,9 +141,7 @@
     });
   };
 
-  /////////////////////////
-  // ADD ITEMS FROM PAGE //
-  /////////////////////////
+  /* ADD ITEMS FROM PAGE */
 
   /**
    * When the user has chosen to add individual items from the page to the Asset Library,
@@ -221,7 +213,7 @@
       // to check for a background image is too slow here and therefore a native
       // approach needs to be taken
       if (this.currentStyle) {
-        return this.currentStyle['backgroundImage'] !== 'none';
+        return this.currentStyle.backgroundImage !== 'none';
       } else if (window.getComputedStyle) {
         return document.defaultView.getComputedStyle(this,null).getPropertyValue('background-image') !== 'none';
       }
@@ -241,9 +233,7 @@
     });
   };
 
-  ///////////////
-  // UTILITIES //
-  ///////////////
+  /* UTILITIES */
 
   // Cache the compiled underscore template so they don't have
   // to be recompiled every time they are used

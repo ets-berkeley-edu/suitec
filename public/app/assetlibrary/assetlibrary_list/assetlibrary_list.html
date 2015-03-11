@@ -3,7 +3,7 @@
   <h1>Asset Library</h1>
 
   <div>
-    <a ng-href="javascript:
+    <a data-ng-href="javascript:
               (function() {
                 var api_domain = '{{me.course.canvas_api_domain}}';
                 var base_url = '{{baseUrl}}';
@@ -31,8 +31,8 @@
     <a href="/assetlibrary/addlink">Add link</a>
   </div>
 
-  <div infinite-scroll='getAssets()' infinite-scroll-disabled='list.isLoading' infinite-scroll-distance='1'>
-    <ul ng-repeat='asset in assets'>
+  <div infinite-scroll="getAssets()" infinite-scroll-disabled="list.isLoading" infinite-scroll-distance="1">
+    <ul data-ng-repeat="asset in assets">
       <li class="list-inline">
         <div>
           {{asset.title}} ({{asset.url}})

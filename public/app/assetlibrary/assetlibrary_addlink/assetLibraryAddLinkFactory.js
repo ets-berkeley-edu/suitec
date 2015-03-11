@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('AssetLibraryAddLinkFactory', function(utilService, $http) {
+  angular.module('collabosphere').factory('assetLibraryAddLinkFactory', function(utilService, $http) {
 
     /**
      * Create a new link asset

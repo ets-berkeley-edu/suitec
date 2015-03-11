@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userService, utilService, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, utilService, $location, $scope) {
 
     $scope.assets = [];
     $scope.list = {
@@ -29,9 +29,14 @@
      * Get the assets for the current course through an infinite scroll
      */
     var getAssets = $scope.getAssets = function() {
+      // Indicate the no further REST API requests should be made
+      // until the current request has completed
       $scope.list.isLoading = true;
       assetLibraryListFactory.getAssets($scope.list.page).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
+        // Only request another page of results if the number of items in the
+        // current result set is the same as the maximum number of items in a
+        // retrieved asset library page
         if (assets.results.length === 10) {
           $scope.list.isLoading = false;
         }
@@ -40,7 +45,7 @@
       $scope.list.page++;
     };
 
-    userService.getMe().then(function(me) {
+    userFactory.getMe().success(function(me) {
       $scope.me = me;
       // Set the domain that should be used by the Bookmarklet for requests
       $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();

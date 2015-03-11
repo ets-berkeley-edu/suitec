@@ -17,13 +17,13 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function($location, $q) {
+  angular.module('collabosphere').service('utilService', function($q, $routeParams) {
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
     // the base URL for all REST API requests
-    var apiDomain = $location.search().api_domain;
-    var courseId = $location.search().course_id;
+    var apiDomain = $routeParams.api_domain;
+    var courseId = $routeParams.course_id;
 
     /**
      * Construct the full URL for a REST API request. All REST API requests should

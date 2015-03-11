@@ -17,12 +17,12 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(AssetLibraryAddLinkFactory, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryAddLinkFactory, $location, $scope) {
 
     $scope.link = {};
 
     $scope.addLink = function() {
-      AssetLibraryAddLinkFactory.createLink($scope.link).success(function() {
+      assetLibraryAddLinkFactory.createLink($scope.link).success(function() {
         $location.path('/assetlibrary');
       });
     };

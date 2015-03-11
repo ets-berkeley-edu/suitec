@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-(function(){
+(function() {
 
   // Create an iFrame that will be overlayed on top of the existing page. This
   // will appear to load the bookmarklet content inside of the page, but

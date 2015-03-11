@@ -2,7 +2,7 @@
 
   <h1>Add a new link</h1>
 
-  <form name="assetlibraryAddlinkForm" ng-submit="assetlibraryAddlinkForm.$valid && addLink()" novalidate>
+  <form name="assetlibraryAddlinkForm" data-ng-submit="assetlibraryAddlinkForm.$valid && addLink()" novalidate>
     <div class="form-group">
       <label for="assetlibrary-addlink-url">URL</label>
       <input type="url" class="form-control" id="assetlibrary-addlink-url" placeholder="Enter URL" data-ng-model="link.url" required>
