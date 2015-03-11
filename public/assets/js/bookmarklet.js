@@ -208,7 +208,7 @@
    */
   var collectBackgroundImages = function(callback) {
     // Extract all elements that have a background image
-    var $backgroundImgages = $('*', window.parent.document).filter(function() {
+    var $backgroundImages = $('*', window.parent.document).filter(function() {
       // Check if the element has a background image. Note that using jQuery
       // to check for a background image is too slow here and therefore a native
       // approach needs to be taken
@@ -219,7 +219,7 @@
       }
     });
     // Load all captured background images in a hidden image tag to extract their height and width
-    $backgroundImgages.each(function() {
+    $backgroundImages.each(function() {
       // Get the background image URL from the CSS property
       var url = $(this).css('background-image').replace(/^url\(['"]?/,'').replace(/['"]?\)$/,'');
       var $tmpImg = $('<img />').hide();
