@@ -39,6 +39,7 @@
     "gulp": "latest",
     "gulp-jscs": "latest",
     "gulp-mocha": "latest",
+    "gulp-csslint": "latest",
     "jscs": "latest",
     "request": "latest",
     "run-sequence": "latest",

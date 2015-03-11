@@ -1,0 +1,44 @@
+<div data-ng-controller="AssetLibraryListController">
+
+  <h1>Asset Library</h1>
+
+  <div>
+    <a data-ng-href="javascript:
+              (function() {
+                var api_domain = '{{me.course.canvas_api_domain}}';
+                var base_url = '{{baseUrl}}';
+                var bookmarklet_token = '{{me.bookmarklet_token}}';
+                var course_id = '{{me.course.canvas_course_id}}';
+                var user_id = '{{me.id}}';
+                window.collabosphere = window.collabosphere || {
+                  'api_domain': api_domain,
+                  'base_url': base_url,
+                  'bookmarklet_token': bookmarklet_token,
+                  'course_id': course_id,
+                  'user_id': user_id
+                };
+                if (window.collabosphere.init !== undefined) {
+                  window.collabosphere.init();
+                } else {
+                  var bookmarklet = document.createElement('script');
+                  bookmarklet.src = base_url + '/assets/js/bookmarklet-init.js';
+                  document.body.appendChild(bookmarklet);
+                }
+              })();">I'm inspired</a>
+  </div>
+
+  <div>
+    <a href="/assetlibrary/addlink">Add link</a>
+  </div>
+
+  <div infinite-scroll="getAssets()" infinite-scroll-disabled="list.isLoading" infinite-scroll-distance="1">
+    <ul data-ng-repeat="asset in assets">
+      <li class="list-inline">
+        <div>
+          {{asset.title}} ({{asset.url}})
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
