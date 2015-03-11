@@ -30,6 +30,7 @@
      * be of the form `/api/<apiDomain>/<courseId>/<restAPI>`
      *
      * @param  {String}       url             The REST API for which the full REST API URL should be constructed
+     * @return {String}                       The full REST API URL of the form `/api/<apiDomain>/<courseId>/<restAPI>`
      */
     var getApiUrl = function(url) {
       return '/api/' + apiDomain + '/' + courseId + url;

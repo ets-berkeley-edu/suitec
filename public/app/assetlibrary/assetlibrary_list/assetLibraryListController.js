@@ -26,15 +26,7 @@
     };
 
     /**
-     * TODO
-     */
-    var loadAssetLibraryList = function() {
-      $scope.page = 0;
-      $scope.list.isLoading = false;
-    };
-
-    /**
-     * TODO
+     * Get the assets for the current course through an infinite scroll
      */
     var getAssets = $scope.getAssets = function() {
       $scope.list.isLoading = true;
@@ -44,6 +36,7 @@
           $scope.list.isLoading = false;
         }
       });
+      // Ensure that the next page is requested the next time
       $scope.list.page++;
     };
 
@@ -51,8 +44,6 @@
       $scope.me = me;
       // Set the domain that should be used by the Bookmarklet for requests
       $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();
-      // TODO
-      loadAssetLibraryList();
     });
 
   });

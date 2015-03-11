@@ -40,7 +40,7 @@
         $(document.body).append(response);
         renderModal();
       }
-    })
+    });
   };
 
   /**
@@ -68,9 +68,11 @@
 
     // Set the width of the modal dialog depending on
     // the currently active pane
-    $('.modal-dialog').removeClass('modal-sm modal-lg');
+    $('.modal-dialog').removeClass('modal-sm modal-md modal-lg');
     if (pane === 'overview') {
       $('.modal-dialog').addClass('modal-sm');
+    } else if (pane === 'bookmark') {
+      $('.modal-dialog').addClass('modal-md');
     } else {
       $('.modal-dialog').addClass('modal-lg');
     }
@@ -90,6 +92,59 @@
     } else if (selected === 'items') {
       renderPageItems();
     }
+  };
+
+  //////////////////
+  // ADD BOOKMARK //
+  //////////////////
+
+  /**
+   * When he user has chosen to add the entire page as a bookmark to the Asset Library,
+   * extract as much metadata as possible from the page and present the metadata options
+   */
+  var renderPageBookmark = function() {
+    // Extract the URL from the parent page
+    var url = window.parent.location;
+    // Extract the title from the title tag in the parent page
+    var title = window.parent.document.title;
+    // Extract the description from the description meta tag in the parent page
+    var description = $('meta[name=Description]', window.parent.document).attr('content');
+
+    // Insert the extract values in the metadata form
+    $('#collabosphere-bookmark-url').val(url);
+    $('#collabosphere-bookmark-title').val(title);
+    $('#collabosphere-bookmark-description').val(description);
+
+    // Show the appropriate modal pane
+    showPane('bookmark');
+  };
+
+  /**
+   * Add the entire page as a bookmark to the Asset Library
+   */
+  var addPageBookmark = function() {
+    // Extract the title and description from the metadata form
+    var url = window.parent.location.toString();
+    var title = $('#collabosphere-bookmark-title').val();
+    var description = $('#collabosphere-bookmark-description').val();
+
+    $.ajax({
+      'url': getApiUrl('/assets'),
+      'type': 'POST',
+      'data': {
+        'type': 'link',
+        'url': url,
+        'title': title,
+        'description': description
+      },
+      'headers': {
+        'x-collabosphere-user': collabosphere.user_id,
+        'x-collabosphere-token': collabosphere.bookmarklet_token
+      },
+      'success': function(response) {
+        // TODO
+      }
+    });
   };
 
   /////////////////////////
@@ -118,9 +173,6 @@
       // Prefix the image with the protocol in case a protocol-neutral
       // approach was used. This will ensure that we properly whether
       // an image has already been included
-      if (img.substring(0, 2) === '//') {
-        img = window.parent.location.protocol + img;
-      }
       if (!_.contains(images, img)) {
         // Ensure that the same image is not re-added
         images.push(img);
@@ -224,10 +276,22 @@
   };
 
   /**
+   * Construct the full URL for a REST API request. All REST API requests should
+   * be of the form `/api/<apiDomain>/<courseId>/<restAPI>`
+   *
+   * @param  {String}       url             The REST API for which the full REST API URL should be constructed
+   * @return {String}                       The full REST API URL of the form `/api/<apiDomain>/<courseId>/<restAPI>`
+   */
+  var getApiUrl = function(url) {
+    return collabosphere.base_url + '/api/' + collabosphere.api_domain + '/' + collabosphere.course_id + url;
+  };
+
+  /**
    * Add the event binding for the Bookmarklet
    */
   var addBinding = function() {
     $(document).on('click', '#collabosphere-overview-next', handleOverviewNext);
+    $(document).on('click', '#collabosphere-bookmark-add', addPageBookmark);
   };
 
   addBinding();
