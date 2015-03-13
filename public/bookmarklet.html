@@ -51,7 +51,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-link collabosphere-back">Back</button>
               <button type="button" class="btn btn-primary" id="collabosphere-bookmark-add">Add</button>
             </div>
           </form>
@@ -61,12 +61,19 @@
           <h5>Select the items you'd like to add</h5>
           <ul id="collabosphere-items-list" class="list-inline clearfix"><!-- --></ul>
           <div class="modal-footer">
-            <button type="button" class="btn btn-link">Back</button>
-            <button class="btn btn-primary" id="collabosphere-overview-next" type="button">Next</button>
+            <button type="button" class="btn btn-link collabosphere-back">Back</button>
+            <button class="btn btn-primary" id="collabosphere-items-next" type="button">Next</button>
           </div>
         </div>
 
-        <div id="collabosphere-items-metadata" class="hide collabosphere-pane"><!-- --></div>
+        <div id="collabosphere-items-metadata" class="hide collabosphere-pane">
+          <h5>Add more information about the items you'd like to add</h5>
+          <ul id="collabosphere-items-metadata-container" class="list-unstyled collabosphere-items-metadata-container"><!-- --></ul>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-link" id="collabosphere-items-metadata-back">Back</button>
+            <button type="button" class="btn btn-primary" id="collabosphere-items-add">Add</button>
+          </div>
+        </div>
 
         <div id="collabosphere-done" class="hide collabosphere-pane"><!-- --></div>
       </div>
@@ -76,7 +83,30 @@
 
 <script id="collabosphere-item-template" type="text/template">
   <li class="collabosphere-item-container">
-    <div class="collabosphere-item" style="background-image: url('<%= img %>')"></div>
-    <input type="checkbox" />
+    <div class="collabosphere-item" style="background-image: url('<%= url %>')"></div>
+    <input type="checkbox" data-collabosphere-url="<%= url %>" />
   </li>
+</script>
+
+<script id="collabosphere-items-metadata-template" type="text/template">
+  <% _.each(selectedItems, function(item, index) { %>
+    <li class="clearfix">
+      <% if (index !== 0) { %>
+        <hr />
+      <% } %>
+      <div class="col-sm-4 col-md-3">
+        <div class="collabosphere-item" style="background-image: url('<%= item.url %>')"></div>
+      </div>
+      <div class="col-sm-8 col-md-9">
+        <div class="form-group">
+          <label for="collabosphere-item-title" class="control-label">Title</label>
+          <input class="form-control collabosphere-item-title" placeholder="Enter title" value="<%= item.title %>">
+        </div>
+        <div class="form-group">
+          <label for="collabosphere-item-description" class="control-label">Description</label>
+          <textarea class="form-control collabosphere-item-description" placeholder="Enter description" rows="3"></textarea>
+        </div>
+      </div>
+    </li>
+  <% }); %>
 </script>
