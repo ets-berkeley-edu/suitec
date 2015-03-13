@@ -13,7 +13,6 @@
     "angular-sanitize": "latest",
     "bootstrap": "latest",
     "fontawesome": "latest",
-    "lodash": "latest",
     "ngInfiniteScroll": "latest"
   }
 }
