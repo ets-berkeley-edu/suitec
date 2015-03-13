@@ -22,8 +22,12 @@
     /**
      * Create a new link asset
      *
-     * @param  {Object}               link          TODO
-     * @return {Promise<Asset>}                     Promise returning the created link asset
+     * @param  {Object}               link                  The object representing the link that should be created
+     * @param  {String}               link.title            The title of the link
+     * @param  {String}               link.url              The url of the link
+     * @param  {String}               [link.description]    The description of the link
+     * @param  {String}               [link.source]         The source of the link
+     * @return {Promise<Asset>}                             Promise returning the created link asset
      */
     var createLink = function(link) {
       link.type = 'link';
