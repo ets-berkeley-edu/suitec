@@ -64,3 +64,13 @@ h5:first-child {
 .collabosphere-item input {
   margin-top: 2px;
 }
+
+/* Add metadata to selected items */
+
+.collabosphere-items-metadata-container {
+  margin-top: 20px;
+}
+
+.collabosphere-items-metadata-container .collabosphere-item {
+  margin: 5px 0 0 20px;
+}

@@ -13,15 +13,7 @@
  * permissions and limitations under the License.
  */
 
-(function(angular) {
-
-  'use strict';
-
-  // Initialize the Collabosphere module
-  angular.module('collabosphere', [
-    'ngAria',
-    'ngRoute',
-    'infinite-scroll'
-  ]);
-
-})(window.angular);
+body {
+  overflow-y: hidden;
+  padding: 0 20px 50px;
+}

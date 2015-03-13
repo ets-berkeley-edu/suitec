@@ -72,6 +72,9 @@
     } else {
       $('.modal-dialog').addClass('modal-lg');
     }
+
+    // Scoll back to the top of the modal
+    $('#collabosphere-modal').scrollTop(0);
   };
 
   /**
@@ -118,30 +121,22 @@
    */
   var addPageBookmark = function() {
     // Extract the title and description from the metadata form
-    var url = window.parent.location.toString();
-    var title = $('#collabosphere-bookmark-title').val();
-    var description = $('#collabosphere-bookmark-description').val();
+    var asset = {
+      url: window.parent.location.toString(),
+      title: $('#collabosphere-bookmark-title').val(),
+      description: $('#collabosphere-bookmark-description').val()
+    };
 
-    $.ajax({
-      'url': getApiUrl('/assets'),
-      'type': 'POST',
-      'data': {
-        'type': 'link',
-        'url': url,
-        'title': title,
-        'description': description
-      },
-      'headers': {
-        'x-collabosphere-user': collabosphere.user_id,
-        'x-collabosphere-token': collabosphere.bookmarklet_token
-      },
-      'success': function(response) {
-        // TODO
-      }
+    addAsset(asset, function() {
+      // TODO
     });
   };
 
   /* ADD ITEMS FROM PAGE */
+
+  // Keep track of the images that have been listed already to ensure
+  // that we don't list the same image multiple times
+  var pageItems = [];
 
   /**
    * When the user has chosen to add individual items from the page to the Asset Library,
@@ -150,26 +145,36 @@
   var renderPageItems = function() {
     // Ensure that we start with a clean list
     $('#collabosphere-items-list').empty();
+    pageItems = [];
 
-    // Keep track of the images that have been listed already to ensure
-    // that we don't list the same image multiple times
-    var images = [];
+    // Disable the next button
+    enableDisableItemsNext();
 
     /*!
      * Function called when an image on the page has been found. This can be either an image
      * from an `img` tag or a background-image
      *
-     * @param  {String}         img             The URL of the image that was found on the page
+     * @param  {Object}         img             The image that was found on the page
+     * @param  {String}         img.url         The URL of the image
+     * @param  {String}         [img.title]     The title of the image
      */
     var imageCallback = function(img) {
-      // Prefix the image with the protocol in case a protocol-neutral
-      // approach was used. This will ensure that we properly whether
-      // an image has already been included
-      if (!_.contains(images, img)) {
-        // Ensure that the same image is not re-added
-        images.push(img);
+      // Prepend the protocol if the original image was protocol neutral
+      if (img.url.substring(0, 2) === '//') {
+        img.url = window.parent.location.protocol + img.url;
+      }
+
+      // Ensure that the same image is not re-added
+      if (_.findWhere(pageItems, {'url': img.url}) === undefined) {
+        // If no title for the image could be extracted, default the
+        // title to the name of the image
+        if (!img.title) {
+          img.title = img.url.split('/').pop();
+        }
+
+        pageItems.push(img);
         // Add the image to the list of available assets
-        $('#collabosphere-items-list').append(renderTemplate('collabosphere-item-template', {'img': img}));
+        $('#collabosphere-items-list').append(renderTemplate('collabosphere-item-template', img));
       }
     };
 
@@ -180,6 +185,28 @@
 
     // Show the appropriate modal pane
     showPane('items');
+  };
+
+  /**
+   * Get the selected individual page items
+   *
+   * @return {Object[]}                   Array containing the selected page items
+   */
+  var getSelectedPageItems = function() {
+    var selected = [];
+    $('#collabosphere-items-list input[type=checkbox]:checked').each(function() {
+      var item = _.findWhere(pageItems, {'url': $(this).attr('data-collabosphere-url')});
+      selected.push(item);
+    });
+    return selected;
+  };
+
+  /**
+   * When adding individual assets from the page, enable the next button when at least
+   * 1 asset has been checked. Otherwise, the next button is disabled
+   */
+  var enableDisableItemsNext = function() {
+    $('#collabosphere-items-next').prop('disabled', (getSelectedPageItems().length === 0));
   };
 
   /**
@@ -194,7 +221,13 @@
     $images.each(function() {
       // Ensure that the image is larger than the minimum dimensions
       if (this.naturalHeight > MIN_DIMENSIONS && this.naturalWidth > MIN_DIMENSIONS) {
-        callback($(this).attr('src'));
+        var img = {
+          'url': $(this).attr('src'),
+          // Try to extract a meaningful title
+          'title': $(this).attr('alt')
+        }
+
+        callback(img);
       }
     });
   };
@@ -222,14 +255,55 @@
     $backgroundImages.each(function() {
       // Get the background image URL from the CSS property
       var url = $(this).css('background-image').replace(/^url\(['"]?/,'').replace(/['"]?\)$/,'');
+      var img = {'url': url};
+
       var $tmpImg = $('<img />').hide();
       $tmpImg.bind('load', function() {
         if (this.naturalHeight > MIN_DIMENSIONS && this.naturalWidth > MIN_DIMENSIONS) {
-          callback(url);
+          callback(img);
         }
       });
       $('body').append($tmpImg);
-      $tmpImg.attr('src', url);
+      $tmpImg.attr('src', img.url);
+    });
+  };
+
+  /**
+   * When one or more individual items from the page have been selected, render
+   * them in a list to allow for metadata to be added to each of the selected items
+   */
+  var renderPageItemsMetadata = function() {
+    // Fetch the selected items
+    var selectedItems = getSelectedPageItems();
+
+    // Render the selected items in a list
+    renderTemplate('collabosphere-items-metadata-template', {'selectedItems': selectedItems}, $('#collabosphere-items-metadata-container'));
+
+    // Show the appropriate modal pane
+    showPane('items-metadata');
+  };
+
+  /**
+   * Add the selected individual items from the page to the asset library.
+   */
+  var addPageItems = function() {
+    // Fetch the selected items
+    var selectedItems = getSelectedPageItems();
+
+    // Function called when all items have been added to the asset library
+    var finishAddPageItems = _.after(selectedItems.length, function() {
+      // TODO
+    });
+
+    // Extract the metadata from the metadata form
+    _.each(selectedItems, function(selectedItem, index) {
+      var $parent = $('#collabosphere-items-metadata-container li:eq(' + index + ')');
+      selectedItem.type = 'link';
+      selectedItem.source = window.parent.location.toString();
+      selectedItem.title = $('.collabosphere-item-title', $parent).val();
+      selectedItem.description = $('.collabosphere-item-description', $parent).val();
+
+      addAsset(selectedItem, finishAddPageItems);
     });
   };
 
@@ -277,11 +351,37 @@
   };
 
   /**
+   * Create a new asset in the asset library. The request will be authenticated through
+   * the user's bookmarklet token
+   *
+   * @param  {Object}       asset           The asset that should be added to the asset library
+   * @param  {Function}     callback        Standard callback function
+   * @param  {Asset}        callback.asset  The created asset
+   */
+  var addAsset = function(asset, callback) {
+    $.ajax({
+      'url': getApiUrl('/assets'),
+      'type': 'POST',
+      'data': asset,
+      'headers': {
+        'x-collabosphere-user': collabosphere.user_id,
+        'x-collabosphere-token': collabosphere.bookmarklet_token
+      },
+      'success': callback
+    });
+  };
+
+  /**
    * Add the event binding for the Bookmarklet
    */
   var addBinding = function() {
     $(document).on('click', '#collabosphere-overview-next', handleOverviewNext);
+    $(document).on('click', '.collabosphere-back', renderModal);
     $(document).on('click', '#collabosphere-bookmark-add', addPageBookmark);
+    $(document).on('change', '#collabosphere-items-list input[type=checkbox]', enableDisableItemsNext);
+    $(document).on('click', '#collabosphere-items-next', renderPageItemsMetadata);
+    $(document).on('click', '#collabosphere-items-metadata-back', renderPageItems);
+    $(document).on('click', '#collabosphere-items-add', addPageItems);
   };
 
   addBinding();
