@@ -21,6 +21,7 @@
     "bunyan-prettystream": "latest",
     "config": "latest",
     "cookie-parser": "latest",
+    "cors": "latest",
     "express": "latest",
     "ims-lti": "latest",
     "joi": "latest",
@@ -34,16 +35,27 @@
     "validator": "1.1.3"
   },
   "devDependencies": {
+    "bower": "latest",
     "coveralls": "latest",
     "gulp": "latest",
     "gulp-jscs": "latest",
     "gulp-mocha": "latest",
+    "gulp-csslint": "latest",
     "jscs": "latest",
     "request": "latest",
     "run-sequence": "latest",
     "xml2js": "latest"
   },
-  "bundleDependencies": [],
+  "bundleDependencies": [
+    "col-assets",
+    "col-canvas",
+    "col-core",
+    "col-course",
+    "col-lti",
+    "col-rest",
+    "col-tests",
+    "col-users"
+  ],
   "engines": {
     "node": ">=0.10"
   }

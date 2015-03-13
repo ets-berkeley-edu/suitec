@@ -1,0 +1,20 @@
+{
+  "name": "collabosphere",
+  "description": "Collabosphere Instructure Canvas LTI Tools",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ets-berkeley-edu/collabosphere.git"
+  },
+  "dependencies": {
+    "angular": "latest",
+    "angular-aria": "latest",
+    "angular-route": "latest",
+    "angular-sanitize": "latest",
+    "bootstrap": "latest",
+    "fontawesome": "latest",
+    "lodash": "latest",
+    "ngInfiniteScroll": "latest"
+  }
+}
+

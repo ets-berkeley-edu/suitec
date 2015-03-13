@@ -1,8 +1,10 @@
 .DS_STORE
+.jscsrc.swp
 *.log
 logs/*.log
 
 node_modules/*
+!node_modules/col-assets
 !node_modules/col-canvas
 !node_modules/col-core
 !node_modules/col-course
@@ -10,3 +12,5 @@ node_modules/*
 !node_modules/col-rest
 !node_modules/col-tests
 !node_modules/col-users
+
+public/lib
