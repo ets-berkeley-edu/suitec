@@ -21,6 +21,7 @@
     "bunyan-prettystream": "latest",
     "config": "latest",
     "cookie-parser": "latest",
+    "cors": "latest",
     "express": "latest",
     "ims-lti": "latest",
     "joi": "latest",
