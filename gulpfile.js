@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+var csslint = require('gulp-csslint');
 var gulp = require('gulp');
 var jscs = require('gulp-jscs');
 var mocha = require('gulp-mocha');
@@ -23,8 +24,20 @@ var runSequence = require('run-sequence');
  */
 gulp.task('jscs', function() {
   return gulp
-    .src(['app.js', 'node_modules/col-*/**/*.js'])
+    .src(['app.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js'])
     .pipe(jscs());
+});
+
+/**
+ * Run the CSS code style linter
+ */
+gulp.task('csslint', function() {
+  return gulp
+    .src(['public/**/*.css', '!public/lib/**/*.css'])
+    .pipe(csslint({
+      'box-model': false
+    }))
+    .pipe(csslint.reporter());
 });
 
 /**
@@ -43,7 +56,7 @@ gulp.task('test', function() {
   // Set the environment to `test`
   process.env.NODE_ENV = 'test';
 
-  runSequence('jscs', 'mocha');
+  runSequence('jscs', 'csslint', 'mocha');
 });
 
 /**
@@ -53,6 +66,6 @@ gulp.task('test-travis', function() {
   // Set the environment to `travis`
   process.env.NODE_ENV = 'travis';
 
-  runSequence('jscs', 'mocha');
+  runSequence('jscs', 'csslint', 'mocha');
 });
 

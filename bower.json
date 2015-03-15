@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "angular": "latest",
+    "angular-aria": "latest",
     "angular-route": "latest",
+    "angular-sanitize": "latest",
     "bootstrap": "latest",
     "fontawesome": "latest",
     "ngInfiniteScroll": "latest"
