@@ -14,6 +14,37 @@
  */
 
 body {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
   overflow-y: hidden;
-  padding: 0 20px 50px;
+  padding: 25px 25px 50px;
+}
+
+/* Bootstrap overrides */
+
+.form-control {
+  height: 38px;
+  padding: 8px 12px;
+}
+
+.btn {
+  padding: 8px 12px;
+}
+
+.btn.btn-default {
+  background-color: #F7F7F7;
+  border-color: #D3D3D3;
+}
+
+.btn i + span {
+  margin-left: 3px;
+}
+
+/* Util */
+
+.col-threedots {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

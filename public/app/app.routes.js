@@ -30,19 +30,22 @@
     $routeProvider.
     // Asset Library routes
     when('/assetlibrary', {
-      templateUrl: '/app/assetlibrary/assetlibrary_list/assetlibrary_list.html'
+      templateUrl: '/app/assetlibrary/list/list.html'
     }).
     when('/assetlibrary/upload', {
-      templateUrl: '/app/assetlibrary/assetlibrary_upload/assetlibrary_upload.html'
+      templateUrl: '/app/assetlibrary/upload/upload.html'
     }).
     when('/assetlibrary/addlink', {
-      templateUrl: '/app/assetlibrary/assetlibrary_addlink/assetlibrary_addlink.html'
+      templateUrl: '/app/assetlibrary/addlink/addlink.html'
     }).
     when('/assetlibrary/addthought', {
-      templateUrl: '/app/assetlibrary/assetlibrary_addthought/assetlibrary_addthought.html'
+      templateUrl: '/app/assetlibrary/addthought/addthought.html'
+    }).
+    when('/assetlibrary/managecategories', {
+      templateUrl: '/app/assetlibrary/managecategories/managecategories.html'
     }).
     when('/assetlibrary/:selectedAssetId', {
-      templateUrl: '/app/assetlibrary/assetlibrary_item/assetlibrary_item.html'
+      templateUrl: '/app/assetlibrary/item/item.html'
     }).
 
     // Engagement Index routes

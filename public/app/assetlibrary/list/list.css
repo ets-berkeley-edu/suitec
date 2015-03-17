@@ -1,0 +1,137 @@
+/*!
+ * Copyright 2015 UC Berkeley (UCB) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ *     http://opensource.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+.assetlibrary-list-top {
+  margin-bottom: 12px;
+}
+
+/* SEARCH */
+
+.assetlibrary-list-search-container {
+  max-width: 600px;
+  width: 100%;
+}
+
+.assetlibrary-list-search-advanced {
+  position: absolute;
+  right: 40px;
+  z-index: 10;
+}
+
+.assetlibrary-list-search-advanced,
+.assetlibrary-list-search-advanced:active,
+.assetlibrary-list-search-advanced:hover {
+  color: #333;
+}
+
+.assetlibrary-list-search-form.form-inline .input-group .input-group-btn {
+  width: 20px;
+}
+
+/* LIST */
+
+.assetlibrary-list-container {
+  margin-right: -15px;
+  margin-left: -5px;
+  margin-top: 10px;
+}
+
+.assetlibrary-list-container ul {
+  display: table;
+  padding: 0;
+  width: 100%;
+}
+
+.assetlibrary-list-container ul li {
+  margin-left: 0;
+  margin-top: 10px;
+  padding-left: 0;
+  padding-right: 10px;
+}
+
+.assetlibrary-list-item-container {
+  border-radius: 4px;
+  padding: 6px;
+  border: 1px solid transparent;
+}
+
+.assetlibrary-list-item-container:hover {
+  background-color: #F7F7F7;
+  border-color: #E0E3E8;
+}
+
+.assetlibrary-list-item-image {
+  border: 1px solid #C2C8D0;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 100%;
+}
+
+.assetlibrary-list-item-image img {
+  min-height: 100%;
+  min-width: 100%;
+  position: absolute;
+}
+
+.assetlibrary-list-item-metadata {
+  color: #FFF;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(51, 51, 51, 0.9);
+  padding: 12px;
+}
+
+.assetlibrary-list-item-metadata h3 {
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 0;
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+.assetlibrary-list-item-metadata small {
+  font-size: 13px;
+}
+
+.assetlibrary-list-item-actions,
+.assetlibrary-list-item-actions .btn {
+  color: #ADABAA;
+}
+
+.assetlibrary-list-item-actions {
+  font-size: 13px;
+  padding: 12px 10px 0;
+}
+
+.assetlibrary-list-item-actions .btn {
+  padding: 0;
+}
+
+.assetlibrary-list-item-actions i {
+  margin-left: 10px;
+  margin-right: 1px;
+}
+
+.assetlibrary-list-item-actions i.fa-thumbs-up {
+  position: relative;
+  top: -2px;
+}
+
+.assetlibrary-list-item-actions i.fa-comment {
+  position: relative;
+  top: -1px;
+}
