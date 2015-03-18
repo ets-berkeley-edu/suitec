@@ -1,4 +1,4 @@
-/*!
+/**
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -17,13 +17,14 @@
 
   'use strict';
 
-  // Initialize the Collabosphere module
-  angular.module('collabosphere', [
-    'ngAria',
-    'ngRoute',
-    'ngSanitize',
-    'infinite-scroll',
-    'monospaced.elastic'
-  ]);
+  angular.module('collabosphere').controller('AssetLibraryAddBookmarkletController', function(userFactory, utilService, $location, $scope) {
 
-})(window.angular);
+    userFactory.getMe().success(function(me) {
+      $scope.me = me;
+      // Set the domain that should be used by the Bookmarklet for requests
+      $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();
+    });
+
+  });
+
+}(window.angular));

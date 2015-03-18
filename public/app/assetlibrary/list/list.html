@@ -32,16 +32,38 @@
   </div>
 
   <div class="assetlibrary-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
-    <ul style="width: 100%;">
+    <ul>
+      <!-- Add items tile -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3">
-        <div>
-          First element
+        <div class="assetlibrary-list-item-container assetlibrary-list-add-tile">
+          <div class="assetlibrary-list-item-tile">
+            <div class="assetlibrary-list-item-add-container">
+              <div class="assetlibrary-list-item-add-table">
+                <a data-ng-href="/assetlibrary/upload" class="text-center col-container">
+                  <i class="fa fa-laptop"></i>
+                  <div class="assetlibrary-list-item-add-action">Upload</div>
+                </a>
+                <a data-ng-href="/assetlibrary/addlink" class="text-center col-container">
+                  <i class="fa fa-globe"></i>
+                  <div class="assetlibrary-list-item-add-action">Add URL</div>
+                </a>
+                <a data-ng-href="/assetlibrary/addthought" class="text-center col-container">
+                  <i class="fa fa-comment"></i>
+                  <div class="assetlibrary-list-item-add-action">Add a thought</div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="assetlibrary-list-item-actions">
+            <a data-ng-href="/assetlibrary/addbookmarklet">Add inspiration from anywhere</a>
+          </div>
         </div>
       </li>
+      <!-- List item -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
         <div class="assetlibrary-list-item-container">
           <a data-ng-href="/assetlibrary/{{asset.id}}">
-            <div class="assetlibrary-list-item-image">
+            <div class="assetlibrary-list-item-tile">
               <img class="img img-responsive full-width" data-ng-src="{{asset.url}}">
               <div class="assetlibrary-list-item-metadata">
                 <h3 class="col-threedots">{{asset.title}}</h3>
@@ -49,29 +71,9 @@
               </div>
             </div>
           </a>
-          <div class="text-right assetlibrary-list-item-actions">
-            <button class="btn btn-link">
-              <i class="fa fa-thumbs-up">
-                <span class="sr-only">Like</span>
-              </i>
-            </button>
-            9
-            <i class="fa fa-eye">
-              <span class="sr-only">Views</span>
-            </i>
-            {{asset.views}}
-            <i class="fa fa-comment">
-              <span class="sr-only">Comments</span>
-            </i>
-            6
-          </div>
+          <div class="text-right assetlibrary-list-item-actions" iconbar asset="asset" ></div>
         </div>
       </li>
     </ul>
   </div>
-
-  <div>
-    <a href="/assetlibrary/addlink">Add link</a>
-  </div>
-
 </div>

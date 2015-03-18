@@ -44,7 +44,7 @@
 
 .assetlibrary-list-container {
   margin-right: -15px;
-  margin-left: -5px;
+  margin-left: -6px;
   margin-top: 10px;
 }
 
@@ -67,19 +67,63 @@
   border: 1px solid transparent;
 }
 
-.assetlibrary-list-item-container:hover {
-  background-color: #F7F7F7;
-  border-color: #E0E3E8;
-}
-
-.assetlibrary-list-item-image {
+.assetlibrary-list-item-tile {
   border: 1px solid #C2C8D0;
+  border-radius: 4px;
   position: relative;
   overflow: hidden;
   padding-bottom: 100%;
 }
 
-.assetlibrary-list-item-image img {
+/* ADD ITEMS */
+
+.assetlibrary-list-item-add-container {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+}
+
+.assetlibrary-list-item-add-table {
+  border-spacing: 6px;
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+
+.assetlibrary-list-item-add-table a {
+  color: #333;
+  display: table-cell;
+  padding: 5px;
+  vertical-align: middle;
+  width: 33.33%;
+}
+
+.assetlibrary-list-item-add-table a:hover {
+  background-color: #E8E8E8;
+  border-color: #DDD;
+  text-decoration: none;
+}
+
+.assetlibrary-list-item-add-table i {
+  color: #404040;
+  font-size: 40px;
+  margin: 15px 0;
+}
+
+.assetlibrary-list-item-add-action {
+  height: 40px;
+}
+
+/* LIST ITEM */
+
+.assetlibrary-list-item-container:not(.assetlibrary-list-add-tile):hover {
+  background-color: #F7F7F7;
+  border-color: #E0E3E8;
+}
+
+.assetlibrary-list-item-tile img {
   min-height: 100%;
   min-width: 100%;
   position: absolute;
@@ -107,31 +151,12 @@
   font-size: 13px;
 }
 
-.assetlibrary-list-item-actions,
-.assetlibrary-list-item-actions .btn {
-  color: #ADABAA;
-}
-
 .assetlibrary-list-item-actions {
   font-size: 13px;
   padding: 12px 10px 0;
 }
 
+.assetlibrary-list-item-actions,
 .assetlibrary-list-item-actions .btn {
-  padding: 0;
-}
-
-.assetlibrary-list-item-actions i {
-  margin-left: 10px;
-  margin-right: 1px;
-}
-
-.assetlibrary-list-item-actions i.fa-thumbs-up {
-  position: relative;
-  top: -2px;
-}
-
-.assetlibrary-list-item-actions i.fa-comment {
-  position: relative;
-  top: -1px;
+    color: #ADABAA;
 }

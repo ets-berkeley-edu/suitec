@@ -44,7 +44,10 @@
     when('/assetlibrary/managecategories', {
       templateUrl: '/app/assetlibrary/managecategories/managecategories.html'
     }).
-    when('/assetlibrary/:selectedAssetId', {
+    when('/assetlibrary/addbookmarklet', {
+      templateUrl: '/app/assetlibrary/addbookmarklet/addbookmarklet.html'
+    }).
+    when('/assetlibrary/:assetId', {
       templateUrl: '/app/assetlibrary/item/item.html'
     }).
 

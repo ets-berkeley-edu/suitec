@@ -9,6 +9,7 @@
   "dependencies": {
     "angular": "latest",
     "angular-aria": "latest",
+    "angular-elastic": "latest",
     "angular-route": "latest",
     "angular-sanitize": "latest",
     "bootstrap": "latest",

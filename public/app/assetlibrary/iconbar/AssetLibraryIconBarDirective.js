@@ -17,13 +17,14 @@
 
   'use strict';
 
-  // Initialize the Collabosphere module
-  angular.module('collabosphere', [
-    'ngAria',
-    'ngRoute',
-    'ngSanitize',
-    'infinite-scroll',
-    'monospaced.elastic'
-  ]);
+  angular.module('collabosphere').directive('iconbar', function() {
+    return {
+      'restrict': 'A',
+      'templateUrl': '/app/assetlibrary/iconbar/iconbar.html',
+      'scope': {
+        'asset': '=asset'
+      }
+    };
+  });
 
-})(window.angular);
+}(window.angular));
