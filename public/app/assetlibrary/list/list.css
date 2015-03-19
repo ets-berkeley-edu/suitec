@@ -129,6 +129,22 @@
   position: absolute;
 }
 
+.assetlibrary-list-item-thumbnail-default {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background-color: #e8e8e8;
+}
+
+.assetlibrary-list-item-thumbnail-default i {
+  font-size: 65px;
+  color: #adabaa;
+  padding-top: 50%;
+  margin-top: -50px;
+}
+
 .assetlibrary-list-item-metadata {
   color: #FFF;
   position: absolute;

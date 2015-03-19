@@ -13,14 +13,6 @@
  * permissions and limitations under the License.
  */
 
-.assetlibrary-item-back {
-  color: #333;
-}
-
-.assetlibrary-item-back i {
-  margin-right: 5px;
-}
-
 .assetlibrary-item-title {
   margin-bottom: 20px;
 }
@@ -43,6 +35,18 @@
 
 .assetlibrary-item-preview-image img {
   max-width: 100%;
+}
+
+.assetlibrary-item-preview-iframe {
+  overflow-y: hidden;
+}
+
+.assetlibrary-item-preview-iframe,
+.assetlibrary-item-preview-iframe iframe {
+  background-color: #FFF;
+  height: 600px;
+  border: none;
+  width: 100%;
 }
 
 /* METADATA */
@@ -145,10 +149,6 @@
   }
 }
 
-.assetlibrary-item-comment {
-  padding-bottom: 15px;
-}
-
 .assetlibrary-item-comments small {
   margin-left: 5px;
   font-size: 13px;
@@ -158,4 +158,5 @@
 
 .assetlibrary-item-comments p {
   margin-top: 14px;
+  white-space: pre-wrap;
 }

@@ -1,29 +1,64 @@
 <div data-ng-controller="AssetLibraryAddBookmarkletController">
 
-  <h1>Add Bookmarklet</h1>
+  <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Inspiration Board</a>
 
-  <div>
-    <a data-ng-href="javascript:
-                    (function() {
-                      var api_domain = '{{me.course.canvas_api_domain}}';
-                      var base_url = '{{baseUrl}}';
-                      var bookmarklet_token = '{{me.bookmarklet_token}}';
-                      var course_id = '{{me.course.canvas_course_id}}';
-                      var user_id = '{{me.id}}';
-                      window.collabosphere = window.collabosphere || {
-                        'api_domain': api_domain,
-                        'base_url': base_url,
-                        'bookmarklet_token': bookmarklet_token,
-                        'course_id': course_id,
-                        'user_id': user_id
-                      };
-                      if (window.collabosphere.init !== undefined) {
-                        window.collabosphere.init();
-                      } else {
-                        var bookmarklet = document.createElement('script');
-                        bookmarklet.src = base_url + '/assets/js/bookmarklet-init.js';
-                        document.body.appendChild(bookmarklet);
-                      }
-                    })();">I'm inspired</a>
+  <h2>Add inspiration to the Inspiration Board from other websites</h2>
+
+  <div class="assetlibrary-addbookmarklet-container">
+    <div class="row">
+      <div class="col-xs-6 text-center">
+        <img src="/assets/img/bookmarklet-step1.jpg" />
+      </div>
+      <div class="col-xs-6">
+        <h3>1.  Turn on your browser's bookmarks bar</h3>
+        <div>
+          Make sure your Bookmarks bar is turned on. If it isn't, go to the browser menu > view > Toolbars > Bookmarks Toolbar and turn it on there.
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-6">
+        <h3>2.  Drag the bookmarklet to the bookmarks bar</h3>
+        <div>
+          Add the 'Inspiration board' bookmarklet displayed on the right to your browser's bookmarks bar by simply dragging and dropping it there.
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <a class="assetlibrary-addbookmarklet-bookmarklet" data-ng-href="javascript:
+                (function() {
+                  var api_domain = '{{me.course.canvas_api_domain}}';
+                  var base_url = '{{baseUrl}}';
+                  var bookmarklet_token = '{{me.bookmarklet_token}}';
+                  var course_id = '{{me.course.canvas_course_id}}';
+                  var user_id = '{{me.id}}';
+                  window.collabosphere = window.collabosphere || {
+                    'api_domain': api_domain,
+                    'base_url': base_url,
+                    'bookmarklet_token': bookmarklet_token,
+                    'course_id': course_id,
+                    'user_id': user_id
+                  };
+                  if (window.collabosphere.init !== undefined) {
+                    window.collabosphere.init();
+                  } else {
+                    var bookmarklet = document.createElement('script');
+                    bookmarklet.src = base_url + '/assets/js/bookmarklet-init.js';
+                    document.body.appendChild(bookmarklet);
+                  }
+                })();">Inspiration Board</a>
+        <i class="fa fa-reply assetlibrary-addbookmarklet-arrow"></i>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-6 text-center">
+        <img src="/assets/img/bookmarklet-step3.jpg" />
+      </div>
+      <div class="col-xs-6">
+        <h3>3.  Save inspiration with one click</h3>
+        <div>
+          Save an interesting website, image or video by clicking the bookmarklet in your browser bookmarks bar.
+        </div>
+      </div>
+    </div>
   </div>
 </div>

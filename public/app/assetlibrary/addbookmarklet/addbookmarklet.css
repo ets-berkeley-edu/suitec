@@ -1,4 +1,4 @@
-/**
+/*!
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -13,20 +13,34 @@
  * permissions and limitations under the License.
  */
 
-(function(angular) {
+.assetlibrary-addbookmarklet-container {
+  max-width: 850px;
+  padding-top: 20px;
+}
 
-  'use strict';
+.assetlibrary-addbookmarklet-container .row {
+  margin-bottom: 50px;
+}
 
-  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryAddLinkFactory, $location, $scope) {
+.assetlibrary-addbookmarklet-container h3 {
+  margin-top: 0;
+}
 
-    $scope.link = {};
+.assetlibrary-addbookmarklet-bookmarklet,
+.assetlibrary-addbookmarklet-bookmarklet:hover {
+  padding: 10px 25px;
+  color: #333;
+  border: 1px dashed #C7CCD3;
+  position: relative;
+  top: 50px;
+  left: 50px;
+}
 
-    $scope.createLink = function() {
-      assetLibraryAddLinkFactory.createLink($scope.link).success(function() {
-        $location.path('/assetlibrary');
-      });
-    };
-
-  });
-
-}(window.angular));
+.assetlibrary-addbookmarklet-arrow {
+  color: #C7CCD3;
+  font-size: 80px;
+  left: 205px;
+  position: absolute;
+  top: -20px;
+  transform: rotate(65deg);
+}

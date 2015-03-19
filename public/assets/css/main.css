@@ -120,6 +120,14 @@ select option[value=''] {
   white-space: nowrap;
 }
 
+.col-back {
+  color: #333;
+}
+
+.col-back i {
+  margin-right: 5px;
+}
+
 .col-avatar {
   background-color: #FFF;
   background-position: center center;

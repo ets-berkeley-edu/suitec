@@ -122,6 +122,7 @@
   var addPageBookmark = function() {
     // Extract the title and description from the metadata form
     var asset = {
+      type: 'link', // TODO: Abstract to addAsset function
       url: window.parent.location.toString(),
       title: $('#collabosphere-bookmark-title').val(),
       description: $('#collabosphere-bookmark-description').val()

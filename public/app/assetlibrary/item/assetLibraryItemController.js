@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryItemFactory, userFactory, utilService, $routeParams, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryItemFactory, userFactory, utilService, $routeParams, $sce, $scope) {
 
     // Variable that will keep track of the current asset id
     var assetId = $routeParams.assetId;
@@ -33,6 +33,7 @@
      */
     var getCurrentAsset = function() {
       assetLibraryItemFactory.getAsset(assetId).success(function(asset) {
+        asset.comments = asset.comments.reverse();
         $scope.asset = asset;
       });
     };
@@ -42,11 +43,18 @@
      */
     var createComment = $scope.createComment = function() {
       assetLibraryItemFactory.createComment(assetId, $scope.newComment.body).success(function(comment) {
-        $scope.asset.comments.push(comment);
+        $scope.asset.comments.unshift(comment);
         $scope.asset.comment_count++;
         // Clear the new comment
          $scope.newComment = null;
       });
+    };
+
+    /**
+     * TODO
+     */
+    var trustSrc = $scope.trustSrc = function(url) {
+      return $sce.trustAsResourceUrl(url);
     };
 
     userFactory.getMe().success(function(me) {
