@@ -46,7 +46,7 @@
         $scope.asset.comments.unshift(comment);
         $scope.asset.comment_count++;
         // Clear the new comment
-         $scope.newComment = null;
+        $scope.newComment = null;
       });
     };
 
