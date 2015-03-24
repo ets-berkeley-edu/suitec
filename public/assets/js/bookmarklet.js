@@ -57,7 +57,7 @@
    * on top of the current page and will block the page content until it is hidden
    */
   var hideBookmarkletIFrame = function() {
-    // Only hide the iFrame if no success message is on the screen
+    // Only hide the iFrame if no success notification is on the screen
     if ($('[data-notify]').length === 0) {
       $('#collabosphere-iframe', window.parent.document).css('display', 'none');
     }
@@ -86,7 +86,7 @@
   var showSuccessNotification = function(message) {
     // Hide the modal dialog
     $('#collabosphere-modal').modal('hide');
-    // Show the success notification and a link back
+    // Show the success notification and link back
     // to the Asset Library
     var notification = {
       'message': message,
@@ -344,9 +344,9 @@
       // Construct the notification message
       var message = null;
       if (selectedItems.length === 1) {
-        message = '1 item has been successfully added to the <strong>Asset Library</strong>';
+        message = 'The selected item has been successfully added to the <strong>Asset Library</strong>';
       } else {
-        message = selectedItems.length + ' items have been successfully added to the <strong>Asset Library</strong>';
+        message = 'The selected items have been successfully added to the <strong>Asset Library</strong>';
       }
       showSuccessNotification(message);
     });

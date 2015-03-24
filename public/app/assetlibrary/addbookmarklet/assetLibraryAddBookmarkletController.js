@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryAddBookmarkletController', function(userFactory, utilService, $location, $routeParams, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryAddBookmarkletController', function(userFactory, utilService, $location, $scope) {
 
     userFactory.getMe().success(function(me) {
       $scope.me = me;
