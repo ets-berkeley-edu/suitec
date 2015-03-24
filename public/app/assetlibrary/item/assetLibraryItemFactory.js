@@ -34,7 +34,7 @@
      *
      * @param  {Number}               id          The id of the asset
      * @param  {String}               body        The body of the comment
-     * @param  {Number}               [parent]    The id of the asset to which the comment is a reply
+     * @param  {Number}               [parent]    The id of the comment to which the comment is a reply
      * @return {Promise<Comment>}                 $http promise returning the created comment
      */
     var createComment = function(id, body, parent) {

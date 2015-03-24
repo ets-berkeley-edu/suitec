@@ -20,7 +20,7 @@ body {
   padding: 25px 25px 50px;
 }
 
-/* Bootstrap overrides */
+/* BOOTSTRAP OVERRIDES */
 
 h2 {
   font-size: 23px;
@@ -50,13 +50,21 @@ a {
   margin-bottom: 20px;
 }
 
+.form-group:not(.has-error) div[data-ng-messages] {
+  display: none;
+}
+
+.help-block {
+  margin-bottom: 0;
+}
+
 .form-control {
   height: 38px;
   padding: 8px 12px;
 }
 
 label {
-  font-weight: 400;
+  font-weight: 500;
 }
 
 option {
@@ -101,13 +109,9 @@ select option[value=''] {
   margin-left: 3px;
 }
 
-.form-group .btn + .btn {
-  margin-left: 5px;
-}
+/* UTILITIES */
 
-/* Util */
-
-.col-container {
+.col-pane {
   background-color: #F7F7F7;
   border: 1px solid #DEDEDE;
   border-radius: 4px;

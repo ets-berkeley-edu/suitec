@@ -18,7 +18,7 @@
 }
 
 .assetlibrary-iconbar .btn:hover {
-  color: #4172b4;
+  color: #4172B4;
 }
 
 .assetlibrary-iconbar i {
@@ -26,11 +26,13 @@
   margin-right: 1px;
 }
 
+/* Move the like icon up to ensure that it aligns vertically */
 .assetlibrary-iconbar i.fa-thumbs-up {
   position: relative;
   top: -2px;
 }
 
+/* Move the comment icon up to ensure that it aligns vertically */
 .assetlibrary-iconbar i.fa-comment {
   position: relative;
   top: -1px;

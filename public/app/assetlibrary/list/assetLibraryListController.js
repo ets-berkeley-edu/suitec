@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, utilService, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, $scope) {
 
     $scope.assets = [];
     $scope.list = {

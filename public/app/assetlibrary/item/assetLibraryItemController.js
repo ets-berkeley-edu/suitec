@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryItemFactory, userFactory, utilService, $routeParams, $sce, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryItemFactory, userFactory, $routeParams, $sce, $scope) {
 
     // Variable that will keep track of the current asset id
     var assetId = $routeParams.assetId;
@@ -29,32 +29,38 @@
     $scope.newComment = null;
 
     /**
-     * TODO
+     * Get the current asset
      */
     var getCurrentAsset = function() {
       assetLibraryItemFactory.getAsset(assetId).success(function(asset) {
+        // Ensure that the newest comments are at the top
+        // TODO: Add sorting to allow for replies
         asset.comments = asset.comments.reverse();
         $scope.asset = asset;
       });
     };
 
     /**
-     * TODO
+     * Allow every URL as an iFrame source URL
+     *
+     * @param  {String}       url             The URL to trust as an iframe source
+     */
+    var trustIFrameSrc = $scope.trustIFrameSrc = function(url) {
+      return $sce.trustAsResourceUrl(url);
+    };
+
+    /**
+     * Create a new comment on the current asset
      */
     var createComment = $scope.createComment = function() {
       assetLibraryItemFactory.createComment(assetId, $scope.newComment.body).success(function(comment) {
+        // Add the created comment to the comment list
+        // TODO: Insert reply
         $scope.asset.comments.unshift(comment);
         $scope.asset.comment_count++;
         // Clear the new comment
         $scope.newComment = null;
       });
-    };
-
-    /**
-     * TODO
-     */
-    var trustSrc = $scope.trustSrc = function(url) {
-      return $sce.trustAsResourceUrl(url);
     };
 
     userFactory.getMe().success(function(me) {

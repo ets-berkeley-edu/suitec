@@ -17,10 +17,14 @@
   margin-bottom: 20px;
 }
 
-/* PREVIEWS */
+/* PREVIEW */
 
 .assetlibrary-item-preview {
   padding: 5px;
+}
+
+.assetlibrary-item-preview-image img {
+  max-width: 100%;
 }
 
 @media only screen and (min-width : 768px) {
@@ -33,10 +37,6 @@
   }
 }
 
-.assetlibrary-item-preview-image img {
-  max-width: 100%;
-}
-
 .assetlibrary-item-preview-iframe {
   overflow-y: hidden;
 }
@@ -44,15 +44,15 @@
 .assetlibrary-item-preview-iframe,
 .assetlibrary-item-preview-iframe iframe {
   background-color: #FFF;
-  height: 600px;
   border: none;
+  height: 600px;
   width: 100%;
 }
 
 /* METADATA */
 
 .assetlibrary-item-metadata {
-  margin: 0px 40px;
+  margin: 0 40px;
 }
 
 .assetlibrary-item-metadata > .row {
@@ -111,7 +111,7 @@
   }
 }
 
-#assetlibrary-item-newcomment-form {
+.assetlibrary-item-newcomment-form {
   max-width: 650px;
   padding-left: 10px;
 }
@@ -126,11 +126,11 @@
   margin-bottom: 5px;
 }
 
-.assetlibrary-item-newcomment-comment-container {
+.assetlibrary-item-newcomment-comment {
   margin-bottom: 10px;
 }
 
-.assetlibrary-item-newcomment-button-container {
+.assetlibrary-item-newcomment-button {
   margin-bottom: 0;
 }
 
@@ -150,10 +150,10 @@
 }
 
 .assetlibrary-item-comments small {
-  margin-left: 5px;
+  color: #747474;
   font-size: 13px;
   font-weight: 300;
-  color: #747474;
+  margin-left: 5px;
 }
 
 .assetlibrary-item-comments p {

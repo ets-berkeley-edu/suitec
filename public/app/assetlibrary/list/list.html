@@ -12,7 +12,7 @@
               <span class="sr-only">Advanced search</span>
             </i>
           </button>
-          <span class="input-group-btn assetlibrary-list-search-button-container">
+          <span class="input-group-btn">
             <button type="submit" class="btn btn-default" title="Search">
               <i class="fa fa-search">
                 <span class="sr-only">Search</span>
@@ -22,6 +22,7 @@
         </div>
       </form>
     </div>
+
     <!-- MANAGE CATEGORIES -->
     <div class="col-xs-4 text-right">
       <a data-ng-href="/assetlibrary/managecategories" data-ng-if="!me.is_admin" class="btn btn-default">
@@ -33,24 +34,24 @@
 
   <div class="assetlibrary-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
     <ul>
-      <!-- Add items tile -->
+      <!-- UPLOAD / ADD LINK -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3">
         <div class="assetlibrary-list-item-container assetlibrary-list-add-tile">
           <div class="assetlibrary-list-item-tile">
             <div class="assetlibrary-list-item-add-container">
               <div class="assetlibrary-list-item-add-table">
-                <a data-ng-href="/assetlibrary/upload" class="text-center col-container">
+                <a data-ng-href="/assetlibrary/upload" class="text-center col-pane">
                   <i class="fa fa-laptop"></i>
                   <div class="assetlibrary-list-item-add-action">Upload</div>
                 </a>
-                <a data-ng-href="/assetlibrary/addlink" class="text-center col-container">
+                <a data-ng-href="/assetlibrary/addlink" class="text-center col-pane">
                   <i class="fa fa-globe"></i>
                   <div class="assetlibrary-list-item-add-action">Add URL</div>
                 </a>
-                <a data-ng-href="/assetlibrary/addthought" class="text-center col-container">
+                <!-- <a data-ng-href="/assetlibrary/addthought" class="text-center col-pane">
                   <i class="fa fa-comment"></i>
                   <div class="assetlibrary-list-item-add-action">Add a thought</div>
-                </a>
+                </a> -->
               </div>
             </div>
           </div>
@@ -59,12 +60,12 @@
           </div>
         </div>
       </li>
-      <!-- List item -->
+      <!-- LIST ITEM -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
         <div class="assetlibrary-list-item-container">
           <a data-ng-href="/assetlibrary/{{asset.id}}">
             <div class="assetlibrary-list-item-tile">
-              <img class="img img-responsive full-width" data-ng-if="asset.thumbnail_url" data-ng-src="{{asset.url}}">
+              <img class="img-responsive" data-ng-src="{{asset.url}}" data-ng-if="asset.thumbnail_url">
               <div class="text-center assetlibrary-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
                 <i class="fa fa-link"></i>
               </div>
@@ -74,7 +75,7 @@
               </div>
             </div>
           </a>
-          <div class="text-right assetlibrary-list-item-actions" iconbar asset="asset" ></div>
+          <div class="text-right assetlibrary-list-item-actions" iconbar asset="asset"></div>
         </div>
       </li>
     </ul>

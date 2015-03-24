@@ -36,16 +36,14 @@
   color: #333;
 }
 
-.assetlibrary-list-search-form.form-inline .input-group .input-group-btn {
+.assetlibrary-list-search-form .input-group .input-group-btn {
   width: 20px;
 }
 
 /* LIST */
 
 .assetlibrary-list-container {
-  margin-right: -15px;
-  margin-left: -6px;
-  margin-top: 10px;
+  margin: 10px -15px -6px 0;
 }
 
 .assetlibrary-list-container ul {
@@ -62,27 +60,27 @@
 }
 
 .assetlibrary-list-item-container {
+  border: 1px solid transparent;
   border-radius: 4px;
   padding: 6px;
-  border: 1px solid transparent;
 }
 
 .assetlibrary-list-item-tile {
   border: 1px solid #C2C8D0;
   border-radius: 4px;
-  position: relative;
   overflow: hidden;
+  position: relative;
   padding-bottom: 100%;
 }
 
-/* ADD ITEMS */
+/* UPLOAD / ADD LINK */
 
 .assetlibrary-list-item-add-container {
+  bottom: 0;
   left: 0;
+  position: absolute;
   right: 0;
   top: 0;
-  bottom: 0;
-  position: absolute;
 }
 
 .assetlibrary-list-item-add-table {
@@ -97,7 +95,7 @@
   display: table-cell;
   padding: 5px;
   vertical-align: middle;
-  width: 33.33%;
+  width: 50%;
 }
 
 .assetlibrary-list-item-add-table a:hover {
@@ -130,36 +128,37 @@
 }
 
 .assetlibrary-list-item-thumbnail-default {
-  position: absolute;
+  background-color: #E8E8E8;
   bottom: 0;
   left: 0;
+  position: absolute;
   right: 0;
   top: 0;
-  background-color: #e8e8e8;
 }
 
 .assetlibrary-list-item-thumbnail-default i {
+  color: #ADABAA;
   font-size: 65px;
-  color: #adabaa;
-  padding-top: 50%;
   margin-top: -50px;
+  padding-top: 50%;
 }
 
 .assetlibrary-list-item-metadata {
-  color: #FFF;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  background-color: #333;
   background-color: rgba(51, 51, 51, 0.9);
+  bottom: 0;
+  color: #FFF;
+  left: 0;
   padding: 12px;
+  position: absolute;
+  right: 0;
 }
 
 .assetlibrary-list-item-metadata h3 {
   font-size: 14px;
   font-weight: 400;
-  margin-top: 0;
   margin-bottom: 5px;
+  margin-top: 0;
   line-height: 1.3;
 }
 
@@ -174,5 +173,5 @@
 
 .assetlibrary-list-item-actions,
 .assetlibrary-list-item-actions .btn {
-    color: #ADABAA;
+  color: #ADABAA;
 }

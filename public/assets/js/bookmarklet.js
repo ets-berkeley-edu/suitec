@@ -122,7 +122,6 @@
   var addPageBookmark = function() {
     // Extract the title and description from the metadata form
     var asset = {
-      type: 'link', // TODO: Abstract to addAsset function
       url: window.parent.location.toString(),
       title: $('#collabosphere-bookmark-title').val(),
       description: $('#collabosphere-bookmark-description').val()
@@ -299,7 +298,6 @@
     // Extract the metadata from the metadata form
     _.each(selectedItems, function(selectedItem, index) {
       var $parent = $('#collabosphere-items-metadata-container li:eq(' + index + ')');
-      selectedItem.type = 'link';
       selectedItem.source = window.parent.location.toString();
       selectedItem.title = $('.collabosphere-item-title', $parent).val();
       selectedItem.description = $('.collabosphere-item-description', $parent).val();
@@ -360,6 +358,10 @@
    * @param  {Asset}        callback.asset  The created asset
    */
   var addAsset = function(asset, callback) {
+    // Indicate that a link is being created
+    asset.type = 'link';
+
+    // Create the asset through a bookmarklet token request
     $.ajax({
       'url': getApiUrl('/assets'),
       'type': 'POST',

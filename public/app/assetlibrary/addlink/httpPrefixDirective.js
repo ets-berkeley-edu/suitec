@@ -17,20 +17,25 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryAddLinkFactory, $location, $scope) {
-
-    // Variable that will keep track of the new link to be created
-    $scope.link = {};
-
-    /**
-     * Create a new link asset
-     */
-    var createLink = $scope.createLink = function() {
-      assetLibraryAddLinkFactory.createLink($scope.link).success(function() {
-        $location.path('/assetlibrary');
-      });
+  angular.module('collabosphere').directive('httpPrefix', function() {
+    return {
+      'restrict': 'A',
+      'require': 'ngModel',
+      'link': function(scope, element, attrs, controller) {
+        function ensureHttpPrefix(value) {
+          // Add a 'http://' prefix if no protocol prefix has been specified
+          if (value && value.indexOf('://') === -1) {
+            controller.$setViewValue('http://' + value);
+            controller.$render();
+            return 'http://' + value;
+          } else {
+            return value;
+          }
+        }
+        controller.$formatters.push(ensureHttpPrefix);
+        controller.$parsers.push(ensureHttpPrefix);
+      }
     };
-
   });
 
 }(window.angular));
