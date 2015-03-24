@@ -1,0 +1,111 @@
+<div data-ng-controller="AssetLibraryItemController">
+
+  <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Inspiration Board</a>
+
+  <h2 class="col-threedots assetlibrary-item-title">{{asset.title}}</h2>
+
+  <div class="col-pane">
+    <!-- PREVIEW -->
+    <div class="text-center assetlibrary-item-preview">
+      <!-- IMAGE PREVIEW -->
+      <div class="assetlibrary-item-preview-image" data-ng-if="asset.thumbnail_url">
+        <img data-ng-src="{{asset.thumbnail_url}}" alt="{{asset.title}}">
+      </div>
+      <!-- IFRAME PREVIEW -->
+      <div class="assetlibrary-item-preview-iframe" data-ng-if="asset.url && !asset.thumbnail_url">
+        <iframe data-ng-src="{{trustIFrameSrc(asset.url)}}"></iframe>
+      </div>
+    </div>
+
+    <!-- METADATA -->
+    <div class="assetlibrary-item-metadata">
+      <div class="row">
+        <div class="col-sm-6 assetlibrary-item-metadata-column">
+          <div class="media">
+            <div class="media-left media-middle">
+              <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + asset.user.canvas_image + ')'}"></div>
+            </div>
+            <div class="media-body media-middle">
+              by <a>{{asset.user.canvas_full_name}}</a> on {{asset.created_at | date:'longDate' }}
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 assetlibrary-item-metadata-column assetlibrary-item-metadata-icons">
+          <div iconbar asset="asset"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 assetlibrary-item-metadata-column">
+          <div class="row">
+            <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Description</div>
+            <div class="col-xs-9">
+              <div data-ng-if="asset.description">{{asset.description}}</div>
+              <div data-ng-if="!asset.description">No description</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 assetlibrary-item-metadata-column">
+          <div class="row">
+            <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Category</div>
+            <div class="col-xs-9">
+              <div>No category</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Source</div>
+            <div class="col-xs-9">
+              <div data-ng-if="asset.source || asset.url" class="col-threedots"><a data-ng-href="{{asset.source || asset.url}}" target="_blank">{{asset.source || asset.url}}</a></div>
+              <div data-ng-if="!asset.source && !asset.url">No source</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3><ng-pluralize count="asset.comment_count" when="{'0': 'No comments', 'one': '1 comment', 'other': '{} comments'}"></ng-pluralize></h3>
+
+  <!-- NEW COMMENT -->
+  <div class="col-pane assetlibrary-item-newcomment-container">
+    <div class="media">
+      <div class="media-left media-top">
+        <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + asset.user.canvas_image + ')'}">
+          <span class="sr-only">{{asset.user.canvas_full_name}}</span>
+        </div>
+      </div>
+      <div class="media-body media-middle">
+        <form name="assetlibraryNewCommentForm" class="assetlibrary-item-newcomment-form" data-ng-submit="assetlibraryNewCommentForm.$valid && createComment()" novalidate>
+          <div class="assetlibrary-item-newcomment-commenter">
+            <a>
+              <i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{asset.user.canvas_full_name}}
+            </a>
+            (me)
+          </div>
+          <div class="form-group assetlibrary-item-newcomment-comment">
+            <label for="assetlibrary-item-newcomment-body" class="sr-only">Comment</label>
+            <textarea class="form-control msd-elastic" id="assetlibrary-item-newcomment-body" placeholder="Add a comment" rows="3" data-ng-model="newComment.body" required></textarea>
+          </div>
+          <div class="form-group text-right assetlibrary-item-newcomment-button">
+            <button type="submit" class="btn btn-primary" data-ng-disabled="assetlibraryNewCommentForm.$invalid">
+              <i class="fa fa-comment"></i>
+              <span>Comment</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="assetlibrary-item-comments">
+    <div class="media assetlibrary-item-comment" data-ng-repeat="comment in asset.comments">
+      <div class="media-left media-top">
+        <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + asset.user.canvas_image + ')'}"></div>
+      </div>
+      <div class="media-body media-top">
+        <a><i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{comment.user.canvas_full_name}}</a> <small>on {{comment.created_at | date:"MMMM d 'at' h:mm a" }}</small>
+        <p>{{comment.body}}</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -13,15 +13,18 @@
  * permissions and limitations under the License.
  */
 
-var Collabosphere = require('col-core');
+(function(angular) {
 
-/*!
- * The me feed
- */
-Collabosphere.apiRouter.get('/me', function(req, res) {
-  if (!req.ctx) {
-    return res.status(401).send('Unauthenticated API request');
-  }
+  'use strict';
 
-  return res.status(200).send(req.ctx.user);
-});
+  angular.module('collabosphere').controller('AssetLibraryAddBookmarkletController', function(userFactory, utilService, $location, $scope) {
+
+    userFactory.getMe().success(function(me) {
+      $scope.me = me;
+      // Set the domain that should be used by the Bookmarklet for requests
+      $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();
+    });
+
+  });
+
+}(window.angular));

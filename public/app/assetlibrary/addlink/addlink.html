@@ -1,0 +1,55 @@
+<div data-ng-controller="AssetLibraryAddLinkController">
+
+  <h2>Add a URL</h2>
+
+  <form name="assetlibraryAddlinkForm" class="form-horizontal assetlibrary-addlink-form" data-ng-submit="assetlibraryAddlinkForm.$valid && createLink()" novalidate>
+    <!-- URL -->
+    <div class="form-group" data-ng-class="{'has-error': assetlibraryAddlinkForm.$submitted && assetlibraryAddlinkForm.assetlibraryAddlinkUrl.$invalid}">
+      <label for="assetlibrary-addlink-url" class="col-sm-2 control-label">URL</label>
+      <div class="col-sm-10">
+        <input type="url" id="assetlibrary-addlink-url" name="assetlibraryAddlinkUrl" class="form-control" placeholder="E.g. http://www.berkeley.edu" data-ng-model="link.url" required http-prefix>
+        <div class="help-block" data-ng-messages="assetlibraryAddlinkForm.assetlibraryAddlinkUrl.$error">
+          <div data-ng-message="required">Please enter a URL</div>
+          <div data-ng-message="url">Please enter a valid URL</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="form-group" data-ng-class="{'has-error': assetlibraryAddlinkForm.$submitted && assetlibraryAddlinkForm.assetlibraryAddlinkTitle.$invalid}">
+      <label for="assetlibrary-addlink-title" class="col-sm-2 control-label">Title</label>
+      <div class="col-sm-10">
+        <input type="text" id="assetlibrary-addlink-title" name="assetlibraryAddlinkTitle" class="form-control" placeholder="Enter a title" data-ng-model="link.title" required>
+        <div class="help-block" data-ng-messages="assetlibraryAddlinkForm.assetlibraryAddlinkTitle.$error">
+          <div data-ng-message="required">Please enter a title</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY -->
+    <div class="form-group">
+      <label for="assetlibrary-addlink-category" class="col-sm-2 control-label">Category</label>
+      <div class="col-sm-10">
+        <select id="assetlibrary-addlink-category" class="form-control default" data-value="{{link.category}}" data-ng-model="link.category">
+          <option value="" selected>Which assignment or topic does this belong to</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="form-group">
+      <label for="assetlibrary-addlink-description" class="col-sm-2 control-label">Description</label>
+      <div class="col-sm-10">
+        <textarea id="assetlibrary-addlink-description" class="form-control" placeholder="Add some more context to your URL. You can use plain text or #keywords" rows="3" data-ng-model="link.description"></textarea>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="form-group text-right">
+      <div class="col-sm-offset-2 col-sm-10">
+        <a data-ng-href="/assetlibrary" class="btn btn-default">Cancel</a>
+        <button type="submit" class="btn btn-primary">Add URL</button>
+      </div>
+    </div>
+  </form>
+</div>

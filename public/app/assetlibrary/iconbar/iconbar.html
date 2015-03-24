@@ -1,0 +1,21 @@
+<div class="assetlibrary-iconbar">
+  <!-- LIKES -->
+  <button class="btn btn-link">
+    <i class="fa fa-thumbs-up">
+      <span class="sr-only">Like</span>
+    </i>
+  </button>
+  <span>9</span>
+
+  <!-- VIEWS -->
+  <i class="fa fa-eye">
+    <span class="sr-only">Views</span>
+  </i>
+  <span data-ng-bind="asset.views | number"></span>
+
+  <!-- COMMENTS -->
+  <i class="fa fa-comment">
+    <span class="sr-only">Comments</span>
+  </i>
+  <span data-ng-bind="asset.comment_count | number"></span>
+</div>

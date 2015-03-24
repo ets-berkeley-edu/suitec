@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function($q, $routeParams) {
+  angular.module('collabosphere').service('utilService', function($q, $routeParams, $timeout) {
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
@@ -148,14 +148,14 @@
       // Only try to send the event when a parent container is present
       if (window.parent) {
         // Wait until Angular has finished rendering items on the screen
-        setTimeout(function() {
+        $timeout(function() {
           // Retrieve the message to send to the parent container. Note that we can't pass the
           // message directly into this function, as we sometimes need to wait until Angular has
           // finished rendering before we can determine what message to send
           var message = messageGenerator();
           // Send the message to the parent container as a stringified object
           window.parent.postMessage(JSON.stringify(message), '*');
-        }, 0);
+        });
       }
     };
 

@@ -1,4 +1,4 @@
-/**
+/*!
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -13,15 +13,25 @@
  * permissions and limitations under the License.
  */
 
-var Collabosphere = require('col-core');
+(function(angular) {
 
-/*!
- * The me feed
- */
-Collabosphere.apiRouter.get('/me', function(req, res) {
-  if (!req.ctx) {
-    return res.status(401).send('Unauthenticated API request');
-  }
+  'use strict';
 
-  return res.status(200).send(req.ctx.user);
-});
+  angular.module('collabosphere').factory('userFactory', function(utilService, $http) {
+
+    /**
+     * Retrieve the profile information for the current user
+     *
+     * @return {Promise<Me>}                      Promise returning the profile information for the current user
+     */
+    var getMe = function() {
+      return $http.get(utilService.getApiUrl('/me'), {'cache': true});
+    };
+
+    return {
+      getMe: getMe
+    };
+
+  });
+
+}(window.angular));

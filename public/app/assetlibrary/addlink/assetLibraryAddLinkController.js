@@ -13,15 +13,24 @@
  * permissions and limitations under the License.
  */
 
-var Collabosphere = require('col-core');
+(function(angular) {
 
-/*!
- * The me feed
- */
-Collabosphere.apiRouter.get('/me', function(req, res) {
-  if (!req.ctx) {
-    return res.status(401).send('Unauthenticated API request');
-  }
+  'use strict';
 
-  return res.status(200).send(req.ctx.user);
-});
+  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryAddLinkFactory, $location, $scope) {
+
+    // Variable that will keep track of the new link to be created
+    $scope.link = {};
+
+    /**
+     * Create a new link asset
+     */
+    var createLink = $scope.createLink = function() {
+      assetLibraryAddLinkFactory.createLink($scope.link).success(function() {
+        $location.path('/assetlibrary');
+      });
+    };
+
+  });
+
+}(window.angular));

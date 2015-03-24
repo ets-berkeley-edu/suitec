@@ -35,7 +35,10 @@ gulp.task('csslint', function() {
   return gulp
     .src(['public/**/*.css', '!public/lib/**/*.css'])
     .pipe(csslint({
-      'box-model': false
+      'adjoining-classes': false,
+      'box-model': false,
+      'overqualified-elements': false,
+      'qualified-headings': false
     }))
     .pipe(csslint.reporter());
 });

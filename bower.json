@@ -9,10 +9,13 @@
   "dependencies": {
     "angular": "latest",
     "angular-aria": "latest",
+    "angular-elastic": "latest",
+    "angular-messages":"latest",
     "angular-route": "latest",
     "angular-sanitize": "latest",
     "bootstrap": "latest",
     "fontawesome": "latest",
+    "lodash": "latest",
     "ngInfiniteScroll": "latest"
   }
 }
