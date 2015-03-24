@@ -21,6 +21,7 @@
   // us a lot more control over the behavior and styling of the bookmarklet
   // content and removes the potential for clashes with the parent page
   var iframe = document.createElement('iframe');
+  iframe.id = 'collabosphere-iframe';
   iframe.style.position = 'fixed';
   iframe.style.top = '0px';
   iframe.style.left = '0px';
@@ -44,10 +45,12 @@
                  '<meta charset="utf-8">' +
                  '<meta http-equiv="X-UA-Compatible" content="IE=edge">' +
                  '<link href="' + baseUrl + '/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">' +
+                 '<link href="' + baseUrl + '/assets/css/main.css" rel="stylesheet">' +
                  '<link href="' + baseUrl + '/assets/css/bookmarklet.css" rel="stylesheet">' +
                  '<script src="' + baseUrl + '/lib/jquery/dist/jquery.js"></script>' +
                  '<script src="' + baseUrl + '/lib/lodash/lodash.js"></script>' +
                  '<script src="' + baseUrl + '/lib/bootstrap/dist/js/bootstrap.js"></script>' +
+                 '<script src="' + baseUrl + '/lib/remarkable-bootstrap-notify/dist/bootstrap-notify.js"></script>' +
                '</head>' +
                '<body>' +
                  '<script src="' + baseUrl + '/assets/js/bookmarklet.js"></script>' +

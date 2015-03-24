@@ -45,8 +45,55 @@
    * Render the Bookmarklet modal and show the overview pane
    */
   var renderModal = function() {
+    // Ensure that the iFrame in which the Bookmarklet is loaded is visible
+    $('#collabosphere-iframe', window.parent.document).css('display', 'block');
+    // Load the modal dialog
     $('#collabosphere-modal').modal();
     showPane('overview');
+  };
+
+  /**
+   * Hide the iFrame in which the Bookmarklet is loaded. This iFrame is loaded
+   * on top of the current page and will block the page content until it is hidden
+   */
+  var hideBookmarkletIFrame = function() {
+    // Only hide the iFrame if no success message is on the screen
+    if ($('[data-notify]').length === 0) {
+      $('#collabosphere-iframe', window.parent.document).css('display', 'none');
+    }
+  };
+
+  /* SUCCESS NOTIFICATION */
+
+  // Set the default settings for the success notification
+  // @see http://bootstrap-growl.remabledesigns.com/
+  $.notifyDefaults({
+    'delay': 3000,
+    'onClosed': hideBookmarkletIFrame,
+    'placement': {
+      'align': 'center',
+      'from': 'top'
+    },
+    'type': 'success'
+  });
+
+  /**
+   * Show a success notification when the current page or items from the current
+   * page have been successfully added to the Asset Library
+   *
+   * @param  {String}     message         The content that should be shown in the notification
+   */
+  var showSuccessNotification = function(message) {
+    // Hide the modal dialog
+    $('#collabosphere-modal').modal('hide');
+    // Show the success notification and a link back
+    // to the Asset Library
+    var notification = {
+      'message': message,
+      'url': collabosphere.tool_url,
+      'target': '_blank'
+    }
+    $.notify(notification);
   };
 
   /* MODAL STATE CHANGES */
@@ -59,8 +106,10 @@
   var showPane = function(pane) {
     // Hide the currenty active pane
     $('.collabosphere-pane').addClass('hide');
+    $('.collabosphere-title').addClass('hide');
     // Show the requested pane
     $('#collabosphere-' + pane).removeClass('hide');
+    $('#collabosphere-title-' + pane).removeClass('hide');
 
     // Set the width of the modal dialog depending on
     // the currently active pane
@@ -127,8 +176,8 @@
       description: $('#collabosphere-bookmark-description').val()
     };
 
-    addAsset(asset, function() {
-      // TODO
+    addAsset(asset, function(asset) {
+      showSuccessNotification('The URL <strong>' + asset.title + '</strong> has been successfully added to the <strong>Asset Library</strong>');
     });
   };
 
@@ -292,15 +341,22 @@
 
     // Function called when all items have been added to the asset library
     var finishAddPageItems = _.after(selectedItems.length, function() {
-      // TODO
+      // Construct the notification message
+      var message = null;
+      if (selectedItems.length === 1) {
+        message = '1 item has been successfully added to the <strong>Asset Library</strong>';
+      } else {
+        message = selectedItems.length + ' items have been successfully added to the <strong>Asset Library</strong>';
+      }
+      showSuccessNotification(message);
     });
 
     // Extract the metadata from the metadata form
     _.each(selectedItems, function(selectedItem, index) {
       var $parent = $('#collabosphere-items-metadata-container li:eq(' + index + ')');
       selectedItem.source = window.parent.location.toString();
-      selectedItem.title = $('.collabosphere-item-title', $parent).val();
-      selectedItem.description = $('.collabosphere-item-description', $parent).val();
+      selectedItem.title = $('#collabosphere-item-title', $parent).val();
+      selectedItem.description = $('#collabosphere-item-description', $parent).val();
 
       addAsset(selectedItem, finishAddPageItems);
     });
@@ -385,6 +441,10 @@
     $(document).on('click', '#collabosphere-items-next', renderPageItemsMetadata);
     $(document).on('click', '#collabosphere-items-metadata-back', renderPageItems);
     $(document).on('click', '#collabosphere-items-add', addPageItems);
+    // Hide the iFrame in which the Bookmarklet is loaded when the modal dialog is closed
+    $(document).on('hidden.bs.modal', '#collabosphere-modal', hideBookmarkletIFrame);
+    // Retrigger the modal dialog when the Bookmarklet is clicked for the second time
+    $(window).on('message', renderModal);
   };
 
   addBinding();
