@@ -3,6 +3,13 @@
 *.log
 logs/*.log
 
+apache/collabosphere.conf
+
+config/*
+!config/default.json
+!config/test.json
+!config/travis.json
+
 node_modules/*
 !node_modules/col-assets
 !node_modules/col-canvas

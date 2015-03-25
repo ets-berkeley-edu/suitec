@@ -1,4 +1,8 @@
 {
+  "apache": {
+    "documentRoot": "/var/www/html",
+    "logDirectory": "/usr/local/var/apache2/log"
+  },
   "app": {
     "port": 2000
   },
