@@ -23,6 +23,8 @@
       $scope.me = me;
       // Set the domain that should be used by the Bookmarklet for requests
       $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();
+      // Set the URL that should be used to send the user back to the Asset Library
+      $scope.toolUrl = utilService.getToolUrl();
     });
 
   });

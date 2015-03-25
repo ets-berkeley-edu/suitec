@@ -19,10 +19,6 @@ body {
 
 /* Boostrap overrides */
 
-h5:first-child {
-  margin-top: 0;
-}
-
 .modal-backdrop {
   position: fixed;                      /* Ensure that the backdrop remains visible when scrolling the parent page */
   bottom: 0;                            /* Ensure that the backdrop stretches until the bottom of the page */
@@ -41,6 +37,31 @@ h5:first-child {
   padding: 0;
 }
 
+form {
+  margin-top: 10px;
+}
+
+@media only screen and (min-width : 768px) {
+  form {
+    margin-left: -20px;
+  }
+}
+
+.radio {
+  margin-bottom: 15px;
+  margin-top: 5px;
+}
+
+div[data-notify="progressbar"] {
+  display: none;
+}
+
+/* Bookmarklet */
+
+.collabosphere-pane {
+  margin: 0 10px 5px 0;
+}
+
 /* Overview panel */
 
 .collabosphere-overview-options-container {
@@ -48,6 +69,10 @@ h5:first-child {
 }
 
 /* Select items from page */
+
+.collabosphere-items-list {
+  margin-left: 10px;
+}
 
 .collabosphere-item-container {
   padding: 10px;
@@ -57,20 +82,34 @@ h5:first-child {
   background-position: center;
   background-size: cover;
   border: 1px solid #ccc;
+  display: inline-block;
   height: 150px;
   width: 150px;
 }
 
-.collabosphere-item input {
-  margin-top: 2px;
+.collabosphere-item-container label {
+  cursor: pointer;
+}
+
+.collabosphere-items-empty {
+  margin-bottom: 25px;
+}
+
+.collabosphere-items-list:not(:empty) + .collabosphere-items-empty {
+  display: none;
 }
 
 /* Add metadata to selected items */
 
 .collabosphere-items-metadata-container {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .collabosphere-items-metadata-container .collabosphere-item {
-  margin: 5px 0 0 20px;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+.collabosphere-items-metadata-column {
+  padding-right: 0;
 }

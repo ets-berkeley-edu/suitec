@@ -16,7 +16,8 @@
     "bootstrap": "latest",
     "fontawesome": "latest",
     "lodash": "latest",
-    "ngInfiniteScroll": "latest"
+    "ngInfiniteScroll": "latest",
+    "remarkable-bootstrap-notify": "latest"
   }
 }
 

@@ -24,6 +24,7 @@
     // the base URL for all REST API requests
     var apiDomain = $routeParams.api_domain;
     var courseId = $routeParams.course_id;
+    var toolUrl = $routeParams.tool_url;
 
     /**
      * Construct the full URL for a REST API request. All REST API requests should
@@ -34,6 +35,13 @@
      */
     var getApiUrl = function(url) {
       return '/api/' + apiDomain + '/' + courseId + url;
+    };
+
+    /**
+     * Get the external tool URL for the current LTI tool placement
+     */
+    var getToolUrl = function() {
+      return toolUrl;
     };
 
     /**
@@ -160,11 +168,12 @@
     };
 
     return {
-      getApiUrl: getApiUrl,
-      getScrollPosition: getScrollPosition,
-      resizeIFrame: resizeIFrame,
-      scrollTo: scrollTo,
-      scrollToTop: scrollToTop
+      'getApiUrl': getApiUrl,
+      'getToolUrl': getToolUrl,
+      'getScrollPosition': getScrollPosition,
+      'resizeIFrame': resizeIFrame,
+      'scrollTo': scrollTo,
+      'scrollToTop': scrollToTop
     };
 
   });

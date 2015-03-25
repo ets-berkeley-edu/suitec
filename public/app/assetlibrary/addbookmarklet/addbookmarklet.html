@@ -30,22 +30,29 @@
                   var base_url = '{{baseUrl}}';
                   var bookmarklet_token = '{{me.bookmarklet_token}}';
                   var course_id = '{{me.course.canvas_course_id}}';
+                  var tool_url = '{{toolUrl}}';
                   var user_id = '{{me.id}}';
                   window.collabosphere = window.collabosphere || {
+                    'initialized': false,
                     'api_domain': api_domain,
                     'base_url': base_url,
                     'bookmarklet_token': bookmarklet_token,
                     'course_id': course_id,
+                    'tool_url': tool_url,
                     'user_id': user_id
                   };
-                  if (window.collabosphere.init !== undefined) {
-                    window.collabosphere.init();
+                  if (window.collabosphere.initialized) {
+                    var iframe = document.getElementById('collabosphere-iframe');
+                    if (iframe) {
+                      iframe.contentWindow.postMessage('collabosphere.load', '*');
+                    }
                   } else {
+                    window.collabosphere.initialized = true;
                     var bookmarklet = document.createElement('script');
                     bookmarklet.src = base_url + '/assets/js/bookmarklet-init.js';
                     document.body.appendChild(bookmarklet);
                   }
-                })();">Inspiration Board</a>
+                })();">Add inspiration</a>
         <i class="fa fa-reply assetlibrary-addbookmarklet-arrow"></i>
       </div>
     </div>
