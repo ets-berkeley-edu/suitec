@@ -11,14 +11,12 @@ TARGET_BRANCH=${BRANCH:-master}
 git reset --hard HEAD
 
 # TODO
-git fetch $TARGET_REMOTE \
-  || { echo 'FAILED to fetch the requested remote'; exit 1; }
-git fetch -t $TARGET_REMOTE \
-  || { echo 'FAILED to fetch the tags from the requested remote'; exit 1; }
-git checkout -B $TARGET_BRANCH \
-  || { echo 'FAILED to move to the requested branch/tag'; exit 1; }
-git pull $TARGET_REMOTE $TARGET_BRANCH \
-  || { echo 'FAILED to pull the latest changes from the requested branch/tag'; exit 1; }
+git fetch $TARGET_REMOTE
+git fetch -t $TARGET_REMOTE
+git checkout -b tmp
+git branch -D $TARGET_BRANCH
+git checkout -b $TARGET_BRANCH $TARGET_REMOTE/$TARGET_BRANCH
+git branch -D tmp
 
 # TODO
 rm -rf node_modules/!(col-*)
