@@ -28,7 +28,7 @@ git branch -D tmp
 # Remove the existing node_modules and re-install
 # all npm dependencies
 find node_modules/ -mindepth 1 -maxdepth 1 ! -name 'col-*' -exec rm -rf {} +
-npm install -d
+npm install
 
 # Remove the existing bower dependencies and
 # re-install
