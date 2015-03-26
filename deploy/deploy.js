@@ -16,4 +16,10 @@
 var config = require('config');
 var exec = require('child_process').exec;
 
-exec('cd ' + __dirname + '/.. && ./deploy/deploy.sh ' + config.get('apache.documentRoot'));
+exec('cd ' + __dirname + '/.. && ./deploy/deploy.sh ' + config.get('apache.documentRoot'), function (error, stdout, stderr) {
+  console.log('stdout: ' + stdout);
+  console.log('stderr: ' + stderr);
+  if (error !== null) {
+    console.log('exec error: ' + error);
+  }
+});
