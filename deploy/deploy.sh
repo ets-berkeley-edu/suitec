@@ -19,8 +19,8 @@ git checkout -b $TARGET_BRANCH $TARGET_REMOTE/$TARGET_BRANCH
 git branch -D tmp
 
 # TODO
-rm -rf node_modules/!(col-*)
-npm install
+find node_modules/ -mindepth 1 -maxdepth 1 ! -name 'col-*' -exec rm -rf {} +
+npm install -d
 
 # TODO
 node_module/.bin/bower install
