@@ -14,12 +14,18 @@
  */
 
 var config = require('config');
-var exec = require('child_process').exec;
+var spawn = require('child_process').spawn;
 
-exec('cd ' + __dirname + '/.. && ./deploy/deploy.sh ' + config.get('apache.documentRoot'), function (error, stdout, stderr) {
-  console.log('stdout: ' + stdout);
-  console.log('stderr: ' + stderr);
-  if (error !== null) {
-    console.log('exec error: ' + error);
-  }
+var collabosphere = spawn('./deploy/deploy.sh', [config.get('apache.documentRoot')]);
+
+collabosphere.stdout.on('data', function (data) {
+  console.log('stdout: ' + data);
+});
+
+collabosphere.stderr.on('data', function (data) {
+  console.log('stderr: ' + data);
+});
+
+collabosphere.on('exit', function (code) {
+  console.log('child process exited with code ' + code);
 });
