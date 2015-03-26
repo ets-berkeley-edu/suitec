@@ -27,9 +27,9 @@
     "joi": "latest",
     "lodash": "latest",
     "oauth": "latest",
-    "randomstring": "latest",
     "pg": "latest",
     "pg-hstore": "latest",
+    "randomstring": "latest",
     "restjsdoc": "latest",
     "sequelize": "latest",
     "validator": "1.1.3"
