@@ -1,13 +1,11 @@
 #!/bin/bash
 
 # Script that deploys the latest Collabosphere code from
-# a specified remote and branch
+# a specified remote and branch. The `DOCUMENT_ROOT` environment
+# variable should be set to the directory in which the static
+# need to be deployed
 # 
-#  usage: $ deploy/deploy.sh <apache_static_files_dir>
-
-# Get the directory to which the static files
-# should be deployed from the provided argument
-DOCUMENT_ROOT=$1
+#  usage: $ deploy/deploy.sh
 
 # Get the remote and branch that should be
 # deployed from the provided environment variables
@@ -41,7 +39,7 @@ node_modules/.bin/bower install
 killall node
 
 # Copy the static files over to the apache directory
-cp -R public/* $DOCUMENT_ROOT
+cp -R public/* ${DOCUMENT_ROOT}
 
 # Start the new node process
 node app.js &
