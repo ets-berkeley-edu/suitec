@@ -23,7 +23,8 @@ find node_modules/ -mindepth 1 -maxdepth 1 ! -name 'col-*' -exec rm -rf {} +
 npm install -d
 
 # TODO
-node_module/.bin/bower install
+rm -rf public/lib
+node_modules/.bin/bower install
 
 #- kill existing process
 killall node
