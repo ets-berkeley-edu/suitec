@@ -32,7 +32,7 @@ fs.readFile(__dirname + '/collabosphere.template', 'utf8', function (err,templat
 
   var templateOutput = _.template(template)(templateData);
 
-  // Store the generate output
+  // Store the generated Apache config file
   fs.writeFile(__dirname + '/collabosphere.conf', templateOutput, function (err) {
     if (err) {
       console.log('An error occurred when writing the generated Apache config file');
