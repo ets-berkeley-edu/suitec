@@ -24,7 +24,7 @@ var runSequence = require('run-sequence');
  */
 gulp.task('jscs', function() {
   return gulp
-    .src(['app.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js'])
+    .src(['app.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js'])
     .pipe(jscs());
 });
 
