@@ -22,6 +22,7 @@
     "clone": "latest",
     "col-assets": "latest",
     "col-canvas": "latest",
+    "col-categories": "latest",
     "col-core": "latest",
     "col-course": "latest",
     "col-lti": "latest",
@@ -58,6 +59,7 @@
   "bundleDependencies": [
     "col-assets",
     "col-canvas",
+    "col-categories",
     "col-core",
     "col-course",
     "col-lti",
