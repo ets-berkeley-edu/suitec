@@ -66,6 +66,7 @@
     "<="
   ],
   "requireParenthesesAroundIIFE": true,
+  "requireSemicolons": true,
   "requireSpaceAfterBinaryOperators": [
     "=",
     ",",

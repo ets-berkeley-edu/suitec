@@ -92,7 +92,7 @@
       'message': message,
       'url': collabosphere.tool_url,
       'target': '_blank'
-    }
+    };
     $.notify(notification);
   };
 
@@ -274,7 +274,7 @@
           'url': $(this).attr('src'),
           // Try to extract a meaningful title
           'title': $(this).attr('alt')
-        }
+        };
 
         callback(img);
       }
