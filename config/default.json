@@ -1,5 +1,10 @@
 {
+  "apache": {
+    "documentRoot": "/var/www/html",
+    "logDirectory": "/usr/local/var/apache2/log"
+  },
   "app": {
+    "https": false,
     "port": 2000
   },
   "cookie": {
