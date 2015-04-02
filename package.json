@@ -19,7 +19,6 @@
     "body-parser": "latest",
     "bunyan": "latest",
     "bunyan-prettystream": "latest",
-    "clone": "latest",
     "col-assets": "latest",
     "col-canvas": "latest",
     "col-categories": "latest",
