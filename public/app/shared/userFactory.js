@@ -25,7 +25,7 @@
      * @return {Promise<Me>}                      Promise returning the profile information for the current user
      */
     var getMe = function() {
-      return $http.get(utilService.getApiUrl('/me'), {'cache': true});
+      return $http.get(utilService.getApiUrl('/users/me'), {'cache': true});
     };
 
     return {
