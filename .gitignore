@@ -11,6 +11,7 @@ config/*
 !config/travis.json
 
 node_modules/*
+!node_modules/col-activities
 !node_modules/col-assets
 !node_modules/col-canvas
 !node_modules/col-categories
