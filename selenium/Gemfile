@@ -1,0 +1,4 @@
+source 'http://rubygems.org'
+
+gem 'selenium-webdriver', '2.45.0'
+gem 'page-object', '1.0.3'

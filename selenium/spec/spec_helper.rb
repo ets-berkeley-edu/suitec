@@ -1,0 +1,8 @@
+require 'rspec'
+require 'logger'
+require 'selenium-webdriver'
+require 'page-object'
+require_relative '../util/web_driver_utils'
+require_relative '../logging'
+require_relative '../pages/canvas_page'
+require_relative '../pages/cal_net_page'
