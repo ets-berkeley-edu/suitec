@@ -8,6 +8,7 @@ class CanvasPage
   # Login messages
   h2(:updated_terms_heading, :xpath => '//h2[contains(text(),"Updated Terms of Use")]')
   checkbox(:terms_cbx, :name => 'user[terms_of_use]')
+  button(:accept_course_invite, :name => 'accept')
   h2(:recent_activity_heading, :xpath => '//h2[contains(text(),"Recent Activity")]')
 
   # Course
@@ -30,6 +31,8 @@ class CanvasPage
   button(:add_button, :id => 'createUsersAddButton')
   paragraph(:add_users_success, :xpath => '//p[contains(.,"The following users have been enrolled")]')
   button(:done_button, :xpath => '//button[contains(.,"Done")]')
+  link(:masquerade_link, :text => 'Masquerade as user')
+  div(:masquerade_bar, :id => 'masquerade_bar')
 
   # Tool config
   link(:apps_link, :text => 'Apps')
@@ -42,33 +45,55 @@ class CanvasPage
   text_area(:secret_input, :xpath => '//input[@placeholder="Shared Secret"]')
   text_area(:url_input, :xpath => '//input[@placeholder="Config URL"]')
   link(:asset_library_app, :xpath => '//td[@title="Asset Library"]')
+  link(:asset_library_link, :text => 'Asset Library')
 
   button(:submit_button, :xpath => '//button[contains(.,"Submit")]')
+  link(:logout_link, :text => 'Logout')
 
-  def load_homepage(driver)
+  def load_homepage
     logger.info 'Loading Canvas homepage'
-    driver.get "#{WebDriverUtils.base_url}"
+    navigate_to "#{WebDriverUtils.base_url}"
   end
 
-  def load_sub_account(driver)
-    driver.get "#{WebDriverUtils.base_url}/accounts/#{WebDriverUtils.sub_account}"
+  def accept_login_messages(course_id)
+    wait_until(timeout=WebDriverUtils.page_load_wait) { current_url.include? "#{course_id}" }
+    if updated_terms_heading?
+      logger.info 'Accepting terms and conditions'
+      terms_cbx_element.when_visible timeout=WebDriverUtils.page_update_wait
+      check_terms_cbx
+      submit_button
+    end
+    recent_activity_heading_element.when_visible timeout=WebDriverUtils.page_load_wait
+    if accept_course_invite?
+      logger.info 'Accepting course invite'
+      accept_course_invite
+      accept_course_invite_element.when_not_visible timeout=WebDriverUtils.page_load_wait
+    end
   end
 
-  def load_course_site(driver, course_id)
-    driver.get "#{WebDriverUtils.base_url}/courses/#{course_id}"
+  def load_sub_account
+    navigate_to "#{WebDriverUtils.base_url}/accounts/#{WebDriverUtils.sub_account}"
   end
 
-  def load_users_page(driver, course_id)
-    driver.get "#{WebDriverUtils.base_url}/courses/#{course_id}/users"
+  def load_course_site(course_id)
+    navigate_to "#{WebDriverUtils.base_url}/courses/#{course_id}"
   end
 
-  def load_tools_config_page(driver, course_id)
-    driver.get "#{WebDriverUtils.base_url}/courses/#{course_id}/settings/configurations"
+  def load_users_page(course_id)
+    navigate_to "#{WebDriverUtils.base_url}/courses/#{course_id}/users"
   end
 
-  def create_course_site(driver, test_id)
+  def load_tools_config_page(course_id)
+    navigate_to "#{WebDriverUtils.base_url}/courses/#{course_id}/settings/configurations"
+  end
+
+  def log_out
+    WebDriverUtils.wait_for_element_and_click logout_link_element
+  end
+
+  def create_course_site(test_id)
     logger.info "Creating a course site named #{test_id}"
-    load_sub_account driver
+    load_sub_account
     WebDriverUtils.wait_for_page_and_click add_new_course_button_element
     course_name_input_element.when_visible timeout=WebDriverUtils.page_update_wait
     self.course_name_input = "#{test_id}"
@@ -77,9 +102,9 @@ class CanvasPage
     add_course_success_element.when_visible timeout=WebDriverUtils.page_load_wait
   end
 
-  def publish_course(driver, test_id)
+  def publish_course(test_id)
     logger.info 'Publishing the course'
-    load_sub_account driver
+    load_sub_account
     search_course_input_element.when_visible timeout=WebDriverUtils.page_update_wait
     self.search_course_input = "#{test_id}"
     search_course_button
@@ -88,14 +113,13 @@ class CanvasPage
     current_url.sub("#{WebDriverUtils.base_url}/courses/", '')
   end
 
-  def add_users(driver, course_id, user_role)
+  def add_users(course_id, test_users, user_role)
     logger.info "Adding users with role #{user_role}"
-    load_users_page(driver, course_id)
+    load_users_page course_id
     WebDriverUtils.wait_for_page_and_click add_people_button_element.when_visible
     user_list_element.when_visible timeout=WebDriverUtils.page_update_wait
     users = ''
-    test_users = WebDriverUtils.load_test_users
-    test_users.each do |user|
+    test_users.each do |id, user|
       if user['role'] == user_role
         users << "#{user['uid'].to_s}, "
       end
@@ -108,9 +132,9 @@ class CanvasPage
     done_button
   end
 
-  def add_asset_library(driver, course_id)
+  def add_asset_library(course_id)
     logger.info 'Adding asset library'
-    load_tools_config_page(driver, course_id)
+    load_tools_config_page course_id
     WebDriverUtils.wait_for_page_and_click apps_link_element
     WebDriverUtils.wait_for_element_and_click add_app_link_element
     WebDriverUtils.wait_for_element_and_click config_type_element
@@ -124,13 +148,21 @@ class CanvasPage
     asset_library_app_element.when_visible timeout=WebDriverUtils.page_load_wait
   end
 
-  def create_complete_test_course(driver, test_id)
-    create_course_site(driver, test_id)
-    course_id = publish_course(driver, test_id)
-    add_users(driver, course_id, 'Teacher')
-    add_users(driver, course_id, 'Designer')
-    add_users(driver, course_id, "Student")
-    add_asset_library(driver, course_id)
+  def create_complete_test_course(test_id, test_users)
+    create_course_site test_id
+    course_id = publish_course test_id
+    logger.info "Course ID is #{course_id}"
+    add_users(course_id, test_users, 'Teacher')
+    add_users(course_id, test_users, 'Designer')
+    add_users(course_id, test_users, "Student")
+    add_asset_library course_id
+    course_id
+  end
+
+  def become_user(user_id)
+    navigate_to "#{WebDriverUtils.base_url}/users/#{user_id['canvasId']}/masquerade"
+    WebDriverUtils.wait_for_page_and_click masquerade_link_element
+    masquerade_bar_element.when_visible timeout=WebDriverUtils.page_load_wait
   end
 
 end

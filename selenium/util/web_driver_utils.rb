@@ -1,5 +1,6 @@
 require 'selenium-webdriver'
 require 'page-object'
+require 'json'
 
 class WebDriverUtils
 
@@ -55,7 +56,8 @@ class WebDriverUtils
 
   def self.load_test_users
     test_users = File.join(ENV['HOME'], '/.collabosphere_selenium/testUsers.json')
-    JSON.parse(File.read(test_users))['users']
+    users_array = JSON.parse(File.read(test_users))['users']
+    users_array.inject({}) { |map, user| map[user['id']] = user; map }
   end
 
   def self.wait_for_element_and_click(element)
