@@ -57,7 +57,7 @@
     "xml2js": "latest"
   },
   "bundleDependencies": [
-    "col-activities"
+    "col-activities",
     "col-assets",
     "col-canvas",
     "col-categories",
