@@ -34,10 +34,10 @@ rm -rf public/lib
 node_modules/.bin/bower install
 
 # Kill the existing node process
-stop collabosphere
+./deploy/stop.sh
 
 # Copy the static files over to the apache directory
 cp -R public/* ${DOCUMENT_ROOT}
 
 # Start the new node process
-start collabosphere
+./deploy/start.sh
