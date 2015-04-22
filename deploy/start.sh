@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # The directory where forever logs should be sent to
-LOG_DIR=/home/app_collabosphere/log
+LOG_DIR=~/log
 
 # Make sure nothing else is running before we start the app server
 ./deploy/stop.sh
