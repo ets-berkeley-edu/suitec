@@ -1,1 +1,19 @@
-<h1>Manage categories</h1>
+<div class="assetlibrary-managecategories-container" data-ng-controller="AssetLibraryManageCategoriesController">
+
+  <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Inspiration Board</a>
+
+  <h2>Manage Categories</h2>
+
+  <p class="assetlibrary-managecategories-info">Categories can be used to tag items. Assignments are automatically pulled in as categories, but you can also create new categories that aren't necessarily related to assignments.</p>
+
+  <form name="assetlibraryCreateCategoryForm" data-ng-submit="assetlibraryCreateCategoryForm.$valid && createCategory(newCategory)" novalidate>
+    <label for="assetlibrary-managecategories-create" class="sr-only">Enter a new category</label>
+    <div class="input-group">
+      <input type="text" id="assetlibrary-managecategories-create" class="form-control" placeholder="Enter a new category" data-ng-model="newCategory" required>
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-default" data-ng-disabled="assetlibraryCreateCategoryForm.$invalid">Add</button>
+      </span>
+    </div>
+  </form>
+
+</div>
