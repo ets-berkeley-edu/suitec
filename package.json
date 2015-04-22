@@ -34,6 +34,7 @@
     "cors": "latest",
     "express": "latest",
     "fast-csv": "latest",
+    "forever": "latest",
     "ims-lti": "latest",
     "joi": "latest",
     "lodash": "latest",
