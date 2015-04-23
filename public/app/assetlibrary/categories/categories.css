@@ -19,7 +19,6 @@
 
 .assetlibrary-categories-info {
   margin-bottom: 30px;
-  margin-top: -10px;
 }
 
 .assetlibrary-categories-create-form {
@@ -37,7 +36,7 @@
 }
 
 .assetlibrary-categories-list li:nth-child(even) {
-  background-color: #F7F7F7;
+  background-color: #F9F9F9;
   border-top: 1px solid #E5E5E5:
   border-bottom: 1px solid #E5E5E5:
 }

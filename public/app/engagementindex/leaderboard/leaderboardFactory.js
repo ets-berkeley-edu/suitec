@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('engagementIndexListFactory', function(utilService, $http) {
+  angular.module('collabosphere').factory('leaderboardFactory', function(utilService, $http) {
 
     /**
      * Get the users for the current course and their points
@@ -32,6 +32,7 @@
         users = users.sort(function(a, b) {
           return b.points - a.points;
         });
+
         // Add the rank information onto each user
         if (users[0]) {
           users[0].rank = 1;
@@ -49,8 +50,23 @@
       });
     };
 
+    /**
+     * Update the points share status for a user. This will determine whether the user's
+     * points are shared with the course
+     *
+     * @param  {Boolean}            share         Whether the user's points should be shared with the course
+     * @return {Promise}                          $http promise
+     */
+    var updateSharePoints = function(share) {
+      var update = {
+        'share': share
+      };
+      return $http.post(utilService.getApiUrl('/users/me/share'), update);
+    };
+
     return {
-      'getUsers': getUsers
+      'getUsers': getUsers,
+      'updateSharePoints': updateSharePoints
     };
 
   });

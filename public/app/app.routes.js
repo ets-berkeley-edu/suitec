@@ -53,7 +53,7 @@
 
     // Engagement Index routes
     when('/engagementindex', {
-      templateUrl: 'app/engagementindex/index/engagementindex.html'
+      templateUrl: 'app/engagementindex/leaderboard/leaderboard.html'
     }).
     when('/engagementindex/points', {
       templateUrl: 'app/engagementindex/points/points.html'

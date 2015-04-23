@@ -1,0 +1,42 @@
+<div class="leaderboard-list-container">
+  <div class="row">
+    <div class="col-xs-8">
+      <form>
+        <div class="form-group">
+          <input type="text" class="form-control leaderboard-list-search" placeholder="Search the Engagement Index" data-ng-model="query.$" data-ng-change="search(query.$)">
+        </div>
+      </form>
+    </div>
+    <div class="col-xs-4 text-right">
+      <a href="/engagementindex/points" class="btn btn-default">Points configuration</a>
+      <a data-ng-href="{{getCSVExportURL()}}" target="_blank" class="btn btn-default" data-ng-show="me.is_admin" data-ng-click="trackCSVDownload()">Download CSV</a>
+    </div>
+  </div>
+
+  <table class="table-striped leaderboard-list-table">
+    <thead>
+      <tr>
+        <th data-ng-click="sort('rank')" data-ng-class="{dropup: reverse}">Rank <span class="caret" data-ng-if="sortBy === 'rank'"></span></th>
+        <th data-ng-click="sort('canvas_full_name')" data-ng-class="{dropup: reverse}">Name <span class="caret" data-ng-if="sortBy === 'canvas_full_name'"></span></th>
+        <th data-ng-click="sort('share_points')" data-ng-class="{dropup: reverse}" data-ng-if="me.is_admin">Share <span class="caret" data-ng-if="sortBy === 'share_points'"></span></th>
+        <th data-ng-click="sort('points')" data-ng-class="{dropup: reverse}">Points <span class="caret" data-ng-if="sortBy === 'points'"></span></th>
+        <th data-ng-click="sort('last_activity')" data-ng-class="{dropup: reverse}">Last Activity <span class="caret" data-ng-if="sortBy === 'last_activity'"></span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-ng-repeat="user in users | orderBy:sortBy:!reverse | filter:query:strict" data-ng-class="{'leaderboard-list-highlight': user.id === me.id}">
+        <td class="col-sm-1" data-ng-bind="user.rank"></td>
+        <td class="col-sm-5">
+          <i class="fa fa-graduation-cap" data-ng-if="user.is_admin"></i>
+          <span data-ng-bind="user.canvas_full_name"></span>
+        </td>
+        <td class="col-sm-1" data-ng-if="me.is_admin" >
+          <span data-ng-if="user.share_points">Yes</span>
+          <span data-ng-if="!user.share_points">No</span>
+        </td>
+        <td class="col-sm-1" data-ng-bind="user.points"></td>
+        <td class="col-sm-2"><span data-ng-if="user.last_activity" data-ng-bind="user.last_activity | date:'MM/dd/yyyy h:mm a'"></span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

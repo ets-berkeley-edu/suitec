@@ -15,6 +15,7 @@
     "angular-sanitize": "latest",
     "bootstrap": "latest",
     "fontawesome": "latest",
+    "highcharts-release": "latest",
     "lodash": "latest",
     "ngInfiniteScroll": "latest",
     "remarkable-bootstrap-notify": "latest"

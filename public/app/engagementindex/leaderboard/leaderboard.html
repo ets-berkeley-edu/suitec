@@ -1,0 +1,17 @@
+<div data-ng-controller="LeaderboardController">
+
+  <h2>Engagement Index</h2>
+
+  <!-- SPLASH -->
+  <div data-ng-if="!me.is_admin && me.share_points === null" data-ng-include="'/app/engagementindex/leaderboard/splash.html'"></div>
+
+  <!-- USER INFO -->
+  <div data-ng-if="!me.is_admin && me.share_points !== null" data-ng-include="'/app/engagementindex/leaderboard/userinfo.html'"></div>
+
+  <!-- LIST -->
+  <div data-ng-if="me.is_admin || me.share_points" data-ng-include="'/app/engagementindex/leaderboard/list.html'"></div>
+
+  <!-- SHARE -->
+  <div data-ng-include="'/app/engagementindex/leaderboard/share.html'"></div>
+
+</div>
