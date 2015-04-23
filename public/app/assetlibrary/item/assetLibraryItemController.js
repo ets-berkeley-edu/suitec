@@ -107,8 +107,6 @@
           }
         }
         $scope.asset.comment_count++;
-        // Clear the reply
-        reply = null;
         // Hide the reply form
         toggleReplyComment(comment);
       });

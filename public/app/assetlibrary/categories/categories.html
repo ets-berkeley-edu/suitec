@@ -1,0 +1,40 @@
+<div class="assetlibrary-categories-container" data-ng-controller="AssetLibraryCategoriesController">
+
+  <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Inspiration Board</a>
+
+  <h2>Manage Categories</h2>
+
+  <p class="assetlibrary-categories-info">Categories can be used to tag items. Assignments are automatically pulled in as categories, but you can also create new categories that aren't necessarily related to assignments.</p>
+
+  <form class="assetlibrary-categories-create-form" name="assetlibraryCreateCategoryForm" data-ng-submit="assetlibraryCreateCategoryForm.$valid && createCategory(newCategory)" novalidate>
+    <label for="assetlibrary-categories-create" class="sr-only">Enter a new category</label>
+    <div class="input-group">
+      <input type="text" id="assetlibrary-categories-create" class="form-control" placeholder="Enter a new category" data-ng-model="newCategory" required>
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-default" data-ng-disabled="assetlibraryCreateCategoryForm.$invalid">Add</button>
+      </span>
+    </div>
+  </form>
+
+  <ul class="assetlibrary-categories-list">
+    <li data-ng-repeat="category in categories">
+      <div class="row">
+        <div class="col-xs-9">
+          <span class="col-threedots" data-ng-bind="category.title"></span>
+          <small>
+            <ng-pluralize count="category.asset_count" when="{'0': 'Not used by any items', 'one': 'Used by 1 item', 'other': 'Used by {} items'}"></ng-pluralize>
+          </small>
+        </div>
+        <div class="text-right col-xs-3 col-actions">
+          <button class="btn btn-link" title="Edit this category" data-ng-click="toggleEditCategory(category)">
+            <i class="fa fa-pencil"><span class="sr-only">Edit this category</span></i>
+          </button>
+          <button class="btn btn-link" title="Delete this category" data-ng-click="deleteCategory(category)">
+            <i class="fa fa-trash"><span class="sr-only">Delete this category</span></i>
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+</div>

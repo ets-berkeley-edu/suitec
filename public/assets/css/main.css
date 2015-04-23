@@ -148,3 +148,14 @@ select option[value=''] {
   height: 50px;
   width: 50px;
 }
+
+.col-actions button {
+  color: #ADABAA;
+  margin-left: 20px;
+  padding: 0;
+}
+
+.col-actions button:focus,
+.col-actions button:hover {
+  color: #282B2D;
+}

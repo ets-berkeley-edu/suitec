@@ -50,9 +50,7 @@
             <div class="form-group">
               <label for="collabosphere-bookmark-category" class="col-sm-3 control-label">Category</label>
               <div class="col-sm-9">
-                <select id="collabosphere-bookmark-category" class="form-control" data-value="">
-                  <option value="" selected>Which assignment or topic is this related to</option>
-                </select>
+                <select id="collabosphere-bookmark-category" class="form-control" data-value=""><!-- --></select>
               </div>
             </div>
             <div class="form-group">
@@ -91,6 +89,13 @@
   </div>
 </div>
 
+<script id="collabosphere-categories-template" type="text/template">
+  <option value="" selected>Which assignment or topic is this related to</option>
+  <% _.each(categories, function(category) { %>
+    <option value="<%= category.id %>"><%= category.title %></option>
+  <% }); %>
+</script>
+
 <script id="collabosphere-item-template" type="text/template">
   <li class="collabosphere-item-container">
     <label>
@@ -118,9 +123,7 @@
         </div>
         <div class="form-group">
           <label for="collabosphere-item-category" class="control-label">Category</label>
-          <select id="collabosphere-item-category" class="form-control" data-value="">
-            <option value="" selected>Which assignment or topic is this related to</option>
-          </select>
+          <select id="collabosphere-item-category" class="form-control collabosphere-item-category" data-value=""><!-- --></select>
         </div>
         <div class="form-group">
           <label for="collabosphere-item-description" class="control-label">Description</label>

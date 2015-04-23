@@ -48,7 +48,12 @@
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Category</div>
             <div class="col-xs-9">
-              <div>No category</div>
+              <div data-ng-if="asset.categories.length">
+                <div data-ng-repeat="category in asset.categories">
+                  <a>{{category.title}}</a>
+                </div>
+              </div>
+              <div data-ng-if="!asset.categories.length">No category</div>
             </div>
           </div>
           <div class="row">
@@ -106,7 +111,7 @@
             <span data-ng-if="me.id === comment.user.id">(me)</span>
           </a>
           <small>on {{comment.created_at | date:"MMMM d 'at' h:mm a" }}</small>
-          <div class="pull-right assetlibrary-item-comment-actions">
+          <div class="pull-right col-actions assetlibrary-item-comment-actions">
             <button class="btn btn-link" title="Reply to this comment" data-ng-if="comment.level === 0" data-ng-click="toggleReplyComment(comment)">
               <i class="fa fa-reply"><span class="sr-only">Reply to this comment</span></i>
             </button>
