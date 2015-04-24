@@ -19,6 +19,10 @@
 
   angular.module('collabosphere').controller('LeaderboardController', function(leaderboardFactory, userFactory, utilService, $scope) {
 
+    // Default sort
+    $scope.sortBy = 'rank';
+    $scope.reverse = true;
+
     // Variable that will keep track of the users in this course and their points
     $scope.users = null;
 
@@ -33,14 +37,14 @@
         leaderboardFactory.getUsers().then(function(users) {
           $scope.users = users;
 
-          // TODO
+          // Extract the current user's rank
           for (var i = 0; i < $scope.users.length; i++) {
             if ($scope.users[i].id === $scope.me.id) {
               $scope.me.rank = $scope.users[i].rank;
             }
           }
 
-          // TODO
+          // Draw the boxplot showing how the current user ranks
           drawBoxPlot();
         });
       }
@@ -246,16 +250,10 @@
      *
      * @param  {String}     sortBy          The name of the field to sort by
      */
-    /** var sort = $scope.sort = function(sortBy) {
-    //  $scope.sortBy = sortBy;
-    //  $scope.reverse = !$scope.reverse;
-
-    //  // Track that the engagement index sort has been changed
-    //  analyticsService.track('Sort Engagement Index', {
-    //    sortBy: $scope.sortBy,
-    //    reverse: $scope.reverse
-    //  });
-    //}; */
+    var sort = $scope.sort = function(sortBy) {
+      $scope.sortBy = sortBy;
+      $scope.reverse = !$scope.reverse;
+    };
 
     /**
      * Store whether the current user's engagement index points should be
@@ -286,7 +284,8 @@
     userFactory.getMe().success(function(me) {
       $scope.me = me;
 
-      // TODO
+      // If the user hasn't indicated if their score should be
+      // shared with the course, check the checkbox by default
       $scope.me.new_share_points = $scope.me.share_points;
       if ($scope.me.share_points === null && !$scope.me.is_admin) {
         $scope.me.new_share_points = true;
