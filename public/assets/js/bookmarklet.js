@@ -147,18 +147,18 @@
 
   /* CATEGORIES */
 
- /**
-  * Get the available categories in the course and cache them
-  */
- var getCategories = function() {
-   $.ajax({
-    'url': getApiUrl('/categories'),
-    'headers': getBookmarkletTokenHeaders(),
-    'success': function(data) {
-      categories = data;
-    }
-  });
- };
+  /**
+   * Get the available categories in the course and cache them
+   */
+  var getCategories = function() {
+    $.ajax({
+      'url': getApiUrl('/categories'),
+      'headers': getBookmarkletTokenHeaders(),
+      'success': function(data) {
+        categories = data;
+      }
+    });
+  };
 
   /* ADD BOOKMARK */
 

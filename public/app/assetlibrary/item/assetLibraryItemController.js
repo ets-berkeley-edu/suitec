@@ -33,7 +33,9 @@
      */
     var getCurrentAsset = function() {
       assetLibraryItemFactory.getAsset(assetId).success(function(asset) {
-        // Extract the top level comments
+
+        // Build the comment tree. First, the top level comments
+        // are extracted
         var comments = [];
         for (var i = 0; i < asset.comments.length; i++) {
           var comment = asset.comments[i];
@@ -52,9 +54,30 @@
           }
         }
 
+        // Calculate which comments have replies
+        flagCommentsWithReplies(comments);
+
         asset.comments = comments;
         $scope.asset = asset;
       });
+    };
+
+    /**
+     * Check for each comment whether they have any replies. In that case,
+     * the comment can't be deleted
+     *
+     * @param  {Comment}      comments        The comments that should be checked for replies
+     */
+    var flagCommentsWithReplies = function(comments) {
+      for (var i = 0; i < comments.length; i++) {
+        var comment = comments[i];
+        var nextComment = comments[i + 1];
+        if (nextComment && nextComment.parent_id === comment.id) {
+          comment.has_replies = true;
+        } else {
+          comment.has_replies = false;
+        }
+      }
     };
 
     /**
@@ -72,6 +95,7 @@
     var createComment = $scope.createComment = function() {
       assetLibraryItemFactory.createComment(assetId, $scope.newComment.body).success(function(comment) {
         // Add the created comment to the comment list
+        comment.level = 0;
         $scope.asset.comments.unshift(comment);
         $scope.asset.comment_count++;
         // Clear the new comment
@@ -107,6 +131,8 @@
           }
         }
         $scope.asset.comment_count++;
+        // Re-calculate which comments have replies
+        flagCommentsWithReplies($scope.asset.comments);
         // Hide the reply form
         toggleReplyComment(comment);
       });
@@ -138,6 +164,27 @@
         comment.body = comment.newBody;
         toggleEditComment(comment);
       });
+    };
+
+    /**
+     * Delete a comment on the current asset
+     *
+     * @param  {Comment}      comment         The comment that is being deleted
+     */
+    var deleteComment = $scope.deleteComment = function(comment) {
+      if (confirm('Are you sure you want to delete this comment?')) {
+        assetLibraryItemFactory.deleteComment(assetId, comment.id).success(function() {
+          // Delete the comment from the comment list
+          for (var i = 0; i < $scope.asset.comments.length; i++) {
+            if ($scope.asset.comments[i].id === comment.id) {
+              $scope.asset.comments.splice(i, 1);
+            }
+          }
+          // Re-calculate which comments have replies
+          flagCommentsWithReplies($scope.asset.comments);
+          $scope.asset.comment_count--;
+        });
+      }
     };
 
     userFactory.getMe().success(function(me) {

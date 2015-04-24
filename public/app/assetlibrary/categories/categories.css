@@ -37,8 +37,8 @@
 
 .assetlibrary-categories-list li:nth-child(even) {
   background-color: #F9F9F9;
-  border-top: 1px solid #E5E5E5:
-  border-bottom: 1px solid #E5E5E5:
+  border-top: 1px solid #E5E5E5;
+  border-bottom: 1px solid #E5E5E5;
 }
 
 .assetlibrary-categories-list li:last-child {

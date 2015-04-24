@@ -237,7 +237,7 @@
      * @return {String}                     The URL at which the CSV export can be downloaded
      */
     var getCSVExportURL = $scope.getCSVExportURL = function() {
-      return utilService.getApiUrl('/activities.csv')
+      return utilService.getApiUrl('/activities.csv');
     };
 
     /**
@@ -246,7 +246,7 @@
      *
      * @param  {String}     sortBy          The name of the field to sort by
      */
-    //var sort = $scope.sort = function(sortBy) {
+    /** var sort = $scope.sort = function(sortBy) {
     //  $scope.sortBy = sortBy;
     //  $scope.reverse = !$scope.reverse;
 
@@ -255,7 +255,7 @@
     //    sortBy: $scope.sortBy,
     //    reverse: $scope.reverse
     //  });
-    //};
+    //}; */
 
     /**
      * Store whether the current user's engagement index points should be

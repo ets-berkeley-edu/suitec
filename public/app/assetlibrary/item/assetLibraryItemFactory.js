@@ -61,6 +61,17 @@
     };
 
     /**
+     * Delete a comment on an asset
+     *
+     * @param  {Number}               assetId     The id of the asset to which the comment belongs
+     * @param  {Number}               id          The id of the comment that is being deleted
+     * @return {Promise<Comment>}                 $http promise
+     */
+    var deleteComment = function(assetId, id) {
+      return $http.delete(utilService.getApiUrl('/assets/' + assetId + '/comments/' + id));
+    };
+
+    /**
      * Like or unlike an asset
      *
      * @param  {Number}         id                The id of the asset that is liked or unliked
@@ -72,9 +83,10 @@
     };
 
     return {
+      'getAsset': getAsset,
       'createComment': createComment,
       'editComment': editComment,
-      'getAsset': getAsset,
+      'deleteComment': deleteComment,
       'like': like
     };
 

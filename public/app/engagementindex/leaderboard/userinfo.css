@@ -67,6 +67,8 @@
   padding: 8px;
 }
 
+/*csslint important:false */
+
 .leaderboard-userinfo-boxplot-container g.highcharts-tooltip {
   display: none !important;
 }

@@ -115,7 +115,7 @@
             <button class="btn btn-link" title="Reply to this comment" data-ng-if="comment.level === 0" data-ng-click="toggleReplyComment(comment)">
               <i class="fa fa-reply"><span class="sr-only">Reply to this comment</span></i>
             </button>
-            <button class="btn btn-link" title="Delete this comment" data-ng-if="comment.user.id === me.id || me.is_admin">
+            <button class="btn btn-link" title="Delete this comment" data-ng-if="(comment.user.id === me.id || me.is_admin) && !comment.has_replies" data-ng-click="deleteComment(comment)">
               <i class="fa fa-trash"><span class="sr-only">Delete this comment</span></i>
             </button>
             <button class="btn btn-link" title="Edit this comment" data-ng-if="comment.user.id === me.id || me.is_admin" data-ng-click="toggleEditComment(comment)">
