@@ -123,7 +123,7 @@
             </button>
           </div>
         </div>
-        <p data-ng-if="!comment.editing">{{comment.body}}</p>
+        <p data-ng-if="!comment.editing" data-ng-bind-html="comment.body | linky"></p>
         <!-- EDIT -->
         <form name="assetlibraryEditForm" class="assetlibrary-item-edit-form" data-ng-submit="assetlibraryEditForm.$valid && editComment(comment)" data-ng-if="comment.editing" novalidate>
           <div class="form-group assetlibrary-item-addcomment-comment">
