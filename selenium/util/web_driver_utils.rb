@@ -47,7 +47,11 @@ class WebDriverUtils
   end
 
   def self.asset_library_url
-    @config['lti_url']
+    @config['lti_asset_library_url']
+  end
+
+  def self.engagement_index_url
+    @config['lti_engagement_index_url']
   end
 
   def self.test_course_name(spec)

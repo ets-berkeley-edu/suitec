@@ -31,8 +31,6 @@ class CanvasPage
   button(:add_button, :id => 'createUsersAddButton')
   paragraph(:add_users_success, :xpath => '//p[contains(.,"The following users have been enrolled")]')
   button(:done_button, :xpath => '//button[contains(.,"Done")]')
-  link(:masquerade_link, :text => 'Masquerade as user')
-  div(:masquerade_bar, :id => 'masquerade_bar')
 
   # Tool config
   link(:apps_link, :text => 'Apps')
@@ -46,6 +44,8 @@ class CanvasPage
   text_area(:url_input, :xpath => '//input[@placeholder="Config URL"]')
   link(:asset_library_app, :xpath => '//td[@title="Asset Library"]')
   link(:asset_library_link, :text => 'Asset Library')
+  link(:engagement_index_app, :xpath => '//td[@title="Engagement Index"]')
+  link(:engagement_index_link, :text => 'Engagement Index')
 
   button(:submit_button, :xpath => '//button[contains(.,"Submit")]')
   link(:logout_link, :text => 'Logout')
@@ -91,6 +91,11 @@ class CanvasPage
     WebDriverUtils.wait_for_element_and_click logout_link_element
   end
 
+  def click_asset_library_link
+    WebDriverUtils.wait_for_element_and_click asset_library_link_element
+    current_url
+  end
+
   def create_course_site(test_id)
     logger.info "Creating a course site named #{test_id}"
     load_sub_account
@@ -132,14 +137,18 @@ class CanvasPage
     done_button
   end
 
-  def add_asset_library(course_id)
-    logger.info 'Adding asset library'
+  def load_add_new_tool_config(course_id)
     load_tools_config_page course_id
     WebDriverUtils.wait_for_page_and_click apps_link_element
     WebDriverUtils.wait_for_element_and_click add_app_link_element
     WebDriverUtils.wait_for_element_and_click config_type_element
     WebDriverUtils.wait_for_element_and_click by_url_element
     url_input_element.when_visible timeout=WebDriverUtils.page_update_wait
+  end
+
+  def add_asset_library(course_id)
+    logger.info 'Adding asset library'
+    load_add_new_tool_config course_id
     self.app_name_input = 'Asset Library'
     self.key_input = WebDriverUtils.lti_key
     self.secret_input = WebDriverUtils.lti_secret
@@ -148,21 +157,27 @@ class CanvasPage
     asset_library_app_element.when_visible timeout=WebDriverUtils.page_load_wait
   end
 
+  def add_engagement_index(course_id)
+    logger.info 'Adding engagement index'
+    load_add_new_tool_config course_id
+    self.app_name_input = 'Engagement Index'
+    self.key_input = WebDriverUtils.lti_key
+    self.secret_input = WebDriverUtils.lti_secret
+    self.url_input = WebDriverUtils.engagement_index_url
+    submit_button
+    engagement_index_app_element.when_visible timeout=WebDriverUtils.page_load_wait
+  end
+
   def create_complete_test_course(test_id, test_users)
     create_course_site test_id
     course_id = publish_course test_id
     logger.info "Course ID is #{course_id}"
     add_users(course_id, test_users, 'Teacher')
     add_users(course_id, test_users, 'Designer')
-    add_users(course_id, test_users, "Student")
+    add_users(course_id, test_users, 'Student')
     add_asset_library course_id
+    add_engagement_index course_id
     course_id
-  end
-
-  def become_user(user_id)
-    navigate_to "#{WebDriverUtils.base_url}/users/#{user_id['canvasId']}/masquerade"
-    WebDriverUtils.wait_for_page_and_click masquerade_link_element
-    masquerade_bar_element.when_visible timeout=WebDriverUtils.page_load_wait
   end
 
 end
