@@ -4,7 +4,7 @@
 # a specified remote and branch. The `DOCUMENT_ROOT` environment
 # variable should be set to the directory in which the static
 # need to be deployed
-# 
+#
 #  usage: $ deploy/deploy.sh
 
 # Get the remote and branch that should be
@@ -33,13 +33,11 @@ npm install
 rm -rf public/lib
 node_modules/.bin/bower install
 
-# Kill the existing Node process
-# TODO: Turn the Node process into a service
-# that can be stopped and started
-killall node
+# Kill the existing node process
+./deploy/stop.sh
 
 # Copy the static files over to the apache directory
 cp -R public/* ${DOCUMENT_ROOT}
 
 # Start the new node process
-node app.js &
+./deploy/start.sh

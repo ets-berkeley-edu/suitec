@@ -33,6 +33,7 @@
     "cookie-parser": "latest",
     "cors": "latest",
     "express": "latest",
+    "forever": "latest",
     "ims-lti": "latest",
     "joi": "latest",
     "lodash": "latest",
