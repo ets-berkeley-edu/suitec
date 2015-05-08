@@ -19,6 +19,7 @@
     "body-parser": "latest",
     "bunyan": "latest",
     "bunyan-prettystream": "latest",
+    "col-activities": "latest",
     "col-assets": "latest",
     "col-canvas": "latest",
     "col-categories": "latest",
@@ -57,6 +58,7 @@
     "xml2js": "latest"
   },
   "bundleDependencies": [
+    "col-activities",
     "col-assets",
     "col-canvas",
     "col-categories",
