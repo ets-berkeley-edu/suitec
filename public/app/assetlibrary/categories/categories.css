@@ -25,6 +25,10 @@
   margin-bottom: 20px;
 }
 
+.assetlibrary-categories-edit-form .form-group {
+  margin-bottom: 5px;
+}
+
 .assetlibrary-categories-list {
   border: 1px solid #CCC;
   padding: 0;

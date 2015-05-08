@@ -18,7 +18,7 @@
 
   <ul class="assetlibrary-categories-list">
     <li data-ng-repeat="category in categories">
-      <div class="row">
+      <div class="row"  data-ng-if="!category.editing">
         <div class="col-xs-9">
           <span class="col-threedots" data-ng-bind="category.title"></span>
           <small>
@@ -34,6 +34,18 @@
           </button>
         </div>
       </div>
+
+      <!-- EDIT CATEGORY -->
+      <form name="assetlibraryEditCategoryForm" class="assetlibrary-categories-edit-form " data-ng-submit="assetlibraryEditCategoryForm.$valid && editCategory(category)" data-ng-if="category.editing" novalidate>
+        <div class="form-group">
+          <label for="assetlibrary-categories-edit" class="sr-only">Edit a category</label>
+          <input type="text" id="assetlibrary-categories-edit" class="form-control" placeholder="Edit a category" data-ng-model="category.newTitle" required>
+        </div>
+        <div class="text-right">
+          <button class="btn btn-sm btn-default" data-ng-click="toggleEditCategory(category)">Cancel</button>
+          <button type="submit" class="btn btn-sm btn-primary" data-ng-disabled="assetlibraryEditCategoryForm.$invalid">Save Changes</button>
+        </div>
+      </form>
     </li>
   </ul>
 

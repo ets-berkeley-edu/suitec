@@ -47,6 +47,34 @@
     };
 
     /**
+     * Show or hide the edit form for a category
+     *
+     * @param  {Category}       category          The category for which the edit form should be shown or hidden
+     */
+    var toggleEditCategory = $scope.toggleEditCategory = function(category) {
+      // When the category is not being edited yet, the title is cached
+      // and the edit form is shown
+      if (!category.editing) {
+        category.newTitle = category.title;
+        category.editing = true;
+      } else {
+        category.editing = false;
+      }
+    };
+
+    /**
+     * Edit a category
+     *
+     * @param  {Category}       category          The category that is being edited
+     */
+    var editCategory = $scope.editCategory = function(category) {
+      assetLibraryCategoriesFactory.editCategory(category.id, category.newTitle).success(function() {
+        category.title = category.newTitle;
+        toggleEditCategory(category);
+      });
+    };
+
+    /**
      * Delete a category
      *
      * @param  {Category}       category          The category that is being deleted
