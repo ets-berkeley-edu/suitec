@@ -17,6 +17,8 @@
     "fontawesome": "latest",
     "lodash": "latest",
     "ngInfiniteScroll": "latest",
+    "ng-file-upload": "latest",
+    "ng-file-upload-shim": "latest",
     "remarkable-bootstrap-notify": "latest"
   }
 }

@@ -24,7 +24,8 @@
     'ngRoute',
     'ngSanitize',
     'infinite-scroll',
-    'monospaced.elastic'
+    'monospaced.elastic',
+    'ngFileUpload'
   ]);
 
 })(window.angular);
