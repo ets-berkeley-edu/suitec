@@ -29,6 +29,7 @@
     "col-rest": "latest",
     "col-tests": "latest",
     "col-users": "latest",
+    "col-whiteboards": "latest",
     "config": "latest",
     "cookie-parser": "latest",
     "cors": "latest",
@@ -68,7 +69,8 @@
     "col-lti",
     "col-rest",
     "col-tests",
-    "col-users"
+    "col-users",
+    "col-whiteboards"
   ],
   "engines": {
     "node": ">=0.10"

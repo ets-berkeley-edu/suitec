@@ -21,5 +21,7 @@
 
     RewriteEngine On
     RewriteRule ^/assetlibrary         <%= documentRoot %>/index.html
+    RewriteRule ^/engagementindex      <%= documentRoot %>/index.html
+    RewriteRule ^/whiteboard           <%= documentRoot %>/index.html
 
 </VirtualHost>

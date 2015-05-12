@@ -10,6 +10,7 @@
     "angular": "latest",
     "angular-aria": "latest",
     "angular-elastic": "latest",
+    "angular-fabric": "latest",
     "angular-messages":"latest",
     "angular-route": "latest",
     "angular-sanitize": "latest",

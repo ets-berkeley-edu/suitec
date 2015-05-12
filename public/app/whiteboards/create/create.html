@@ -1,0 +1,26 @@
+<div data-ng-controller="WhiteboardsCreateController">
+
+  <h2>Create a new whiteboard</h2>
+
+  <form name="whiteboardsCreateForm" class="form-horizontal whiteboards-create-form" data-ng-submit="whiteboardsCreateForm.$valid && createWhiteboard()" novalidate>
+    <!-- TITLE -->
+    <div class="form-group" data-ng-class="{'has-error': whiteboardsCreateForm.$submitted && whiteboardsCreateForm.whiteboardsCreateTitle.$invalid}">
+      <label for="whiteboards-create-title" class="col-sm-2 control-label">Title</label>
+      <div class="col-sm-10">
+        <input type="text" id="whiteboards-create-title" name="whiteboardsCreateTitle" class="form-control" placeholder="Enter a title" data-ng-model="whiteboard.title" data-ng-maxlength="255" required>
+        <div class="help-block" data-ng-messages="whiteboardsCreateForm.whiteboardsCreateTitle.$error">
+          <div data-ng-message="required">Please enter a title</div>
+          <div data-ng-message="maxlength">A title can only be 255 characters long</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="form-group text-right">
+      <div class="col-sm-offset-2 col-sm-10">
+        <a data-ng-href="/whiteboards" class="btn btn-default">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create whiteboard</button>
+      </div>
+    </div>
+  </form>
+</div>

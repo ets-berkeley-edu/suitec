@@ -1,0 +1,13 @@
+<div data-ng-controller="WhiteboardsListController">
+  <a href="/whiteboards/create">Create new whiteboard</a>
+
+  <div class="whiteboards-list-container" data-infinite-scroll="getWhiteboards()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
+    <ul>
+      <li data-ng-repeat="whiteboard in whiteboards">
+        <a data-ng-click="openWhiteboard(whiteboard, $event)" data-ng-href="/whiteboards/{{whiteboard.id}}">
+          {{whiteboard.title}}
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

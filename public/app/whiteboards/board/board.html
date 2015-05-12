@@ -1,0 +1,13 @@
+<div data-ng-controller="WhiteboardsBoardController">
+  Canvas:
+  <button data-ng-click="addCircle()">Add circle</button>
+  <button data-ng-click="addImage()">Add image</button>
+  <button data-ng-click="toggleDraw()">Toggle Draw</button>
+  <button data-ng-click="toggleDelete()">Toggle Delete</button>
+  <button data-ng-click="addText()">Add Text</button>
+  <button data-ng-click="zoomIn()">Zoom In</button>
+  <button data-ng-click="zoomOut()">Zoom Out</button>
+  <div id="viewport" style="overflow: hidden; height: 1000px; width: 1500px;">
+    <canvas id="board" width="1500" height="1000" style="border:1px solid #000000;"></canvas>
+  </div>
+</div>

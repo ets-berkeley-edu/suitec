@@ -28,6 +28,7 @@
 
     // Configure the Collabosphere routes
     $routeProvider.
+
     // Asset Library routes
     when('/assetlibrary', {
       templateUrl: '/app/assetlibrary/list/list.html'
@@ -53,10 +54,21 @@
 
     // Engagement Index routes
     when('/engagementindex', {
-      templateUrl: 'app/engagementindex/leaderboard/leaderboard.html'
+      templateUrl: '/app/engagementindex/leaderboard/leaderboard.html'
     }).
     when('/engagementindex/points', {
-      templateUrl: 'app/engagementindex/points/points.html'
+      templateUrl: '/app/engagementindex/points/points.html'
+    }).
+
+    // Whiteboard routes
+    when('/whiteboards', {
+      templateUrl: '/app/whiteboards/list/list.html'
+    }).
+    when('/whiteboards/create', {
+      templateUrl: '/app/whiteboards/create/create.html'
+    }).
+    when('/whiteboards/:whiteboardId', {
+      templateUrl: '/app/whiteboards/board/board.html'
     }).
 
     // Unrecognized route

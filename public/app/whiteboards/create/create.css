@@ -12,22 +12,3 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
-(function(angular) {
-
-  'use strict';
-
-  // Initialize the Collabosphere module
-  angular.module('collabosphere', [
-    'ngAria',
-    'ngMessages',
-    'ngRoute',
-    'ngSanitize',
-    'common.fabric',
-    'common.fabric.utilities',
-    'common.fabric.constants',
-    'infinite-scroll',
-    'monospaced.elastic'
-  ]);
-
-})(window.angular);
