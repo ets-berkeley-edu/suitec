@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, whiteboardsBoardFactory, $routeParams, $scope) {
 
     var canvas = new fabric.Canvas('board');
 
@@ -146,6 +146,136 @@
         'y': (last.y / canvas.getZoom()) + (viewport.clientHeight / canvas.getZoom() / 2)
       }
     }
+
+    //
+    //
+    //
+
+    fabric.Object.prototype.toObject = (function(toObject) {
+      return function () {
+        return fabric.util.object.extend(toObject.call(this), {
+          'uid': this.uid,
+          'index': canvas.getObjects().indexOf(this)
+        });
+      };
+    })(fabric.Object.prototype.toObject);
+
+    canvas.on('path:created', function(e) {
+      var object = e.target;
+      if (!object.get('isUpdate')) {
+        object.set('uid', Math.round(Math.random() * 10000));
+        whiteboardsBoardFactory.addWhiteboardElement(whiteboardId, object.toObject());
+      }
+      object.set('isUpdate', false);
+    });
+
+    canvas.on('object:added', function(e) {
+      var object = e.target;
+      if (!object.get('isUpdate')) {
+        object.set('uid', Math.round(Math.random() * 10000));
+        whiteboardsBoardFactory.addWhiteboardElement(whiteboardId, object.toObject());
+      }
+      object.set('isUpdate', false);
+    });
+
+    canvas.on('object:modified', function(e) {
+      console.log('Updating object');
+      var object = e.target;
+      if (!object.get('isUpdate')) {
+        whiteboardsBoardFactory.updateWhiteboardElement(whiteboardId, object.toObject());
+      }
+      object.set('isUpdate', false);
+    });
+
+    ///
+    ///
+    ///
+
+    // Variable that will keep track of the current whiteboard id
+    var whiteboardId = $routeParams.whiteboardId;
+
+    // Variable that will keep track of the chat messages on the current whiteboard
+    $scope.chatMessages = [];
+
+    // Variable that will keep track of the chat message
+    $scope.newChatMessage = null;
+
+    var createChatMessage = $scope.createChatMessage = function() {
+      whiteboardsBoardFactory.createChatMessage(whiteboardId, $scope.newChatMessage.body).success(function(chatMessage) {
+        $scope.newChatMessage = null;
+        //console.log(chatMessage);
+        //$scope.chatMessages.push(chatMessage);
+        // Clear the new chat message
+        //
+      });
+
+    };
+
+    var getChatMessages = function() {
+      whiteboardsBoardFactory.getChatMessages(whiteboardId).success(function(chatMessages) {
+        $scope.chatMessages = chatMessages.reverse();
+      });
+    };
+
+    getChatMessages();
+
+    var socket = io();
+    socket.emit('subscribe', { 'whiteboard': whiteboardId });
+
+    socket.on('chat', function(chatMessage){
+      console.log(chatMessage);
+      $scope.chatMessages.push(chatMessage);
+    });
+
+    //
+    //
+    //
+
+    socket.on('addElement', function(element) {
+      console.log('ADDING NEW ELEMENT');
+      if (getElement(element.uid)) {
+        return false;
+      }
+      var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
+      if (fabric[type].async) {
+          fabric[type].fromObject(element, function (img) {
+            img.set('isUpdate', true);
+              canvas.add(img);
+          });
+      } else {
+        var item = fabric[type].fromObject(element);
+        item.set('isUpdate', true);
+          canvas.add(item);
+      }
+    });
+
+    socket.on('updateElement', function(element) {
+      console.log('UPDATING ELEMENT');
+      if (getElement(element.uid)) {
+        canvas.remove(getElement(element.uid));
+      }
+      var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
+      if (fabric[type].async) {
+          fabric[type].fromObject(element, function (img) {
+            img.set('isUpdate', true);
+              canvas.add(img);
+          });
+      } else {
+        var item = fabric[type].fromObject(element);
+        item.set('isUpdate', true);
+          canvas.add(item);
+      }
+    });
+
+    var getElement = function(uid) {
+      var elements = canvas.getObjects();
+      for (var i = 0; i < elements.length; i++) {
+        if (elements[i].get('uid') === uid) {
+          return elements[i];
+        }
+      }
+      return null;
+    };
 
   });
 

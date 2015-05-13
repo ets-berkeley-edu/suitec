@@ -27,6 +27,13 @@
     var toolUrl = $routeParams.tool_url;
 
     /**
+     * TODO
+     */
+    var getRouteParams = function() {
+      return $routeParams;
+    };
+
+    /**
      * Construct the full URL for a REST API request. All REST API requests should
      * be of the form `/api/<apiDomain>/<courseId>/<restAPI>`
      *
@@ -168,6 +175,7 @@
     };
 
     return {
+      'getRouteParams': getRouteParams,
       'getApiUrl': getApiUrl,
       'getToolUrl': getToolUrl,
       'getScrollPosition': getScrollPosition,

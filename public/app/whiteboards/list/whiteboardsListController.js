@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsListController', function(userFactory, whiteboardsListFactory, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsListController', function(userFactory, utilService, whiteboardsListFactory, $scope) {
 
     $scope.whiteboards = [];
     $scope.list = {
@@ -49,7 +49,13 @@
      * TODO
      */
     var openWhiteboard = $scope.openWhiteboard = function(whiteboard, $event) {
-      window.open('/whiteboards/' + whiteboard.id, '_blank', 'width=1024, height=768, toolbar=no, titlebar=no, status=no, menubar=no, location=no');
+      var routeParams = utilService.getRouteParams();
+      // TODO
+      var url = '/whiteboards/' + whiteboard.id;
+      url += '?api_domain=' + routeParams.api_domain;
+      url += '&course_id=' + routeParams.course_id;
+      url += '&tool_url=' + routeParams.tool_url;
+      window.open(url, '_blank', 'width=1024, height=768, toolbar=no, titlebar=no, status=no, menubar=no, location=no');
       $event.preventDefault()
     };
 
