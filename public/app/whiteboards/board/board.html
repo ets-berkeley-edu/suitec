@@ -39,12 +39,12 @@
       </button>
     </div>
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-default" title="Zoom in" data-ng-click="zoomIn()">
+      <button type="button" class="btn btn-default" title="Zoom in" data-ng-click="zoom(0.3)" data-ng-disabled="zoomLevel >= 2.5">
         <i class="fa fa-search-plus">
           <span class="sr-only">Zoom in</span>
         </i>
       </button>
-      <button type="button" class="btn btn-default" title="Zoom out" data-ng-click="zoomOut()">
+      <button type="button" class="btn btn-default" title="Zoom out" data-ng-click="zoom(-0.3)" data-ng-disabled="zoomLevel <= 0.5">
         <i class="fa fa-search-minus">
           <span class="sr-only">Zoom out</span>
         </i>
@@ -67,7 +67,7 @@
   <!-- SIDEBAR -->
   <div id="whiteboards-board-sidebar-toggle">
     <button type="button" class="btn btn-link" title="Who's online"  data-ng-click="toggleSidebar('online')">
-      <span data-ng-bind="whiteboard.online_count | number"></span> online
+      <span data-ng-bind="whiteboard.online.length | number"></span> online
     </button>
     <button type="button" class="btn btn-link pull-right" title="Chat" data-ng-click="toggleSidebar('chat')">
       <i class="fa fa-comments">
@@ -102,7 +102,15 @@
       </div>
     </div>
     <div id="whiteboards-board-online" data-ng-if="sidebarMode === 'online'">
-      Online users go here
+      <div class="media" data-ng-repeat="onlineUser in whiteboard.online">
+        <div class="media-left media-middle">
+          <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + onlineUser.user.canvas_image + ')'}"></div>
+        </div>
+        <div class="media-body media-middle">
+          <i class="fa fa-graduation-cap" data-ng-if="onlineUser.user.is_admin"></i> {{onlineUser.user.canvas_full_name}}
+          <span data-ng-if="me.id === onlineUser.user.id">(me)</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

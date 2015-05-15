@@ -46,7 +46,29 @@
       });
     };
 
+    /**
+     * When a user has joined or left the whiteboard, update the list of online users
+     */
+    socket.on('online', function(onlineUsers){
+      $scope.whiteboard.online = onlineUsers;
+    });
+
     /* CANVAS */
+
+    /**
+     * Extend the Fabric.js `toObject` deserialization function to include
+     * the property that uniquely identifies an object on the canvas, as well
+     * as a property containing the index of the object relative to the other
+     * items on the canvas
+     */
+    fabric.Object.prototype.toObject = (function(toObject) {
+      return function () {
+        return fabric.util.object.extend(toObject.call(this), {
+          'uid': this.uid,
+          'index': canvas.getObjects().indexOf(this)
+        });
+      };
+    })(fabric.Object.prototype.toObject);
 
     /**
      * Initialize the Fabric.js canvas and load the whiteboard content
@@ -102,7 +124,42 @@
       }
     };
 
+    /**
+     * Get a Fabric.js canvas element based on its unique id
+     *
+     * @param  {Boolean}        uid               The unique id of the Fabric.js canvas element to retrieve
+     * @return {Object}                           The retrieved Fabric.js canvas element
+     */
+    var getCanvasElement = function(uid) {
+      var elements = canvas.getObjects();
+      for (var i = 0; i < elements.length; i++) {
+        if (elements[i].get('uid') === uid) {
+          return elements[i];
+        }
+      }
+      return null;
+    };
+
     initializeCanvas();
+
+    /* ZOOMING */
+
+    // Variable that will keep track of the current zoom level
+    $scope.zoomLevel = 1;
+
+    /**
+     * TODO
+     */
+    var zoom = $scope.zoom = function(zoomDelta) {
+      var currentZoom = $scope.zoomLevel;
+      // Modify the zoom level
+      $scope.zoomLevel = currentZoom + zoomDelta;
+      //canvas.zoomToPoint(new fabric.Point(getCanvasCenter().x, getCanvasCenter().y), $scope.zoomLevel);
+      // TODO: Recalculate the pan point and zoom to center
+      // last = ;
+      canvas.setZoom($scope.zoomLevel);
+      canvas.absolutePan(new fabric.Point(last.x, last.y));
+    };
 
     /* TOOLBAR */
 
@@ -132,6 +189,9 @@
       // Draw mode has been selected
       } else if (newMode === 'draw') {
         setDrawMode(true);
+      // Shape mode has been selected
+      } else if (newMode === 'shape') {
+        addCircle();
       // Text mode has been selected
       } else if (newMode === 'text') {
         addText();
@@ -284,31 +344,13 @@
     canvas.add(rect);
     }
 
-    var addImage = $scope.addImage = function() {
+    var addAsset = $scope.addAsset = function() {
       fabric.Image.fromURL('http://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Redwood_National_Park%2C_fog_in_the_forest.jpg/220px-Redwood_National_Park%2C_fog_in_the_forest.jpg', function(oImg) {
         oImg.left = getCanvasCenter().x;
         oImg.top = getCanvasCenter().y;
-        oImg.originX = 'center';
-        oImg.originY = 'center';
         canvas.add(oImg);
       });
     }
-
-    var zoomIn = $scope.zoomIn = function() {
-      var currentZoom = canvas.getZoom();
-      var newZoom = currentZoom + 0.5;
-      canvas.setZoom(newZoom);
-      canvas.absolutePan(new fabric.Point(last.x, last.y));
-    };
-
-    var zoomOut = $scope.zoomOut = function() {
-      var currentZoom = canvas.getZoom();
-      var newZoom = currentZoom - 0.5;
-      if (newZoom > 0.1) {
-        canvas.setZoom(newZoom);
-        canvas.absolutePan(new fabric.Point(last.x, last.y));
-      }
-    };
 
 
     var isDraggingCanvas = false;
@@ -366,15 +408,6 @@
     //
     //
 
-    fabric.Object.prototype.toObject = (function(toObject) {
-      return function () {
-        return fabric.util.object.extend(toObject.call(this), {
-          'uid': this.uid,
-          'index': canvas.getObjects().indexOf(this)
-        });
-      };
-    })(fabric.Object.prototype.toObject);
-
     canvas.on('path:created', function(e) {
       var object = e.target;
       if (!object.get('isUpdate')) {
@@ -410,7 +443,7 @@
 
     socket.on('addElement', function(element) {
       console.log('ADDING NEW ELEMENT');
-      if (getElement(element.uid)) {
+      if (getCanvasElement(element.uid)) {
         return false;
       }
       var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
@@ -428,8 +461,8 @@
 
     socket.on('updateElement', function(element) {
       console.log('UPDATING ELEMENT');
-      if (getElement(element.uid)) {
-        canvas.remove(getElement(element.uid));
+      if (getCanvasElement(element.uid)) {
+        canvas.remove(getCanvasElement(element.uid));
       }
       var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
       if (fabric[type].async) {
@@ -443,16 +476,6 @@
           canvas.add(item);
       }
     });
-
-    var getElement = function(uid) {
-      var elements = canvas.getObjects();
-      for (var i = 0; i < elements.length; i++) {
-        if (elements[i].get('uid') === uid) {
-          return elements[i];
-        }
-      }
-      return null;
-    };
 
   });
 

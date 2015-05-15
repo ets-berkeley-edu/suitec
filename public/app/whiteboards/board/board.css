@@ -105,6 +105,11 @@
   top: 5px;
 }
 
+#whiteboards-board-sidebar .col-avatar {
+  height: 40px;
+  width: 40px;
+}
+
 #whiteboards-board-chat {
   font-size: 13px;
   height: 100%;
@@ -118,11 +123,6 @@
   overflow: auto;
   padding: 10px;
   width: 100%;
-}
-
-#whiteboards-board-chat-messages .col-avatar {
-  height: 40px;
-  width: 40px;
 }
 
 #whiteboards-board-chat-messages .whiteboards-board-chat-actor {
@@ -151,4 +151,11 @@
   padding: 5px 10px;
   resize: none;
   width: 100%;
+}
+
+#whiteboards-board-online {
+  background-color: #FFF;
+  height: 100%;
+  overflow: auto;
+  padding: 10px;
 }
