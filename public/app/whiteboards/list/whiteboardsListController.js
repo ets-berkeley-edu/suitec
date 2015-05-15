@@ -55,7 +55,7 @@
       url += '?api_domain=' + routeParams.api_domain;
       url += '&course_id=' + routeParams.course_id;
       url += '&tool_url=' + routeParams.tool_url;
-      window.open(url, '_blank', 'width=1024, height=768, toolbar=no, titlebar=no, status=no, menubar=no, location=no');
+      window.open(url, '_blank', 'width=1100, height=600, toolbar=no, titlebar=no, status=no, menubar=no, location=no');
       $event.preventDefault()
     };
 

@@ -1,27 +1,108 @@
 <div data-ng-controller="WhiteboardsBoardController">
-  Canvas:
-  <button data-ng-click="addCircle()">Add circle</button>
-  <button data-ng-click="addImage()">Add image</button>
-  <button data-ng-click="toggleDraw()">Toggle Draw</button>
-  <button data-ng-click="toggleDelete()">Toggle Delete</button>
-  <button data-ng-click="addText()">Add Text</button>
-  <button data-ng-click="zoomIn()">Zoom In</button>
-  <button data-ng-click="zoomOut()">Zoom Out</button>
-  <div id="viewport" style="overflow: hidden; height: 500px; width: 500px;">
-    <canvas id="board" width="500" height="500" style="border:1px solid #000000;"></canvas>
+  <!-- WHITEBOARD -->
+  <div id="whiteboards-board-viewport">
+    <canvas id="whiteboards-board-board"></canvas>
   </div>
 
-  <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 300px; background-color: #eee;">
-    <div style="width: 100%; height: 80%; background-color: yellow; overflow: auto;" scroll-glue >
-      <div data-ng-repeat="chatMessage in chatMessages">
-        {{chatMessage.body}}
-      </div>
+  <!-- TOOLBAR -->
+  <div id="whiteboards-board-toolbar" class="btn-toolbar" role="toolbar" aria-label="Whiteboard Toolbar">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default active" title="Move and transform" data-ng-click="setMode('move')" data-ng-class="{'active': mode === 'move'}">
+        <i class="fa fa-arrows">
+          <span class="sr-only">Move and transform</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Draw" data-ng-click="setMode('draw')" data-ng-class="{'active': mode === 'draw'}">
+        <i class="fa fa-pencil">
+          <span class="sr-only">Draw</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Shape" data-ng-click="setMode('shape')" data-ng-class="{'active': mode === 'shape'}">
+        <i class="fa fa-square-o">
+          <span class="sr-only">Shape</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Text" data-ng-click="setMode('text')" data-ng-class="{'active': mode === 'text'}">
+        <i class="fa fa-font">
+          <span class="sr-only">Text</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Connect concepts">
+        <i class="fa fa-sitemap">
+          <span class="sr-only">Connect concepts</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Erase" data-ng-click="setMode('erase')"  data-ng-class="{'active': mode === 'erase'}">
+        <i class="fa fa-eraser">
+          <span class="sr-only">Erase</span>
+        </i>
+      </button>
     </div>
-    <div style="width: 100%; height: 20%; background-color: green">
-      <form ui-keypress="{13:'createChatMessage()'}">
-        <textarea data-ng-model="newChatMessage.body"></textarea>
-      </form>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" title="Zoom in" data-ng-click="zoomIn()">
+        <i class="fa fa-search-plus">
+          <span class="sr-only">Zoom in</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Zoom out" data-ng-click="zoomOut()">
+        <i class="fa fa-search-minus">
+          <span class="sr-only">Zoom out</span>
+        </i>
+      </button>
+    </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" title="Add asset" data-ng-click="addAsset()">
+        <i class="fa fa-plus-circle"></i>
+        <span>Asset</span>
+      </button>
+    </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" title="Export">
+        <i class="fa fa-download"></i>
+        <span>Export</span>
+      </button>
     </div>
   </div>
-  <!-- position: absolute; top: 0; bottom: 200px; left: 0; right: 0; -->
+
+  <!-- SIDEBAR -->
+  <div id="whiteboards-board-sidebar-toggle">
+    <button type="button" class="btn btn-link" title="Who's online"  data-ng-click="toggleSidebar('online')">
+      <span data-ng-bind="whiteboard.online_count | number"></span> online
+    </button>
+    <button type="button" class="btn btn-link pull-right" title="Chat" data-ng-click="toggleSidebar('chat')">
+      <i class="fa fa-comments">
+        <span class="sr-only">Chat</span>
+      </i>
+    </button>
+  </div>
+
+  <div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
+    <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
+      <div id="whiteboards-board-chat-messages" scroll-glue>
+        <div class="media" data-ng-repeat="chatMessage in chatMessages">
+          <div class="media-left media-top">
+            <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
+          </div>
+          <div class="media-body media-top">
+            <div class="whiteboards-board-chat-actor">
+              <a>
+                <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
+                <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
+              </a>
+              <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+            </div>
+            <p data-ng-bind-html="chatMessage.body | linky"></p>
+          </div>
+        </div>
+      </div>
+      <div id="whiteboards-board-chat-new">
+        <form ui-keypress="{13:'createChatMessage()'}">
+          <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
+        </form>
+      </div>
+    </div>
+    <div id="whiteboards-board-online" data-ng-if="sidebarMode === 'online'">
+      Online users go here
+    </div>
+  </div>
 </div>

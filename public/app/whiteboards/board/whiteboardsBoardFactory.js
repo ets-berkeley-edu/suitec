@@ -20,6 +20,16 @@
   angular.module('collabosphere').factory('whiteboardsBoardFactory', function(utilService, $http) {
 
     /**
+     * Get a whiteboard
+     *
+     * @param  {Number}               id                    The id of the whiteboard
+     * @return {Promise<Whiteboard>}                        Promise returning the requested whiteboard
+     */
+    var getWhiteboard = function(id) {
+      return $http.get(utilService.getApiUrl('/whiteboards/' + id));
+    };
+
+    /**
      * Create a new chat message on a whiteboard
      *
      * @param  {Number}               whiteboardId          The id of the whiteboard to which the chat message is added
@@ -58,6 +68,7 @@
     };
 
     return {
+      'getWhiteboard': getWhiteboard,
       'createChatMessage': createChatMessage,
       'getChatMessages': getChatMessages,
       'addWhiteboardElement': addWhiteboardElement,
