@@ -319,6 +319,7 @@
         activeElement.exitEditing();
       }
       canvas.deactivateAll().renderAll();
+      lockObjects(false);
 
       // If the selected mode is the same as the current mode, undo the selection
       // and switch back to move mode
@@ -333,6 +334,9 @@
 
       // Erase mode has been selected
       if (newMode === 'erase') {
+        // Prevent objects from being moved when deleting
+        lockObjects(true);
+        // change the cursor to delete mode when hovering over an object
         canvas.hoverCursor = 'not-allowed';
       // Draw mode has been selected
       } else if (newMode === 'draw') {
@@ -360,6 +364,20 @@
     };
 
     /* ERASE */
+
+    /**
+     * Lock or unlock all elements on the whiteboard canvas
+     *
+     * @param  {Boolean}        lock              Whether the elements on the whiteboard canvas should be locked or unlocked
+     */
+    var lockObjects = function(lock) {
+      var elements = canvas.getObjects();
+      for (var i = 0; i < elements.length; i++) {
+        var element = elements[i];
+        element.lockMovementX = lock;
+        element.lockMovementY = lock;
+      }
+    }
 
     /**
      * Delete the selected whiteboard item when the whiteboard
@@ -488,13 +506,16 @@
 
     // "add" rectangle onto canvas
     canvas.add(rect);
+    canvas.setActiveObject(rect);
     }
 
     var addAsset = $scope.addAsset = function() {
-      fabric.Image.fromURL('http://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Redwood_National_Park%2C_fog_in_the_forest.jpg/220px-Redwood_National_Park%2C_fog_in_the_forest.jpg', function(oImg) {
+      setMode('move');
+      fabric.Image.fromURL('http://static.wixstatic.com/media/402283_be5f150a9e188d1bf78a87f764741686.jpg', function(oImg) {
         oImg.left = getCanvasCenter().x;
         oImg.top = getCanvasCenter().y;
         canvas.add(oImg);
+        canvas.setActiveObject(oImg);
       });
     }
 

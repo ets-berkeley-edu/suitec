@@ -32,12 +32,12 @@
     </div>
   </div>
 
-  <div class="assetlibrary-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
+  <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
     <ul>
       <!-- UPLOAD / ADD LINK -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3">
-        <div class="assetlibrary-list-item-container assetlibrary-list-add-tile">
-          <div class="assetlibrary-list-item-tile">
+        <div class="col-list-item-container col-list-add-tile">
+          <div class="col-list-item-tile">
             <div class="assetlibrary-list-item-add-container">
               <div class="assetlibrary-list-item-add-table">
                 <a data-ng-href="/assetlibrary/upload" class="text-center col-pane">
@@ -55,27 +55,27 @@
               </div>
             </div>
           </div>
-          <div class="assetlibrary-list-item-actions">
+          <div class="col-list-item-actions">
             <a data-ng-href="/assetlibrary/addbookmarklet">Add inspiration from anywhere</a>
           </div>
         </div>
       </li>
       <!-- LIST ITEM -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
-        <div class="assetlibrary-list-item-container">
+        <div class="col-list-item-container">
           <a data-ng-href="/assetlibrary/{{asset.id}}">
-            <div class="assetlibrary-list-item-tile">
+            <div class="col-list-item-tile">
               <img class="img-responsive" data-ng-src="{{asset.url}}" data-ng-if="asset.thumbnail_url">
-              <div class="text-center assetlibrary-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+              <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
                 <i class="fa fa-link"></i>
               </div>
-              <div class="assetlibrary-list-item-metadata">
+              <div class="col-list-item-metadata">
                 <h3 class="col-threedots">{{asset.title}}</h3>
                 <small class="col-threedots">by {{asset.user.canvas_full_name}}</small>
               </div>
             </div>
           </a>
-          <div class="text-right assetlibrary-list-item-actions" iconbar asset="asset"></div>
+          <div class="text-right col-list-item-actions" iconbar asset="asset"></div>
         </div>
       </li>
     </ul>
