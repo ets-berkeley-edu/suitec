@@ -30,20 +30,6 @@
     };
 
     /**
-     * Create a new chat message on a whiteboard
-     *
-     * @param  {Number}               whiteboardId          The id of the whiteboard to which the chat message is added
-     * @param  {String}               body                  The body of the chat message
-     * @return {Promise<Chat>}                              Promise returning the created chat message
-     */
-    var createChatMessage = function(whiteboardId, body) {
-      var chatMessage = {
-        'body': body
-      };
-      return $http.post(utilService.getApiUrl('/whiteboards/' + whiteboardId + '/chat'), chatMessage);
-    };
-
-    /**
      * Get the most recent chat messages for a whiteboard
      *
      * @param  {Number}               whiteboardId          The id of the whiteboard for which to get the most chat messages
@@ -53,26 +39,9 @@
       return $http.get(utilService.getApiUrl('/whiteboards/' + whiteboardId + '/chat'));
     };
 
-    /**
-     * TODO
-     */
-    var addWhiteboardElement = function(whiteboardId, element) {
-      return $http.post(utilService.getApiUrl('/whiteboards/' + whiteboardId + '/elements'), element);
-    };
-
-    /**
-     * TODO
-     */
-    var updateWhiteboardElement = function(whiteboardId, element) {
-      return $http.post(utilService.getApiUrl('/whiteboards/' + whiteboardId + '/elements/' + element.uid), element);
-    };
-
     return {
       'getWhiteboard': getWhiteboard,
-      'createChatMessage': createChatMessage,
-      'getChatMessages': getChatMessages,
-      'addWhiteboardElement': addWhiteboardElement,
-      'updateWhiteboardElement': updateWhiteboardElement
+      'getChatMessages': getChatMessages
     };
 
   });

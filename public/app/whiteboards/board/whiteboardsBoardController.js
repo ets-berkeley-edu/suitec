@@ -43,6 +43,17 @@
     var getWhiteboard = function() {
       whiteboardsBoardFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {
         $scope.whiteboard = whiteboard;
+
+        // Load the content of the whiteboard
+        canvas.loadFromJSON({'objects': whiteboard.whiteboard_elements}, function() {
+          // Set the correct index for all items
+          var elements = canvas.getObjects();
+          for (var i = 0; i < elements.length; i++) {
+            elements[i].moveTo(elements[i].get('index'));
+          }
+
+          canvas.renderAll();
+        });
       });
     };
 
@@ -57,9 +68,9 @@
 
     /**
      * Extend the Fabric.js `toObject` deserialization function to include
-     * the property that uniquely identifies an object on the canvas, as well
-     * as a property containing the index of the object relative to the other
-     * items on the canvas
+     * the property that uniquely identifies an object on the canvas, as well as
+     * a property containing the index of the object relative to the other items
+     * on the canvas
      */
     fabric.Object.prototype.toObject = (function(toObject) {
       return function () {
@@ -142,6 +153,136 @@
 
     initializeCanvas();
 
+    /* CONCURRENT EDITING */
+
+    /**
+     * Convert a serialized Fabric.js canvas element to a proper Fabric.js canvas element
+     *
+     * @param  {Object}         element           The serialized Fabric.js canvas element to deserialize
+     * @param  {Function}       callback          Standard callback function
+     * @param  {Object}         callback.element  The deserialized Fabric.js canvas element
+     */
+    var deserializeElement = function(element, callback) {
+      // Extract the type from the serialized element
+      var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
+      if (fabric[type].async) {
+        fabric[type].fromObject(element, callback);
+      } else {
+        return callback(fabric[type].fromObject(element));
+      }
+    };
+
+    /**
+     * A new element was added to the whiteboard canvas by the current user
+     */
+    canvas.on('object:added', function(ev) {
+      var element = ev.target;
+
+      // Don't add a new text element until text has been entered
+      if (element.type === 'i-text' && !element.text.trim()) {
+        return false;
+      }
+
+      // Only notify the server if the element was added by the current user
+      if (!element.get('uid')) {
+        // Add a unique id to the element
+        element.set('uid', Math.round(Math.random() * 10000));
+        socket.emit('addElement', element.toObject());
+      }
+    });
+
+    /**
+     * A new element was added to the whitebard canvas by a different user
+     */
+    socket.on('addElement', function(element) {
+      deserializeElement(element, function(element) {
+        // Add the element to the whiteboard canvas and move it to its appropriate index
+        canvas.add(element);
+        element.moveTo(element.get('index'));
+      });
+    });
+
+    /**
+     * A whiteboard canvas element was updated by the current user
+     */
+    canvas.on('object:modified', function(ev) {
+      var element = ev.target;
+      // Only notify the server if the element was updated by the current user
+      if (!element.get('isSocketUpdate')) {
+        socket.emit('updateElement', element.toObject());
+      }
+      element.set('isSocketUpdate', null);
+    });
+
+    /**
+     * A whiteboard canvas element was updated by a different user
+     */
+    socket.on('updateElement', function(updatedElement) {
+      var originalElement = getCanvasElement(updatedElement.uid);
+      if (originalElement) {
+        deserializeElement(updatedElement, function(updatedElement) {
+          // Indicate that this update has come in through a socket
+          originalElement.set('isSocketUpdate', true);
+
+          // Remove the existing element from the whiteboard canvas and add the updated element
+          canvas.remove(originalElement);
+          canvas.add(updatedElement);
+          updatedElement.moveTo(updatedElement.get('index'));
+        });
+      }
+    });
+
+    /**
+     * An IText whiteboard canvas element was updated by the current user
+     */
+    fabric.IText.prototype.on('editing:exited', function() {
+      var element = this;
+
+      // If the text element is empty, it can be removed from the whiteboard canvas
+      var text = element.text.trim();
+      if (!text) {
+        canvas.remove(text);
+        // Notify the server if the element was already stored
+        if (element.get('uid')) {
+          socket.emit('deleteElement', element.toObject());
+        }
+      // The text element did not exist before. Notify the server that the element was added
+      } else if (!element.get('uid')) {
+        element.set('uid', Math.round(Math.random() * 10000));
+        socket.emit('addElement', element.toObject());
+      // The text element existed before. Notify the server that the element was updated
+      } else {
+        socket.emit('updateElement', element.toObject());
+      }
+
+      // Switch back to move mode
+      $scope.mode = 'move';
+    });
+
+    /**
+     * A whiteboard canvas element was deleted by the current user
+     */
+    canvas.on('object:removed', function(ev) {
+      var element = ev.target;
+      // Only notify the server if the element was deleted by the current user
+      if (!element.get('isSocketUpdate')) {
+        socket.emit('deleteElement', element.toObject());
+      }
+      element.set('isSocketUpdate', null);
+    });
+
+    /**
+     * A whiteboard canvas element was deleted by a different user
+     */
+    socket.on('deleteElement', function(element) {
+      var element = getCanvasElement(element.uid);
+      if (element) {
+        // Indicate that this update has come in through a socket
+        element.set('isSocketUpdate', true);
+        canvas.remove(element);
+      }
+    });
+
     /* ZOOMING */
 
     // Variable that will keep track of the current zoom level
@@ -172,6 +313,13 @@
      * @param  {Boolean}        newMode           The mode the toolbar should be put in. Accepted values are `move`, `erase`, `draw`, `shape` and `text`
      */
     var setMode = $scope.setMode = function(newMode) {
+      // Deactivate the currently selected item
+      var activeElement = canvas.getActiveObject();
+      if (activeElement && activeElement.type === 'i-text') {
+        activeElement.exitEditing();
+      }
+      canvas.deactivateAll().renderAll();
+
       // If the selected mode is the same as the current mode, undo the selection
       // and switch back to move mode
       if ($scope.mode === newMode) {
@@ -220,7 +368,6 @@
     canvas.on('object:selected', function() {
       if ($scope.mode === 'erase') {
         canvas.remove(canvas.getActiveObject());
-        // TODO: REST API call to remove item
       }
     });
 
@@ -283,10 +430,9 @@
      * Create a new chat message
      */
     var createChatMessage = $scope.createChatMessage = function() {
-      whiteboardsBoardFactory.createChatMessage(whiteboardId, $scope.newChatMessage.body).success(function(chatMessage) {
-        // Reset the new chat message
-        $scope.newChatMessage = null;
-      });
+      socket.emit('chat', $scope.newChatMessage.body);
+      // Reset the new chat message
+      $scope.newChatMessage = null;
     };
 
     /**
@@ -374,8 +520,6 @@
 
         start.x = e.e.layerX;
         start.y = e.e.layerY;
-        console.log(start);
-        console.log(e.e);
       }
     });
 
@@ -404,78 +548,11 @@
       }
     });
 
+    // TODO: Resize viewport when canvas is resized
+
     //
     //
     //
-
-    canvas.on('path:created', function(e) {
-      var object = e.target;
-      if (!object.get('isUpdate')) {
-        object.set('uid', Math.round(Math.random() * 10000));
-        whiteboardsBoardFactory.addWhiteboardElement(whiteboardId, object.toObject());
-      }
-      object.set('isUpdate', false);
-    });
-
-    canvas.on('object:added', function(e) {
-      var object = e.target;
-      console.log('OBJECT ADDED');
-      console.log(object.type);
-      if (!object.get('isUpdate')) {
-        object.set('uid', Math.round(Math.random() * 10000));
-        whiteboardsBoardFactory.addWhiteboardElement(whiteboardId, object.toObject());
-      }
-      object.set('isUpdate', false);
-    });
-
-    canvas.on('object:modified', function(e) {
-      console.log('Updating object');
-      var object = e.target;
-      if (!object.get('isUpdate')) {
-        whiteboardsBoardFactory.updateWhiteboardElement(whiteboardId, object.toObject());
-      }
-      object.set('isUpdate', false);
-    });
-
-    ///
-    ///
-    ///
-
-    socket.on('addElement', function(element) {
-      console.log('ADDING NEW ELEMENT');
-      if (getCanvasElement(element.uid)) {
-        return false;
-      }
-      var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
-      if (fabric[type].async) {
-          fabric[type].fromObject(element, function (img) {
-            img.set('isUpdate', true);
-              canvas.add(img);
-          });
-      } else {
-        var item = fabric[type].fromObject(element);
-        item.set('isUpdate', true);
-          canvas.add(item);
-      }
-    });
-
-    socket.on('updateElement', function(element) {
-      console.log('UPDATING ELEMENT');
-      if (getCanvasElement(element.uid)) {
-        canvas.remove(getCanvasElement(element.uid));
-      }
-      var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
-      if (fabric[type].async) {
-          fabric[type].fromObject(element, function (img) {
-            img.set('isUpdate', true);
-              canvas.add(img);
-          });
-      } else {
-        var item = fabric[type].fromObject(element);
-        item.set('isUpdate', true);
-          canvas.add(item);
-      }
-    });
 
   });
 

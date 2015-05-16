@@ -95,10 +95,6 @@
   font-size: 20px;
 }
 
-#whiteboards-board-sidebar-toggle button:hover {
-
-}
-
 #whiteboards-board-sidebar {
   border-top-left-radius: 4px;
   bottom: 54px;
@@ -115,7 +111,7 @@
   height: 100%;
 }
 
-#whiteboards-board-chat-messages {
+#whiteboards-board-chat-messages-container {
   background-color: #FFF;
   border-bottom: 1px solid #C2C2C2;
   border-top-left-radius: 4px;
@@ -123,6 +119,17 @@
   overflow: auto;
   padding: 10px;
   width: 100%;
+}
+
+#whiteboards-board-chat-messages-table {
+  display: table;
+  height: 100%;
+}
+
+#whiteboards-board-chat-messages {
+  display: table-cell;
+  padding-bottom: 5px;
+  vertical-align: bottom;
 }
 
 #whiteboards-board-chat-messages .whiteboards-board-chat-actor {

@@ -78,20 +78,24 @@
 
   <div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
     <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
-      <div id="whiteboards-board-chat-messages" scroll-glue>
-        <div class="media" data-ng-repeat="chatMessage in chatMessages">
-          <div class="media-left media-top">
-            <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
-          </div>
-          <div class="media-body media-top">
-            <div class="whiteboards-board-chat-actor">
-              <a>
-                <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
-                <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
-              </a>
-              <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+      <div id="whiteboards-board-chat-messages-container" scroll-glue>
+        <div id="whiteboards-board-chat-messages-table">
+          <div id="whiteboards-board-chat-messages">
+            <div class="media" data-ng-repeat="chatMessage in chatMessages">
+              <div class="media-left media-top">
+                <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
+              </div>
+              <div class="media-body media-top">
+                <div class="whiteboards-board-chat-actor">
+                  <a>
+                    <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
+                    <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
+                  </a>
+                  <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+                </div>
+                <p data-ng-bind-html="chatMessage.body | linky"></p>
+              </div>
             </div>
-            <p data-ng-bind-html="chatMessage.body | linky"></p>
           </div>
         </div>
       </div>
