@@ -1,0 +1,26 @@
+<div>
+  <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
+    <ul>
+      <li class="list-inline col-xs-6 col-sm-3 col-md-2" data-ng-repeat="asset in assets">
+        <div class="col-list-item-container">
+          <a data-ng-href="/assetlibrary/{{asset.id}}">
+            <div class="col-list-item-tile">
+              <img class="img-responsive" data-ng-src="{{asset.url}}" data-ng-if="asset.thumbnail_url">
+              <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+                <i class="fa fa-link"></i>
+              </div>
+              <div class="col-list-item-metadata">
+                <h3 class="col-threedots">{{asset.title}}</h3>
+                <small class="col-threedots">by {{asset.user.canvas_full_name}}</small>
+              </div>
+            </div>
+          </a>
+          <div class="col-list-item-actions">
+            <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected" />
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <button type="button" data-ng-click="addSelectedAssets()">Add assets</button>
+</div>

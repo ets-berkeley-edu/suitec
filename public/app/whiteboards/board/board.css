@@ -70,7 +70,7 @@
 #whiteboards-board-sidebar-toggle,
 #whiteboards-board-sidebar {
   background-color: #F7F7F7;
-  border: 1px solid #C2C2C2;
+  border: 1px solid #D3D3D3;
   border-bottom: none;
   border-right: none;
   position: absolute;
@@ -88,6 +88,7 @@
 #whiteboards-board-sidebar-toggle button {
   color: #333;
   font-weight: 300;
+  font-size: 13px;
   text-decoration: none;
 }
 
@@ -114,7 +115,7 @@
 
 #whiteboards-board-chat-messages-container {
   background-color: #FFF;
-  border-bottom: 1px solid #C2C2C2;
+  border-bottom: 1px solid #D3D3D3;
   border-top-left-radius: 4px;
   height: 85%;
   overflow: auto;
@@ -166,4 +167,32 @@
   height: 100%;
   overflow: auto;
   padding: 10px;
+}
+
+/* POPOVERS */
+
+.popover-content ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.popover-content li {
+  margin-bottom: 5px;
+}
+
+.popover-content li:last-child {
+  margin-bottom: 0;
+}
+
+.popover-content ul button {
+  text-align: left;
+  width: 130px;
+}
+
+.popover-content ul button > i {
+  font-size: 16px;
+  margin-right: 5px;
+  position: relative;
+  top: 1px;
 }

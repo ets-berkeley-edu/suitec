@@ -29,6 +29,7 @@
     'infinite-scroll',
     'luegg.directives',
     'monospaced.elastic',
+    'ui.bootstrap',
     'ui.utils'
   ]);
 

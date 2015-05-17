@@ -27,10 +27,18 @@
     var toolUrl = $routeParams.tool_url;
 
     /**
-     * TODO
+     * Get the parameters that were passed in through the iFrame launch URL
+     *
+     * @return {Object}                       The parameters that were passed in through the iFrame launch URL
      */
-    var getRouteParams = function() {
-      return $routeParams;
+    var getLaunchParams = function() {
+      var launchParams = {
+        'apiDomain': apiDomain,
+        'courseId': courseId,
+        'toolUrl': toolUrl
+      };
+      console.log(launchParams);
+      return launchParams;
     };
 
     /**
@@ -175,7 +183,7 @@
     };
 
     return {
-      'getRouteParams': getRouteParams,
+      'getLaunchParams': getLaunchParams,
       'getApiUrl': getApiUrl,
       'getToolUrl': getToolUrl,
       'getScrollPosition': getScrollPosition,

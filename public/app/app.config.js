@@ -17,7 +17,9 @@
 
   'use strict';
 
-  angular.module('collabosphere').config(function($compileProvider) {
+  angular.module('collabosphere').config(function($compileProvider, $tooltipProvider) {
+
+    console.log($tooltipProvider);
 
     // Add `javascript:` to the list of accepted href protocols. This will be used for the Bookmarklet
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);

@@ -17,6 +17,7 @@
           <span class="sr-only">Draw</span>
         </i>
       </button>
+      <!--  -->
       <button type="button" class="btn btn-default" title="Shape" data-ng-click="setMode('shape')" data-ng-class="{'active': mode === 'shape'}">
         <i class="fa fa-square-o">
           <span class="sr-only">Shape</span>
@@ -51,7 +52,7 @@
       </button>
     </div>
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-default" title="Add asset" data-ng-click="addAsset()">
+      <button type="button" class="btn btn-default" title="Add asset" data-ng-click="setMode('asset')" data-ng-class="{'active': mode === 'asset'}" popover-template="'addAssetPopoverTemplate'" popover-append-to-body="true">
         <i class="fa fa-plus-circle"></i>
         <span>Asset</span>
       </button>
@@ -63,6 +64,27 @@
       </button>
     </div>
   </div>
+
+  <!-- ADD ASSET POPOVER -->
+  <script type="text/ng-template" id="addAssetPopoverTemplate">
+    <ul>
+      <li>
+        <button class="btn btn-default" data-ng-click="reuseAsset()">
+          <i class="fa fa-th"></i> Reuse Asset
+        </button>
+      </li>
+      <li>
+        <button class="btn btn-default">
+          <i class="fa fa-laptop"></i> Upload New
+        </button>
+      </li>
+      <li>
+        <button class="btn btn-default">
+          <i class="fa fa-link"></i> Add Site
+        </button>
+      </li>
+    </ul>
+  </script>
 
   <!-- SIDEBAR -->
   <div id="whiteboards-board-sidebar-toggle">

@@ -46,17 +46,20 @@
     };
 
     /**
-     * TODO
+     * Open a whiteboard in a new window
+     *
+     * @param  {Whiteboard}       whiteboard          The whiteboard to open
+     * @param  {Event}            $event              The click event
      */
     var openWhiteboard = $scope.openWhiteboard = function(whiteboard, $event) {
-      var routeParams = utilService.getRouteParams();
+      var launchParams = utilService.getLaunchParams();
       // TODO
       var url = '/whiteboards/' + whiteboard.id;
-      url += '?api_domain=' + routeParams.api_domain;
-      url += '&course_id=' + routeParams.course_id;
-      url += '&tool_url=' + routeParams.tool_url;
+      url += '?api_domain=' + launchParams.apiDomain;
+      url += '&course_id=' + launchParams.courseId;
+      url += '&tool_url=' + launchParams.toolUrl;
       window.open(url, '_blank', 'width=1100, height=600, toolbar=no, titlebar=no, status=no, menubar=no, location=no');
-      $event.preventDefault()
+      $event.preventDefault();
     };
 
     userFactory.getMe().success(function(me) {

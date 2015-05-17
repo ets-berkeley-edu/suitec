@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, whiteboardsBoardFactory, $routeParams, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, whiteboardsBoardFactory, $modal, $routeParams, $scope) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $routeParams.whiteboardId;
@@ -341,6 +341,8 @@
       // Draw mode has been selected
       } else if (newMode === 'draw') {
         setDrawMode(true);
+
+      closePopovers();
       // Shape mode has been selected
       } else if (newMode === 'shape') {
         addCircle();
@@ -413,6 +415,34 @@
         text.hiddenTextarea.focus();
       }, 0);
     };
+
+    /* ADD ASSET */
+
+    $scope.items = ['1', '2'];
+
+    /**
+     * TODO
+     */
+    var reuseAsset = $scope.reuseAsset = function() {
+      setMode('move');
+      closePopovers();
+      var modalInstance = $modal.open({
+        templateUrl: '/app/whiteboards/reuse/reuse.html',
+        controller: 'WhiteboardsReuseController',
+        size: 'lg'
+      });
+
+      modalInstance.result.then(function(selectedAssets) {
+        for (var i = 0; i < selectedAssets.length; i++) {
+          var asset = selectedAssets[i];
+          if (asset.thumbnail_url) {
+            addAsset(asset.thumbnail_url);
+          }
+        }
+      }, function () {
+        console.log('Modal dismissed at: ' + new Date());
+      });
+    }
 
     /* SIDEBAR */
 
@@ -509,9 +539,9 @@
     canvas.setActiveObject(rect);
     }
 
-    var addAsset = $scope.addAsset = function() {
+    var addAsset = $scope.addAsset = function(url) {
       setMode('move');
-      fabric.Image.fromURL('http://static.wixstatic.com/media/402283_be5f150a9e188d1bf78a87f764741686.jpg', function(oImg) {
+      fabric.Image.fromURL(url, function(oImg) {
         oImg.left = getCanvasCenter().x;
         oImg.top = getCanvasCenter().y;
         canvas.add(oImg);
@@ -541,6 +571,8 @@
 
         start.x = e.e.layerX;
         start.y = e.e.layerY;
+        canvas.setCursor('grabbing');
+        canvas.renderAll();
       }
     });
 
@@ -553,6 +585,7 @@
           x: latest.x,
           y: latest.y
         };
+        canvas.setCursor('default');
       }
     });
 
@@ -574,6 +607,85 @@
     //
     //
     //
+
+    /* angular.element(document.body).bind('click', function (e) {
+        //Find all elements with the popover attribute
+        var popups = document.querySelectorAll('*[popover]');
+        if(popups) {
+          //Go through all of them
+          for(var i=0; i<popups.length; i++) {
+            //The following is the popover DOM elemet
+            var popup = popups[i];
+            //The following is the same jQuery lite element
+            var popupElement = angular.element(popup);
+
+            var content;
+            var arrow;
+            if(popupElement.next()) {
+              //The following is the content child in the popovers first sibling
+              content = popupElement.next()[0].querySelector('.popover-content');
+              //The following is the arrow child in the popovers first sibling
+              arrow = popupElement.next()[0].querySelector('.arrow');
+            }
+            //If the following condition is met, then the click does not correspond
+            //to a click on the current popover in the loop or its content.
+            //So, we can safely remove the current popover's content and set the
+            //scope property of the popover
+            if(popup != e.target && e.target != content && e.target != arrow) {
+              if(popupElement.next().hasClass('popover')) {
+                //Remove the popover content
+                popupElement.next().remove();
+                //Set the scope to reflect this
+                popupElement.scope().tt_isOpen = false;
+              }
+            }
+          }
+        }
+      }); */
+
+/*var hidePopover = function(element) {
+    //Set the state of the popover in the scope to reflect this
+    var elementScope = angular.element($(element).siblings('.popover')).scope().$parent;
+    elementScope.isOpen = false;
+    elementScope.$apply();
+    //Remove the popover element from the DOM
+    $(element).siblings('.popover').remove();
+};
+var hidePopovers = function(e) {
+    $('*[popover]').each(function() {
+        //Only do this for all popovers other than the current one that cause this event,
+        if (!($(this).is(e.target) || $(this).has(e.target).length > 0) && $(this).siblings('.popover').length !==
+            0 && $(this).siblings('.popover').has(e.target).length === 0) {
+            hidePopover(this);
+        }
+    });
+};*/
+
+    var closePopovers = function() {
+      var popupTriggers = document.querySelectorAll('*[popover-template]');
+      var popups = document.querySelectorAll('.popover');
+      for(var i=0; i<popups.length; i++) {
+        var popup = angular.element(popups[i]);
+        var elementScope = popup.scope().$parent;
+        console.log(popup.scope().isOpen);
+        console.log(popup.scope());
+        elementScope.isOpen = false;
+        //elementScope.$apply();
+        popup.remove();
+        //popup.scope().$apply();
+        //console.log(popup.scope().isOpen);
+        //console.log(popup.scope());
+        //popup.remove();
+      }
+      //for(var i=0; i<popupTriggers.length; i++) {
+      //  var popupTrigger = angular.element(popupTriggers[i]);
+      //  console.log(popupTrigger);
+      //  console.log(popupTrigger.scope());
+      //  console.log(popupTrigger.scope().isOpen);
+      //  popupTrigger.scope().isOpen = false;
+      //}
+
+    };
 
   });
 

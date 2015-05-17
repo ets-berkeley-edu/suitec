@@ -118,6 +118,10 @@ select option[value=''] {
   margin-left: 3px;
 }
 
+.popover-content {
+  padding: 5px;
+}
+
 /* TILE LIST */
 
 .col-list-container {
