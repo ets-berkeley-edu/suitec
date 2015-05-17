@@ -106,6 +106,8 @@
       canvas.setWidth(viewport.clientWidth);
     };
 
+    // TODO: Resize viewport when canvas is resized
+
     /**
      * Get the current center point of the whiteboard canvas. This will
      * exclude the toolbar and the chat/online sidebar (if expanded)
@@ -126,8 +128,8 @@
 
       // Calculate the center point of the whiteboard canvas
       var zoomLevel = canvas.getZoom();
-      var centerX = (last.x + (viewportWidth / 2)) / zoomLevel;
-      var centerY = (last.y + (viewportHeight / 2)) / zoomLevel;
+      var centerX = (currentCanvasPan.x + (viewportWidth / 2)) / zoomLevel;
+      var centerY = (currentCanvasPan.y + (viewportHeight / 2)) / zoomLevel;
 
       return {
         'x': centerX,
@@ -283,6 +285,70 @@
       }
     });
 
+    /* INFINITE CANVAS SCROLLING */
+
+    // Variable that will keep track of whether the whiteboard canvas is currently being infinitely dragged
+    var isDraggingCanvas = false;
+
+    // Variable that will keep track of the current whiteboard canvas top left position
+    var currentCanvasPan = new fabric.Point(0, 0);
+
+    // Variable that will keep track of the previous mouse position when the whiteboard canvas is being dragged
+    var previousMousePosition = new fabric.Point(0, 0);
+
+    /**
+     * The mouse is pressed down on the whiteboard canvas
+     */
+    canvas.on('mouse:down', function(ev) {
+      // Only start the whiteboard canvas infinite scrolling when no whiteboard
+      // element has been clicked and the canvas is not in draw mode
+      if (!canvas.getActiveObject() && !canvas.isDrawingMode) {
+        // Indicate that infinite scrolling has started
+        isDraggingCanvas = true;
+        // Indicate that no element selections can currently be made
+        canvas.selection = false;
+
+        // Keep track of the point where the infinite scrolling started
+        previousMousePosition.setXY(ev.e.clientX, ev.e.clientY);
+        // Change the cursors to a grabbing icon
+        canvas.setCursor('grabbing');
+      }
+    });
+
+    /**
+     * The mouse is moved on the whiteboard canvas
+     */
+    canvas.on('mouse:move', function(ev) {
+      // Only move the whiteboard canvas when the whiteboard canvas is in infinite scrolling mode
+      if (isDraggingCanvas) {
+        // Get the current position of the mouse
+        var currentMousePosition = new fabric.Point(ev.e.clientX, ev.e.clientY);
+
+        // Calculate the new top left of the whiteboard canvas based on the difference
+        // between the current mouse position and the previous mouse position
+        currentCanvasPan.x = currentCanvasPan.x - (currentMousePosition.x - previousMousePosition.x);
+        currentCanvasPan.y = currentCanvasPan.y - (currentMousePosition.y - previousMousePosition.y);
+        canvas.absolutePan(currentCanvasPan);
+
+        // Keep track of the point where the mouse is currently at
+        previousMousePosition = currentMousePosition;
+      }
+    });
+
+    /**
+     * The mouse is released on the whiteboard canvas
+     */
+    canvas.on('mouse:up', function() {
+      if (isDraggingCanvas) {
+        // Indicate that infinite scrolling has stopped
+        isDraggingCanvas = false;
+        // Indicate that element selections can be made again
+        canvas.selection = true;
+        // Change the cursors back to the default cursor
+        canvas.setCursor('default');
+      }
+    });
+
     /* ZOOMING */
 
     // Variable that will keep track of the current zoom level
@@ -299,7 +365,7 @@
       // TODO: Recalculate the pan point and zoom to center
       // last = ;
       canvas.setZoom($scope.zoomLevel);
-      canvas.absolutePan(new fabric.Point(last.x, last.y));
+      canvas.absolutePan(currentCanvasPan);
     };
 
     /* TOOLBAR */
@@ -345,13 +411,29 @@
       closePopovers();
       // Shape mode has been selected
       } else if (newMode === 'shape') {
-        addCircle();
+        addShape();
       // Text mode has been selected
       } else if (newMode === 'text') {
         addText();
       }
 
       $scope.mode = newMode;
+    };
+
+    /**
+     * Close all popovers
+     * @see https://angular-ui.github.io/bootstrap/
+     */
+    var closePopovers = function() {
+      // Get all popovers
+      var popups = document.querySelectorAll('.popover');
+      for (var i=0; i<popups.length; i++) {
+        // Close each popover
+        var popup = angular.element(popups[i]);
+        var popupScope = popup.scope().$parent;
+        popupScope.isOpen = false;
+        popup.remove();
+      }
     };
 
     /* DRAWING */
@@ -363,6 +445,28 @@
      */
     var setDrawMode = $scope.setDrawMode = function(drawMode) {
       canvas.isDrawingMode = drawMode
+    };
+
+    /* SHAPE */
+
+    /**
+     * Add a shape to the canvas
+     * TODO: Make this drawable and use selected properties
+     */
+    var addShape = $scope.addShape = function() {
+      var canvasCenter = getCanvasCenter();
+      var shape = new fabric.Rect({
+        'left': canvasCenter.x,
+        'top': canvasCenter.y,
+        'fill': 'red',
+        'width': 50,
+        'height': 50
+      });
+
+      // Add the shape to the canvas
+      canvas.add(shape);
+      // Select the added shape
+      canvas.setActiveObject(shape);
     };
 
     /* ERASE */
@@ -418,29 +522,54 @@
 
     /* ADD ASSET */
 
-    $scope.items = ['1', '2'];
-
     /**
-     * TODO
+     * Launch the modal that allows for an existing asset to be added to
+     * whiteboard canvas
      */
     var reuseAsset = $scope.reuseAsset = function() {
+      // Switch the toolbar back to move mode. This will
+      // also close the add asset popover
       setMode('move');
+      // TODO: Remove this once setMode does this
       closePopovers();
+
+      // Open the asset selection modal dialog
       var modalInstance = $modal.open({
         templateUrl: '/app/whiteboards/reuse/reuse.html',
         controller: 'WhiteboardsReuseController',
         size: 'lg'
       });
 
+      // When the modal dialog is closed, the selected assets will
+      // be passed back and will be added to the whiteboard canvas
       modalInstance.result.then(function(selectedAssets) {
         for (var i = 0; i < selectedAssets.length; i++) {
           var asset = selectedAssets[i];
+          // TODO: Deal with assets that don't have thumbnail URL
           if (asset.thumbnail_url) {
             addAsset(asset.thumbnail_url);
           }
         }
-      }, function () {
-        console.log('Modal dismissed at: ' + new Date());
+      });
+    };
+
+    /**
+     * Add an asset to the whiteboard canvas
+     *
+     * @param  {String}         url               The image URL of the asset that should be added to the whiteboard canvas
+     */
+    var addAsset = $scope.addAsset = function(url) {
+      // Switch the toolbar back to move mode
+      setMode('move');
+      // Add the asset to the center of the whiteboard canvas
+      fabric.Image.fromURL(url, function(oImg) {
+        var canvasCenter = getCanvasCenter();
+        oImg.left = canvasCenter.x;
+        oImg.top = canvasCenter.y;
+        canvas.add(oImg);
+
+        // Select the added asset
+        canvas.setActiveObject(oImg);
       });
     }
 
@@ -504,188 +633,6 @@
 
     // Get the most recent chat messages
     getChatMessages();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    var addCircle = $scope.addCircle = function() {
-          // create a rectangle object
-    var rect = new fabric.Rect({
-      left: getCanvasCenter().x,
-      top: getCanvasCenter().y,
-      fill: 'red',
-      width: 20,
-      height: 20
-    });
-
-    // "add" rectangle onto canvas
-    canvas.add(rect);
-    canvas.setActiveObject(rect);
-    }
-
-    var addAsset = $scope.addAsset = function(url) {
-      setMode('move');
-      fabric.Image.fromURL(url, function(oImg) {
-        oImg.left = getCanvasCenter().x;
-        oImg.top = getCanvasCenter().y;
-        canvas.add(oImg);
-        canvas.setActiveObject(oImg);
-      });
-    }
-
-
-    var isDraggingCanvas = false;
-    var start = {
-      'x': 0,
-      'y': 0
-    };
-    var latest = {
-      'x': 0,
-      'y': 0
-    }
-    var last = {
-      'x': 0,
-      'y': 0
-    }
-
-    canvas.on('mouse:down', function(e) {
-      if (!canvas.getActiveObject() && !canvas.isDrawingMode) {
-        isDraggingCanvas = true;
-        canvas.selection = false;
-
-        start.x = e.e.clientX;
-        start.y = e.e.clientY;
-        canvas.setCursor('grabbing');
-        canvas.renderAll();
-      }
-    });
-
-    canvas.on('mouse:up', function(e) {
-      if (isDraggingCanvas) {
-        isDraggingCanvas = false;
-        canvas.selection = true;
-
-        last = {
-          x: latest.x,
-          y: latest.y
-        };
-        canvas.setCursor('default');
-      }
-    });
-
-    canvas.on('mouse:move', function(e) {
-      if (isDraggingCanvas) {
-        var current = {
-          x: e.e.clientX,
-          y: e.e.clientY
-        };
-
-        latest.x = last.x - (current.x - start.x);
-        latest.y = last.y - (current.y - start.y);
-        canvas.absolutePan(new fabric.Point(latest.x, latest.y));
-      }
-    });
-
-    // TODO: Resize viewport when canvas is resized
-
-    //
-    //
-    //
-
-    /* angular.element(document.body).bind('click', function (e) {
-        //Find all elements with the popover attribute
-        var popups = document.querySelectorAll('*[popover]');
-        if(popups) {
-          //Go through all of them
-          for(var i=0; i<popups.length; i++) {
-            //The following is the popover DOM elemet
-            var popup = popups[i];
-            //The following is the same jQuery lite element
-            var popupElement = angular.element(popup);
-
-            var content;
-            var arrow;
-            if(popupElement.next()) {
-              //The following is the content child in the popovers first sibling
-              content = popupElement.next()[0].querySelector('.popover-content');
-              //The following is the arrow child in the popovers first sibling
-              arrow = popupElement.next()[0].querySelector('.arrow');
-            }
-            //If the following condition is met, then the click does not correspond
-            //to a click on the current popover in the loop or its content.
-            //So, we can safely remove the current popover's content and set the
-            //scope property of the popover
-            if(popup != e.target && e.target != content && e.target != arrow) {
-              if(popupElement.next().hasClass('popover')) {
-                //Remove the popover content
-                popupElement.next().remove();
-                //Set the scope to reflect this
-                popupElement.scope().tt_isOpen = false;
-              }
-            }
-          }
-        }
-      }); */
-
-/*var hidePopover = function(element) {
-    //Set the state of the popover in the scope to reflect this
-    var elementScope = angular.element($(element).siblings('.popover')).scope().$parent;
-    elementScope.isOpen = false;
-    elementScope.$apply();
-    //Remove the popover element from the DOM
-    $(element).siblings('.popover').remove();
-};
-var hidePopovers = function(e) {
-    $('*[popover]').each(function() {
-        //Only do this for all popovers other than the current one that cause this event,
-        if (!($(this).is(e.target) || $(this).has(e.target).length > 0) && $(this).siblings('.popover').length !==
-            0 && $(this).siblings('.popover').has(e.target).length === 0) {
-            hidePopover(this);
-        }
-    });
-};*/
-
-    var closePopovers = function() {
-      var popupTriggers = document.querySelectorAll('*[popover-template]');
-      var popups = document.querySelectorAll('.popover');
-      for(var i=0; i<popups.length; i++) {
-        var popup = angular.element(popups[i]);
-        var elementScope = popup.scope().$parent;
-        console.log(popup.scope().isOpen);
-        console.log(popup.scope());
-        elementScope.isOpen = false;
-        //elementScope.$apply();
-        popup.remove();
-        //popup.scope().$apply();
-        //console.log(popup.scope().isOpen);
-        //console.log(popup.scope());
-        //popup.remove();
-      }
-      //for(var i=0; i<popupTriggers.length; i++) {
-      //  var popupTrigger = angular.element(popupTriggers[i]);
-      //  console.log(popupTrigger);
-      //  console.log(popupTrigger.scope());
-      //  console.log(popupTrigger.scope().isOpen);
-      //  popupTrigger.scope().isOpen = false;
-      //}
-
-    };
 
   });
 
