@@ -569,8 +569,8 @@
         isDraggingCanvas = true;
         canvas.selection = false;
 
-        start.x = e.e.layerX;
-        start.y = e.e.layerY;
+        start.x = e.e.clientX;
+        start.y = e.e.clientY;
         canvas.setCursor('grabbing');
         canvas.renderAll();
       }
@@ -592,8 +592,8 @@
     canvas.on('mouse:move', function(e) {
       if (isDraggingCanvas) {
         var current = {
-          x: e.e.layerX,
-          y: e.e.layerY
+          x: e.e.clientX,
+          y: e.e.clientY
         };
 
         latest.x = last.x - (current.x - start.x);
