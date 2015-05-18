@@ -21,23 +21,6 @@
 
 .assetlibrary-list-search-container {
   max-width: 600px;
-  width: 100%;
-}
-
-.assetlibrary-list-search-advanced {
-  position: absolute;
-  right: 40px;
-  z-index: 10;
-}
-
-.assetlibrary-list-search-advanced,
-.assetlibrary-list-search-advanced:active,
-.assetlibrary-list-search-advanced:hover {
-  color: #333;
-}
-
-.assetlibrary-list-search-form .input-group .input-group-btn {
-  width: 20px;
 }
 
 /* UPLOAD / ADD LINK */

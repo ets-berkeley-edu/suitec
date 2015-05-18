@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, whiteboardsBoardFactory, $modal, $routeParams, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, whiteboardsBoardFactory, $modal, $rootScope, $routeParams, $scope) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $routeParams.whiteboardId;
@@ -43,6 +43,9 @@
     var getWhiteboard = function() {
       whiteboardsBoardFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {
         $scope.whiteboard = whiteboard;
+
+        // Set the title of the window to the title of the whiteboard
+        $rootScope.header = whiteboard.title;
 
         // Load the content of the whiteboard
         canvas.loadFromJSON({'objects': whiteboard.whiteboard_elements}, function() {
@@ -186,7 +189,8 @@
       }
 
       // Only notify the server if the element was added by the current user
-      if (!element.get('uid')) {
+      // and the element is not a drawing helper element
+      if (!element.get('uid') && !element.get('isHelper')) {
         // Add a unique id to the element
         element.set('uid', Math.round(Math.random() * 10000));
         socket.emit('addElement', element.toObject());
@@ -209,8 +213,10 @@
      */
     canvas.on('object:modified', function(ev) {
       var element = ev.target;
+
       // Only notify the server if the element was updated by the current user
-      if (!element.get('isSocketUpdate')) {
+      // and if the element is not a drawing helper element
+      if (!element.get('isSocketUpdate') && !element.get('isHelper')) {
         socket.emit('updateElement', element.toObject());
       }
       element.set('isSocketUpdate', null);
@@ -301,8 +307,8 @@
      */
     canvas.on('mouse:down', function(ev) {
       // Only start the whiteboard canvas infinite scrolling when no whiteboard
-      // element has been clicked and the canvas is not in draw mode
-      if (!canvas.getActiveObject() && !canvas.isDrawingMode) {
+      // element has been clicked and the canvas is not in draw or shape mode
+      if (!canvas.getActiveObject() && !canvas.isDrawingMode && $scope.mode !== 'shape') {
         // Indicate that infinite scrolling has started
         isDraggingCanvas = true;
         // Indicate that no element selections can currently be made
@@ -409,9 +415,6 @@
         setDrawMode(true);
 
       closePopovers();
-      // Shape mode has been selected
-      } else if (newMode === 'shape') {
-        addShape();
       // Text mode has been selected
       } else if (newMode === 'text') {
         addText();
@@ -449,25 +452,121 @@
 
     /* SHAPE */
 
-    /**
-     * Add a shape to the canvas
-     * TODO: Make this drawable and use selected properties
-     */
-    var addShape = $scope.addShape = function() {
-      var canvasCenter = getCanvasCenter();
-      var shape = new fabric.Rect({
-        'left': canvasCenter.x,
-        'top': canvasCenter.y,
-        'fill': 'red',
-        'width': 50,
-        'height': 50
-      });
+    // Variable that will keep track of the type of shape that will be added to the whiteboard canvas
+    var shapeType = 'Rect';
 
-      // Add the shape to the canvas
-      canvas.add(shape);
-      // Select the added shape
-      canvas.setActiveObject(shape);
-    };
+    // Variable that will keep track of the shape that is being added to the whiteboard canvas
+    var shape = null;
+
+    // Variable that will keep track of whether a shape is currently being drawn
+    var isDrawingShape = false;
+
+    // Variable that will keep track of the point at which drawing a shape started
+    var startShapePointer = null;
+
+    /**
+     * The mouse is pressed down on the whiteboard canvas
+     */
+    canvas.on('mouse:down', function(ev) {
+      // Only start drawing a shape when the canvas is in shape mode
+      if ($scope.mode === 'shape') {
+        // Indicate that drawing a shape has started
+        isDrawingShape = true;
+        // Indicate that no element selections can currently be made
+        canvas.selection = false;
+
+        // Keep track of the point where drawing the shape started
+        startShapePointer = canvas.getPointer(ev.e);
+
+        // Create the basic shape of the selected type that will
+        // be used as the drawing guide
+        shape = new fabric[shapeType]({
+          'left': startShapePointer.x,
+          'top': startShapePointer.y,
+          'originX': 'left',
+          'originY': 'top',
+          'radius': 1,
+          'width': 1,
+          'height': 1,
+          'fill': 'rgba(255, 0, 0, 0.5)'
+        });
+        // Indicate that this element is a helper element that should
+        // not be saved back to the server
+        shape.set('isHelper', true);
+        canvas.add(shape);
+      }
+    });
+
+    /**
+     * The mouse is moved on the whiteboard canvas
+     */
+    canvas.on('mouse:move', function(ev) {
+      // Only continue drawing the shape when the whiteboard canvas is in shape mode
+      if (isDrawingShape) {
+        // Get the current position of the mouse
+        var currentShapePointer = canvas.getPointer(ev.e);
+
+        // When the user has moved the cursor to the left of the original
+        // starting point, move the left of the circle to that point so
+        // negative shape drawing can be achieved
+        if(startShapePointer.x > currentShapePointer.x){
+          shape.set({'left': currentShapePointer.x});
+        }
+        // When the user has moved the cursor above the original starting
+        // point, move the left of the circle to that point so negative
+        // shape drawing can be achieved
+        if(startShapePointer.y > currentShapePointer.y){
+          shape.set({'top': currentShapePointer.y});
+        }
+
+        // Set the radius and width of the circle based on how much the cursor
+        // has moved compared to the starting point
+        if (shapeType === 'Circle') {
+          shape.set({
+            'width': Math.abs(startShapePointer.x - currentShapePointer.x),
+            'height': Math.abs(startShapePointer.x - currentShapePointer.x),
+            'radius': Math.abs(startShapePointer.x - currentShapePointer.x) / 2
+          });
+        // Set the width and height of the shape based on how much the cursor
+        // has moved compared to the starting point
+        } else {
+          shape.set({
+            'width': Math.abs(startShapePointer.x - currentShapePointer.x),
+            'height': Math.abs(startShapePointer.y - currentShapePointer.y)
+          });
+        }
+
+        canvas.renderAll();
+      }
+    });
+
+    /**
+     * The mouse is released on the whiteboard canvas
+     */
+    canvas.on('mouse:up', function() {
+      if (isDrawingShape) {
+        // Indicate that shape drawing has stopped
+        isDrawingShape = false;
+        // Indicate that element selections can be made again
+        canvas.selection = true;
+        // Switch the toolbar back to move mode
+        setMode('move');
+        // Clone the drawn shape and add the clone to the canvas.
+        // This is caused by a bug in Fabric where it initially uses
+        // the size when drawing started to position the controls. Cloning
+        // ensures that the controls are added in the correct position
+        var finalShape = fabric.util.object.clone(shape);
+        // Indicate that this is no longer a drawing helper shape and can
+        // therefore be saved back to the server
+        finalShape.set('isHelper', false);
+        // Remove the opacity from the shape
+        finalShape.setFill('rgba(255, 0, 0, 1)');
+        canvas.add(finalShape);
+        canvas.remove(shape);
+        // Select the added shape
+        canvas.setActiveObject(finalShape);
+      }
+    });
 
     /* ERASE */
 

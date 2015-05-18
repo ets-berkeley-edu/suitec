@@ -27,6 +27,13 @@
 
     // TODO
     var addSelectedAssets = $scope.addSelectedAssets = function() {
+      $modalInstance.close(getSelectedAssets());
+    };
+
+    /**
+     * TODO
+     */
+    var getSelectedAssets = $scope.getSelectedAssets = function() {
       var selectedAssets = [];
       for (var i = 0; i < $scope.assets.length; i++) {
         var asset = $scope.assets[i];
@@ -34,7 +41,21 @@
           selectedAssets.push($scope.assets[i]);
         }
       }
-      $modalInstance.close(selectedAssets);
+      return selectedAssets;
+    };
+
+    /**
+     * TODO
+     */
+    var selectAsset = $scope.selectAsset = function(asset) {
+      asset.selected = !asset.selected;
+    };
+
+    /**
+     * TODO
+     */
+    var closeModal = $scope.closeModal = function() {
+      $modalInstance.close();
     };
 
     /**
