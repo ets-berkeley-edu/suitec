@@ -43,7 +43,7 @@
     };
 
     return {
-      createFile: createFile
+      'createFile': createFile
     };
 
   });

@@ -17,9 +17,7 @@
 
   'use strict';
 
-  var app = angular.module('collabosphere');
-
-  app.controller('AssetLibraryUploadFileController', function(assetLibraryUploadFileFactory, $location, $scope) {
+  var app = angular.module('collabosphere').controller('AssetLibraryUploadFileController', function(assetLibraryUploadFileFactory, $location, $scope) {
 
     // Variable that will keep track of the new file to be uploaded
     $scope.file = {};

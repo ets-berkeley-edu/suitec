@@ -20,12 +20,12 @@
   // Initialize the Collabosphere module
   angular.module('collabosphere', [
     'ngAria',
+    'ngFileUpload',
     'ngMessages',
     'ngRoute',
     'ngSanitize',
     'infinite-scroll',
-    'monospaced.elastic',
-    'ngFileUpload'
+    'monospaced.elastic'
   ]);
 
 })(window.angular);
