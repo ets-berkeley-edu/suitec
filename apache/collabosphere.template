@@ -14,14 +14,22 @@
     CustomLog <%= logDirectory %>/collabosphere_access_log common
     CustomLog <%= logDirectory %>/collabosphere-combined_log combined
 
+    RewriteEngine on
+    RewriteCond %{QUERY_STRING} transport=polling
+    RewriteRule /(.*)$ http://localhost:2000/$1 [P]
+
+    # Proxy websocket connections
+    ProxyPass         /socket.io/   ws://localhost:<%= port %>/socket.io/
+    ProxyPassReverse  /socket.io/   ws://localhost:<%= port %>/socket.io/
+
     # Proxy API & LTI calls to the application server
-    ProxyPass /api http://localhost:<%= port %>/api retry=0
-    ProxyPass /lti http://localhost:<%= port %>/lti retry=0
+    ProxyPass         /api          http://localhost:<%= port %>/api retry=0
+    ProxyPass         /lti          http://localhost:<%= port %>/lti retry=0
     ProxyPreserveHost On
 
     RewriteEngine On
     RewriteRule ^/assetlibrary         <%= documentRoot %>/index.html
     RewriteRule ^/engagementindex      <%= documentRoot %>/index.html
-    RewriteRule ^/whiteboard           <%= documentRoot %>/index.html
+    RewriteRule ^/whiteboards          <%= documentRoot %>/index.html
 
 </VirtualHost>

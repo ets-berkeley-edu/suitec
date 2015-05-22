@@ -77,7 +77,7 @@
      * on the canvas
      */
     fabric.Object.prototype.toObject = (function(toObject) {
-      return function () {
+      return function() {
         return fabric.util.object.extend(toObject.call(this), {
           'uid': this.uid,
           'index': canvas.getObjects().indexOf(this)
@@ -91,7 +91,7 @@
      */
     var initializeCanvas = function() {
       // Ensure that the horizontal and vertical origins of objects are set to center
-      fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center'
+      fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
       // Initialize the whiteboard Fabric.js instance
       canvas = new fabric.Canvas('whiteboards-board-board');
       // Set the width and height of the canvas
@@ -138,7 +138,7 @@
       return {
         'x': centerX,
         'y': centerY
-      }
+      };
     };
 
     /**
@@ -381,9 +381,8 @@
       var currentZoom = $scope.zoomLevel;
       // Modify the zoom level
       $scope.zoomLevel = currentZoom + zoomDelta;
-      //canvas.zoomToPoint(new fabric.Point(getCanvasCenter().x, getCanvasCenter().y), $scope.zoomLevel);
       // TODO: Recalculate the pan point and zoom to center
-      // last = ;
+      // canvas.zoomToPoint(new fabric.Point(getCanvasCenter().x, getCanvasCenter().y), $scope.zoomLevel);
       canvas.setZoom($scope.zoomLevel);
       canvas.absolutePan(currentCanvasPan);
     };
@@ -427,8 +426,8 @@
       // Draw mode has been selected
       } else if (newMode === 'draw') {
         setDrawMode(true);
-
-      closePopovers();
+        // TODO: Always close open popovers when using toolbar
+        closePopovers();
       // Text mode has been selected
       } else if (newMode === 'text') {
         addText();
@@ -444,7 +443,7 @@
     var closePopovers = function() {
       // Get all popovers
       var popups = document.querySelectorAll('.popover');
-      for (var i=0; i<popups.length; i++) {
+      for (var i = 0; i < popups.length; i++) {
         // Close each popover
         var popup = angular.element(popups[i]);
         var popupScope = popup.scope().$parent;
@@ -461,7 +460,7 @@
      * @param  {Boolean}        drawMode          Whether drawing mode for the whiteboard canvas should be enabled
      */
     var setDrawMode = $scope.setDrawMode = function(drawMode) {
-      canvas.isDrawingMode = drawMode
+      canvas.isDrawingMode = drawMode;
     };
 
     /* SHAPE */
@@ -523,13 +522,13 @@
         // When the user has moved the cursor to the left of the original
         // starting point, move the left of the circle to that point so
         // negative shape drawing can be achieved
-        if(startShapePointer.x > currentShapePointer.x){
+        if (startShapePointer.x > currentShapePointer.x) {
           shape.set({'left': currentShapePointer.x});
         }
         // When the user has moved the cursor above the original starting
         // point, move the left of the circle to that point so negative
         // shape drawing can be achieved
-        if(startShapePointer.y > currentShapePointer.y){
+        if (startShapePointer.y > currentShapePointer.y) {
           shape.set({'top': currentShapePointer.y});
         }
 
@@ -596,7 +595,7 @@
         element.lockMovementX = lock;
         element.lockMovementY = lock;
       }
-    }
+    };
 
     /**
      * Delete the selected whiteboard item when the whiteboard
@@ -619,7 +618,7 @@
       // Start off with an empty text field
       var text = new fabric.IText('', {
         left: canvasCenter.x,
-        top: canvasCenter.y ,
+        top: canvasCenter.y
       });
       canvas.add(text);
 
@@ -675,16 +674,16 @@
       // Switch the toolbar back to move mode
       setMode('move');
       // Add the asset to the center of the whiteboard canvas
-      fabric.Image.fromURL(url, function(oImg) {
+      fabric.Image.fromURL(url, function(element) {
         var canvasCenter = getCanvasCenter();
-        oImg.left = canvasCenter.x;
-        oImg.top = canvasCenter.y;
-        canvas.add(oImg);
+        element.left = canvasCenter.x;
+        element.top = canvasCenter.y;
+        canvas.add(element);
 
         // Select the added asset
-        canvas.setActiveObject(oImg);
+        canvas.setActiveObject(element);
       });
-    }
+    };
 
     /* SIDEBAR */
 
@@ -740,7 +739,7 @@
      * When a new chat message is received via the websocket, add it to
      * the list of chat messages
      */
-    socket.on('chat', function(chatMessage){
+    socket.on('chat', function(chatMessage) {
       $scope.chatMessages.push(chatMessage);
     });
 

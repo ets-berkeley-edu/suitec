@@ -34,7 +34,8 @@
     var getCurrentAsset = function() {
       assetLibraryItemFactory.getAsset(assetId).success(function(asset) {
 
-        // Build the comment tree. First, the top level comments
+        // Build a comment tree that will hold a flat list of comments where each
+        // child comment should come after their parent. First, the top level comments
         // are extracted
         var comments = [];
         for (var i = 0; i < asset.comments.length; i++) {
@@ -63,8 +64,7 @@
     };
 
     /**
-     * Check for each comment whether they have any replies. In that case,
-     * the comment can't be deleted
+     * Flag comments that have replies. These comments can not be deleted
      *
      * @param  {Comment}      comments        The comments that should be checked for replies
      */
@@ -109,9 +109,7 @@
      * @param  {Comment}      comment         The comment for which the reply form should be shown or hidden
      */
     var toggleReplyComment = $scope.toggleReplyComment = function(comment) {
-      // When the reply form is showing, it is hidden.
-      // Otherwise, the reply form is shown
-      comment.replying = comment.replying ? false : true;
+      comment.replying = !comment.replying;
     };
 
     /**

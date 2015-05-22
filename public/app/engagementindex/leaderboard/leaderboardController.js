@@ -41,6 +41,7 @@
           for (var i = 0; i < $scope.users.length; i++) {
             if ($scope.users[i].id === $scope.me.id) {
               $scope.me.rank = $scope.users[i].rank;
+              break;
             }
           }
 
