@@ -22,6 +22,8 @@
     "fontawesome": "latest",
     "highcharts-release": "latest",
     "lodash": "latest",
+    "ng-file-upload": "latest",
+    "ng-file-upload-shim": "latest",
     "ngInfiniteScroll": "latest",
     "remarkable-bootstrap-notify": "latest",
     "socket.io-client": "latest"

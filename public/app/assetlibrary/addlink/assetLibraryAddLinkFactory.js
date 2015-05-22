@@ -35,7 +35,7 @@
     };
 
     return {
-      createLink: createLink
+      'createLink': createLink
     };
 
   });
