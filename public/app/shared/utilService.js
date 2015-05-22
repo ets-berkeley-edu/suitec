@@ -27,6 +27,21 @@
     var toolUrl = $routeParams.tool_url;
 
     /**
+     * Get the parameters that were passed in through the iFrame launch URL
+     *
+     * @return {Object}                       The parameters that were passed in through the iFrame launch URL
+     */
+    var getLaunchParams = function() {
+      var launchParams = {
+        'apiDomain': apiDomain,
+        'courseId': courseId,
+        'toolUrl': toolUrl
+      };
+      console.log(launchParams);
+      return launchParams;
+    };
+
+    /**
      * Construct the full URL for a REST API request. All REST API requests should
      * be of the form `/api/<apiDomain>/<courseId>/<restAPI>`
      *
@@ -168,6 +183,7 @@
     };
 
     return {
+      'getLaunchParams': getLaunchParams,
       'getApiUrl': getApiUrl,
       'getToolUrl': getToolUrl,
       'getScrollPosition': getScrollPosition,

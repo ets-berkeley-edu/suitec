@@ -14,9 +14,11 @@
  */
 
 .assetlibrary-iconbar .btn {
+  margin-top: -2px;
   padding: 0;
 }
 
+.assetlibrary-iconbar .btn.active,
 .assetlibrary-iconbar .btn:hover {
   color: #4172B4;
 }
@@ -24,16 +26,6 @@
 .assetlibrary-iconbar i {
   margin-left: 10px;
   margin-right: 1px;
-}
-
-/* Move the like icon up to ensure that it aligns vertically */
-.assetlibrary-iconbar i.fa-thumbs-up {
-  position: relative;
-  top: -2px;
-}
-
-/* Move the comment icon up to ensure that it aligns vertically */
-.assetlibrary-iconbar i.fa-comment {
   position: relative;
   top: -1px;
 }

@@ -1,0 +1,14 @@
+<div class="leaderboard-share-container">
+  <h3>Share my score</h3>
+  <form data-ng-submit="saveSharePoints()">
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" id="engagementindex-share" data-ng-model="me.new_share_points" data-ng-change="changeSharePoints()">
+        Yes, I want to share my score on the Engagement Index
+      </label>
+    </div>
+    <div class="form-group" data-ng-if="me.share_points === null && !me.is_admin">
+      <button type="submit" class="btn btn-primary">Continue</button>
+    </div>
+  </form>
+</div>

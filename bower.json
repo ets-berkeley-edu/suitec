@@ -10,14 +10,21 @@
     "angular": "latest",
     "angular-aria": "latest",
     "angular-elastic": "latest",
+    "angular-fabric": "latest",
     "angular-messages":"latest",
     "angular-route": "latest",
     "angular-sanitize": "latest",
+    "angular-scroll-glue": "latest",
+    "angular-socket-io": "latest",
+    "angular-ui-bootstrap-bower": "latest",
+    "angular-ui-utils": "latest",
     "bootstrap": "latest",
     "fontawesome": "latest",
+    "highcharts-release": "latest",
     "lodash": "latest",
     "ngInfiniteScroll": "latest",
-    "remarkable-bootstrap-notify": "latest"
+    "remarkable-bootstrap-notify": "latest",
+    "socket.io-client": "latest"
   }
 }
 

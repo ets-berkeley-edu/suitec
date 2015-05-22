@@ -1,0 +1,14 @@
+<div class="clearfix leaderboard-userinfo-container">
+  <div class="leaderboard-userinfo-badge" data-ng-if="me.share_points">
+    <div class="leaderboard-userinfo-badge-title">My Rank</div>
+    <span class="leaderboard-userinfo-badge-value" data-ng-bind="me.rank"></span>
+  </div>
+  <div class="leaderboard-userinfo-badge">
+    <div class="leaderboard-userinfo-badge-title">My Points</div>
+    <span class="leaderboard-userinfo-badge-value" data-ng-bind="me.points"></span>
+  </div>
+  <div class="leaderboard-userinfo-badge leaderboard-userinfo-boxplot-container" data-ng-if="me.share_points">
+    <div class="leaderboard-userinfo-badge-title">How do I compare</div>
+    <div id="leaderboard-userinfo-boxplot" class="leaderboard-userinfo-boxplot"></div>
+  </div>
+</div>
