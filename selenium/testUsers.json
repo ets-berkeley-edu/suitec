@@ -1,0 +1,28 @@
+{
+    "users": [
+        {
+            "id": "Teacher 1",
+            "uid": 123456,
+            "username": "username-foo",
+            "fullName": "Test Teacher",
+            "email": "teacher@berkeley.edu",
+            "role": "Teacher"
+        },
+        {
+            "id": "Designer 1",
+            "uid": 654321,
+            "username": "username-foo",
+            "fullName": "Test Designer",
+            "email": "designer@berkeley.edu",
+            "role": "Designer"
+        },
+        {
+            "id": "Student 1",
+            "uid": 321456,
+            "username": "username-foo",
+            "fullName": "Test Student",
+            "email": "student@berkeley.edu",
+            "role": "Student"
+        }
+    ]
+}

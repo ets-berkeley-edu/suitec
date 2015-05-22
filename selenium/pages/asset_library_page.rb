@@ -1,3 +1,16 @@
+# Copyright 2015 UC Berkeley (UCB) Licensed under the
+# Educational Community License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may
+# obtain a copy of the License at
+#
+#     http://opensource.org/licenses/ECL-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an "AS IS"
+# BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
 require_relative '../spec/spec_helper'
 
 class AssetLibraryPage
@@ -37,33 +50,50 @@ class AssetLibraryPage
   elements(:gallery_asset_title, :h3, :xpath => '//li[@data-ng-repeat="asset in assets"]//h3')
   elements(:gallery_asset_owner_name, :element, :xpath => '//li[@data-ng-repeat="asset in assets"]//small')
 
+  # Loads the asset library and puts browser focus in the iframe containing the tool
+  # @param driver [Selenium::WebDriver]
+  # @param url [String]
   def load_page(driver, url)
     navigate_to url
     wait_until(timeout=WebDriverUtils.page_load_wait) { driver.find_element(:id, 'tool_content') }
     driver.switch_to.frame driver.find_element(:id, 'tool_content')
   end
 
+  # Waits for an asset with a specified title to become visible in the gallery view
+  # @param driver [Selenium::WebDriver]
+  # @param asset_title [String]
   def wait_for_asset_in_gallery(driver, asset_title)
     wait_until(timeout=WebDriverUtils.page_load_wait) { driver.find_element(:xpath, "//li//h3[text()='#{asset_title}']").displayed? }
   end
 
+  # Waits for and then clicks the asset gallery item at a specified position in the list of items
+  # @param index_position [Integer]
   def click_asset_link(index_position)
     logger.info 'Clicking gallery thumbnail'
     WebDriverUtils.wait_for_element_and_click gallery_asset_link_elements[index_position]
   end
 
+  # Waits for an asset with a specified title to become visible in the detail view
+  # @param driver [Selenium::WebDriver]
+  # @param asset_title [String]
   def wait_for_asset_detail(driver, asset_title)
     wait_until(timeout=WebDriverUtils.page_update_wait) { driver.find_element(:xpath, "//h2[text()='#{asset_title}']").displayed? }
   end
 
   # ADD SITE
 
+  # Waits for and then clicks the link to add a new URL asset
   def click_add_site_link
     logger.info 'Clicking Add Site link'
     WebDriverUtils.wait_for_page_and_click add_site_link_element
     add_url_heading_element.when_visible timeout=WebDriverUtils.page_update_wait
   end
 
+  # Enters the metadata associated with a new URL asset
+  # @param url [String]
+  # @param title [String]
+  # @param category [String]
+  # @param description [String]
   def enter_url_metadata(url, title, category, description)
     logger.info 'Entering URL details'
     WebDriverUtils.wait_for_element_and_click url_input_element
@@ -75,11 +105,13 @@ class AssetLibraryPage
     self.url_description = description
   end
 
+  # Waits for and then clicks the Add button for a new URL asset
   def click_add_url_button
     logger.info 'Confirming new URL'
     WebDriverUtils.wait_for_element_and_click add_url_button_element
   end
 
+  # Waits for and then clicks the Cancel link for a new URL asset
   def click_cancel_url_button
     logger.info 'Canceling new URL'
     WebDriverUtils.wait_for_element_and_click cancel_url_link_element
@@ -87,12 +119,15 @@ class AssetLibraryPage
 
   # MANAGE CATEGORIES
 
+  # Waits for and then clicks the Manage Categories link
   def click_manage_categories_link
     logger.info 'Clicking Manage Categories link'
     WebDriverUtils.wait_for_page_and_click manage_categories_link_element
     manage_categories_heading_element.when_visible WebDriverUtils.page_update_wait
   end
 
+  # Enters the title of a new category and clicks the Add button
+  # @param title [String]
   def add_category(title)
     logger.info "Adding category called #{title}"
     WebDriverUtils.wait_for_element_and_click category_input_element
@@ -100,6 +135,9 @@ class AssetLibraryPage
     WebDriverUtils.wait_for_element_and_click add_category_button_element
   end
 
+  # Deletes the delete button for a category at a specified position in the list, then accepts the alert
+  # @param driver [Selenium::WebDriver]
+  # @param index_position [Integer]
   def delete_category(driver, index_position)
     logger.info 'Deleting category'
     wait_until(timeout=WebDriverUtils.page_update_wait) { delete_category_button_elements[index_position].exists? }

@@ -1,3 +1,16 @@
+# Copyright 2015 UC Berkeley (UCB) Licensed under the
+# Educational Community License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may
+# obtain a copy of the License at
+#
+#     http://opensource.org/licenses/ECL-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an "AS IS"
+# BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
 require_relative 'spec_helper'
 
 describe 'Adding Asset Library URLs' do
@@ -9,17 +22,17 @@ describe 'Adding Asset Library URLs' do
   before(:all) { @driver = WebDriverUtils.driver }
 
   before(:context) do
-    @canvas = CanvasPage.new @driver
-    @canvas.load_homepage
-    @cal_net= CalNetPage.new @driver
-    @cal_net.log_in(WebDriverUtils.admin_username, WebDriverUtils.admin_password)
+    canvas = CanvasPage.new @driver
+    canvas.load_homepage
+    cal_net= CalNetPage.new @driver
+    cal_net.log_in(WebDriverUtils.admin_username, WebDriverUtils.admin_password)
     @course_id = @canvas.create_complete_test_course(test_id, test_users)
-    @canvas.log_out
-    @cal_net.logout_success_message_element.when_visible WebDriverUtils.page_load_wait
-    @canvas.load_homepage
-    @cal_net.log_in(test_teacher['username'], WebDriverUtils.test_user_password)
-    @canvas.load_course_site @course_id
-    @canvas.accept_login_messages @course_id
+    canvas.log_out
+    cal_net.logout_success_message_element.when_visible WebDriverUtils.page_load_wait
+    canvas.load_homepage
+    cal_net.log_in(test_teacher['username'], WebDriverUtils.test_user_password)
+    canvas.load_course_site @course_id
+    canvas.accept_login_messages @course_id
     @asset_library = AssetLibraryPage.new @driver
     @asset_library_url = @canvas.click_asset_library_link
     @asset_library.load_page(@driver, @asset_library_url)
@@ -106,10 +119,6 @@ describe 'Adding Asset Library URLs' do
 
   it 'offers only non-deleted categories' do
     expect(@asset_library.url_category_options).to eql(['Which assignment or topic is this related to', 'Category 1'])
-  end
-
-  it 'limits a description to X characters' do
-    # TODO: verify max character validation if max is enforced
   end
 
   it 'allows the user to cancel adding a URL and return to the asset library' do
