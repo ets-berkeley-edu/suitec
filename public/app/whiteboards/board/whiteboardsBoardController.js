@@ -47,24 +47,25 @@
         // Set the title of the window to the title of the whiteboard
         $rootScope.header = whiteboard.title;
 
-        // Load the content of the whiteboard
-        canvas.loadFromJSON({'objects': whiteboard.whiteboard_elements}, function() {
-          // Set the correct index for all items
-          var elements = canvas.getObjects();
-          for (var i = 0; i < elements.length; i++) {
-            elements[i].moveTo(elements[i].get('index'));
-          }
-
-          canvas.renderAll();
-        });
+        // Restore the layout of the whiteboard canvas
+        for (var i = 0; i < whiteboard.whiteboard_elements.length; i++) {
+          var element = whiteboard.whiteboard_elements[i];
+          deserializeElement(element, function(element) {
+            canvas.add(element);
+            element.moveTo(element.get('index'));
+            canvas.renderAll();
+          });
+        }
       });
     };
 
     /**
      * When a user has joined or left the whiteboard, update the list of online users
      */
-    socket.on('online', function(onlineUsers){
-      $scope.whiteboard.online = onlineUsers;
+    socket.on('online', function(onlineUsers) {
+      if ($scope.whiteboard) {
+        $scope.whiteboard.online = onlineUsers;
+      }
     });
 
     /* CANVAS */
@@ -170,7 +171,18 @@
     var deserializeElement = function(element, callback) {
       // Extract the type from the serialized element
       var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
-      if (fabric[type].async) {
+      if (element.type === 'image') {
+        // In order to avoid cross-domain errors when loading images from different domains,
+        // the source of the element needs to be temporarily cleared and set manually once
+        // the element has been created
+        element.realSrc = element.src;
+        element.src = '';
+        fabric[type].fromObject(element, function(element) {
+          element.setSrc(element.get('realSrc'), function() {
+            return callback(element);
+          });
+        });
+      } else if (fabric[type].async) {
         fabric[type].fromObject(element, callback);
       } else {
         return callback(fabric[type].fromObject(element));
@@ -205,6 +217,7 @@
         // Add the element to the whiteboard canvas and move it to its appropriate index
         canvas.add(element);
         element.moveTo(element.get('index'));
+        canvas.renderAll();
       });
     });
 
@@ -236,6 +249,7 @@
           canvas.remove(originalElement);
           canvas.add(updatedElement);
           updatedElement.moveTo(updatedElement.get('index'));
+          canvas.renderAll();
         });
       }
     });
