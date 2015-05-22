@@ -26,12 +26,8 @@ h2 {
   font-size: 23px;
   font-weight: 400;
   line-height: 1.3;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   margin-top: 25px;
-}
-
-h2 + form {
-  margin-top: 10px;
 }
 
 h3 {
@@ -118,103 +114,6 @@ select option[value=''] {
   margin-left: 3px;
 }
 
-.popover-content {
-  padding: 5px;
-}
-
-/* TILE LIST */
-
-.col-list-container {
-  margin: 10px -15px 0 -6px;
-}
-
-.col-list-container ul {
-  display: table;
-  padding: 0;
-  width: 100%;
-}
-
-.col-list-container ul li {
-  margin-left: 0;
-  margin-top: 10px;
-  padding-left: 0;
-  padding-right: 10px;
-}
-
-.col-list-item-container {
-  border: 1px solid transparent;
-  border-radius: 4px;
-  padding: 6px;
-}
-
-.col-list-item-tile {
-  border: 1px solid #C2C8D0;
-  border-radius: 4px;
-  overflow: hidden;
-  padding-bottom: 100%;
-  position: relative;
-}
-
-.col-list-item-container:not(.col-list-add-tile):hover {
-  background-color: #F7F7F7;
-  border-color: #E0E3E8;
-}
-
-.col-list-item-tile img {
-  min-height: 100%;
-  min-width: 100%;
-  position: absolute;
-}
-
-.col-list-item-thumbnail-default {
-  background-color: #E8E8E8;
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-.col-list-item-thumbnail-default i {
-  color: #ADABAA;
-  font-size: 65px;
-  margin-top: -50px;
-  padding-top: 50%;
-}
-
-.col-list-item-metadata {
-  background-color: #333;
-  background-color: rgba(51, 51, 51, 0.9);
-  bottom: 0;
-  color: #FFF;
-  left: 0;
-  padding: 12px;
-  position: absolute;
-  right: 0;
-}
-
-.col-list-item-metadata h3 {
-  font-size: 14px;
-  font-weight: 400;
-  margin-bottom: 5px;
-  margin-top: 0;
-  line-height: 1.3;
-}
-
-.col-list-item-metadata small {
-  font-size: 13px;
-}
-
-.col-list-item-actions {
-  font-size: 13px;
-  padding: 12px 10px 0;
-}
-
-.col-list-item-actions,
-.col-list-item-actions .btn {
-  color: #ADABAA;
-}
-
 /* UTILITIES */
 
 .col-pane {
@@ -248,15 +147,4 @@ select option[value=''] {
   display: block;
   height: 50px;
   width: 50px;
-}
-
-.col-actions button {
-  color: #ADABAA;
-  margin-left: 20px;
-  padding: 0;
-}
-
-.col-actions button:focus,
-.col-actions button:hover {
-  color: #282B2D;
 }

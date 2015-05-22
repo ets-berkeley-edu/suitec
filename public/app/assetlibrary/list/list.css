@@ -21,6 +21,56 @@
 
 .assetlibrary-list-search-container {
   max-width: 600px;
+  width: 100%;
+}
+
+.assetlibrary-list-search-advanced {
+  position: absolute;
+  right: 40px;
+  z-index: 10;
+}
+
+.assetlibrary-list-search-advanced,
+.assetlibrary-list-search-advanced:active,
+.assetlibrary-list-search-advanced:hover {
+  color: #333;
+}
+
+.assetlibrary-list-search-form .input-group .input-group-btn {
+  width: 20px;
+}
+
+/* LIST */
+
+.assetlibrary-list-container {
+  margin: 10px -15px 0 -6px;
+}
+
+.assetlibrary-list-container ul {
+  display: table;
+  padding: 0;
+  width: 100%;
+}
+
+.assetlibrary-list-container ul li {
+  margin-left: 0;
+  margin-top: 10px;
+  padding-left: 0;
+  padding-right: 10px;
+}
+
+.assetlibrary-list-item-container {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 6px;
+}
+
+.assetlibrary-list-item-tile {
+  border: 1px solid #C2C8D0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 100%;
 }
 
 /* UPLOAD / ADD LINK */
@@ -62,4 +112,66 @@
 
 .assetlibrary-list-item-add-action {
   height: 40px;
+}
+
+/* LIST ITEM */
+
+.assetlibrary-list-item-container:not(.assetlibrary-list-add-tile):hover {
+  background-color: #F7F7F7;
+  border-color: #E0E3E8;
+}
+
+.assetlibrary-list-item-tile img {
+  min-height: 100%;
+  min-width: 100%;
+  position: absolute;
+}
+
+.assetlibrary-list-item-thumbnail-default {
+  background-color: #E8E8E8;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.assetlibrary-list-item-thumbnail-default i {
+  color: #ADABAA;
+  font-size: 65px;
+  margin-top: -50px;
+  padding-top: 50%;
+}
+
+.assetlibrary-list-item-metadata {
+  background-color: #333;
+  background-color: rgba(51, 51, 51, 0.9);
+  bottom: 0;
+  color: #FFF;
+  left: 0;
+  padding: 12px;
+  position: absolute;
+  right: 0;
+}
+
+.assetlibrary-list-item-metadata h3 {
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 5px;
+  margin-top: 0;
+  line-height: 1.3;
+}
+
+.assetlibrary-list-item-metadata small {
+  font-size: 13px;
+}
+
+.assetlibrary-list-item-actions {
+  font-size: 13px;
+  padding: 12px 10px 0;
+}
+
+.assetlibrary-list-item-actions,
+.assetlibrary-list-item-actions .btn {
+  color: #ADABAA;
 }

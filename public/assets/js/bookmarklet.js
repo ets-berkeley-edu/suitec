@@ -24,9 +24,6 @@
   // user and the user id
   var collabosphere = window.parent.collabosphere;
 
-  // The cached available categories in the course
-  var categories = null;
-
   /* MODAL */
 
   /**
@@ -145,21 +142,6 @@
     }
   };
 
-  /* CATEGORIES */
-
-  /**
-   * Get the available categories in the course and cache them
-   */
-  var getCategories = function() {
-    $.ajax({
-      'url': getApiUrl('/categories'),
-      'headers': getBookmarkletTokenHeaders(),
-      'success': function(data) {
-        categories = data;
-      }
-    });
-  };
-
   /* ADD BOOKMARK */
 
   /**
@@ -179,9 +161,6 @@
     $('#collabosphere-bookmark-title').val(title);
     $('#collabosphere-bookmark-description').val(description);
 
-    // Render the list of available categories
-    renderTemplate('collabosphere-categories-template', {'categories': categories}, $('#collabosphere-bookmark-category'));
-
     // Show the appropriate modal pane
     showPane('bookmark');
   };
@@ -192,10 +171,9 @@
   var addPageBookmark = function() {
     // Extract the title and description from the metadata form
     var asset = {
-      'url': window.parent.location.toString(),
-      'title': $('#collabosphere-bookmark-title').val(),
-      'categories': $('#collabosphere-bookmark-category').val(),
-      'description': $('#collabosphere-bookmark-description').val()
+      url: window.parent.location.toString(),
+      title: $('#collabosphere-bookmark-title').val(),
+      description: $('#collabosphere-bookmark-description').val()
     };
 
     addAsset(asset, function(asset) {
@@ -350,9 +328,6 @@
     // Render the selected items in a list
     renderTemplate('collabosphere-items-metadata-template', {'selectedItems': selectedItems}, $('#collabosphere-items-metadata-container'));
 
-    // Add the categories to each of the rendered items
-    renderTemplate('collabosphere-categories-template', {'categories': categories}, $('.collabosphere-item-category'));
-
     // Show the appropriate modal pane
     showPane('items-metadata');
   };
@@ -381,7 +356,6 @@
       var $parent = $('#collabosphere-items-metadata-container li:eq(' + index + ')');
       selectedItem.source = window.parent.location.toString();
       selectedItem.title = $('#collabosphere-item-title', $parent).val();
-      selectedItem.categories = $('#collabosphere-item-category', $parent).val();
       selectedItem.description = $('#collabosphere-item-description', $parent).val();
 
       addAsset(selectedItem, finishAddPageItems);
@@ -448,29 +422,12 @@
       'url': getApiUrl('/assets'),
       'type': 'POST',
       'data': asset,
-      'headers': getBookmarkletTokenHeaders(),
+      'headers': {
+        'x-collabosphere-user': collabosphere.user_id,
+        'x-collabosphere-token': collabosphere.bookmarklet_token
+      },
       'success': callback
     });
-  };
-
-  /**
-   * Get the headers required to authenticate a request using the user's bookmarklet token
-   *
-   * @return {Object}                       The request headers that should be used for bookmarklet token authentication
-   */
-  var getBookmarkletTokenHeaders = function() {
-    return {
-      'x-collabosphere-user': collabosphere.user_id,
-      'x-collabosphere-token': collabosphere.bookmarklet_token
-    };
-  };
-
-  /**
-   *
-   */
-  var setSelectStyle = function() {
-    var $select = $(this);
-    $select.attr('data-value', $select.val());
   };
 
   /**
@@ -484,7 +441,6 @@
     $(document).on('click', '#collabosphere-items-next', renderPageItemsMetadata);
     $(document).on('click', '#collabosphere-items-metadata-back', renderPageItems);
     $(document).on('click', '#collabosphere-items-add', addPageItems);
-    $(document).on('change', 'select', setSelectStyle);
     // Hide the iFrame in which the Bookmarklet is loaded when the modal dialog is closed
     $(document).on('hidden.bs.modal', '#collabosphere-modal', hideBookmarkletIFrame);
     // Retrigger the modal dialog when the Bookmarklet is clicked for the second time
@@ -493,6 +449,5 @@
 
   addBinding();
   setUpModal();
-  getCategories();
 
 })();

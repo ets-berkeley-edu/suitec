@@ -17,13 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryCategoriesFactory, assetLibraryAddLinkFactory, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryAddLinkFactory, $location, $scope) {
 
     // Variable that will keep track of the new link to be created
     $scope.link = {};
-
-    // Variable that will keep track of the categories in the current course
-    $scope.categories = null;
 
     /**
      * Create a new link asset
@@ -33,17 +30,6 @@
         $location.path('/assetlibrary');
       });
     };
-
-    /**
-     * Get the categories for the current course
-     */
-    var getCategories = function() {
-      assetLibraryCategoriesFactory.getCategories().success(function(categories) {
-        $scope.categories = categories;
-      });
-    };
-
-    getCategories();
 
   });
 

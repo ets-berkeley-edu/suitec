@@ -23,14 +23,8 @@
     'ngMessages',
     'ngRoute',
     'ngSanitize',
-    'common.fabric',
-    'common.fabric.utilities',
-    'common.fabric.constants',
     'infinite-scroll',
-    'luegg.directives',
-    'monospaced.elastic',
-    'ui.bootstrap',
-    'ui.utils'
+    'monospaced.elastic'
   ]);
 
 })(window.angular);
