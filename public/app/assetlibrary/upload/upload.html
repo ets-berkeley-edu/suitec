@@ -1,1 +1,55 @@
-<h1>Upload a file</h1>
+<div data-ng-controller="AssetLibraryUploadFileController">
+
+  <h2>Upload a file</h2>
+
+  <form name="assetlibraryUploadFileForm" class="form-horizontal assetlibrary-uploadfile-form" data-ng-submit="assetlibraryUploadFileForm.$valid && createFile()" novalidate>
+    <!-- FILE -->
+    <div class="form-group" data-ng-class="{'has-error': assetlibraryUploadFileForm.$submitted && assetlibraryUploadFileForm.assetlibraryUploadFileFile.$invalid}">
+      <label for="assetlibrary-uploadfile-file" class="col-sm-2 control-label">File</label>
+      <div class="col-sm-10">
+        <input type="file" id="assetlibrary-uploadfile-file" name="assetlibraryUploadFileFile" class="form-control" placeholder="E.g. http://www.berkeley.edu" data-ng-model="file.file" ngf-select>
+        <div class="help-block" data-ng-messages="assetlibraryUploadFileForm.assetlibraryUploadFileFile.$error">
+          <div data-ng-message="required">Please enter a file</div>
+          <div data-ng-message="file">Please enter a valid file</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="form-group" data-ng-class="{'has-error': assetlibraryUploadFileForm.$submitted && assetlibraryUploadFileForm.assetlibraryUploadFileTitle.$invalid}">
+      <label for="assetlibrary-uploadfile-title" class="col-sm-2 control-label">Title</label>
+      <div class="col-sm-10">
+        <input type="text" id="assetlibrary-uploadfile-title" name="assetlibraryUploadFileTitle" class="form-control" placeholder="Enter a title" data-ng-model="file.title" required>
+        <div class="help-block" data-ng-messages="assetlibraryUploadFileForm.assetlibraryUploadFileTitle.$error">
+          <div data-ng-message="required">Please enter a title</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY -->
+    <div class="form-group">
+      <label for="assetlibrary-uploadfile-category" class="col-sm-2 control-label">Category</label>
+      <div class="col-sm-10">
+        <select id="assetlibrary-uploadfile-category" class="form-control" data-value="{{file.category}}" data-ng-model="file.category">
+          <option value="" selected>Which assignment or topic is this related to</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="form-group">
+      <label for="assetlibrary-uploadfile-description" class="col-sm-2 control-label">Description</label>
+      <div class="col-sm-10">
+        <textarea id="assetlibrary-uploadfile-description" class="form-control" placeholder="Add some more context to your file. You can use plain text or #keywords" rows="3" data-ng-model="file.description"></textarea>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="form-group text-right">
+      <div class="col-sm-offset-2 col-sm-10">
+        <a data-ng-href="/assetlibrary" class="btn btn-default">Cancel</a>
+        <button type="submit" class="btn btn-primary">Add file</button>
+      </div>
+    </div>
+  </form>
+</div>
