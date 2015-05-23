@@ -45,9 +45,49 @@
       return $http.post(utilService.getApiUrl('/assets/' + id + '/comments'), comment);
     };
 
+    /**
+     * Edit a comment on an asset
+     *
+     * @param  {Number}               assetId     The id of the asset to which the comment belongs
+     * @param  {Number}               id          The id of the comment that is being edited
+     * @param  {String}               body        The updated comment body
+     * @return {Promise<Comment>}                 $http promise returning the edited comment
+     */
+    var editComment = function(assetId, id, body) {
+      var edit = {
+        'body': body
+      };
+      return $http.post(utilService.getApiUrl('/assets/' + assetId + '/comments/' + id), edit);
+    };
+
+    /**
+     * Delete a comment on an asset
+     *
+     * @param  {Number}               assetId     The id of the asset to which the comment belongs
+     * @param  {Number}               id          The id of the comment that is being deleted
+     * @return {Promise<Comment>}                 $http promise
+     */
+    var deleteComment = function(assetId, id) {
+      return $http.delete(utilService.getApiUrl('/assets/' + assetId + '/comments/' + id));
+    };
+
+    /**
+     * Like or unlike an asset
+     *
+     * @param  {Number}         id                The id of the asset that is liked or unliked
+     * @param  {Boolean}        like              `true` when the asset should be liked, `null` when the asset should be unliked
+     * @return {Promise}                          $http promise
+     */
+    var like = function(id, like) {
+      return $http.post(utilService.getApiUrl('/assets/' + id + '/like'), {'like': like});
+    };
+
     return {
+      'getAsset': getAsset,
       'createComment': createComment,
-      'getAsset': getAsset
+      'editComment': editComment,
+      'deleteComment': deleteComment,
+      'like': like
     };
 
   });

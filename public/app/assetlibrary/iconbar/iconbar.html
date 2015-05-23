@@ -1,11 +1,11 @@
-<div class="assetlibrary-iconbar">
+<div class="assetlibrary-iconbar" data-ng-controller="AssetLibraryIconBarController">
   <!-- LIKES -->
-  <button class="btn btn-link">
+  <button class="btn btn-link" data-ng-class="{'active': asset.liked}" data-ng-click="like(asset)" data-ng-disabled="asset.user_id === me.id">
     <i class="fa fa-thumbs-up">
       <span class="sr-only">Like</span>
     </i>
   </button>
-  <span>9</span>
+  <span data-ng-bind="asset.likes | number"></span>
 
   <!-- VIEWS -->
   <i class="fa fa-eye">

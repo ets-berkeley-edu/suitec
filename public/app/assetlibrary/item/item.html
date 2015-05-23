@@ -2,7 +2,7 @@
 
   <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Inspiration Board</a>
 
-  <h2 class="col-threedots assetlibrary-item-title">{{asset.title}}</h2>
+  <h2 class="col-threedots">{{asset.title}}</h2>
 
   <div class="col-pane">
     <!-- PREVIEW -->
@@ -48,7 +48,12 @@
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Category</div>
             <div class="col-xs-9">
-              <div>No category</div>
+              <div data-ng-if="asset.categories.length">
+                <div data-ng-repeat="category in asset.categories">
+                  <a>{{category.title}}</a>
+                </div>
+              </div>
+              <div data-ng-if="!asset.categories.length">No category</div>
             </div>
           </div>
           <div class="row">
@@ -69,17 +74,14 @@
   <div class="col-pane assetlibrary-item-newcomment-container">
     <div class="media">
       <div class="media-left media-top">
-        <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + asset.user.canvas_image + ')'}">
-          <span class="sr-only">{{asset.user.canvas_full_name}}</span>
+        <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + me.canvas_image + ')'}">
+          <span class="sr-only">{{me.canvas_full_name}}</span>
         </div>
       </div>
       <div class="media-body media-middle">
         <form name="assetlibraryNewCommentForm" class="assetlibrary-item-newcomment-form" data-ng-submit="assetlibraryNewCommentForm.$valid && createComment()" novalidate>
-          <div class="assetlibrary-item-newcomment-commenter">
-            <a>
-              <i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{asset.user.canvas_full_name}}
-            </a>
-            (me)
+          <div class="assetlibrary-item-addcomment-commenter">
+            <a><i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}</a> (me)
           </div>
           <div class="form-group assetlibrary-item-newcomment-comment">
             <label for="assetlibrary-item-newcomment-body" class="sr-only">Comment</label>
@@ -98,13 +100,66 @@
 
   <!-- COMMENTS -->
   <div class="assetlibrary-item-comments">
-    <div class="media assetlibrary-item-comment" data-ng-repeat="comment in asset.comments">
+    <div class="media assetlibrary-item-comment assetlibrary-item-comment-level-{{comment.level}}" data-ng-repeat="comment in asset.comments">
       <div class="media-left media-top">
-        <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + asset.user.canvas_image + ')'}"></div>
+        <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + comment.user.canvas_image + ')'}"></div>
       </div>
       <div class="media-body media-top">
-        <a><i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{comment.user.canvas_full_name}}</a> <small>on {{comment.created_at | date:"MMMM d 'at' h:mm a" }}</small>
-        <p>{{comment.body}}</p>
+        <div class="assetlibrary-item-addcomment-commenter">
+          <a>
+            <i class="fa fa-graduation-cap" data-ng-if="comment.user.is_admin"></i> {{comment.user.canvas_full_name}}
+            <span data-ng-if="me.id === comment.user.id">(me)</span>
+          </a>
+          <small>on {{comment.created_at | date:"MMMM d 'at' h:mm a" }}</small>
+          <div class="pull-right col-actions assetlibrary-item-comment-actions">
+            <button class="btn btn-link" title="Reply to this comment" data-ng-if="comment.level === 0" data-ng-click="toggleReplyComment(comment)">
+              <i class="fa fa-reply"><span class="sr-only">Reply to this comment</span></i>
+            </button>
+            <button class="btn btn-link" title="Delete this comment" data-ng-if="(comment.user.id === me.id || me.is_admin) && !comment.has_replies" data-ng-click="deleteComment(comment)">
+              <i class="fa fa-trash"><span class="sr-only">Delete this comment</span></i>
+            </button>
+            <button class="btn btn-link" title="Edit this comment" data-ng-if="comment.user.id === me.id || me.is_admin" data-ng-click="toggleEditComment(comment)">
+              <i class="fa fa-pencil"><span class="sr-only">Edit this comment</span></i>
+            </button>
+          </div>
+        </div>
+        <p data-ng-if="!comment.editing" data-ng-bind-html="comment.body | linky"></p>
+        <!-- EDIT -->
+        <form name="assetlibraryEditForm" class="assetlibrary-item-edit-form" data-ng-submit="assetlibraryEditForm.$valid && editComment(comment)" data-ng-if="comment.editing" novalidate>
+          <div class="form-group assetlibrary-item-addcomment-comment">
+            <label for="assetlibrary-item-editcomment-body" class="sr-only">Reply</label>
+            <textarea class="form-control msd-elastic" id="assetlibrary-item-editcomment-body" placeholder="Add a comment" rows="3" data-ng-model="comment.newBody" required></textarea>
+          </div>
+          <div class="form-group text-right">
+            <button class="btn btn-sm btn-default" data-ng-click="toggleEditComment(comment)">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary" data-ng-disabled="assetlibraryEditForm.$invalid">Save Changes</button>
+          </div>
+        </form>
+
+        <!-- REPLY -->
+        <div class="media assetlibrary-item-comment assetlibrary-item-reply" data-ng-if="comment.replying">
+          <div class="media-left media-top">
+            <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + me.canvas_image + ')'}"></div>
+          </div>
+          <div class="media-body media-middle">
+            <form name="assetlibraryReplyForm" class="assetlibrary-item-reply-form" data-ng-submit="assetlibraryReplyForm.$valid && replyComment(comment, reply)" novalidate>
+              <div class="assetlibrary-item-addcomment-commenter">
+                <a><i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}</a> (me)
+              </div>
+              <div class="form-group assetlibrary-item-addcomment-comment">
+                <label for="assetlibrary-item-addcomment-body" class="sr-only">Reply</label>
+                <textarea class="form-control msd-elastic" id="assetlibrary-item-addcomment-body" placeholder="Add a reply" rows="3" data-ng-model="reply" required></textarea>
+              </div>
+              <div class="form-group text-right">
+                <button class="btn btn-sm btn-default" data-ng-click="toggleReplyComment(comment)">Cancel</button>
+                <button type="submit" class="btn btn-sm btn-primary" data-ng-disabled="assetlibraryReplyForm.$invalid">
+                  <i class="fa fa-reply"></i>
+                  <span>Reply</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>

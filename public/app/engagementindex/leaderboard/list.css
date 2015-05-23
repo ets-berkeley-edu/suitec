@@ -13,19 +13,25 @@
  * permissions and limitations under the License.
  */
 
-.assetlibrary-iconbar .btn {
-  margin-top: -2px;
-  padding: 0;
+.leaderboard-list-container {
+  margin-bottom: 30px;
 }
 
-.assetlibrary-iconbar .btn.active,
-.assetlibrary-iconbar .btn:hover {
-  color: #4172B4;
+.leaderboard-list-search {
+  max-width: 250px;
+  width: 100%;
 }
 
-.assetlibrary-iconbar i {
-  margin-left: 10px;
-  margin-right: 1px;
-  position: relative;
-  top: -1px;
+.leaderboard-list-table {
+  border: 1px solid #CCC;
+  width: 100%;
+}
+
+.leaderboard-list-table th,
+.leaderboard-list-table td {
+  padding: 10px;
+}
+
+.leaderboard-list-table.table-striped .leaderboard-list-highlight {
+  background-color: #EDEDED;
 }

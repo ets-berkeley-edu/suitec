@@ -33,6 +33,7 @@
     "cookie-parser": "latest",
     "cors": "latest",
     "express": "latest",
+    "fast-csv": "latest",
     "forever": "latest",
     "ims-lti": "latest",
     "joi": "latest",
@@ -42,7 +43,7 @@
     "pg-hstore": "latest",
     "randomstring": "latest",
     "restjsdoc": "latest",
-    "sequelize": "latest",
+    "sequelize": "2.0.6",
     "validator": "1.1.3"
   },
   "devDependencies": {

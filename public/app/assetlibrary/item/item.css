@@ -13,10 +13,6 @@
  * permissions and limitations under the License.
  */
 
-.assetlibrary-item-title {
-  margin-bottom: 20px;
-}
-
 /* PREVIEW */
 
 .assetlibrary-item-preview {
@@ -99,6 +95,16 @@
   font-weight: 500;
 }
 
+/* ADD COMMENT */
+
+.assetlibrary-item-addcomment-commenter {
+  margin-bottom: 5px;
+}
+
+.assetlibrary-item-addcomment-comment {
+  margin-bottom: 10px;
+}
+
 /* NEW COMMENT */
 
 .assetlibrary-item-newcomment-container {
@@ -122,16 +128,14 @@
   width: 100px;
 }
 
-.assetlibrary-item-newcomment-commenter {
-  margin-bottom: 5px;
-}
-
-.assetlibrary-item-newcomment-comment {
-  margin-bottom: 10px;
-}
-
 .assetlibrary-item-newcomment-button {
   margin-bottom: 0;
+}
+
+/* REPLY */
+
+.assetlibrary-item-reply {
+  margin-top: 25px;
 }
 
 /* COMMENTS */
@@ -141,6 +145,16 @@
   margin-top: 40px;
   max-width: 830px;
   padding-left: 80px;
+}
+
+.assetlibrary-item-comments .assetlibrary-item-comment-level-0:not(:first-child) {
+  border-top: 1px solid #EAEAEA;
+  margin-top: 20px;
+  padding-top: 25px;
+}
+
+.assetlibrary-item-comments .assetlibrary-item-comment-level-1 {
+  margin-left: 60px;
 }
 
 @media only screen and (min-width : 768px) {
@@ -156,7 +170,11 @@
   margin-left: 5px;
 }
 
+.assetlibrary-item-comment-actions {
+  margin-top: -2px;
+}
+
 .assetlibrary-item-comments p {
-  margin-top: 14px;
+  margin-top: 10px;
   white-space: pre-wrap;
 }
