@@ -26,6 +26,7 @@
      * @param  {String}               link.title            The title of the link
      * @param  {String}               link.url              The url of the link
      * @param  {String}               [link.description]    The description of the link
+     * // TODO: Document category
      * @param  {String}               [link.source]         The source of the link
      * @return {Promise<Asset>}                             Promise returning the created link asset
      */

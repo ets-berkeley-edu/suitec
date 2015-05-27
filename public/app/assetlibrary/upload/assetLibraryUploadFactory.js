@@ -17,9 +17,7 @@
 
   'use strict';
 
-  var app = angular.module('collabosphere');
-
-  app.factory('assetLibraryUploadFileFactory', function(utilService, $http, Upload) {
+  angular.module('collabosphere').factory('assetLibraryUploadFactory', function(utilService, $http, Upload) {
 
     /**
      * Create a new file asset
@@ -28,10 +26,12 @@
      * @param  {String}               file.title            The title of the file
      * @param  {String}               file.file             The file to upload
      * @param  {String}               [file.description]    The description of the file
+     * // TODO: Add category
      * @param  {String}               [file.source]         The source of the file
      * @return {Promise<Asset>}                             Promise returning the created file asset
      */
     var createFile = function(file) {
+      // TODO: Switch to metadata object
       file.type = 'file';
       var fileToUpload = file.file;
       delete file.file;
