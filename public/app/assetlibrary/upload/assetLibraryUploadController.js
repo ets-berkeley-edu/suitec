@@ -22,44 +22,101 @@
     // Variable that will keep track of the files to be uploaded
     $scope.files = [];
 
-    // TODO
+    // Variable that will keep track of whether uploading is currently in progress
     $scope.isUploading = false;
 
+    // Variable that will keep track of the file upload progress as a rounded percentage
+    $scope.progress = 0;
+
+    // Variable that will keep track of the total file size of the files to be uploaded
+    var totalSize = 0;
+
+    // Variable that will keep track of the total file size that has already been uploaded
+    var uploadedSize = 0;
+
+    // Variable that will keep track of the file that is currently being uploaded
+    var currentFile = null;
+
     /**
-     * TODO
+     * Function invoked when a new file or set of files has been selected in the file dialog
+     * or dropped into the file drop area
+     *
+     * @param  {File[]}         files           The file(s) that have been selected or dropped
      */
     var filesSelected = $scope.filesSelected = function(files) {
+      // Clear the previously selected files
       $scope.files = [];
+      totalSize = 0;
+
+      // Render the selected files. Default the file title
+      // to the file name
       for (var i = 0; i < files.length; i++) {
-        console.log(files[i]);
+        var file = files[i];
+        totalSize += file.size;
         $scope.files.push({
-          'title': files[i].name,
-          'file': files[i]
+          'title': file.name,
+          'file': file
         });
       }
     };
 
     /**
-     * TODO
+     * Remove a file from the list of selected files
+     *
+     * @param  {Number}         index           The index of the file that should be removed in the array of selected files
      */
     var removeFile = $scope.removeFile = function(index) {
       $scope.files.splice(index, 1);
     };
 
     /**
-     * Create a new file asset
-     * TODO
+     * Upload the selected files and their metadata
      */
     var createFiles = $scope.createFiles = function() {
+      // Indicate that uploading is now in progress
       $scope.isUploading = true;
+
+      // Reset the progress indicator
+      uploadedSize = 0;
+      calculateProgress(uploadedSize);
+
+      // Start uploading the first file
+      createFile();
+    };
+
+    /**
+     * Upload the next file from the list of selected files
+     */
+    var createFile = function() {
+      // If no more files need to be uploaded, return to
+      // the asset library list
       if ($scope.files.length === 0) {
         return $location.path('/assetlibrary');
       }
 
-      var file = $scope.files.pop();
-      assetLibraryUploadFactory.createFile(file, function(ev) {
-        console.log(loaded);
-      }).success(createFiles);
+      // Calculate the total size of the files that have been
+      // uploaded so far
+      if (currentFile) {
+        uploadedSize += currentFile.file.size;
+        calculateProgress(uploadedSize);
+      }
+
+      // Pick the next file in the list of selected file and
+      // upload it
+      currentFile = $scope.files.pop();
+      assetLibraryUploadFactory.createFile(currentFile, function(ev) {
+        calculateProgress(uploadedSize + ev.loaded);
+      }).success(createFile);
+    };
+
+    /**
+     * Calculate the file upload progress as a rounded percentage
+     *
+     * @param  {Number}         uploaded        The total file size that has been uploaded so far
+     * @return {Number}                         The calculated file upload progress as a rounded percentage based on total size of the files that need to be uploaded
+     */
+    var calculateProgress = function(uploaded) {
+      $scope.progress = Math.round((uploaded / totalSize) * 100);
     };
 
     /**

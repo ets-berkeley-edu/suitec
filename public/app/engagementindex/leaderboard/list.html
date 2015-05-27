@@ -1,14 +1,12 @@
 <div class="leaderboard-list-container">
-  <div class="row">
-    <div class="col-xs-8">
-      <form>
-        <div class="form-group">
-          <input type="text" class="form-control leaderboard-list-search" placeholder="Search the Engagement Index" data-ng-model="query.$" data-ng-change="search(query.$)">
-        </div>
-      </form>
-    </div>
-    <div class="col-xs-4 text-right">
-      <a href="/engagementindex/points" class="btn btn-default">Points configuration</a>
+  <div class="clearfix">
+    <form class="leaderboard-list-search-form">
+      <div class="form-group">
+        <input type="text" class="form-control leaderboard-list-search" placeholder="Search the Engagement Index" data-ng-model="query.$" data-ng-change="search(query.$)">
+      </div>
+    </form>
+    <div class="pull-right leaderboard-list-actions-container">
+      <a href="/engagementindex/pointsconfiguration" class="btn btn-default">Points configuration</a>
       <a data-ng-href="{{getCSVExportURL()}}" target="_blank" class="btn btn-default" data-ng-show="me.is_admin" data-ng-click="trackCSVDownload()">Download CSV</a>
     </div>
   </div>

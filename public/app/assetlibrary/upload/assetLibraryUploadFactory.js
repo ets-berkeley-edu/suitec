@@ -26,20 +26,25 @@
      * @param  {String}               file.title            The title of the file
      * @param  {String}               file.file             The file to upload
      * @param  {String}               [file.description]    The description of the file
-     * // TODO: Add category
+     * @param  {Number[]}             [file.categories]     The ids of the categories to which the link should be associated
      * @param  {String}               [file.source]         The source of the file
+     * @param  {Function}             [progressCallback]    Callback function that will be informed of progress updates
      * @return {Promise<Asset>}                             Promise returning the created file asset
      */
-    var createFile = function(file) {
-      // TODO: Switch to metadata object
-      file.type = 'file';
+    var createFile = function(file, progressCallback) {
       var fileToUpload = file.file;
-      delete file.file;
+      var metadata = {
+        'type': 'file',
+        'title': file.title,
+        'description': file.description,
+        'categories': file.categories,
+        'source': file.source
+      };
       return Upload.upload({
         'url': utilService.getApiUrl('/assets'),
-        'fields': file,
+        'fields': metadata,
         'file': fileToUpload
-      });
+      }).progress(progressCallback);
     };
 
     return {
