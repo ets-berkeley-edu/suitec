@@ -24,8 +24,8 @@ class CalNetPage
   h3(:logout_success_message, :xpath => '//h3[text()="Logout Successful"]')
 
   # Authenticates via the CalNet SSO service
-  # @param username [String]
-  # @param password [String]
+  # @param username [String]                   - the CalNet username
+  # @param password [String]                   - the CalNet password
   def log_in(username, password)
     username_input_element.when_visible(timeout=WebDriverUtils.page_load_wait)
     self.username_input = username

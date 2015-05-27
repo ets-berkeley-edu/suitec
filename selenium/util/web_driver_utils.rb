@@ -68,12 +68,14 @@ class WebDriverUtils
   end
 
   # Generates a unique name for a test course site by combining the test name and the epoch
-  # @param spec [RSpec]
+  # @param spec [RSpec]                             - the spec being executed
+  # @return [String]                                - return concatenated spec name and current epoch
   def self.test_course_name(spec)
     "#{spec.inspect.sub('RSpec::ExampleGroups::', '')}-#{Time.now.to_i.to_s}"
   end
 
   # Loads an array of test users from a file and maps them by each user's id
+  # @return [Hash]                                  - return the set of test users mapped by the 'id' associated with each
   def self.load_test_users
     test_users = File.join(ENV['HOME'], '/.collabosphere_selenium/testUsers.json')
     users_array = JSON.parse(File.read(test_users))['users']
@@ -81,14 +83,14 @@ class WebDriverUtils
   end
 
   # Waits for an element to become visible after a DOM update and then clicks the element
-  # @param element [Selenium::WebDriver::Element]
+  # @param element [Selenium::WebDriver::Element]   - the element to be clicked
   def self.wait_for_element_and_click(element)
     element.when_visible timeout=page_update_wait
     element.click
   end
 
   # Waits for an element to become visible after a page load and then clicks the element
-  # @param element [Selenium::WebDriver::Element]
+  # @param element [Selenium::WebDriver::Element]   - the element to be clicked
   def self.wait_for_page_and_click(element)
     element.when_visible timeout=page_load_wait
     element.click
