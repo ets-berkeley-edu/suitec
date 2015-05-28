@@ -37,37 +37,39 @@
           <div class="col-xs-3 text-center">
             <div class="col-list-item-tile">
               <img class="img-responsive" ngf-src="file.file" data-ng-if="file.file.type.indexOf('image/') !== -1">
-              <div class="text-center col-list-item-thumbnail-default" data-ng-if="file.file.type.indexOf('image/') === -1">
+              <div class="text-center col-list-item-thumbnail-default col-list-item-no-metadata" data-ng-if="file.file.type.indexOf('image/') === -1">
                 <i class="fa fa-file-o"></i>
               </div>
             </div>
 
           </div>
           <div class="col-xs-9">
-            <!-- TITLE -->
-            <div class="form-group" data-ng-class="{'has-error': assetlibraryUploadForm.$submitted && assetlibraryUploadForm.assetlibraryUploadTitle.$invalid}">
-              <label for="assetlibrary-upload-title" class="control-label">Title</label>
-              <input type="text" id="assetlibrary-upload-title" name="assetlibraryUploadTitle" class="form-control" placeholder="Enter a title" data-ng-model="file.title" data-ng-maxlength="255" required>
-              <div class="help-block" data-ng-messages="assetlibraryUploadForm.assetlibraryUploadTitle.$error">
-                <div data-ng-message="required">Please enter a title</div>
-                <div data-ng-message="maxlength">A title can only be 255 characters long</div>
+            <ng-form name="assetlibraryUploadItem">
+              <!-- TITLE -->
+              <div class="form-group" data-ng-class="{'has-error': assetlibraryUploadForm.$submitted && assetlibraryUploadItem.assetlibraryUploadTitle.$invalid}">
+                <label for="assetlibrary-upload-title" class="control-label">Title</label>
+                <input type="text" id="assetlibrary-upload-title" name="assetlibraryUploadTitle" class="form-control" placeholder="Enter a title" data-ng-model="file.title" data-ng-maxlength="255" required>
+                <div class="help-block" data-ng-messages="assetlibraryUploadItem.assetlibraryUploadTitle.$error">
+                  <div data-ng-message="required">Please enter a title</div>
+                  <div data-ng-message="maxlength">A title can only be 255 characters long</div>
+                </div>
               </div>
-            </div>
 
-            <!-- CATEGORY -->
-            <div class="form-group">
-              <label for="assetlibrary-upload-category" class="control-label">Category</label>
-              <select id="assetlibrary-upload-category" class="form-control" data-value="{{file.categories}}" data-ng-model="file.categories">
-                <option value="" selected>Which assignment or topic is this related to</option>
-                <option data-ng-value="category.id" data-ng-repeat="category in categories">{{category.title}}</option>
-              </select>
-            </div>
+              <!-- CATEGORY -->
+              <div class="form-group">
+                <label for="assetlibrary-upload-category" class="control-label">Category</label>
+                <select id="assetlibrary-upload-category" class="form-control" data-value="{{file.categories}}" data-ng-model="file.categories">
+                  <option value="" selected>Which assignment or topic is this related to</option>
+                  <option data-ng-value="category.id" data-ng-repeat="category in categories">{{category.title}}</option>
+                </select>
+              </div>
 
-            <!-- DESCRIPTION -->
-            <div class="form-group">
-              <label for="assetlibrary-upload-description" class="control-label">Description</label>
-              <textarea id="assetlibrary-upload-description" class="form-control" placeholder="Add some more context to your file. You can use plain text or #keywords" rows="3" data-ng-model="file.description"></textarea>
-            </div>
+              <!-- DESCRIPTION -->
+              <div class="form-group">
+                <label for="assetlibrary-upload-description" class="control-label">Description</label>
+                <textarea id="assetlibrary-upload-description" class="form-control" placeholder="Add some more context to your file. You can use plain text or #keywords" rows="3" data-ng-model="file.description"></textarea>
+              </div>
+            </ng-form>
           </div>
         </div>
       </div>
