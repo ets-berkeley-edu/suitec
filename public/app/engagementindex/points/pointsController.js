@@ -1,4 +1,4 @@
-/*!
+/**
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -13,34 +13,16 @@
  * permissions and limitations under the License.
  */
 
-.leaderboard-list-container {
-  margin-bottom: 30px;
-}
+(function(angular) {
 
-.leaderboard-list-search-form {
-  display: inline-block;
-  max-width: 250px;
-  width: 100%;
-}
+  'use strict';
 
-.leaderboard-list-search-form .form-group {
-  margin-bottom: 10px;
-}
+  angular.module('collabosphere').controller('PointsController', function(userFactory, $scope) {
 
-.leaderboard-list-actions-container {
-  margin-bottom: 15px;
-}
+    userFactory.getMe().success(function(me) {
+      $scope.me = me;
+    });
 
-.leaderboard-list-table {
-  border: 1px solid #CCC;
-  width: 100%;
-}
+  });
 
-.leaderboard-list-table th,
-.leaderboard-list-table td {
-  padding: 10px;
-}
-
-.leaderboard-list-table.table-striped .leaderboard-list-highlight {
-  background-color: #EDEDED;
-}
+}(window.angular));
