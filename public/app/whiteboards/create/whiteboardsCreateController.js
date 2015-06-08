@@ -1,4 +1,4 @@
-/*!
+/**
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -17,20 +17,20 @@
 
   'use strict';
 
-  // Initialize the Collabosphere module
-  angular.module('collabosphere', [
-    'ngAria',
-    'ngMessages',
-    'ngRoute',
-    'ngSanitize',
-    'common.fabric',
-    'common.fabric.utilities',
-    'common.fabric.constants',
-    'infinite-scroll',
-    'luegg.directives',
-    'monospaced.elastic',
-    'ui.bootstrap',
-    'ui.utils'
-  ]);
+  angular.module('collabosphere').controller('WhiteboardsCreateController', function(whiteboardsCreateFactory, $location, $scope) {
 
-})(window.angular);
+    // Variable that will keep track of the new whiteboard to be created
+    $scope.whiteboard = {};
+
+    /**
+     * Create a new whiteboard
+     */
+    var createWhiteboard = $scope.createWhiteboard = function() {
+      whiteboardsCreateFactory.createWhiteboard($scope.whiteboard).success(function() {
+        $location.path('/whiteboards');
+      });
+    };
+
+  });
+
+}(window.angular));

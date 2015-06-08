@@ -1,6 +1,6 @@
 <div data-ng-controller="AssetLibraryItemController">
 
-  <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Inspiration Board</a>
+  <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
 
   <h2 class="col-threedots">{{asset.title}}</h2>
 
@@ -127,7 +127,7 @@
         <!-- EDIT -->
         <form name="assetlibraryEditForm" class="assetlibrary-item-edit-form" data-ng-submit="assetlibraryEditForm.$valid && editComment(comment)" data-ng-if="comment.editing" novalidate>
           <div class="form-group assetlibrary-item-addcomment-comment">
-            <label for="assetlibrary-item-editcomment-body" class="sr-only">Reply</label>
+            <label for="assetlibrary-item-editcomment-body" class="sr-only">Edit</label>
             <textarea class="form-control msd-elastic" id="assetlibrary-item-editcomment-body" placeholder="Add a comment" rows="3" data-ng-model="comment.newBody" required></textarea>
           </div>
           <div class="form-group text-right">

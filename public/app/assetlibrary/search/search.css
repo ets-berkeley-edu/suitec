@@ -13,24 +13,22 @@
  * permissions and limitations under the License.
  */
 
-(function(angular) {
+.assetlibrary-search-container {
+  width: 100%;
+}
 
-  'use strict';
+.assetlibrary-search-advanced {
+  position: absolute;
+  right: 40px;
+  z-index: 10;
+}
 
-  // Initialize the Collabosphere module
-  angular.module('collabosphere', [
-    'ngAria',
-    'ngMessages',
-    'ngRoute',
-    'ngSanitize',
-    'common.fabric',
-    'common.fabric.utilities',
-    'common.fabric.constants',
-    'infinite-scroll',
-    'luegg.directives',
-    'monospaced.elastic',
-    'ui.bootstrap',
-    'ui.utils'
-  ]);
+.assetlibrary-search-advanced,
+.assetlibrary-search-advanced:active,
+.assetlibrary-search-advanced:hover {
+  color: #333;
+}
 
-})(window.angular);
+.assetlibrary-search-form .input-group .input-group-btn {
+  width: 20px;
+}

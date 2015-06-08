@@ -1,0 +1,35 @@
+<div data-ng-controller="WhiteboardsListController">
+
+  <div class="row">
+    <div class="col-xs-8">
+      <h2>My whiteboards</h2>
+    </div>
+    <div class="col-xs-4 text-right">
+      <a data-ng-href="/whiteboards/create" class="btn btn-primary pull-right">
+        <i class="fa fa-plus-circle"></i>
+        <span>Whiteboard</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-list-container" data-infinite-scroll="getWhiteboards()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
+    <ul>
+      <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="whiteboard in whiteboards">
+        <div class="col-list-item-container">
+          <a data-ng-click="openWhiteboard(whiteboard, $event)" data-ng-href="/whiteboards/{{whiteboard.id}}">
+            <div class="col-list-item-tile">
+              <img class="img-responsive" data-ng-src="{{asset.url}}" data-ng-if="whiteboard.thumbnail_url">
+              <div class="text-center col-list-item-thumbnail-default" data-ng-if="!whiteboard.thumbnail_url">
+                <i class="fa fa-calendar-o"></i>
+              </div>
+              <div class="col-list-item-metadata">
+                <h3 class="col-threedots">{{whiteboard.title}}</h3>
+                <small class="col-threedots">0 online</small>
+              </div>
+            </div>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

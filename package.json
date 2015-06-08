@@ -29,7 +29,9 @@
     "col-rest": "latest",
     "col-tests": "latest",
     "col-users": "latest",
+    "col-whiteboards": "latest",
     "config": "latest",
+    "cookie": "latest",
     "cookie-parser": "latest",
     "cors": "latest",
     "express": "latest",
@@ -44,6 +46,7 @@
     "randomstring": "latest",
     "restjsdoc": "latest",
     "sequelize": "2.0.6",
+    "socket.io": "latest",
     "validator": "1.1.3"
   },
   "devDependencies": {
@@ -68,7 +71,8 @@
     "col-lti",
     "col-rest",
     "col-tests",
-    "col-users"
+    "col-users",
+    "col-whiteboards"
   ],
   "engines": {
     "node": ">=0.10"
