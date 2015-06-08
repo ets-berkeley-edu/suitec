@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, whiteboardsBoardFactory, $modal, $rootScope, $routeParams, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsBoardFactory, $modal, $rootScope, $routeParams, $scope) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $routeParams.whiteboardId;
@@ -31,8 +31,12 @@
     // Variable that will keep track of the whiteboard Fabric.js instance
     var canvas = null;
 
-    // Open a websocket connection for real-time communication with the server (chat + whiteboard changes)
-    var socket = io();
+    // Open a websocket connection for real-time communication with the server (chat + whiteboard changes).
+    // The course ID and API domain are passed in as handshake query parameters
+    var launchParams = utilService.getLaunchParams();
+    var socket = io(window.location.origin, {
+      'query': 'api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&whiteboard_id=' + whiteboardId
+    });
 
     /* WHITEBOARD */
 
