@@ -37,7 +37,6 @@
         'courseId': courseId,
         'toolUrl': toolUrl
       };
-      console.log(launchParams);
       return launchParams;
     };
 
