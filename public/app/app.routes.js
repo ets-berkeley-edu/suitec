@@ -56,7 +56,7 @@
     when('/engagementindex', {
       templateUrl: '/app/engagementindex/leaderboard/leaderboard.html'
     }).
-    when('/engagementindex/points', {
+    when('/engagementindex/pointsconfiguration', {
       templateUrl: '/app/engagementindex/points/points.html'
     }).
 

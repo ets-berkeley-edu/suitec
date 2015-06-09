@@ -21,5 +21,9 @@
   "log": {
     "level": "info",
     "stream": "stdout"
+  },
+  "canvasPoller": {
+    "enabled": true,
+    "interval": 15
   }
 }

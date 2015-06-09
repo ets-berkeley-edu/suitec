@@ -6,5 +6,8 @@
   "log": {
     "level": "trace",
     "stream": "logs/test.log"
+  },
+  "canvasPoller": {
+    "enabled": false
   }
 }

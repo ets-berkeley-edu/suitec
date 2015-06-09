@@ -57,3 +57,9 @@ npm install
 # Run Collabosphere
 node app
 ```
+
+### Canvas synchronization
+
+By default collabosphere will poll the Canvas API for any new activities that are included in the
+engagement index. Whether polling should be enabled and how ofter it should run can be configured
+from the configuration file in the `canvasPoller` section.
