@@ -83,7 +83,7 @@
      * Hide the alert message that indicates that files that exceed the file size limit
      * have been selected
      */
-    var hideFilesExceedSizeError = $scope.hideFilesExceedSizeError= function() {
+    var hideFilesExceedSizeError = $scope.hideFilesExceedSizeError = function() {
       $scope.alertFilesExceedSize = false;
     };
 
