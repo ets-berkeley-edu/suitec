@@ -1,0 +1,20 @@
+<div class="alert alert-danger" role="alert" data-ng-if="alertFilesExceedSize === true">
+  <button class="close" aria-label="Close" data-ng-click="hideFilesExceedSizeError()"><span aria-hidden="true">&times;</span></button>
+  <span data-ng-if="filesExceedSize.length === 1">
+    The file <strong data-ng-bind="filesExceedSize[0].name"></strong> is too large.
+  </span>
+  <span data-ng-if="filesExceedSize.length > 1">
+    The files
+    <span data-ng-repeat="file in filesExceedSize">
+      <strong data-ng-bind="file.name"></strong>
+      <span data-ng-if="$index < filesExceedSize.length - 2">
+        ,
+      </span>
+      <span data-ng-if="$index === filesExceedSize.length - 2">
+        and
+      </span>
+    </span>
+    are too large.
+  </span>
+  Files can be maximum 10MB in size.
+</div>

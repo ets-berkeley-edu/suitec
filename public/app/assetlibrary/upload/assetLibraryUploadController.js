@@ -19,8 +19,18 @@
 
   var app = angular.module('collabosphere').controller('AssetLibraryUploadController', function(assetLibraryCategoriesFactory, assetLibraryUploadFactory, $location, $scope) {
 
+    // Constant that defines the maximum allowed file size
+    var MAX_FILE_SIZE = 10 * 1024 * 1024;
+
     // Variable that will keep track of the files to be uploaded
     $scope.files = [];
+
+    // Variable that will keep track of the files that exceed the file size limit
+    $scope.filesExceedSize = [];
+
+    // Variable that will keep track of whether the alert message that indicates that files that
+    // exceed the file size limit have been selected should be shown
+    $scope.alertFilesExceedSize = false;
 
     // Variable that will keep track of whether uploading is currently in progress
     $scope.isUploading = false;
@@ -46,18 +56,35 @@
     var filesSelected = $scope.filesSelected = function(files) {
       // Clear the previously selected files
       $scope.files = [];
+      $scope.filesExceedSize = [];
+      $scope.alertFilesExceedSize = false;
       totalSize = 0;
 
-      // Render the selected files. Default the file title
-      // to the file name
+      // Render the selected files
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
-        totalSize += file.size;
-        $scope.files.push({
-          'title': file.name,
-          'file': file
-        });
+        var fileSize = file.size;
+        // Exclude files that exceed the file size limit
+        if (fileSize > MAX_FILE_SIZE) {
+          $scope.filesExceedSize.push(file);
+          $scope.alertFilesExceedSize = true;
+        } else {
+          totalSize += file.size;
+          $scope.files.push({
+            // Default the file title to the file name
+            'title': file.name,
+            'file': file
+          });
+        }
       }
+    };
+
+    /**
+     * Hide the alert message that indicates that files that exceed the file size limit
+     * have been selected
+     */
+    var hideFilesExceedSizeError = $scope.hideFilesExceedSizeError= function() {
+      $scope.alertFilesExceedSize = false;
     };
 
     /**
@@ -105,7 +132,12 @@
       // upload it
       currentFile = $scope.files.pop();
       assetLibraryUploadFactory.createFile(currentFile, function(ev) {
-        calculateProgress(uploadedSize + ev.loaded);
+        // As `ev.loaded` reports the total number of bytes that have been transferred in the
+        // HTTP request, this can end up being higher than just the file size. Therefore, we
+        // ensure that the reported progress never goes above the size of the file that is currently
+        // being uploaded
+        var loaded = ev.loaded > currentFile.file.size ? currentFile.file.size : ev.loaded;
+        calculateProgress(uploadedSize + loaded);
       }).success(createFile);
     };
 

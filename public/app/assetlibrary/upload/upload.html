@@ -6,6 +6,7 @@
 
   <!-- SELECT FILE(S) -->
   <div data-ng-if="files.length === 0 && !isUploading">
+    <div data-ng-include="'/app/assetlibrary/upload/error.html'"></div>
     <div class="assetlibrary-upload-drag-container" data-ng-model="files" ngf-drop ngf-select ngf-drag-over-class="assetlibrary-upload-drag-hover" ngf-multiple="true" ngf-allow-dir="true" ngf-change="filesSelected($files)">
       <div class="text-center">
         <div>
@@ -25,6 +26,7 @@
 
   <!-- FILE METADATA -->
   <div data-ng-if="files.length > 0 && !isUploading">
+    <div data-ng-include="'/app/assetlibrary/upload/error.html'"></div>
     <form name="assetlibraryUploadForm" class="assetlibrary-upload-form" data-ng-submit="assetlibraryUploadForm.$valid && createFiles()" novalidate>
       <div data-ng-repeat="file in files">
         <button type="button" class="btn btn-link pull-left assetlibrary-upload-file-remove" data-ng-click="removeFile($index)" title="Don't upload this file">
