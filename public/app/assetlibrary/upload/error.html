@@ -6,10 +6,7 @@
   <span data-ng-if="filesExceedSize.length > 1">
     The files
     <span data-ng-repeat="file in filesExceedSize">
-      <strong data-ng-bind="file.name"></strong>
-      <span data-ng-if="$index < filesExceedSize.length - 2">
-        ,
-      </span>
+      <strong data-ng-bind="file.name"></strong><span data-ng-if="$index < filesExceedSize.length - 2">,</span>
       <span data-ng-if="$index === filesExceedSize.length - 2">
         and
       </span>
