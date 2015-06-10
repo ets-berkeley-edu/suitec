@@ -47,7 +47,7 @@
     "pg-hstore": "latest",
     "randomstring": "latest",
     "restjsdoc": "latest",
-    "sequelize": "2.0.6",
+    "sequelize": "latest",
     "socket.io": "latest",
     "validator": "1.1.3"
   },
