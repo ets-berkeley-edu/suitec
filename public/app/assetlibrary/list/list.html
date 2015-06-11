@@ -50,7 +50,7 @@
             <div class="col-list-item-tile">
               <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
               <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
-                <i class="fa fa-link"></i>
+                <i class="fa fa-{{ asset.type }}"></i>
               </div>
               <div class="col-list-item-metadata">
                 <h3 class="col-threedots">{{asset.title}}</h3>
