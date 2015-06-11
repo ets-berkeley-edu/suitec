@@ -21,6 +21,7 @@
     "bootstrap": "latest",
     "fontawesome": "latest",
     "highcharts-release": "latest",
+    "oi.multiselect": "latest",
     "lodash": "latest",
     "ng-file-upload": "latest",
     "ng-file-upload-shim": "latest",

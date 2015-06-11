@@ -16,11 +16,16 @@
     </div>
 
     <!-- INVITE -->
-    <div class="form-group" data-ng-class="{'has-error': whiteboardsCreateForm.$submitted && whiteboardsCreateForm.whiteboardsCreateInvite.$invalid}">
+    <div class="form-group">
       <label for="whiteboards-create-invite" class="col-sm-2 control-label">Invite</label>
       <div class="col-sm-10">
-        <input type="text" id="whiteboards-create-invite" name="whiteboardsCreateInvite" class="form-control" placeholder="Invite students into this whiteboard">
-        <div class="help-block" data-ng-messages="whiteboardsCreateForm.whiteboardsCreateInvite.$error"><!-- --></div>
+        <oi-multiselect
+          ng-options="user.canvas_full_name for user in users | orderBy:'canvas_full_name.toLowerCase()' track by user.id "
+          oi-multiselect-options="{
+              searchFilter: 'whiteboardsCreateInviteSearch'
+          }"
+          ng-model="invitedUsers" multiple placeholder="Enter the names of the people you want to invite">
+        </oi-multiselect>
       </div>
     </div>
 

@@ -16,3 +16,23 @@
 .whiteboards-create-form {
   max-width: 650px;
 }
+
+.multiselect-search-list .btn.multiselect-search-list-item {
+  background-color: #D9EDF7;
+  border-color: #BCE9F1;
+  color: #3A87AD;
+  padding: 3px 12px 3px 12px;
+}
+
+.multiselect-search-list .btn.multiselect-search-list-item .close {
+    color: #3a87ad;
+    font-size: 1.1em;
+    line-height: 22px;
+    margin-left: 4px;
+    opacity: 1;
+}
+
+oi-multiselect .multiselect-dropdown-optgroup-option.active {
+    background-color: #0299E5;
+    color: #ffffff;
+}

@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('leaderboardFactory', function(utilService, $http) {
+  angular.module('collabosphere').factory('leaderboardFactory', function(utilService, $http, userFactory) {
 
     /**
      * Get the users for the current course and their points
@@ -25,7 +25,7 @@
      * @return {Promise<User[]>}                  $http promise returning the users in the current course and their points
      */
     var getUsers = function() {
-      return $http.get(utilService.getApiUrl('/users')).then(function(response) {
+      return userFactory.getLeaderboard().then(function(response) {
         var users = response.data;
 
         // Order the users by points

@@ -28,8 +28,28 @@
       return $http.get(utilService.getApiUrl('/users/me'), {'cache': true});
     };
 
+    /**
+     * Get the users for the current course
+     *
+     * @return {Promise<User[]>}                  $http promise returning the users in the current course
+     */
+    var getUsers = function() {
+      return $http.get(utilService.getApiUrl('/users'));
+    };
+
+    /**
+     * Get the users for the current course and their points
+     *
+     * @return {Promise<User[]>}                  $http promise returning the users in the current course and their points
+     */
+    var getLeaderboard = function() {
+      return $http.get(utilService.getApiUrl('/users/leaderboard'));
+    };
+
     return {
-      getMe: getMe
+      'getMe': getMe,
+      'getUsers': getUsers,
+      'getLeaderboard': getLeaderboard
     };
 
   });
