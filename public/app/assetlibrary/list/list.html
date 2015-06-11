@@ -2,12 +2,10 @@
 
   <div class="row assetlibrary-list-top">
     <!-- SEARCH -->
-    <div class="col-xs-8">
-      <div class="assetlibrary-list-search-container" data-ng-include="'/app/assetlibrary/search/search.html'"></div>
-    </div>
+    <div class="assetlibrary-list-search-container col-xs-{{ searchIsAdvancedView ? 12 : 8 }}" data-ng-include="'/app/assetlibrary/search/search.html'"></div>
 
     <!-- MANAGE CATEGORIES -->
-    <div class="col-xs-4 text-right">
+    <div class="col-xs-4 text-right" data-ng-show="!searchIsAdvancedView">
       <a data-ng-href="/assetlibrary/categories" data-ng-if="me.is_admin" class="btn btn-default">
         <i class="fa fa-cog"></i>
         <span>Manage categories</span>

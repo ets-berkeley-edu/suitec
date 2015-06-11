@@ -1,18 +1,70 @@
-<form class="form-inline assetlibrary-search-form">
-  <label for="assetlibrary-search" class="sr-only">Search Asset Library</label>
-  <div class="input-group assetlibrary-search-container">
-    <input type="text" id="assetlibrary-search" class="form-control" placeholder="Search">
-    <button class="btn btn-link assetlibrary-search-advanced" title="Advanced search">
-      <i class="fa fa-caret-down">
-        <span class="sr-only">Advanced search</span>
-      </i>
-    </button>
-    <span class="input-group-btn">
-      <button type="submit" class="btn btn-default" title="Search">
-        <i class="fa fa-search">
-          <span class="sr-only">Search</span>
-        </i>
-      </button>
-    </span>
+<div data-ng-controller="AssetLibrarySearchController">
+
+  <!-- SIMPLE SEARCH -->
+  <div data-ng-show="!isAdvancedView">
+    <form class="form-inline assetlibrary-search-form" name="assetlibrarySearchForm" data-ng-submit="assetlibrarySearchForm.$valid && search()">
+      <label for="assetlibrary-search" class="sr-only">Search Asset Library</label>
+      <div class="input-group assetlibrary-search-container">
+        <input type="text" id="assetlibrary-search" class="form-control" placeholder="Search" data-ng-model="searchOptions.keywords">
+        <button class="btn btn-link assetlibrary-search-advanced" title="Advanced search" data-ng-click="isAdvancedView = !isAdvancedView; $emit('assetLibrarySearchViewToggle', isAdvancedView)" type="button">
+          <i class="fa fa-caret-down">
+            <span class="sr-only">Advanced search</span>
+          </i>
+        </button>
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-default" title="Search">
+            <i class="fa fa-search">
+              <span class="sr-only">Search</span>
+            </i>
+          </button>
+        </span>
+      </div>
+    </div>
+  </form>
+
+  <!-- ADVANCED SEARCH -->
+  <div data-ng-show="isAdvancedView" class="col-pane">
+    <form name="assetlibrarySearchAdvancedForm" class="form-horizontal assetlibrary-search-advancedform" data-ng-submit="assetlibrarySearchAdvancedForm.$valid && search()" novalidate>
+    <!-- SEARCH -->
+    <div class="form-group">
+      <label for="assetlibrary-search-q" class="col-sm-1 control-label">Search</label>
+      <div class="col-sm-11">
+        <input type="text" id="assetlibrary-search-keywords" data-ng-model="searchOptions.keywords" name="assetlibrarySearchKeywords" class="form-control" placeholder="Keyword" data-ng-maxlength="255">
+      </div>
+    </div>
+
+    <!-- FILTER BY -->
+    <div class="form-group">
+      <label for="assetlibrary-search-category" class="col-sm-1 control-label">Filter by</label>
+      <div class="col-sm-4">
+        <select id="assetlibrary-search-category" class="form-control" data-ng-model="searchOptions.category">
+          <option value="" selected>Category</option>
+          <option data-ng-value="category.id" data-ng-repeat="category in categories">{{category.title}}</option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <select id="assetlibrary-search-user" class="form-control" data-ng-model="searchOptions.user">
+          <option value="" selected>Uploader</option>
+          <option data-ng-value="user.id" data-ng-repeat="user in users">{{user.canvas_full_name}}</option>
+        </select>
+      </div>
+      <div class="col-sm-3">
+        <select id="assetlibrary-search-type" class="form-control" data-ng-model="searchOptions.type">
+          <option value="" selected>Asset type</option>
+          <option value="file">File</option>
+          <option value="link">Link</option>
+          <option value="whiteboard">Whiteboard</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="form-group text-right">
+      <div class="col-sm-offset-1 col-sm-11">
+        <a class="btn btn-default" data-ng-click="isAdvancedView = !isAdvancedView; $emit('assetLibrarySearchViewToggle', isAdvancedView)">Cancel</a>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </div>
+  </form>
   </div>
-</form>
+</div>

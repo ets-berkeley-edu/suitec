@@ -19,6 +19,13 @@
 
   angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, $scope) {
 
+    // Variable that keeps track of whether the search component is in the advanced view state
+    $scope.searchIsAdvancedView = false;
+
+    // Variable that keeps track of the search options
+    $scope.searchOptions = {};
+
+    // Variable that keeps track of the assets in the list
     $scope.assets = [];
     $scope.list = {
       'page': 0,
@@ -32,7 +39,7 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.isLoading = true;
-      assetLibraryListFactory.getAssets($scope.list.page).success(function(assets) {
+      assetLibraryListFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
@@ -49,6 +56,22 @@
       $scope.me = me;
     });
 
+    /**
+     * Listen for events indicating that the user wants to search through the asset library
+     */
+    $scope.$on('assetLibrarySearchSearch', function(ev, searchOptions) {
+      $scope.list.page = 0;
+      $scope.assets = [];
+      $scope.searchOptions = searchOptions;
+      getAssets();
+    });
+
+    /**
+     * Listen for events indicating that the search view is toggled to or from the advanced view
+     */
+    $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
+      $scope.searchIsAdvancedView = isAdvancedView;
+    });
   });
 
 }(window.angular));
