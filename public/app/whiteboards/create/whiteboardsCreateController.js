@@ -34,7 +34,7 @@
         html += '<span>' + option.canvas_full_name + '</span>';
 
         // Add a close icon
-        html += '<button class="btn btn-link pull-right close">';
+        html += '<button class="btn btn-link pull-right close" tabindex=\"-1\">';
         html += '  <i class="fa fa-times-circle"><span class="sr-only">Remove</span></i>';
         html += '</button>';
 

@@ -22,7 +22,7 @@
         <oi-multiselect
           ng-options="user.canvas_full_name for user in users | orderBy:'canvas_full_name.toLowerCase()' track by user.id "
           oi-multiselect-options="{'searchFilter': 'whiteboardsCreateInviteSearch', 'dropdownFilter': 'whiteboardsCreateInviteDropdown'}"
-          ng-model="invitedUsers" multiple placeholder="Enter the names of the people you want to invite">
+          ng-model="invitedUsers" multiple placeholder="Enter the names of the people you want to invite" tabindex="-1">
         </oi-multiselect>
       </div>
     </div>
