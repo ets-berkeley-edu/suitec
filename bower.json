@@ -21,11 +21,11 @@
     "bootstrap": "latest",
     "fontawesome": "latest",
     "highcharts-release": "latest",
-    "oi.multiselect": "latest",
     "lodash": "latest",
     "ng-file-upload": "latest",
     "ng-file-upload-shim": "latest",
     "ngInfiniteScroll": "latest",
+    "oi.multiselect": "latest",
     "remarkable-bootstrap-notify": "latest",
     "socket.io-client": "latest"
   }

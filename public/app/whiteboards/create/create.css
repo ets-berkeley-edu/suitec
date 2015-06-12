@@ -21,18 +21,38 @@
   background-color: #D9EDF7;
   border-color: #BCE9F1;
   color: #3A87AD;
-  padding: 3px 12px 3px 12px;
+  padding: 3px 12px;
 }
 
+/* Style the fontawesome icons in the selected users bubbles */
+.multiselect-search-list .btn.multiselect-search-list-item .admin,
 .multiselect-search-list .btn.multiselect-search-list-item .close {
-    color: #3a87ad;
-    font-size: 1.1em;
-    line-height: 22px;
-    margin-left: 4px;
-    opacity: 1;
+  color: #3A87AD;
+  font-size: 15px;
+  line-height: 22px;
+  margin-left: 4px;
+  opacity: 1;
+}
+
+/* Add some spacing between the graduation cap and the label in the selected bubble */
+.multiselect-search-list .btn.multiselect-search-list-item .admin + span {
+  margin-left: 5px;
+}
+
+/* Override multiselect's default padding */
+oi-multiselect .multiselect-dropdown-optgroup-option {
+  padding-left: 10px;
 }
 
 oi-multiselect .multiselect-dropdown-optgroup-option.active {
-    background-color: #0299E5;
-    color: #ffffff;
+  background-color: #0299E5;
+  color: #FFFFFF;
+}
+
+/* Align the labels in the dropdown */
+oi-multiselect .multiselect-dropdown-optgroup-option span.admin {
+  margin-left: 4px;
+}
+oi-multiselect .multiselect-dropdown-optgroup-option span.student {
+  margin-left: 22px;
 }

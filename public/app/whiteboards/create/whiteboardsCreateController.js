@@ -19,12 +19,47 @@
 
   angular.module('collabosphere')
 
-    // A custom filter that will return a slightly different DOM structure for selected users
+    // Register a custom filter that will return a slightly different DOM structure
+    // for selected users in the invite autosuggest
     .filter('whiteboardsCreateInviteSearch', ['$sce', function($sce) {
-      return function(label) {
-        var closeIcon = '<button class="btn btn-link pull-right close multiselect-search-list-item_selection-remove"><i class="fa fa-times-circle"><span class="sr-only">Remove</span></i></button>';
+      return function(label, query, option) {
+        var html = '';
 
-        return $sce.trustAsHtml(label + closeIcon);
+        // Add the graduation cap if the selected user is an administrator
+        if (option.is_admin) {
+          html += '<span class="admin"><i class="fa fa-graduation-cap"></i></span>';
+        }
+
+        // Add the selected user's name
+        html += '<span>' + option.canvas_full_name + '</span>';
+
+        // Add a close icon
+        html += '<button class="btn btn-link pull-right close">';
+        html += '  <i class="fa fa-times-circle"><span class="sr-only">Remove</span></i>';
+        html += '</button>';
+
+        return $sce.trustAsHtml(html);
+      };
+    }])
+
+    // Register a custom filter that will return a slightly different DOM structure
+    // for displaying users in the invite autosuggest list
+    .filter('whiteboardsCreateInviteDropdown', ['$sce', function($sce) {
+      return function(label, query, option) {
+        var html = '';
+        var cssClass = '';
+        if (option.is_admin) {
+          cssClass = 'admin';
+          html += '<i class="fa fa-graduation-cap"></i>';
+        } else {
+          cssClass = 'student';
+        }
+
+        // Add a class for regular students so we can add some margin to the span and align the
+        // label of students with those of TAs, teachers and/or administrators
+        html += '<span class="' + cssClass + '">' + label + '</span>';
+
+        return $sce.trustAsHtml(html);
       };
     }])
 
