@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('LeaderboardController', function(leaderboardFactory, userFactory, utilService, $scope) {
+  angular.module('collabosphere').controller('LeaderboardController', function(userFactory, utilService, $scope) {
 
     // Default sort
     $scope.sortBy = 'rank';
@@ -30,11 +30,11 @@
      * Get the users in the engagement index and their engagement
      * index points
      */
-    var getUsers = function() {
+    var getLeaderboard = function() {
       // The users in the engagement index can only be loaded by course admins
       // and users that share their points with the course
       if ($scope.me.is_admin || $scope.me.share_points) {
-        leaderboardFactory.getUsers().then(function(users) {
+        userFactory.getLeaderboard().then(function(users) {
           $scope.users = users;
 
           // Extract the current user's rank
@@ -262,9 +262,9 @@
      * initial save
      */
     var saveSharePoints = $scope.saveSharePoints = function() {
-      leaderboardFactory.updateSharePoints($scope.me.new_share_points).success(function() {
+      userFactory.updateSharePoints($scope.me.new_share_points).success(function() {
         $scope.me.share_points = $scope.me.new_share_points;
-        getUsers();
+        getLeaderboard();
       });
     };
 
@@ -292,7 +292,7 @@
         $scope.me.new_share_points = true;
       }
 
-      getUsers();
+      getLeaderboard();
     });
 
   });
