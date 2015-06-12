@@ -21,7 +21,7 @@
   background-color: #D9EDF7;
   border-color: #BCE9F1;
   color: #3A87AD;
-  padding: 3px 12px;
+  padding: 3px 9px;
 }
 
 /* Style the fontawesome icons in the selected users bubbles */
@@ -30,12 +30,12 @@
   color: #3A87AD;
   font-size: 15px;
   line-height: 22px;
-  margin-left: 4px;
+  margin-left: 7px;
   opacity: 1;
 }
 
 /* Add some spacing between the graduation cap and the label in the selected bubble */
-.multiselect-search-list .btn.multiselect-search-list-item .admin + span {
+.multiselect-search-list .btn.multiselect-search-list-item .whiteboards-create-list-item-admin + span {
   margin-left: 5px;
 }
 
@@ -47,12 +47,4 @@ oi-multiselect .multiselect-dropdown-optgroup-option {
 oi-multiselect .multiselect-dropdown-optgroup-option.active {
   background-color: #0299E5;
   color: #FFFFFF;
-}
-
-/* Align the labels in the dropdown */
-oi-multiselect .multiselect-dropdown-optgroup-option span.admin {
-  margin-left: 4px;
-}
-oi-multiselect .multiselect-dropdown-optgroup-option span.student {
-  margin-left: 22px;
 }

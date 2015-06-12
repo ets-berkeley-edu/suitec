@@ -27,7 +27,7 @@
 
         // Add the graduation cap if the selected user is an administrator
         if (option.is_admin) {
-          html += '<span class="admin"><i class="fa fa-graduation-cap"></i></span>';
+          html += '<span class="whiteboards-create-list-item-admin"><i class="fa fa-graduation-cap"></i></span>';
         }
 
         // Add the selected user's name
@@ -47,17 +47,12 @@
     .filter('whiteboardsCreateInviteDropdown', ['$sce', function($sce) {
       return function(label, query, option) {
         var html = '';
-        var cssClass = '';
+
         if (option.is_admin) {
-          cssClass = 'admin';
-          html += '<i class="fa fa-graduation-cap"></i>';
-        } else {
-          cssClass = 'student';
+          html += '<i class="fa fa-graduation-cap"></i> ';
         }
 
-        // Add a class for regular students so we can add some margin to the span and align the
-        // label of students with those of TAs, teachers and/or administrators
-        html += '<span class="' + cssClass + '">' + label + '</span>';
+        html += label;
 
         return $sce.trustAsHtml(html);
       };
