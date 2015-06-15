@@ -24,6 +24,6 @@
   },
   "canvasPoller": {
     "enabled": true,
-    "interval": 15
+    "delay": 15
   }
 }

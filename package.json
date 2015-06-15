@@ -77,6 +77,10 @@
     "col-users",
     "col-whiteboards"
   ],
+  "scripts": {
+    "pretest": "test -f logs/test.log && rm logs/test.log || echo 'No test log to remove'",
+    "test": "gulp test"
+  },
   "engines": {
     "node": ">=0.10"
   }
