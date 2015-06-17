@@ -51,7 +51,8 @@ gulp.task('mocha', function() {
     .src(['node_modules/col-tests/lib/beforeTests.js', 'node_modules/col-*/tests/**/*.js'])
     .pipe(mocha({
       'fullStackTrace': true,
-      'grep': process.env.MOCHA_GREP
+      'grep': process.env.MOCHA_GREP,
+      'timeout': 10000
     }));
 });
 
