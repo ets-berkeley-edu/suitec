@@ -11,16 +11,41 @@
 # or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-require 'selenium-webdriver'
-require 'page-object'
-require 'json'
+require_relative '../spec/spec_helper'
 
 class WebDriverUtils
 
   @config = YAML.load_file File.join(ENV['HOME'], '/.collabosphere_selenium/settings.yml')
 
+  def self.download_dir
+    File.join(ENV['HOME'], @config['webdriver_download_dir'])
+  end
+
+  # Creates the download dir if it does not exist and deletes any files remaining from previous tests
+  def self.prepare_download_dir
+    FileUtils::mkdir_p download_dir
+    FileUtils.rm_rf(download_dir, secure: true)
+  end
+
+  # Instantiates the browser and (in the case of Firefox) modifies the default handling of CSV downloads
   def self.driver
-    Selenium::WebDriver.for @config['webdriver'].to_sym
+    if @config['webdriver'] == 'firefox'
+      profile = Selenium::WebDriver::Firefox::Profile.new
+      profile['browser.download.folderList'] = 2
+      profile['browser.download.manager.showWhenStarting'] = false
+      profile['browser.download.dir'] = download_dir
+      profile['browser.helperApps.neverAsk.saveToDisk'] = 'text/csv'
+      driver = Selenium::WebDriver.for :firefox, :profile => profile
+      driver.manage.window.maximize
+      driver
+    elsif @config['webdriver'] == 'chrome'
+      Selenium::WebDriver.for :chrome
+    elsif @config['webdriver'] == 'safari'
+      Selenium::WebDriver.for :safari
+    else
+      logger.error 'Designated WebDriver is not supported'
+      nil
+    end
   end
 
   def self.base_url

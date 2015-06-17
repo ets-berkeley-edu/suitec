@@ -29,6 +29,7 @@ class CanvasPage
   text_area(:course_name_input, :xpath => '//label[@for="course_name"]/../following-sibling::td/input')
   text_area(:ref_code_input, :id => 'course_course_code')
   span(:create_course_button, :xpath => '//span[contains(.,"Add Course")]')
+  h2(:course_site_heading, :xpath => '//div[@id="course_home_content"]/h2')
   button(:publish_course_button, :xpath => '//button[@class="ui-button btn-publish"]')
   button(:course_published_button, :xpath => '//button[@class="ui-button disabled btn-published"]')
   text_area(:search_course_input, :id => 'course_name')
@@ -115,10 +116,21 @@ class CanvasPage
     WebDriverUtils.wait_for_element_and_click logout_link_element
   end
 
-  # Clicks the sidebar link to an existing asset library
+  # Ensures focus is not in the iframe, then clicks the sidebar link to an existing asset library
+  # @param driver [Selenium::WebDriver]         - the browser
   # @return [String]                            - return the URL of the course site's asset library
-  def click_asset_library_link
+  def click_asset_library_link(driver)
+    driver.switch_to.default_content
     WebDriverUtils.wait_for_element_and_click asset_library_link_element
+    current_url
+  end
+
+  # Ensures focus is not in the iframe, then clicks the Engagement Index link in the Canvas sidebar
+  # @param driver [Selenium::WebDriver]         - the browser
+  # @return [String]                            - return the URL of the course site's engagement index
+  def click_engagement_index_link(driver)
+    driver.switch_to.default_content
+    WebDriverUtils.wait_for_element_and_click engagement_index_link_element
     current_url
   end
 
@@ -135,16 +147,28 @@ class CanvasPage
     add_course_success_element.when_visible timeout=WebDriverUtils.page_load_wait
   end
 
+  # Searches for a test course site.  Since Canvas can lag in indexing new sites, will retry the search up to 3 times.
+  # @param test_id [String]                     - the string used to identify a specific test run and its course site
+  def search_for_course(test_id)
+    tries ||= 3
+    logger.info('Searching for course site')
+    load_sub_account
+    search_course_input_element.when_visible timeout=WebDriverUtils.page_update_wait
+    self.search_course_input = "#{test_id}"
+    search_course_button
+    wait_until(timeout) { course_site_heading.include? "#{test_id}" }
+  rescue => e
+    logger.error('Course site not found, retrying')
+    retry unless (tries -= 1).zero?
+  end
+
   # Publishes a test course site
   # @param test_id [String]                     - the string used to identify a specific test run and its course site
   # @return [String]                            - return the Canvas course id extracted from the course site URL
   def publish_course(test_id)
     logger.info 'Publishing the course'
-    load_sub_account
-    search_course_input_element.when_visible timeout=WebDriverUtils.page_update_wait
-    self.search_course_input = "#{test_id}"
-    search_course_button
-    WebDriverUtils.wait_for_page_and_click publish_course_button_element
+    search_for_course test_id
+    WebDriverUtils.wait_for_element_and_click publish_course_button_element
     course_published_button_element.when_visible timeout=WebDriverUtils.page_load_wait
     current_url.sub("#{WebDriverUtils.base_url}/courses/", '')
   end

@@ -34,7 +34,7 @@ describe 'Adding Asset Library URLs' do
     canvas.load_course_site @course_id
     canvas.accept_login_messages @course_id
     @asset_library = AssetLibraryPage.new @driver
-    @asset_library_url = canvas.click_asset_library_link
+    @asset_library_url = canvas.click_asset_library_link @driver
     @asset_library.load_page(@driver, @asset_library_url)
     @asset_library.click_manage_categories_link
     @asset_library.add_category 'Category 1'
