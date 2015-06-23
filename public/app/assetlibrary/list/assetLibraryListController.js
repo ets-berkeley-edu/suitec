@@ -20,7 +20,7 @@
   angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, $scope) {
 
     // Variable that keeps track of whether the search component is in the advanced view state
-    $scope.searchIsAdvancedView = false;
+    $scope.isAdvancedSearch = false;
 
     // Variable that keeps track of the search options
     $scope.searchOptions = {};
@@ -70,7 +70,7 @@
      * Listen for events indicating that the search view is toggled to or from the advanced view
      */
     $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
-      $scope.searchIsAdvancedView = isAdvancedView;
+      $scope.isAdvancedSearch = isAdvancedView;
     });
   });
 

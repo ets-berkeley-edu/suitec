@@ -20,7 +20,7 @@
   angular.module('collabosphere').controller('AssetLibrarySearchController', function($scope, assetLibraryCategoriesFactory, userFactory) {
 
     // Variable that keeps track of whether the search component is in the advanced view state
-    $scope.isAdvancedView = false;
+    $scope.isAdvancedSearch = false;
 
     // Variables that keeps track of the search options
     $scope.searchOptions = {
@@ -40,7 +40,7 @@
      * Emit an event indicating that we want to search through the assets
      */
     var search = $scope.search = function() {
-      if ($scope.isAdvancedView) {
+      if ($scope.isAdvancedSearch) {
         $scope.$emit('assetLibrarySearchSearch', $scope.searchOptions);
       } else {
         $scope.$emit('assetLibrarySearchSearch', {'keywords': $scope.searchOptions.keywords});
@@ -65,8 +65,40 @@
       });
     };
 
-    getCategories();
-    getUsers();
+    /**
+     * Show the simple search view
+     */
+    var showSimpleView = $scope.showSimpleView = function() {
+      $scope.isAdvancedSearch = false;
+      $scope.searchOptions = {
+        'keywords': '',
+        'category': '',
+        'user': '',
+        'type': ''
+      };
+      emitViewToggleEvent();
+    };
+
+    /**
+     * Show the advanced search view
+     */
+    var showAdvancedView = $scope.showAdvancedView = function() {
+      $scope.isAdvancedSearch = true;
+      emitViewToggleEvent();
+
+      // If we haven't loaded the asset categories or users yet, we'll fetch them now
+      if (!$scope.categories) {
+        getCategories();
+        getUsers();
+      }
+    };
+
+    /**
+     * Emit an event indicating the view has been changed
+     */
+    var emitViewToggleEvent = function() {
+      $scope.$emit('assetLibrarySearchViewToggle', $scope.isAdvancedSearch);
+    };
 
   });
 
