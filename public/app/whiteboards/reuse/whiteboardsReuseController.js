@@ -19,6 +19,7 @@
 
   angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryListFactory, $scope, $modalInstance) {
 
+    $scope.searchOptions = {};
     $scope.assets = [];
     $scope.list = {
       'page': 0,
@@ -65,7 +66,7 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.isLoading = true;
-      assetLibraryListFactory.getAssets($scope.list.page).success(function(assets) {
+      assetLibraryListFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
@@ -77,6 +78,16 @@
       // Ensure that the next page is requested the next time
       $scope.list.page++;
     };
+
+    /**
+     * Listen for events indicating that the user wants to search through the asset library
+     */
+    $scope.$on('assetLibrarySearchSearch', function(ev, searchOptions) {
+      $scope.list.page = 0;
+      $scope.assets = [];
+      $scope.searchOptions = searchOptions;
+      getAssets();
+    });
 
   });
 
