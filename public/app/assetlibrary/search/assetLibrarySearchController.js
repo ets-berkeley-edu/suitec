@@ -77,6 +77,9 @@
         'type': ''
       };
       emitViewToggleEvent();
+
+      // Trigger a search so other components can re-initialize the list
+      search();
     };
 
     /**
