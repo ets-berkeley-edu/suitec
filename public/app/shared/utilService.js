@@ -19,8 +19,6 @@
 
   angular.module('collabosphere').service('utilService', function($location, $q, $timeout) {
 
-    console.log($location.search());
-
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
     // the base URL for all REST API requests
@@ -69,15 +67,18 @@
       postIFrameMessage(function() {
         var height = document.body.offsetHeight;
         return {
-          subject: 'changeParent',
-          height: height
+          'subject': 'changeParent',
+          'height': height
         };
+      }, function(response) {
+        alert('RESIZE RESPONSE');
+        // TODO
       });
     };
 
     // Continuously check if there have been any changes to the content of the page
     // and resize accordingly
-    setInterval(resizeIFrame, 250);
+    // setInterval(resizeIFrame, 2500);
 
     /**
      * Scroll to the top of the window. When Collabosphere is being run stand-alone,
@@ -91,8 +92,8 @@
       // the parent window to the top
       postIFrameMessage(function() {
         return {
-          subject: 'changeParent',
-          scrollToTop: true
+          'subject': 'changeParent',
+          'scrollToTop': true
         };
       });
     };
@@ -109,8 +110,8 @@
       if (window.parent) {
         postIFrameMessage(function() {
           return {
-            subject: 'changeParent',
-            scrollTo: position
+            'subject': 'changeParent',
+            'scrollTo': position
           };
         });
       // Otherwise, scroll the current window
@@ -132,26 +133,14 @@
       if (window.parent) {
         postIFrameMessage(function() {
           return {
-            subject: 'getScrollPosition'
+            'subject': 'getScrollInformation'
           };
-        });
-
-        // The parent window will respond with a message into the current window containing
-        // the scroll position of the parent window
-        window.onmessage = function(ev) {
-          if (ev && ev.data) {
-            var message;
-            try {
-              message = JSON.parse(ev.data);
-            } catch (err) {
-              // The message is not for us; ignore it
-              return;
-            }
-            if (message.scrollPosition !== undefined) {
-              deferred.resolve(message.scrollPosition);
-            }
+        }, function(response) {
+          alert(response);
+          if (response.scrollPosition !== undefined) {
+            deferred.resolve(response.scrollPosition);
           }
-        };
+        });
       // Otherwise, retrieve the scroll position of the current window
       } else {
         var scrollPosition = (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
@@ -165,14 +154,36 @@
      * Collabosphere as a BasicLTI tool, this is our main way of communicating with the container
      * application
      *
-     * @param  {Function}   messageGenerator              Function that will return the message to send to the parent container
+     * @param  {Function}   messageGenerator                          Function that will return the message to send to the parent container
+     * @param  {Function}   [messageCallback]                         Function that will be called when a response from the parent container has been received
+     * @param  {Number}     [messageCallback.currentIframeHeight]     The height of the LTI iFrame
+     * @param  {Number}     [messageCallback.currentParentHeight]     The full height of the parent container
+     * @param  {Number}     [messageCallback.currentScrollPosition]   The scroll position within the parent container
+     * @param  {Number}     [messageCallback.scrollToBottom]          The distance between the bottom of the browser and the bottom of the page
      * @api private
      */
-    var postIFrameMessage = function(messageGenerator) {
+    var postIFrameMessage = function(messageGenerator, messageCallback) {
       // Only try to send the event when a parent container is present
       if (window.parent) {
         // Wait until Angular has finished rendering items on the screen
         $timeout(function() {
+          // The parent container will respond with a message into the current window containing
+          // the scroll information of the parent window
+          window.onmessage = function(ev) {
+            if (ev && ev.data) {
+              var message;
+              try {
+                message = JSON.parse(ev.data);
+              } catch (err) {
+                // The message is not for us; ignore it
+                return;
+              }
+              if (message && messageCallback) {
+                messageCallback(message);
+              }
+            }
+          };
+
           // Retrieve the message to send to the parent container. Note that we can't pass the
           // message directly into this function, as we sometimes need to wait until Angular has
           // finished rendering before we can determine what message to send

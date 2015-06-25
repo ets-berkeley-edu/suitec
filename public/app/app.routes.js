@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').config(function($locationProvider, $stateProvider, $urlRouterProvider) {
+  angular.module('collabosphere').config(function($locationProvider, $stateProvider) {
 
     // Use the HTML5 location provider to ensure that the $location service getters
     // and setters interact with the browser URL address through the HTML5 history API
