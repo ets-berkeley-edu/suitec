@@ -22,15 +22,37 @@
     /**
      * Get the assets for the current course
      *
-     * @param  {Number}               page      The results page to retrieve
-     * @return {Promise<Object>}                $http promise returning the total number of assets for the current course and the assets in the current page
+     * @param  {Number}               [page]                          The results page to retrieve
+     * @param  {Object}               [searchOptions]                 A set of options to filter the results by
+     * @param  {String}               [searchOptions.keywords]        A string to filter the assets by
+     * @param  {Number}               [searchOptions.category]        The id of the category to filter the assets by
+     * @param  {Number}               [searchOptions.user]            The id of the user who created the assets
+     * @param  {Number}               [searchOptions.type]            The type of assets
+     * @return {Promise<Object>}                                      $http promise returning the total number of assets for the current course and the assets in the current page
      */
-    var getAssets = function(page) {
-      return $http.get(utilService.getApiUrl('/assets?offset=' + (page * 10)));
+    var getAssets = function(page, searchOptions) {
+      page = page || 0;
+      searchOptions = searchOptions || {};
+
+      var url = '/assets';
+      url += '?offset=' + (page * 10);
+      if (searchOptions.keywords) {
+        url += '&keywords=' + searchOptions.keywords;
+      }
+      if (searchOptions.category) {
+        url += '&category=' + searchOptions.category;
+      }
+      if (searchOptions.user) {
+        url += '&user=' + searchOptions.user;
+      }
+      if (searchOptions.type) {
+        url += '&type=' + searchOptions.type;
+      }
+      return $http.get(utilService.getApiUrl(url));
     };
 
     return {
-      getAssets: getAssets
+      'getAssets': getAssets
     };
 
   });

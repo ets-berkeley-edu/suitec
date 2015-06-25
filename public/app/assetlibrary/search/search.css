@@ -32,3 +32,18 @@
 .assetlibrary-search-form .input-group .input-group-btn {
   width: 20px;
 }
+
+.assetlibrary-search-advancedform {
+  padding: 30px 30px 0 30px;
+}
+
+@media only screen and (min-width : 768px) {
+  .assetlibrary-search-advancedform .form-group > label {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.assetlibrary-search-advancedform .form-group select {
+  margin-bottom: 5px;
+}
