@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, utilService, $rootScope, $scope, $state) {
+
+    // Variable that keeps track of the URL state
+    $scope.state = $state;
 
     // Variable that keeps track of whether the search component is in the advanced view state
     $scope.isAdvancedSearch = false;
@@ -32,6 +35,9 @@
       'isLoading': false
     };
 
+    // Variable that will keep track of the scroll position in the list
+    var scrollPosition = 0;
+
     /**
      * Get the assets for the current course through an infinite scroll
      */
@@ -44,7 +50,7 @@
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
         // retrieved asset library page
-        if (assets.results.length === 10) {
+        if (assets.results.length === 3) {
           $scope.list.isLoading = false;
         }
       });
@@ -52,8 +58,29 @@
       $scope.list.page++;
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
+    /**
+     * Listen for events indicating that a state change is about to take place. At that point,
+     * the current scroll position in the list will be cached
+     */
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      if (fromState.name === 'assetlibrarylist') {
+        utilService.getScrollPosition().then(function(currentScrollPosition) {
+          scrollPosition = currentScrollPosition;
+        });
+      }
+    });
+
+    /**
+     * Listen for events indicating that a state change has taken place. At that point,
+     * the previous scroll position in the list will be restored
+     */
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+      if (toState.name === 'assetlibrarylist') {
+        // Resize the iFrame the Asset Library is being run in
+        utilService.resizeIFrame();
+        // Restore the scroll position to the position the list was in previously
+        utilService.scrollTo(scrollPosition);
+      }
     });
 
     /**
@@ -71,6 +98,10 @@
      */
     $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
       $scope.isAdvancedSearch = isAdvancedView;
+    });
+
+    userFactory.getMe().success(function(me) {
+      $scope.me = me;
     });
   });
 

@@ -22,16 +22,15 @@
     'ngAria',
     'ngFileUpload',
     'ngMessages',
-    'ngRoute',
     'ngSanitize',
     'common.fabric',
     'common.fabric.utilities',
     'common.fabric.constants',
-    'infinite-scroll',
     'luegg.directives',
     'monospaced.elastic',
     'oi.multiselect',
     'ui.bootstrap',
+    'ui.router',
     'ui.utils'
   ]);
 

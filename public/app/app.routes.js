@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').config(function($routeProvider, $locationProvider) {
+  angular.module('collabosphere').config(function($locationProvider, $stateProvider, $urlRouterProvider) {
 
     // Use the HTML5 location provider to ensure that the $location service getters
     // and setters interact with the browser URL address through the HTML5 history API
@@ -27,54 +27,71 @@
     }).hashPrefix('!');
 
     // Configure the Collabosphere routes
-    $routeProvider.
+    $stateProvider
+      // Asset Library routes
+      .state('assetlibrarylist', {
+        'url': '/assetlibrary',
+        'templateUrl': '/app/assetlibrary/list/list.html',
+        'controller': 'AssetLibraryListController'
+      })
+      .state('assetlibrarylist.item', {
+        'views': {
+          'item': {
+            'controller': 'AssetLibraryItemController',
+            'templateUrl': '/app/assetlibrary/item/item.html'
+          }
+        },
+        'url': '/assetlibrary/:assetId'
+      })
+      .state('assetlibraryupload', {
+        'url': '/assetlibrary/upload',
+        'templateUrl': '/app/assetlibrary/upload/upload.html',
+        'controller': 'AssetLibraryUploadController'
+      })
+      .state('assetlibraryaddlink', {
+        'url': '/assetlibrary/addlink',
+        'templateUrl': '/app/assetlibrary/addlink/addlink.html',
+        'controller': 'AssetLibraryAddLinkController'
+      })
+      .state('assetlibrarycategories', {
+        'url': '/assetlibrary/categories',
+        'templateUrl': '/app/assetlibrary/categories/categories.html',
+        'controller': 'AssetLibraryCategoriesController'
+      })
+      .state('assetlibraryaddbookmarklet', {
+        'url': '/assetlibrary/addbookmarklet',
+        'templateUrl': '/app/assetlibrary/addbookmarklet/addbookmarklet.html',
+        'controller': 'AssetLibraryAddBookmarkletController'
+      })
 
-    // Asset Library routes
-    when('/assetlibrary', {
-      templateUrl: '/app/assetlibrary/list/list.html'
-    }).
-    when('/assetlibrary/upload', {
-      templateUrl: '/app/assetlibrary/upload/upload.html'
-    }).
-    when('/assetlibrary/addlink', {
-      templateUrl: '/app/assetlibrary/addlink/addlink.html'
-    }).
-    when('/assetlibrary/addthought', {
-      templateUrl: '/app/assetlibrary/addthought/addthought.html'
-    }).
-    when('/assetlibrary/categories', {
-      templateUrl: '/app/assetlibrary/categories/categories.html'
-    }).
-    when('/assetlibrary/addbookmarklet', {
-      templateUrl: '/app/assetlibrary/addbookmarklet/addbookmarklet.html'
-    }).
-    when('/assetlibrary/:assetId', {
-      templateUrl: '/app/assetlibrary/item/item.html'
-    }).
+      // Engagement Index routes
+      .state('engagementindex', {
+        'url': '/engagementindex',
+        'templateUrl': '/app/engagementindex/leaderboard/leaderboard.html',
+        'controller': 'LeaderboardController'
+      })
+      .state('pointsconfiguration', {
+        'url': '/engagementindex/pointsconfiguration',
+        'templateUrl': '/app/engagementindex/points/points.html',
+        'controller': 'PointsController'
+      })
 
-    // Engagement Index routes
-    when('/engagementindex', {
-      templateUrl: '/app/engagementindex/leaderboard/leaderboard.html'
-    }).
-    when('/engagementindex/pointsconfiguration', {
-      templateUrl: '/app/engagementindex/points/points.html'
-    }).
-
-    // Whiteboard routes
-    when('/whiteboards', {
-      templateUrl: '/app/whiteboards/list/list.html'
-    }).
-    when('/whiteboards/create', {
-      templateUrl: '/app/whiteboards/create/create.html'
-    }).
-    when('/whiteboards/:whiteboardId', {
-      templateUrl: '/app/whiteboards/board/board.html'
-    }).
-
-    // Unrecognized route
-    otherwise({
-      templateUrl: '404.html'
-    });
+      // Whiteboard routes
+      .state('whiteboards', {
+        'url': '/whiteboards',
+        'templateUrl': '/app/whiteboards/list/list.html',
+        'controller': 'WhiteboardsListController'
+      })
+      .state('whiteboardscreate', {
+        'url': '/whiteboards/create',
+        'templateUrl': '/app/whiteboards/create/create.html',
+        'controller': 'WhiteboardsCreateController'
+      })
+      .state('whiteboard', {
+        'url': '/whiteboards/:whiteboardId',
+        'templateUrl': '/app/whiteboards/board/board.html',
+        'controller': 'WhiteboardsBoardController'
+      })
 
   });
 

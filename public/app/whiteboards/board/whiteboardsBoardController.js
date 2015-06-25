@@ -17,10 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsBoardFactory, $modal, $rootScope, $routeParams, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsBoardFactory, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
-    var whiteboardId = $routeParams.whiteboardId;
+    var whiteboardId = $stateParams.whiteboardId;
 
     // Variable that will keep track of the current whiteboard
     $scope.whiteboard = null;
