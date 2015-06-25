@@ -64,20 +64,27 @@ class AssetLibraryPage
     driver.switch_to.frame driver.find_element(:id, 'tool_content')
   end
 
-  # Waits for an asset with a specified title to become visible in the gallery view
+  # Obtains the asset id from the first asset in the gallery list of assets
+  # @return [String]                            - the ID of the asset
+  def get_first_asset_id
+    wait_until(timeout=WebDriverUtils.page_load_wait) { gallery_asset_link_elements.any? }
+    gallery_asset_link_elements[0].attribute('href').sub("#{WebDriverUtils.collabosphere_base_url}/assetlibrary/", '')
+  end
+
+  # Waits for an asset with a specified id to become visible in the gallery view
   # @param driver [Selenium::WebDriver]         - the active browser
-  # @param asset_title [String]                 - the title of the asset that should appear in the gallery
-  def wait_for_asset_in_gallery(driver, asset_title)
-    wait_until(timeout=WebDriverUtils.page_load_wait) { driver.find_element(:xpath, "//h3[contains(text(),'#{asset_title}')]").displayed? }
+  # @param asset_id [String]                    - the id of the asset that should appear in the gallery
+  def wait_for_asset_in_gallery(driver, asset_id)
+    wait_until(timeout=WebDriverUtils.page_load_wait) { driver.find_element(:xpath, "//li[@data-ng-repeat='asset in assets']//a[contains(@href,'#{asset_id}')]")  }
   end
 
   # Combines the methods for loading the asset library and waiting for an asset with a specific title to appear
   # @param driver [Selenium::WebDriver]         - the browser
   # @param url [String]                         - the asset library URL specific to the test course site
-  # @param asset_title [String]                 - the title of the asset that should appear in the gallery
-  def load_gallery_asset(driver, url, asset_title)
+  # @param asset_id [String]                    - the id of the asset that should appear in the gallery
+  def load_gallery_asset(driver, url, asset_id)
     load_page(driver, url)
-    wait_for_asset_in_gallery(driver, asset_title)
+    wait_for_asset_in_gallery(driver, asset_id)
   end
 
   # Waits for and then clicks the asset gallery item at a specified position in the list of items

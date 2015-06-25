@@ -67,7 +67,7 @@ class CanvasPage
   # Loads the Canvas homepage
   def load_homepage
     logger.info 'Loading Canvas homepage'
-    navigate_to "#{WebDriverUtils.base_url}"
+    navigate_to "#{WebDriverUtils.canvas_base_url}"
   end
 
   # Accepts the Canvas messages that can intercept the user when logging into a course site
@@ -90,25 +90,25 @@ class CanvasPage
 
   # Loads the Canvas sub-account used to create test course sites
   def load_sub_account
-    navigate_to "#{WebDriverUtils.base_url}/accounts/#{WebDriverUtils.sub_account}"
+    navigate_to "#{WebDriverUtils.canvas_base_url}/accounts/#{WebDriverUtils.sub_account}"
   end
 
   # Loads the test course site homepage
   # @param course_id [String]                   - the Canvas course id in the course site URL path
   def load_course_site(course_id)
-    navigate_to "#{WebDriverUtils.base_url}/courses/#{course_id}"
+    navigate_to "#{WebDriverUtils.canvas_base_url}/courses/#{course_id}"
   end
 
   # Loads the test course site users page
   # @param course_id [String]                   - the Canvas course id in the course site URL path
   def load_users_page(course_id)
-    navigate_to "#{WebDriverUtils.base_url}/courses/#{course_id}/users"
+    navigate_to "#{WebDriverUtils.canvas_base_url}/courses/#{course_id}/users"
   end
 
   # Loads the test course site LTI tool configuration page
   # @param course_id [String]                   - the Canvas course id in the course site URL path
   def load_tools_config_page(course_id)
-    navigate_to "#{WebDriverUtils.base_url}/courses/#{course_id}/settings/configurations"
+    navigate_to "#{WebDriverUtils.canvas_base_url}/courses/#{course_id}/settings/configurations"
   end
 
   # Logs out of Canvas
@@ -147,7 +147,7 @@ class CanvasPage
     add_course_success_element.when_visible timeout=WebDriverUtils.page_load_wait
   end
 
-  # Searches for a test course site.  Since Canvas can lag in indexing new sites, will retry the search up to 3 times.
+  # Searches for a test course site up to 3 times, since Canvas can lag in indexing new sites.
   # @param test_id [String]                     - the string used to identify a specific test run and its course site
   def search_for_course(test_id)
     tries ||= 3
@@ -170,7 +170,7 @@ class CanvasPage
     search_for_course test_id
     WebDriverUtils.wait_for_element_and_click publish_course_button_element
     course_published_button_element.when_visible timeout=WebDriverUtils.page_load_wait
-    current_url.sub("#{WebDriverUtils.base_url}/courses/", '')
+    current_url.sub("#{WebDriverUtils.canvas_base_url}/courses/", '')
   end
 
   # Adds to a course site all the test users in a hash where the user 'role' matches the user_role param
