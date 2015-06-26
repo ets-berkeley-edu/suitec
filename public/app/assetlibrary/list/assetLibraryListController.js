@@ -32,7 +32,7 @@
     $scope.assets = [];
     $scope.list = {
       'page': 0,
-      'isLoading': false
+      'ready': true
     };
 
     // Variable that will keep track of the scroll position in the list
@@ -44,14 +44,14 @@
     var getAssets = $scope.getAssets = function() {
       // Indicate the no further REST API requests should be made
       // until the current request has completed
-      $scope.list.isLoading = true;
+      $scope.list.ready = false;
       assetLibraryListFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
         // retrieved asset library page
-        if (assets.results.length === 3) {
-          $scope.list.isLoading = false;
+        if (assets.results.length === 10) {
+          $scope.list.ready = true;
         }
       });
       // Ensure that the next page is requested the next time
@@ -64,8 +64,10 @@
      */
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
       if (fromState.name === 'assetlibrarylist') {
-        utilService.getScrollPosition().then(function(currentScrollPosition) {
-          scrollPosition = currentScrollPosition;
+        utilService.getScrollInformation().then(function(scrollInformation) {
+          scrollPosition = scrollInformation.scrollPosition;
+          // Don't load additional results
+          $scope.list.ready = false;
         });
       }
     });
@@ -80,6 +82,8 @@
         utilService.resizeIFrame();
         // Restore the scroll position to the position the list was in previously
         utilService.scrollTo(scrollPosition);
+        // Indicate that more results can be loaded
+        $scope.list.ready = true;
       }
     });
 

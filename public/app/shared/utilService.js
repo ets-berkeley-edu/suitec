@@ -71,14 +71,14 @@
           'height': height
         };
       }, function(response) {
-        alert('RESIZE RESPONSE');
+        // console.log('Resizing iFrame: ' + JSON.stringify(response));
         // TODO
       });
     };
 
     // Continuously check if there have been any changes to the content of the page
     // and resize accordingly
-    // setInterval(resizeIFrame, 2500);
+    setInterval(resizeIFrame, 250);
 
     /**
      * Scroll to the top of the window. When Collabosphere is being run stand-alone,
@@ -121,13 +121,13 @@
     };
 
     /**
-     * Get the current scroll position. When Collabosphere is being run stand-alone,
+     * Get the current scroll information. When Collabosphere is being run stand-alone,
      * it will return the scroll position of the current window. When Collabosphere is being run
-     * as a BasicLTI tool, it will return the scroll position of the parent window
+     * as a BasicLTI tool, it will return the scroll information of the parent window
      *
-     * @return {Promise<Number>}                      Promise returning the current scroll position
+     * @return {Promise<Object>}                      Promise returning the current scroll information
      */
-    var getScrollPosition = function() {
+    var getScrollInformation = function() {
       var deferred = $q.defer();
       // When running Collabosphere as a BasicLTI tool, request the scroll position of the parent window
       if (window.parent) {
@@ -136,15 +136,16 @@
             'subject': 'getScrollInformation'
           };
         }, function(response) {
-          alert(response);
-          if (response.scrollPosition !== undefined) {
-            deferred.resolve(response.scrollPosition);
-          }
+          deferred.resolve(response);
         });
-      // Otherwise, retrieve the scroll position of the current window
+      // Otherwise, retrieve the scroll information of the current window
       } else {
         var scrollPosition = (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
-        deferred.resolve(scrollPosition);
+        var scrollToBottom =  document.body.offsetHeight - scrollPosition - document.documentElement.clientHeight;
+        deferred.resolve({
+          'scrollPosition': scrollPosition,
+          'scrollToBottom': scrollToBottom
+        });
       }
       return deferred.promise;
     };
@@ -169,20 +170,24 @@
         $timeout(function() {
           // The parent container will respond with a message into the current window containing
           // the scroll information of the parent window
-          window.onmessage = function(ev) {
-            if (ev && ev.data) {
-              var message;
-              try {
-                message = JSON.parse(ev.data);
-              } catch (err) {
-                // The message is not for us; ignore it
-                return;
+          if (messageCallback) {
+            var callback = function(ev) {
+              if (ev && ev.data) {
+                var message;
+                try {
+                  message = JSON.parse(ev.data);
+                } catch (err) {
+                  // The message is not for us; ignore it
+                  return;
+                }
+                if (message) {
+                  messageCallback(message);
+                }
+                window.removeEventListener('message', callback);
               }
-              if (message && messageCallback) {
-                messageCallback(message);
-              }
-            }
-          };
+            };
+            window.addEventListener('message', callback);
+          }
 
           // Retrieve the message to send to the parent container. Note that we can't pass the
           // message directly into this function, as we sometimes need to wait until Angular has
@@ -198,7 +203,7 @@
       'getLaunchParams': getLaunchParams,
       'getApiUrl': getApiUrl,
       'getToolUrl': getToolUrl,
-      'getScrollPosition': getScrollPosition,
+      'getScrollInformation': getScrollInformation,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
       'scrollToTop': scrollToTop

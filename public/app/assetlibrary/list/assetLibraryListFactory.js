@@ -35,7 +35,7 @@
       searchOptions = searchOptions || {};
 
       var url = '/assets';
-      url += '?offset=' + (page * 3) + '&limit=3';
+      url += '?offset=' + (page * 10);
       if (searchOptions.keywords) {
         url += '&keywords=' + searchOptions.keywords;
       }

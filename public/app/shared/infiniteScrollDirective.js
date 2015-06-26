@@ -17,49 +17,77 @@
 
   'use strict';
 
-  angular.module('collabosphere').directive('infiniteScroll', function($interval) {
+  angular.module('collabosphere').directive('infiniteScroll', function(utilService, $interval) {
     return {
       'restrict': 'A',
       'scope': {
         'infiniteScroll': '&',
         'infiniteScrollContainer': '@',
         'infiniteScrollDistance': '=',
-        'infiniteScrollDisabled': '='
+        'infiniteScrollReady': '='
       },
       'link': function(scope, elem, attrs) {
-        console.log(scope);
-        console.log(elem);
-        console.log(attrs);
+
+        // Default the distance to the bottom of the page at which further results are loaded
+        scope.infiniteScrollDistance = scope.infiniteScrollDistance || 400;
+
+        // Default whether infinite scrolling should happen against the window or the current element
+        scope.infiniteScrollContainer = scope.infiniteScrollContainer || 'window';
+
+        // Cache the infinite scroll container when a container other than the browser window has been supplied
+        var infiniteScrollContainer = null;
+        if (scope.infiniteScrollContainer !== 'window') {
+          infiniteScrollContainer = document.querySelector('#' + scope.infiniteScrollContainer);
+        }
 
         /**
-         * TODO
-         */
-        var handleInfiniteScrollDisabled = function(v) {
-          console.log('handleInfiniteScrollDisabled');
-          console.log(v);
-        };
-        scope.$watch('infiniteScrollDisabled', handleInfiniteScrollDisabled, true);
-
-        /**
-         * TODO
+         * Load the next set of results in the infinite scroll instance
          */
         var handleInfiniteScrollLoad = function() {
           scope.infiniteScroll();
         };
 
-        var infiniteScrollInterval = $interval(function() {
-          if (!scope.infiniteScrollDisabled) {
+        /**
+         * Check whether the next set of results should be loaded. The next set of results should only be loaded
+         * when the infinite scroll instance is ready to accept more results and when the bottom of the page or element
+         * is close enough
+         *
+         * @param  {Number}         scrollToBottom            When the browser window was supplied as the infiniteScrollContainer, the distance between the bottom of the browser and the bottom of the page. Otherwise, the distance between the bottom of the infinite scroll container and the current scroll position within that container
+         */
+        var checkInfiniteScrollLoad = function(scrollToBottom) {
+          if (scope.infiniteScrollReady && scrollToBottom < scope.infiniteScrollDistance) {
             handleInfiniteScrollLoad();
+          }
+        };
+
+        /**
+         * Interval that checks whether the next set of results should be loaded. As the Collabosphere tools might
+         * be loaded inside of an LTI iFrame and it's difficult to get access to the scrolling events
+         * from the parent window, an interval is used instead.
+         */
+        var infiniteScrollInterval = $interval(function() {
+          // Request the page scroll information when infinite scrolling should happen against the window
+          if (scope.infiniteScrollContainer === 'window') {
+            utilService.getScrollInformation().then(function(scrollInformation) {
+              checkInfiniteScrollLoad(scrollInformation.scrollToBottom);
+            });
+          } else {
+            var scrollToBottom = infiniteScrollContainer.scrollHeight - infiniteScrollContainer.clientHeight - infiniteScrollContainer.scrollTop;
+            checkInfiniteScrollLoad(scrollToBottom);
           }
         }, 250);
 
-        // TODO
-        handleInfiniteScrollLoad();
-
+        /**
+         * Clear the interval when the infinite scroll instance has been
+         * destroyed
+         */
         scope.$on('$destroy', function() {
-          console.log('Destroying instance');
           $interval.cancel(infiniteScrollInterval);
         });
+
+        // Load the first set of results when the infinite scroll instance is initiated
+        handleInfiniteScrollLoad();
+
       }
     };
   });
