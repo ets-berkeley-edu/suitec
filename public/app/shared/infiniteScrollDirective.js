@@ -21,10 +21,10 @@
    * The infinite scroll directive can be used to add infinite scrolling functionality to
    * a container. The following attributes should be applied to the infinite scrolling container:
    *
-   * @param  {Function}       infinite-scroll             The function that fetches the next set of results
-   * @param  {String}         infinite-scroll-container   `window` if the next set of results should be fetched when the user scroll approaches the end of the page. Otherwise, the id of the element in which the user scroll should approach the end before loading the next set of results
-   * @param  {Number}         infinite-scroll-distance    The distance in pixels between the current scroll position within the scroll container and the bottom of the scroll container at which the next set of results will be loaded
-   * @param  {Boolean}        infinite-scroll-ready       Whether the infinite scroll container is ready to load more results.
+   * @param  {Function}       infinite-scroll               The function that fetches the next set of results
+   * @param  {String}         [infinite-scroll-container]   `window` if the next set of results should be fetched when the user scroll approaches the end of the page. Otherwise, the id of the element in which the user scroll should approach the end before loading the next set of results
+   * @param  {Number}         [infinite-scroll-distance]    The distance in pixels between the current scroll position within the scroll container and the bottom of the scroll container at which the next set of results will be loaded. Defaults to 400px
+   * @param  {Boolean}        infinite-scroll-ready         Whether the infinite scroll container is ready to load more results.
    */
   angular.module('collabosphere').directive('infiniteScroll', function(utilService, $interval) {
     return {
