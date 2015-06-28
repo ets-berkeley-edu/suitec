@@ -22,7 +22,7 @@
     $scope.whiteboards = [];
     $scope.list = {
       'page': 0,
-      'isLoading': false
+      'ready': true
     };
 
     /**
@@ -31,14 +31,14 @@
     var getWhiteboards = $scope.getWhiteboards = function() {
       // Indicate the no further REST API requests should be made
       // until the current request has completed
-      $scope.list.isLoading = true;
+      $scope.list.ready = false;
       whiteboardsListFactory.getWhiteboards($scope.list.page).success(function(whiteboards) {
         $scope.whiteboards = $scope.whiteboards.concat(whiteboards.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
         // retrieved asset library page
         if (whiteboards.results.length === 10) {
-          $scope.list.isLoading = false;
+          $scope.list.ready = true;
         }
       });
       // Ensure that the next page is requested the next time

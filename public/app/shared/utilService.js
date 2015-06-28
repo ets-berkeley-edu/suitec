@@ -70,9 +70,6 @@
           'subject': 'changeParent',
           'height': height
         };
-      }, function(response) {
-        // console.log('Resizing iFrame: ' + JSON.stringify(response));
-        // TODO
       });
     };
 
