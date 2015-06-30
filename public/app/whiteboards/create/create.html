@@ -18,9 +18,9 @@
     <label for="whiteboards-create-invite" class="col-sm-2 control-label">Invite</label>
     <div class="col-sm-10">
       <oi-multiselect
-        ng-options="user.canvas_full_name for user in users | orderBy:'canvas_full_name.toLowerCase()' track by user.id "
+        ng-options="user.id as user.canvas_full_name for user in users | orderBy: 'canvas_full_name.toLowerCase()' track by user.id "
         oi-multiselect-options="{'searchFilter': 'whiteboardsCreateInviteSearch', 'dropdownFilter': 'whiteboardsCreateInviteDropdown'}"
-        ng-model="invitedUsers" multiple placeholder="Enter the names of the people you want to invite" tabindex="-1">
+        ng-model="whiteboard.members" multiple placeholder="Enter the names of the people you want to invite" tabindex="-1">
       </oi-multiselect>
     </div>
   </div>

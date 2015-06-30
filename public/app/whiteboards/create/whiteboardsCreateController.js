@@ -63,9 +63,6 @@
       // Variable that will keep track of the new whiteboard to be created
       $scope.whiteboard = {};
 
-      // Variable that will keep track of the users that should be invited
-      $scope.invitedUsers = [];
-
       // Variable that will keep track of all the users in the course
       $scope.users = [];
 
@@ -79,15 +76,15 @@
       };
 
       /**
-       * Get the users in the course
+       * Get all users in the course
        */
-      var getUsers = function() {
+      var getAllUsers = function() {
         // Get our own information first, so we can filter ourselves out of
         // the set of users who can be invited into the whiteboard
         userFactory.getMe()
           .then(function(me) {
             $scope.me = me.data;
-            return userFactory.getUsers();
+            return userFactory.getAllUsers();
           })
           .then(function(response) {
             $scope.users = response.data.filter(function(user) {
@@ -96,7 +93,7 @@
           });
       };
 
-      getUsers();
+      getAllUsers();
     });
 
 }(window.angular));

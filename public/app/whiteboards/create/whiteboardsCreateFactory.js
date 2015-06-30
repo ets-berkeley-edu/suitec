@@ -22,8 +22,9 @@
     /**
      * Create a new whiteboard
      *
-     * @param  {Object}               whiteboard            The object representing the whiteboard that should be created
+     * @param  {Object}               whiteboard            The object representing the link that should be created
      * @param  {String}               whiteboard.title      The title of the whiteboard
+     * @param  {Number[]}             [whiteboard.members]  The ids of the users that should be added to the whiteboard as members. The current user will automatically be added as a member
      * @return {Promise<Whiteboard>}                        Promise returning the created whiteboard
      */
     var createWhiteboard = function(whiteboard) {

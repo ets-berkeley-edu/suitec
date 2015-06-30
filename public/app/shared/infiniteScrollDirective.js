@@ -17,7 +17,7 @@
 
   'use strict';
 
-  /**
+  /*!
    * The infinite scroll directive can be used to add infinite scrolling functionality to
    * a container. The following attributes should be applied to the infinite scrolling container:
    *

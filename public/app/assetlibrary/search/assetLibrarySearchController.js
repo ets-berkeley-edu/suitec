@@ -57,10 +57,10 @@
     };
 
     /**
-     * Get the users for the current course
+     * Get all users in the current course
      */
-    var getUsers = function() {
-      userFactory.getUsers().success(function(response) {
+    var getAllUsers = function() {
+      userFactory.getAllUsers().success(function(response) {
         $scope.users = response;
       });
     };
@@ -92,7 +92,7 @@
       // If we haven't loaded the asset categories or users yet, we'll fetch them now
       if (!$scope.categories) {
         getCategories();
-        getUsers();
+        getAllUsers();
       }
     };
 
