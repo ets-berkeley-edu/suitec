@@ -23,7 +23,7 @@
     $scope.assets = [];
     $scope.list = {
       'page': 0,
-      'isLoading': false
+      'ready': false
     };
 
     // TODO
@@ -65,14 +65,18 @@
     var getAssets = $scope.getAssets = function() {
       // Indicate the no further REST API requests should be made
       // until the current request has completed
+<<<<<<< HEAD
       $scope.list.isLoading = true;
+=======
+      $scope.list.ready = false;
+>>>>>>> master
       assetLibraryListFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
         // retrieved asset library page
         if (assets.results.length === 10) {
-          $scope.list.isLoading = false;
+          $scope.list.ready = true;
         }
       });
       // Ensure that the next page is requested the next time

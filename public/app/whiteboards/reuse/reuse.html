@@ -2,9 +2,9 @@
   <button type="button" class="close" data-ng-click="closeModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <h3 class="modal-title">Add asset(s)</h4>
 </div>
-<div class="modal-body whiteboards-reuse-list-container">
+<div id="whiteboards-reuse-list-container" class="modal-body whiteboards-reuse-list-container">
   <div data-ng-include="'/app/assetlibrary/search/search.html'"></div>
-  <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
+  <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="whiteboards-reuse-list-container">
     <ul>
       <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
         <div class="col-list-item-container">

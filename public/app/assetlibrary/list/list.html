@@ -1,5 +1,4 @@
-<div data-ng-controller="AssetLibraryListController">
-
+<div data-ng-show="state.current.name === 'assetlibrarylist'">
   <div class="row assetlibrary-list-top">
     <!-- SEARCH -->
     <div class="assetlibrary-list-search-container col-xs-{{ isAdvancedSearch ? 12 : 8 }}" data-ng-include="'/app/assetlibrary/search/search.html'"></div>
@@ -13,7 +12,7 @@
     </div>
   </div>
 
-  <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-disabled="list.isLoading" data-infinite-scroll-distance="1">
+  <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="window">
     <ul>
       <!-- UPLOAD / ADD LINK -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3">
@@ -29,10 +28,6 @@
                   <i class="fa fa-link "></i>
                   <div class="assetlibrary-list-item-add-action">Add Site</div>
                 </a>
-                <!-- <a data-ng-href="/assetlibrary/addthought" class="text-center col-pane">
-                  <i class="fa fa-comment"></i>
-                  <div class="assetlibrary-list-item-add-action">Add a thought</div>
-                </a> -->
               </div>
             </div>
           </div>
@@ -44,7 +39,7 @@
       <!-- LIST ITEM -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
         <div class="col-list-item-container">
-          <a data-ng-href="/assetlibrary/{{asset.id}}">
+          <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
             <div class="col-list-item-tile">
               <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
               <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
@@ -62,3 +57,5 @@
     </ul>
   </div>
 </div>
+
+<div ui-view="item"></div>

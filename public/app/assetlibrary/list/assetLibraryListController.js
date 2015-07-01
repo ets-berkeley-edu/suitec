@@ -17,8 +17,14 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, utilService, $rootScope, $scope, $state) {
 
+<<<<<<< HEAD
+=======
+    // Variable that keeps track of the URL state
+    $scope.state = $state;
+
+>>>>>>> master
     // Variable that keeps track of whether the search component is in the advanced view state
     $scope.isAdvancedSearch = false;
 
@@ -29,8 +35,11 @@
     $scope.assets = [];
     $scope.list = {
       'page': 0,
-      'isLoading': false
+      'ready': true
     };
+
+    // Variable that will keep track of the scroll position in the list
+    var scrollPosition = 0;
 
     /**
      * Get the assets for the current course through an infinite scroll
@@ -38,22 +47,51 @@
     var getAssets = $scope.getAssets = function() {
       // Indicate the no further REST API requests should be made
       // until the current request has completed
+<<<<<<< HEAD
       $scope.list.isLoading = true;
+=======
+      $scope.list.ready = false;
+>>>>>>> master
       assetLibraryListFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
         // retrieved asset library page
         if (assets.results.length === 10) {
-          $scope.list.isLoading = false;
+          $scope.list.ready = true;
         }
       });
       // Ensure that the next page is requested the next time
       $scope.list.page++;
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
+    /**
+     * Listen for events indicating that a state change is about to take place. At that point,
+     * the current scroll position in the list will be cached
+     */
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      if (fromState.name === 'assetlibrarylist') {
+        utilService.getScrollInformation().then(function(scrollInformation) {
+          scrollPosition = scrollInformation.scrollPosition;
+          // Don't load additional results
+          $scope.list.ready = false;
+        });
+      }
+    });
+
+    /**
+     * Listen for events indicating that a state change has taken place. At that point,
+     * the previous scroll position in the list will be restored
+     */
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+      if (toState.name === 'assetlibrarylist') {
+        // Resize the iFrame the Asset Library is being run in
+        utilService.resizeIFrame();
+        // Restore the scroll position to the position the list was in previously
+        utilService.scrollTo(scrollPosition);
+        // Indicate that more results can be loaded
+        $scope.list.ready = true;
+      }
     });
 
     /**
@@ -72,6 +110,30 @@
     $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
       $scope.isAdvancedSearch = isAdvancedView;
     });
+
+    userFactory.getMe().success(function(me) {
+      $scope.me = me;
+    });
+<<<<<<< HEAD
+
+    /**
+     * Listen for events indicating that the user wants to search through the asset library
+     */
+    $scope.$on('assetLibrarySearchSearch', function(ev, searchOptions) {
+      $scope.list.page = 0;
+      $scope.assets = [];
+      $scope.searchOptions = searchOptions;
+      getAssets();
+    });
+
+    /**
+     * Listen for events indicating that the search view is toggled to or from the advanced view
+     */
+    $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
+      $scope.isAdvancedSearch = isAdvancedView;
+    });
+=======
+>>>>>>> master
   });
 
 }(window.angular));
