@@ -147,7 +147,7 @@ class CanvasPage
     add_course_success_element.when_visible timeout=WebDriverUtils.page_load_wait
   end
 
-  # Searches for a test course site.  Since Canvas can lag in indexing new sites, will retry the search up to 3 times.
+  # Searches for a test course site up to 3 times, since Canvas can lag in indexing new sites.
   # @param test_id [String]                     - the string used to identify a specific test run and its course site
   def search_for_course(test_id)
     tries ||= 3

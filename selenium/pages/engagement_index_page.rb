@@ -33,7 +33,7 @@ class EngagementIndexPage
   end
 
   # Searches for a user by name and waits until the user's name appears in the first row
-  # @param user [Hash]
+  # @param user [Hash]                          - the user from the set of test users
   def search_for_user(user)
     name = user['fullName']
     WebDriverUtils.wait_for_page_and_click search_input_element
@@ -49,9 +49,9 @@ class EngagementIndexPage
   end
 
   # Creates and/or cleans out the download dir, downloads the current CSV, and collects score information from its rows
-  # @param driver [Selenium::WebDriver]
-  # @param url [String]
-  # @return [Array]
+  # @param driver [Selenium::WebDriver]         - the browser
+  # @param url [String]                         - the engagement index URL specific to the test course site
+  # @return [Array]                             - the collection of activities contained in the CSV
   def download_csv(driver, url)
     WebDriverUtils.prepare_download_dir
     csv_file_path = "#{WebDriverUtils.download_dir}/activities.csv"

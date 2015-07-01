@@ -44,7 +44,7 @@ describe 'Asset likes', :order => :defined do
     @asset_title = 'Likable Asset'
     @asset_library.enter_url_metadata('www.google.com', @asset_title, nil, nil)
     @asset_library.click_add_url_button
-    @asset_library.wait_for_asset_in_gallery(@driver, @asset_title)
+    @asset_id = @asset_library.get_first_asset_id
   end
 
   context 'when the user is the asset creator' do
@@ -66,7 +66,7 @@ describe 'Asset likes', :order => :defined do
       @canvas.load_course_site @course_id
       @cal_net.log_in(test_liker['username'], WebDriverUtils.test_user_password)
       @canvas.accept_login_messages @course_id
-      @asset_library.load_gallery_asset(@driver, @asset_library_url, @asset_title)
+      @asset_library.load_gallery_asset(@driver, @asset_library_url, @asset_id)
     end
     it 'increase the asset\'s total likes' do
       @asset_library.wait_until { @asset_library.gallery_asset_likes_count_elements[0].text == '0' }
@@ -94,7 +94,7 @@ describe 'Asset likes', :order => :defined do
 
   context 'when removed on the gallery view' do
     it 'decrease the asset\'s total likes' do
-      @asset_library.load_gallery_asset(@driver, @asset_library_url, @asset_title)
+      @asset_library.load_gallery_asset(@driver, @asset_library_url, @asset_id)
       @asset_library.toggle_gallery_item_like 0
       @asset_library.wait_until { @asset_library.gallery_asset_likes_count_elements[0].text == '0' }
     end
@@ -120,7 +120,7 @@ describe 'Asset likes', :order => :defined do
   context 'when added on the detail view' do
     before(:all) do
       @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.wait_for_asset_in_gallery(@driver, @asset_title)
+      @asset_library.wait_for_asset_in_gallery(@driver, @asset_id)
       @asset_library.click_asset_link 0
       @asset_library.wait_for_asset_detail(@driver, @asset_title)
     end
@@ -151,7 +151,7 @@ describe 'Asset likes', :order => :defined do
   context 'when removed on the detail view' do
     before(:all) do
       @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.wait_for_asset_in_gallery(@driver, @asset_title)
+      @asset_library.wait_for_asset_in_gallery(@driver, @asset_id)
       @asset_library.click_asset_link 0
       @asset_library.wait_for_asset_detail(@driver, @asset_title)
     end

@@ -49,7 +49,10 @@ gulp.task('csslint', function() {
 gulp.task('mocha', function() {
   return gulp
     .src(['node_modules/col-tests/lib/beforeTests.js', 'node_modules/col-*/tests/**/*.js'])
-    .pipe(mocha({'grep': process.env.MOCHA_GREP}));
+    .pipe(mocha({
+      'fullStackTrace': true,
+      'grep': process.env.MOCHA_GREP
+    }));
 });
 
 /**
