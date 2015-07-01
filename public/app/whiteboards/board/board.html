@@ -12,11 +12,10 @@
       </i>
     </button>
     <button type="button" class="btn btn-default" title="Draw" data-ng-click="setMode('draw')" data-ng-class="{'active': mode === 'draw'}">
-      <i class="fa fa-pencil">
+      <i class="fa fa-paint-brush">
         <span class="sr-only">Draw</span>
       </i>
     </button>
-    <!--  -->
     <button type="button" class="btn btn-default" title="Shape" data-ng-click="setMode('shape')" data-ng-class="{'active': mode === 'shape'}">
       <i class="fa fa-square-o">
         <span class="sr-only">Shape</span>
@@ -27,11 +26,11 @@
         <span class="sr-only">Text</span>
       </i>
     </button>
-    <button type="button" class="btn btn-default" title="Connect concepts">
+    <!-- <button type="button" class="btn btn-default" title="Connect concepts">
       <i class="fa fa-sitemap">
         <span class="sr-only">Connect concepts</span>
       </i>
-    </button>
+    </button> -->
     <button type="button" class="btn btn-default" title="Erase" data-ng-click="setMode('erase')"  data-ng-class="{'active': mode === 'erase'}">
       <i class="fa fa-eraser">
         <span class="sr-only">Erase</span>
@@ -62,6 +61,26 @@
       <span>Export</span>
     </button>
   </div>
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-default whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarMode === 'online'}">
+      <i class="fa fa-user">
+        <span class="sr-only">Collaborators</span>
+      </i>
+      <span class="badge">{{getOnlineUsers().length}}</span>
+    </button>
+    <button type="button" class="btn btn-default whiteboards-board-toolbar-chat" title="Chat" data-ng-click="toggleSidebar('chat')" data-ng-class="{'active': sidebarMode === 'chat'}">
+      <i class="fa fa-comments">
+        <span class="sr-only">Chat</span>
+      </i>
+    </button>
+  </div>
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-default" title="Settings">
+      <i class="fa fa-cog">
+        <span class="sr-only">Settings</span>
+      </i>
+    </button>
+  </div>
 </div>
 
 <!-- ADD ASSET POPOVER -->
@@ -84,18 +103,6 @@
     </li>
   </ul>
 </script>
-
-<!-- SIDEBAR -->
-<div id="whiteboards-board-sidebar-toggle">
-  <button type="button" class="btn btn-link" title="Who's online"  data-ng-click="toggleSidebar('online')">
-    <span data-ng-bind="whiteboard.online.length | number"></span> online
-  </button>
-  <button type="button" class="btn btn-link pull-right" title="Chat" data-ng-click="toggleSidebar('chat')">
-    <i class="fa fa-comments">
-      <span class="sr-only">Chat</span>
-    </i>
-  </button>
-</div>
 
 <div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
   <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
@@ -126,14 +133,14 @@
       </form>
     </div>
   </div>
-  <div id="whiteboards-board-online" data-ng-if="sidebarMode === 'online'">
-    <div class="media" data-ng-repeat="onlineUser in whiteboard.online">
+  <div id="whiteboards-board-members" data-ng-if="sidebarMode === 'online'">
+    <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">
       <div class="media-left media-middle">
-        <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + onlineUser.user.canvas_image + ')'}"></div>
+        <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}"></div>
       </div>
       <div class="media-body media-middle">
-        <i class="fa fa-graduation-cap" data-ng-if="onlineUser.user.is_admin"></i> {{onlineUser.user.canvas_full_name}}
-        <span data-ng-if="me.id === onlineUser.user.id">(me)</span>
+        <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}
+        <span data-ng-if="me.id === member.id">(me)</span>
       </div>
     </div>
   </div>

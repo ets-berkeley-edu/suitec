@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsBoardFactory, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsBoardFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -64,13 +64,26 @@
     };
 
     /**
-     * When a user has joined or left the whiteboard, update the list of online users
+     * When a user has joined or left the whiteboard, update the online status on the list of members
      */
     socket.on('online', function(onlineUsers) {
       if ($scope.whiteboard) {
-        $scope.whiteboard.online = onlineUsers;
+        for (var i = 0; i < $scope.whiteboard.members.length; i++) {
+          var member = $scope.whiteboard.members[i];
+          var online = $filter('filter')(onlineUsers, {'user_id': member.id});
+          member.online = (online.length > 0);
+        }
       }
     });
+
+    /**
+     * Get the whiteboard members that are currently online
+     */
+    var getOnlineUsers = $scope.getOnlineUsers = function() {
+      if ($scope.whiteboard) {
+        return $filter('filter')($scope.whiteboard.members, {'online': true});
+      }
+    };
 
     /* CANVAS */
 
