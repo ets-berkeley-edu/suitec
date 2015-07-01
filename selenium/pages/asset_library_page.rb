@@ -19,7 +19,7 @@ class AssetLibraryPage
   include Logging
 
   # SEARCH
-  text_area(:search_input, :id => 'assetlibrary-list-search')
+  text_area(:search_input, :id => 'assetlibrary-search')
   button(:advanced_search_button, :xpath => '//button[@title="Advanced search"]')
   button(:search_button, :xpath => '//button[@title="Search"]')
 
@@ -46,13 +46,21 @@ class AssetLibraryPage
   elements(:delete_category_button, :button, :xpath => '//button[@title="Delete this category"]')
 
   # ASSETS
+  elements(:gallery_asset, :list_item, :xpath => '//li[@data-ng-repeat="asset in assets"]')
   elements(:gallery_asset_link, :link, :xpath => '//li[@data-ng-repeat="asset in assets"]//a')
   elements(:gallery_asset_title, :h3, :xpath => '//li[@data-ng-repeat="asset in assets"]//h3')
   elements(:gallery_asset_owner_name, :element, :xpath => '//li[@data-ng-repeat="asset in assets"]//small')
   elements(:gallery_asset_like_button, :button, :xpath => '//button[@data-ng-click="like(asset)"]')
   elements(:gallery_asset_likes_count, :span, :xpath => '//span[@data-ng-bind="asset.likes | number"]')
+  elements(:gallery_asset_comments_count, :span, :xpath => '//span[@data-ng-bind="asset.comment_count | number"]')
 
-  link(:back_to_library_link, :xpath => '//a[contains(text(),"Back to Asset Library")]')
+  # COMMENTS
+  span(:asset_detail_comment_count, :xpath => '//div[@class="assetlibrary-item-metadata"]//span[@data-ng-bind="asset.comment_count | number"]')
+  text_area(:comment_input, :id => 'assetlibrary-item-newcomment-body')
+  button(:comment_add_button, :xpath => '//span[text()="Comment"]/..')
+  elements(:comment, :div, :xpath => '//div[@data-ng-repeat="comment in asset.comments"]')
+
+  link(:back_to_library_link, :text => 'Back to Asset Library')
 
   # Loads the asset library and puts browser focus in the iframe containing the tool
   # @param driver [Selenium::WebDriver]         - the active browser
@@ -92,6 +100,17 @@ class AssetLibraryPage
   # @param asset_title [String]                 - the title of the asset that should appear in the detail view
   def wait_for_asset_detail(driver, asset_title)
     wait_until(timeout=WebDriverUtils.page_update_wait) { driver.find_element(:xpath, "//h2[contains(text(),'#{asset_title}')]").displayed? }
+  end
+
+  # Combines methods to load the asset library, click an asset, and wait for the asset detail to load
+  # @param driver [Selenium::WebDriver]         - the browser
+  # @param url [String]                         - the asset library URL specific to the test course site
+  # @param asset_title [String]                 - the title of the asset that should appear in the gallery
+  # @param index_position [Integer]             - the position of the asset in the list of assets
+  def load_gallery_asset_detail(driver, url, asset_title, index_position)
+    load_gallery_asset(driver, url, asset_title)
+    click_asset_link index_position
+    wait_for_asset_detail(driver, asset_title)
   end
 
   # ADD SITE
@@ -174,9 +193,118 @@ class AssetLibraryPage
     WebDriverUtils.wait_for_element_and_click gallery_asset_like_button_elements[index_position]
   end
 
+  # COMMENTS
+
+  # Adds a new comment on the asset detail view
+  # @param comment_body [String]                - the text of the new comment
+  def add_comment(comment_body)
+    WebDriverUtils.wait_for_element_and_click comment_input_element
+    self.comment_input = comment_body
+    wait_until(timeout=WebDriverUtils.page_update_wait) { comment_add_button_element.enabled? }
+    comment_add_button
+  end
+
+  # Returns the comment count displayed for an asset at a specified position in the list of assets
+  # @param index_position [Integer]             - the position of the asset in the list of assets
+  def asset_comment_count(index_position)
+    gallery_asset_elements[index_position].span_element(:xpath => '//span[@data-ng-bind="asset.comment_count | number"]').text
+  end
+
+  # Returns the comment text for an existing comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def comment_body(index_position)
+    comment_elements[index_position].paragraph_element.text
+  end
+
+  # Returns the commenter name displayed for an existing comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def commenter_name(index_position)
+    comment_elements[index_position].link_element.text
+  end
+
+  # Returns the first link within the body of an existing comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  # @param link_text [String]                   - the text of the link
+  def comment_body_link(index_position, link_text)
+    comment_elements[index_position].paragraph_element.link_element(:text => link_text)
+  end
+
+  # Returns the reply button for a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def reply_button_element(index_position)
+    comment_elements[index_position].button_element(:xpath => '//button[@title="Reply to this comment"]')
+  end
+
+  # Returns the text area for replying to a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def reply_input_element(index_position)
+    comment_elements[index_position].text_area_element(:id => 'assetlibrary-item-addcomment-body')
+  end
+
+  # Returns the button for adding a reply to a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def reply_add_button_element(index_position)
+    comment_elements[index_position].button_element(:xpath => '//span[text()="Reply"]/..')
+  end
+
+  # Adds a reply to a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  # @param reply_body [String]                  - the text of the reply
+  def reply_to_comment(index_position, reply_body)
+    WebDriverUtils.wait_for_element_and_click reply_button_element(index_position)
+    WebDriverUtils.wait_for_element_and_type(reply_input_element(index_position), reply_body)
+    reply_add_button_element(index_position).click
+  end
+
+  # Returns the edit button for a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def edit_button_element(index_position)
+    comment_elements[index_position].button_element(:xpath => '//button[@title="Edit this comment"]')
+  end
+
+  # Returns the text area for editing a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def edit_input_element(index_position)
+    comment_elements[index_position].text_area_element(:id => 'assetlibrary-item-editcomment-body')
+  end
+
+  # Returns the button for saving an edit to a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def edit_save_button_element(index_position)
+    comment_elements[index_position].button_element(:xpath => '//button[contains(.,"Save Changes")]')
+  end
+
+  # Edits an existing comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  # @param edited_body [String]                 - the new text of the edited comment
+  def edit_comment(index_position, edited_body)
+    WebDriverUtils.wait_for_element_and_click edit_button_element(index_position)
+    WebDriverUtils.wait_for_element_and_type(edit_input_element(index_position), edited_body)
+    edit_save_button_element(index_position).click
+  end
+
+  # Returns the button for canceling a reply or an edit to a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def cancel_button_element(index_position)
+    comment_elements[index_position].button_element(:xpath => '//button[text()="Cancel"]')
+  end
+
+  # Returns the button for deleting a comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def delete_button_element(index_position)
+    comment_elements[index_position].button_element(:xpath => '//button[@title="Delete this comment"]')
+  end
+
+  # Deletes an existing comment
+  # @param index_position [Integer]             - the position of the comment in the list of comments
+  def delete_comment(index_position)
+    confirm(true) { WebDriverUtils.wait_for_element_and_click delete_button_element(index_position) }
+  end
+
   # Clicks the 'Back to Asset Library' link on the asset detail view
   def click_back_to_gallery_link
     WebDriverUtils.wait_for_element_and_click back_to_library_link_element
+    search_input_element.when_visible(timeout=WebDriverUtils.page_update_wait)
   end
 
 end

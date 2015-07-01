@@ -48,8 +48,8 @@ class WebDriverUtils
     end
   end
 
-  def self.base_url
-    @config['base_url']
+  def self.canvas_base_url
+    @config['canvas_base_url']
   end
 
   def self.sub_account
@@ -119,6 +119,45 @@ class WebDriverUtils
   def self.wait_for_page_and_click(element)
     element.when_visible timeout=page_load_wait
     element.click
+  end
+
+  # Waits for an element to be present dynamically on a page then enters text in the element
+  # @param element [Selenium::WebDriver::Element]   - the element
+  # @param text [String]                            - the text to enter in the element
+  def self.wait_for_element_and_type(element, text)
+    element.when_present(timeout=page_update_wait)
+    element.send_keys text
+  end
+
+  # Clicks a link, verifies that the destination page loads in a new window, verifies the page title matches expectations,
+  # and then closes the new window and returns focus to the original window
+  # @param driver [Selenium::WebDriver]             - the browser driver
+  # @param link [Selenium::WebDriver::Element]      - the link element to be clicked
+  # @param expected_page_title [String]             - the expected title of the page that should load
+  def self.verify_external_link(driver, link, expected_page_title)
+    begin
+      link.click
+      if driver.window_handles.length > 1
+        driver.switch_to.window driver.window_handles.last
+        wait = Selenium::WebDriver::Wait.new(:timeout => WebDriverUtils.page_load_timeout)
+        wait.until { driver.find_element(:xpath => "//title[contains(.,'#{expected_page_title}')]") }
+        true
+      else
+        logger.error('Link did not open in a new window')
+        false
+      end
+    rescue
+      false
+    ensure
+      if driver.window_handles.length > 1
+        # Handle any alert that might appear when opening the new window
+        driver.switch_to.alert.accept rescue Selenium::WebDriver::Error::NoAlertPresentError
+        driver.close
+        # Handle any alert that might appear when closing the new window
+        driver.switch_to.alert.accept rescue Selenium::WebDriver::Error::NoAlertPresentError
+      end
+      driver.switch_to.window driver.window_handles.first
+    end
   end
 
 end

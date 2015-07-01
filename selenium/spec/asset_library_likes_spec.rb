@@ -167,7 +167,7 @@ describe 'Asset likes', :order => :defined do
     end
     it 'remove Engagement Index "get_like" points from the asset creator' do
       @engagement_index.search_for_user test_uploader
-      expect(@engagement_index.users_table_element[1][3].text).to eql('5')
+      expect(@engagement_index.user_score test_uploader).to eql('5')
     end
     it 'remove the un-liker\'s "like" activity from the activities csv' do
       scores = @engagement_index.download_csv(@driver, @engagement_index_url)
