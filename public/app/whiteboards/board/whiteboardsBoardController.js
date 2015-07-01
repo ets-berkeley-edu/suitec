@@ -721,11 +721,14 @@
 
     /**
      * Create a new chat message
+     *
+     * @param  {Event}          $event            The click event
      */
-    var createChatMessage = $scope.createChatMessage = function() {
+    var createChatMessage = $scope.createChatMessage = function($event) {
       socket.emit('chat', $scope.newChatMessage.body);
       // Reset the new chat message
       $scope.newChatMessage = null;
+      $event.preventDefault();
     };
 
     /**

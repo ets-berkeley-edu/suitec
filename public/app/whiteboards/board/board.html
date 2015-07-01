@@ -121,7 +121,7 @@
       </div>
     </div>
     <div id="whiteboards-board-chat-new">
-      <form ui-keypress="{13:'createChatMessage()'}">
+      <form ui-keypress="{13:'createChatMessage($event)'}">
         <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
       </form>
     </div>
