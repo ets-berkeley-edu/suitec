@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsBoardFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -45,7 +45,7 @@
      * as the content of the whiteboard
      */
     var getWhiteboard = function() {
-      whiteboardsBoardFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {
+      whiteboardsFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {
         $scope.whiteboard = whiteboard;
 
         // Set the title of the window to the title of the whiteboard
@@ -748,7 +748,7 @@
      * Get the most recent chat messages
      */
     var getChatMessages = function() {
-      whiteboardsBoardFactory.getChatMessages(whiteboardId).success(function(chatMessages) {
+      whiteboardsFactory.getChatMessages(whiteboardId).success(function(chatMessages) {
         // Reverse the returned chat messages to ensure that the newest chat
         // message is at the bottom
         $scope.chatMessages = chatMessages.reverse();
@@ -765,6 +765,32 @@
 
     // Get the most recent chat messages
     getChatMessages();
+
+    /* SETTINGS */
+
+    /**
+     * Launch the modal that allows for a whiteboard to be edited
+     */
+    var editWhiteboard = $scope.editWhiteboard = function() {
+      // Open the edit whiteboard modal dialog
+      var scope = $scope.$new();
+      scope.whiteboard = $scope.whiteboard;
+      var modalInstance = $modal.open({
+        'scope': scope,
+        'templateUrl': '/app/whiteboards/edit/edit.html',
+        'controller': 'WhiteboardsEditController'
+      });
+
+      // When the modal dialog is closed, the updated whiteboard will
+      // be passed back
+      modalInstance.result.then(function(updatedWhiteboard) {
+        if (updatedWhiteboard) {
+          $scope.whiteboard = updatedWhiteboard;
+          // Set the title of the window to the new title of the whiteboard
+          $rootScope.header = $scope.whiteboard.title;
+        }
+      });
+    };
 
   });
 

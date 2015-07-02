@@ -154,7 +154,13 @@
   background-color: #FFF;
   height: 100%;
   overflow: auto;
-  padding: 10px;
+  padding: 10px 10px 10px 15px;
+}
+
+#whiteboards-board-members .whiteboard-board-members-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 5px;
 }
 
 #whiteboards-board-members .col-avatar {

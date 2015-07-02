@@ -17,21 +17,31 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsCreateController', function(whiteboardsFactory, userFactory, $location, $scope) {
-
-    // Variable that will keep track of the new whiteboard to be created
-    $scope.whiteboard = {};
+  angular.module('collabosphere').controller('WhiteboardsEditController', function(userFactory, whiteboardsFactory, $scope, $modalInstance) {
 
     // Variable that will keep track of all the users in the course
     $scope.users = [];
 
+    // Variable that will keep track of the updated whiteboard
+    $scope.updatedWhiteboard = {
+      'title': $scope.whiteboard.title
+    };
+
     /**
-     * Create a new whiteboard
+     * Edit the current whiteboard
      */
-    var createWhiteboard = $scope.createWhiteboard = function() {
-      whiteboardsFactory.createWhiteboard($scope.whiteboard).success(function() {
-        $location.path('/whiteboards');
+    var editWhiteboard = $scope.editWhiteboard = function() {
+      whiteboardsFactory.editWhiteboard($scope.whiteboard.id, $scope.updatedWhiteboard).success(function(updatedWhiteboard) {
+        // Pass the updated whiteboard back to where the modal dialog was invoked
+        $modalInstance.close(updatedWhiteboard);
       });
+    };
+
+    /**
+     * Close the modal dialog without editing the current whiteboard
+     */
+    var closeModal = $scope.closeModal = function() {
+      $modalInstance.close();
     };
 
     /**
@@ -46,13 +56,18 @@
           return userFactory.getAllUsers();
         })
         .then(function(response) {
-          $scope.users = response.data.filter(function(user) {
-            return (user.id != $scope.me.id);
-          });
+          $scope.users = response.data;
+
+          // Prefill the updated members with the current whiteboard members
+          $scope.updatedWhiteboard.members = [];
+          for (var i = 0; i < $scope.whiteboard.members.length; i++) {
+            $scope.updatedWhiteboard.members.push($scope.whiteboard.members[i].id);
+          }
         });
     };
 
     getAllUsers();
+
   });
 
 }(window.angular));
