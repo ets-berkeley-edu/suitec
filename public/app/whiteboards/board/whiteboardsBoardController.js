@@ -713,6 +713,12 @@
     // Variable that will keep track of the chat messages on the current whiteboard
     $scope.chatMessages = [];
 
+    // Variable that will keep track of the state of the chat list
+    $scope.chatList = {
+      'lastMessage': {},
+      'ready': true
+    };
+
     // Variable that will keep track of the current chat message
     $scope.newChatMessage = null;
 
@@ -742,16 +748,36 @@
       // Reset the new chat message
       $scope.newChatMessage = null;
       $event.preventDefault();
+
+      // Scroll to the bottom of the chat messages container
+      var chatMessagesContainer = document.getElementById('whiteboards-board-chat-messages-container');
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight - chatMessagesContainer.clientHeight;
     };
 
     /**
-     * Get the most recent chat messages
+     * Get the chat messages
      */
-    var getChatMessages = function() {
-      whiteboardsFactory.getChatMessages(whiteboardId).success(function(chatMessages) {
-        // Reverse the returned chat messages to ensure that the newest chat
-        // message is at the bottom
-        $scope.chatMessages = chatMessages.reverse();
+    var getChatMessages = $scope.getChatMessages = function() {
+      // Indicate the no further REST API requests should be made
+      // until the current request has completed
+      $scope.chatList.ready = false;
+      return whiteboardsFactory.getChatMessages(whiteboardId, $scope.chatList.lastMessage.created_at).success(function(chatMessages) {
+        // Oldest messages go on top
+        chatMessages.reverse();
+
+        // Prepend the older messages
+        $scope.chatMessages = chatMessages.concat($scope.chatMessages);
+
+        // Only request another page of chat messages if the returned number of messages
+        // is the maximum number the REST API returns
+        if (chatMessages.length === 10) {
+          $scope.chatList.ready = true;
+        }
+
+        // Ensure that the next set of chat messages are older messages
+        if ($scope.chatMessages.length > 0) {
+          $scope.chatList.lastMessage = $scope.chatMessages[0];
+        }
       });
     };
 
@@ -762,9 +788,6 @@
     socket.on('chat', function(chatMessage) {
       $scope.chatMessages.push(chatMessage);
     });
-
-    // Get the most recent chat messages
-    getChatMessages();
 
     /* SETTINGS */
 

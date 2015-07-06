@@ -106,7 +106,7 @@
 
 <div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
   <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
-    <div id="whiteboards-board-chat-messages-container" scroll-glue>
+    <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
       <div id="whiteboards-board-chat-messages-table">
         <div id="whiteboards-board-chat-messages">
           <div class="media" data-ng-repeat="chatMessage in chatMessages">
