@@ -56,5 +56,5 @@
 
         return $sce.trustAsHtml(html);
       };
-    }])
+    }]);
 }(window.angular));
