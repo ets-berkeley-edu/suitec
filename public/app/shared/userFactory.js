@@ -29,16 +29,16 @@
     };
 
     /**
-     * Get the users for the current course
+     * Get all users in the current course
      *
-     * @return {Promise<User[]>}                  $http promise returning the users in the current course
+     * @return {Promise<User[]>}                  $http promise returning all users in the current course
      */
-    var getUsers = function() {
+    var getAllUsers = function() {
       return $http.get(utilService.getApiUrl('/users'));
     };
 
     /**
-     * Get the users for the current course and their points
+     * Get the users in the current course and their points
      *
      * @return {Promise<User[]>}                  $http promise returning the users in the current course and their points
      */
@@ -85,7 +85,7 @@
 
     return {
       'getMe': getMe,
-      'getUsers': getUsers,
+      'getAllUsers': getAllUsers,
       'getLeaderboard': getLeaderboard,
       'updateSharePoints': updateSharePoints
     };
