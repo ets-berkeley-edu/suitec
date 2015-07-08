@@ -54,9 +54,6 @@ gulp.task('mocha', function() {
       'grep': process.env.MOCHA_GREP,
       'timeout': 10000
     }))
-    .once('error', function() {
-      process.exit(1);
-    })
     .once('end', function() {
       process.exit();
     });
