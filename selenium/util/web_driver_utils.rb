@@ -68,6 +68,22 @@ class WebDriverUtils
     @config['ajax_timeout']
   end
 
+  def self.file_upload_wait
+    @config['file_upload_timeout']
+  end
+
+  def self.canvas_sync_attempts
+    @config['canvas_sync_attempts']
+  end
+
+  def self.super_admin_username
+    @config['super_admin_username']
+  end
+
+  def self.super_admin_password
+    @config['super_admin_password']
+  end
+
   def self.admin_username
     @config['admin_username']
   end
@@ -103,12 +119,21 @@ class WebDriverUtils
     "#{spec.inspect.sub('RSpec::ExampleGroups::', '')}-#{Time.now.to_i.to_s}"
   end
 
-  # Loads an array of test users from a file and maps them by each user's id
-  # @return [Hash]                                  - return the set of test users mapped by the 'id' associated with each
+  def self.test_data_file_path(filename)
+    File.join(ENV['HOME'], "/test-data/#{filename}")
+  end
+
+  # Parses an array of test users from a JSON file
+  # @return [Array]                                 - the set of test users
   def self.load_test_users
     test_users = File.join(ENV['HOME'], '/.collabosphere_selenium/testUsers.json')
-    users_array = JSON.parse(File.read(test_users))['users']
-    users_array.inject({}) { |map, user| map[user['id']] = user; map }
+    JSON.parse(File.read(test_users))['users']
+  end
+
+  #
+  # @return [Array]                                 - return the set of test users mapped by the 'id' associated with each
+  def self.mapped_test_users
+    load_test_users.inject({}) { |map, user| map[user['id']] = user; map }
   end
 
   # Waits for an element to become visible after a DOM update and then clicks the element

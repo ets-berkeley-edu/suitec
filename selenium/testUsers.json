@@ -6,7 +6,11 @@
             "username": "username-foo",
             "fullName": "Test Teacher",
             "email": "teacher@berkeley.edu",
-            "role": "Teacher"
+            "role": "Teacher",
+            "canvasId": 162534,
+            "submissionType": "fileUpload",
+            "submission": "JPEG",
+            "testData": "file.jpg"
         },
         {
             "id": "Designer 1",
@@ -14,7 +18,11 @@
             "username": "username-foo",
             "fullName": "Test Designer",
             "email": "designer@berkeley.edu",
-            "role": "Designer"
+            "role": "Designer",
+            "canvasId": 615243,
+            "submissionType": "url",
+            "submission": "YOUTUBE",
+            "testData": "http://www.youtube.com"
         },
         {
             "id": "Student 1",
@@ -22,7 +30,11 @@
             "username": "username-foo",
             "fullName": "Test Student",
             "email": "student@berkeley.edu",
-            "role": "Student"
+            "role": "Student",
+            "canvasId": "456321",
+            "submissionType": "fileUpload",
+            "submission": "PDF",
+            "testData": "file.pdf"
         }
     ]
 }

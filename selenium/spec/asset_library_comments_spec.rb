@@ -18,7 +18,7 @@ include Logging
 describe 'An asset library comment', :order => :defined do
 
   test_id = WebDriverUtils.test_course_name(self)
-  test_users = WebDriverUtils.load_test_users
+  test_users = WebDriverUtils.mapped_test_users
   timeout = WebDriverUtils.page_update_wait
   asset_creator = test_users['Teacher 1']
   asset_viewer = test_users['Teacher 2']

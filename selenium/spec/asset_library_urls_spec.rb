@@ -16,7 +16,7 @@ require_relative 'spec_helper'
 describe 'Adding Asset Library URLs' do
 
   test_id = WebDriverUtils.test_course_name(self)
-  test_users = WebDriverUtils.load_test_users
+  test_users = WebDriverUtils.mapped_test_users
   test_teacher = test_users['Teacher 1']
 
   before(:all) { @driver = WebDriverUtils.driver }

@@ -18,7 +18,7 @@ include Logging
 describe 'Asset likes', :order => :defined do
 
   test_id = WebDriverUtils.test_course_name(self)
-  test_users = WebDriverUtils.load_test_users
+  test_users = WebDriverUtils.mapped_test_users
   test_uploader = test_users['Teacher 1']
   test_liker = test_users['Teacher 2']
 

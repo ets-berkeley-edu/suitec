@@ -36,16 +36,37 @@ class EngagementIndexPage
   # @param user [Hash]                          - the user from the set of test users
   def search_for_user(user)
     name = user['fullName']
+    logger.info "Searching engagement index for #{name}"
     WebDriverUtils.wait_for_page_and_click search_input_element
     self.search_input = name
     wait_until(timeout=WebDriverUtils.page_update_wait) { (users_table_element[1][1].text).include? name }
   end
 
   # Returns the current engagement score for a user
+  # @param user [Hash]                          - the user from the set of test users
+  # @return [String]                            - the score displayed on the engagement index table
   def user_score(user)
     score = String.new('')
     users_table_element.each { |row| score = row[3].text if row[1].text == user['fullName'] }
     score
+  end
+
+  # Makes a configurable number of attempts to match a user's displayed score to the expected score.
+  # Returns true if the test user's score matches the expected score.
+  # @param driver [Selenium::WebDriver]         - the browser
+  # @param url [String]                         - the engagement index URL specific to the test course site
+  # @param user [Hash]                          - the user from the set of test users
+  # @param expected_score [String]              - the score expected to be displayed for the user
+  def user_score_updated?(driver, url, user, expected_score)
+    tries ||= WebDriverUtils.canvas_sync_attempts
+    logger.info("Checking if #{user['fullName']} has an updated score")
+    load_page(driver, url)
+    wait_until(timeout=WebDriverUtils.page_update_wait) { users_table? }
+    wait_until(timeout) { user_score(user) == expected_score }
+    logger.info 'Score updated'
+  rescue => e
+    logger.warn('Score not yet updated, retrying')
+    retry unless (tries -= 1).zero?
   end
 
   # Creates and/or cleans out the download dir, downloads the current CSV, and collects score information from its rows
