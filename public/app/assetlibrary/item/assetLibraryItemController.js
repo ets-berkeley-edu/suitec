@@ -100,6 +100,8 @@
         $scope.asset.comment_count++;
         // Clear the new comment
         $scope.newComment = null;
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
       });
     };
 
@@ -133,6 +135,8 @@
         flagCommentsWithReplies($scope.asset.comments);
         // Hide the reply form
         toggleReplyComment(comment);
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
       });
     };
 
@@ -181,6 +185,8 @@
           // Re-calculate which comments have replies
           flagCommentsWithReplies($scope.asset.comments);
           $scope.asset.comment_count--;
+          // Indicate that the asset has been updated
+          $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
         });
       }
     };

@@ -33,6 +33,8 @@
         } else {
           asset.likes--;
         }
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', asset);
       });
     };
 

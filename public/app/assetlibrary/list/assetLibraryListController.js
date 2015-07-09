@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, utilService, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, utilService, $filter, $rootScope, $scope, $state) {
 
     // Variable that keeps track of the URL state
     $scope.state = $state;
@@ -68,6 +68,9 @@
           scrollPosition = scrollInformation.scrollPosition;
           // Don't load additional results
           $scope.list.ready = false;
+          // Increase the views count for the selected asset
+          var selectedAsset = $filter('filter')($scope.assets, {'id': parseInt(toParams.assetId, 10)})[0];
+          selectedAsset.views++;
         });
       }
     });
@@ -102,6 +105,17 @@
      */
     $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
       $scope.isAdvancedSearch = isAdvancedView;
+    });
+
+    /**
+     * Listen for events indicating that an asset has been updated
+     */
+    $scope.$on('assetLibraryAssetUpdated', function(ev, updatedAsset) {
+      for (var i = 0; i < $scope.assets.length; i++) {
+        if ($scope.assets[i].id === updatedAsset.id) {
+          $scope.assets[i] = updatedAsset;
+        }
+      }
     });
 
     userFactory.getMe().success(function(me) {
