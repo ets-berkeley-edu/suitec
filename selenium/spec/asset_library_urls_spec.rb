@@ -18,6 +18,7 @@ describe 'Adding Asset Library URLs' do
   test_id = WebDriverUtils.test_course_name(self)
   test_users = WebDriverUtils.load_test_users
   test_teacher = test_users['Teacher 1']
+  timeout=WebDriverUtils.page_update_wait
 
   before(:all) { @driver = WebDriverUtils.driver }
 
@@ -50,10 +51,8 @@ describe 'Adding Asset Library URLs' do
   it 'allows the user to add a URL, title, category, and description to the asset library' do
     @asset_library.enter_url_metadata('en.wikipedia.org', 'URL Title 1', 'Category 1', 'URL description')
     @asset_library.click_add_url_button
-    asset_id = @asset_library.get_first_asset_id
-    @asset_library.wait_for_asset_in_gallery(@driver, asset_id)
-    expect(@asset_library.gallery_asset_title_elements[0].text).to eql('URL Title 1')
-    expect(@asset_library.gallery_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
+    @asset_library.wait_until(timeout) { @asset_library.list_view_asset_title_elements[0].text == 'URL Title 1' }
+    expect(@asset_library.list_view_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
     @asset_library.click_asset_link 0
     @asset_library.wait_for_asset_detail(@driver, 'URL Title 1')
     # TODO: verify asset category, description, and embedded URL once visible in the viewport
@@ -62,10 +61,8 @@ describe 'Adding Asset Library URLs' do
   it 'allows the user to add a URL, title, and category to the asset library' do
     @asset_library.enter_url_metadata('en.wikipedia.org', 'URL Title 2', 'Category 1', nil)
     @asset_library.click_add_url_button
-    asset_id = @asset_library.get_first_asset_id
-    @asset_library.wait_for_asset_in_gallery(@driver, asset_id)
-    expect(@asset_library.gallery_asset_title_elements[0].text).to eql('URL Title 2')
-    expect(@asset_library.gallery_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
+    @asset_library.wait_until(timeout) { @asset_library.list_view_asset_title_elements[0].text == 'URL Title 2' }
+    expect(@asset_library.list_view_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
     @asset_library.click_asset_link 0
     @asset_library.wait_for_asset_detail(@driver, 'URL Title 2')
     # TODO: verify asset category and embedded URL once visible in the viewport
@@ -74,10 +71,8 @@ describe 'Adding Asset Library URLs' do
   it 'allows the user to add a URL and title to the asset library' do
     @asset_library.enter_url_metadata('en.wikipedia.org', 'URL Title 3', nil, 'URL description')
     @asset_library.click_add_url_button
-    asset_id = @asset_library.get_first_asset_id
-    @asset_library.wait_for_asset_in_gallery(@driver, asset_id)
-    expect(@asset_library.gallery_asset_title_elements[0].text).to eql('URL Title 3')
-    expect(@asset_library.gallery_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
+    @asset_library.wait_until(timeout) { @asset_library.list_view_asset_title_elements[0].text == 'URL Title 3' }
+    expect(@asset_library.list_view_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
     @asset_library.click_asset_link 0
     @asset_library.wait_for_asset_detail(@driver, 'URL Title 3')
     # TODO: verify asset embedded URL once visible in the viewport
@@ -86,10 +81,8 @@ describe 'Adding Asset Library URLs' do
   it 'allows the user to add a URL, title, and description to the asset library' do
     @asset_library.enter_url_metadata('en.wikipedia.org', 'URL Title 4', nil, 'URL description')
     @asset_library.click_add_url_button
-    asset_id = @asset_library.get_first_asset_id
-    @asset_library.wait_for_asset_in_gallery(@driver, asset_id)
-    expect(@asset_library.gallery_asset_title_elements[0].text).to eql('URL Title 4')
-    expect(@asset_library.gallery_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
+    @asset_library.wait_until(timeout) { @asset_library.list_view_asset_title_elements[0].text == 'URL Title 4' }
+    expect(@asset_library.list_view_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
     @asset_library.click_asset_link 0
     @asset_library.wait_for_asset_detail(@driver, 'URL Title 4')
     # TODO: verify asset description and embedded URL once visible in the viewport
