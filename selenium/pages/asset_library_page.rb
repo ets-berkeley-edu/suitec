@@ -46,16 +46,16 @@ class AssetLibraryPage
   elements(:delete_category_button, :button, :xpath => '//button[@title="Delete this category"]')
 
   # ASSETS
-  elements(:gallery_asset_link, :link, :xpath => '//li[@data-ng-repeat="asset in assets"]//a')
-  elements(:gallery_asset_title, :h3, :xpath => '//li[@data-ng-repeat="asset in assets"]//h3')
-  elements(:gallery_asset_owner_name, :element, :xpath => '//li[@data-ng-repeat="asset in assets"]//small')
-  elements(:gallery_asset_like_button, :button, :xpath => '//button[@data-ng-click="like(asset)"]')
-  elements(:gallery_asset_likes_count, :span, :xpath => '//span[@data-ng-bind="asset.likes | number"]')
+  elements(:list_view_asset_link, :link, :xpath => '//li[@data-ng-repeat="asset in assets"]//a')
+  elements(:list_view_asset_title, :h3, :xpath => '//li[@data-ng-repeat="asset in assets"]//h3')
+  elements(:list_view_asset_owner_name, :element, :xpath => '//li[@data-ng-repeat="asset in assets"]//small')
+  elements(:list_view_asset_like_button, :button, :xpath => '//button[@data-ng-click="like(asset)"]')
+  elements(:list_view_asset_likes_count, :span, :xpath => '//span[@data-ng-bind="asset.likes | number"]')
 
   link(:back_to_library_link, :xpath => '//a[contains(text(),"Back to Asset Library")]')
 
   # Loads the asset library and puts browser focus in the iframe containing the tool
-  # @param driver [Selenium::WebDriver]         - the active browser
+  # @param driver [Selenium::WebDriver]         - the browser
   # @param url [String]                         - the asset library URL specific to the test course site
   def load_page(driver, url)
     navigate_to url
@@ -64,31 +64,38 @@ class AssetLibraryPage
     driver.switch_to.frame driver.find_element(:id, 'tool_content')
   end
 
-  # Waits for an asset with a specified title to become visible in the gallery view
-  # @param driver [Selenium::WebDriver]         - the active browser
-  # @param asset_title [String]                 - the title of the asset that should appear in the gallery
-  def wait_for_asset_in_gallery(driver, asset_title)
-    wait_until(timeout=WebDriverUtils.page_load_wait) { driver.find_element(:xpath, "//h3[contains(text(),'#{asset_title}')]").displayed? }
+  # Obtains the asset id from the first asset in the list of assets
+  # @return [String]                            - the ID of the asset
+  def get_first_asset_id
+    wait_until(timeout=WebDriverUtils.page_load_wait) { list_view_asset_link_elements.any? }
+    list_view_asset_link_elements[0].attribute('href').sub("#{WebDriverUtils.collabosphere_base_url}/assetlibrary/", '')
+  end
+
+  # Waits for an asset with a specified id to become visible in the list view
+  # @param driver [Selenium::WebDriver]         - the browser
+  # @param asset_id [String]                    - the id of the asset that should appear in the list view
+  def wait_for_asset_in_list_view(driver, asset_id)
+    wait_until(timeout=WebDriverUtils.page_load_wait) { driver.find_element(:xpath, "//li[@data-ng-repeat='asset in assets']//a[contains(@href,'#{asset_id}')]")  }
   end
 
   # Combines the methods for loading the asset library and waiting for an asset with a specific title to appear
   # @param driver [Selenium::WebDriver]         - the browser
   # @param url [String]                         - the asset library URL specific to the test course site
-  # @param asset_title [String]                 - the title of the asset that should appear in the gallery
-  def load_gallery_asset(driver, url, asset_title)
+  # @param asset_id [String]                    - the id of the asset that should appear in the list view
+  def load_list_view_asset(driver, url, asset_id)
     load_page(driver, url)
-    wait_for_asset_in_gallery(driver, asset_title)
+    wait_for_asset_in_list_view(driver, asset_id)
   end
 
-  # Waits for and then clicks the asset gallery item at a specified position in the list of items
+  # Waits for and then clicks the asset library item at a specified position in the list of items
   # @param index_position [Integer]             - the position of the asset in the list of assets
   def click_asset_link(index_position)
-    logger.info 'Clicking gallery thumbnail'
-    WebDriverUtils.wait_for_element_and_click gallery_asset_link_elements[index_position]
+    logger.info 'Clicking list view thumbnail'
+    WebDriverUtils.wait_for_element_and_click list_view_asset_link_elements[index_position]
   end
 
   # Waits for an asset with a specified title to become visible in the detail view
-  # @param driver [Selenium::WebDriver]         - the active browser
+  # @param driver [Selenium::WebDriver]         - the browser
   # @param asset_title [String]                 - the title of the asset that should appear in the detail view
   def wait_for_asset_detail(driver, asset_title)
     wait_until(timeout=WebDriverUtils.page_update_wait) { driver.find_element(:xpath, "//h2[contains(text(),'#{asset_title}')]").displayed? }
@@ -150,7 +157,7 @@ class AssetLibraryPage
   end
 
   # Clicks the delete button for a category at a specified position in the list, then accepts the alert
-  # @param driver [Selenium::WebDriver]         - the active browser
+  # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the category in the list of categories
   def delete_category(driver, index_position)
     logger.info 'Deleting category'
@@ -164,18 +171,18 @@ class AssetLibraryPage
   # Returns all the click-able 'like' button elements on the current page
   def enabled_like_buttons
     buttons = []
-    gallery_asset_like_button_elements.each { |button| buttons << button if button.enabled? }
+    list_view_asset_like_button_elements.each { |button| buttons << button if button.enabled? }
     buttons
   end
 
   # Toggles the state of a specified 'like' button element in a collection of elements, from like to not-like or vice versa
   # @param index_position [Integer]             - the position of the button in the collection of buttons
-  def toggle_gallery_item_like(index_position)
-    WebDriverUtils.wait_for_element_and_click gallery_asset_like_button_elements[index_position]
+  def toggle_list_view_item_like(index_position)
+    WebDriverUtils.wait_for_element_and_click list_view_asset_like_button_elements[index_position]
   end
 
   # Clicks the 'Back to Asset Library' link on the asset detail view
-  def click_back_to_gallery_link
+  def click_back_to_asset_library_link
     WebDriverUtils.wait_for_element_and_click back_to_library_link_element
   end
 
