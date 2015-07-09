@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsBoardFactory, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -45,7 +45,7 @@
      * as the content of the whiteboard
      */
     var getWhiteboard = function() {
-      whiteboardsBoardFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {
+      whiteboardsFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {
         $scope.whiteboard = whiteboard;
 
         // Set the title of the window to the title of the whiteboard
@@ -64,13 +64,26 @@
     };
 
     /**
-     * When a user has joined or left the whiteboard, update the list of online users
+     * When a user has joined or left the whiteboard, update the online status on the list of members
      */
     socket.on('online', function(onlineUsers) {
       if ($scope.whiteboard) {
-        $scope.whiteboard.online = onlineUsers;
+        for (var i = 0; i < $scope.whiteboard.members.length; i++) {
+          var member = $scope.whiteboard.members[i];
+          var online = $filter('filter')(onlineUsers, {'user_id': member.id});
+          member.online = (online.length > 0);
+        }
       }
     });
+
+    /**
+     * Get the whiteboard members that are currently online
+     */
+    var getOnlineUsers = $scope.getOnlineUsers = function() {
+      if ($scope.whiteboard) {
+        return $filter('filter')($scope.whiteboard.members, {'online': true});
+      }
+    };
 
     /* CANVAS */
 
@@ -721,18 +734,21 @@
 
     /**
      * Create a new chat message
+     *
+     * @param  {Event}          $event            The click event
      */
-    var createChatMessage = $scope.createChatMessage = function() {
+    var createChatMessage = $scope.createChatMessage = function($event) {
       socket.emit('chat', $scope.newChatMessage.body);
       // Reset the new chat message
       $scope.newChatMessage = null;
+      $event.preventDefault();
     };
 
     /**
      * Get the most recent chat messages
      */
     var getChatMessages = function() {
-      whiteboardsBoardFactory.getChatMessages(whiteboardId).success(function(chatMessages) {
+      whiteboardsFactory.getChatMessages(whiteboardId).success(function(chatMessages) {
         // Reverse the returned chat messages to ensure that the newest chat
         // message is at the bottom
         $scope.chatMessages = chatMessages.reverse();
@@ -749,6 +765,38 @@
 
     // Get the most recent chat messages
     getChatMessages();
+
+    /* SETTINGS */
+
+    /**
+     * Launch the modal that allows for a whiteboard to be edited
+     */
+    var editWhiteboard = $scope.editWhiteboard = function() {
+      // Open the edit whiteboard modal dialog
+      var scope = $scope.$new();
+      scope.whiteboard = $scope.whiteboard;
+      var modalInstance = $modal.open({
+        'scope': scope,
+        'templateUrl': '/app/whiteboards/edit/edit.html',
+        'controller': 'WhiteboardsEditController'
+      });
+
+      // When the modal dialog is closed, the updated whiteboard will
+      // be passed back
+      modalInstance.result.then(function(updatedWhiteboard) {
+        if (updatedWhiteboard) {
+          $scope.whiteboard = updatedWhiteboard;
+          // Set the title of the window to the new title of the whiteboard
+          $rootScope.header = $scope.whiteboard.title;
+        }
+      });
+    };
+
+    /* INITIALIZATION */
+
+    userFactory.getMe().success(function(me) {
+      $scope.me = me;
+    });
 
   });
 

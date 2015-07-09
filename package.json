@@ -43,6 +43,7 @@
     "joi": "latest",
     "lodash": "latest",
     "mime": "latest",
+    "moment-timezone": "latest",
     "oauth": "latest",
     "pg": "latest",
     "pg-hstore": "latest",
