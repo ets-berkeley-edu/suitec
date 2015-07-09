@@ -24,7 +24,7 @@
    * @param  {Function}       infinite-scroll               The function that fetches the next set of results
    * @param  {String}         [infinite-scroll-container]   `window` if the next set of results should be fetched when the user scroll approaches the end of the page. Otherwise, the id of the element in which the user scroll should approach the end before loading the next set of results
    * @param  {Number}         [infinite-scroll-distance]    The distance in pixels between the current scroll position within the scroll container and the end of the scroll container at which the next set of results will be loaded. Defaults to 400px
-   * @param  {String}         [infinite-scroll-direction]   The end of the container. Defaults to `bottom`
+   * @param  {String}         [infinite-scroll-direction]   The direction of the infinite scroll. One of `bottom` or `top`. Defaults to `bottom`
    * @param  {Boolean}        infinite-scroll-ready         Whether the infinite scroll container is ready to load more results.
    */
   angular.module('collabosphere').directive('infiniteScroll', function(utilService, $interval) {
@@ -59,6 +59,31 @@
           infiniteScrollContainer = document.getElementById(scope.infiniteScrollContainer);
         }
 
+        if (scope.infiniteScrollDirection === 'top') {
+          // Variable that will keep track of what the original scroll offset to the bottom of
+          // the container is when requesting new data to add to the container
+          var oldOffsetToBottom = 0;
+
+          // Because of Angular's asynchronous two-way binding, the DOM isn't updated as soon
+          // as the infinite scroll's function returns. We have to wait until the DOM has been
+          // fully updated before we can re-adjust the scrolling position.
+          // On top of Angular's two-way binding we also need to take into account the templating
+          // process. Angular will actually make two changes to the DOM:
+          //   1.  Perform the two-way binding operation. This will add new elements in the DOM
+          //   2.  Replace any expressions (e.g., {{user.name}}) in the DOM
+          //
+          // It's easier to simply watch the height of the container (i.e., data gets added or rendered)
+          // and re-adjust the scroll position to where it was at the time extra data was requested.
+          // This makes it look like data was simply added on top
+          scope.$watch(function() {
+            return infiniteScrollContainer.scrollHeight;
+          }, function(newValue, oldValue) {
+            if (newValue != oldValue) {
+              infiniteScrollContainer.scrollTop = infiniteScrollContainer.scrollHeight - oldOffsetToBottom;
+            }
+          });
+        }
+
         /**
          * Load the next set of results in the infinite scroll instance
          */
@@ -87,36 +112,7 @@
             // When we're adding more data at the top of the container, we'll need to adjust
             // the scroll position
             if (scope.infiniteScrollDirection === 'top') {
-              // Variable that will keep track of what the original scroll offset to the bottom of
-              // the container is
-              var oldOffsetToBottom = infiniteScrollContainer.clientHeight + scrollToBottom;
-
-              // Because of Angular's asynchronous two-way binding, the DOM isn't updated as soon
-              // as the infinite scroll's function returns. We have to wait until the DOM has been
-              // fully updated before we can re-adjust the scrolling position.
-              // On top of Angular's two-way binding we also need to take into account the templating
-              // process. Angular will actually make two changes to the DOM:
-              //   1.  Perform the two-way binding operation. This will add new elements in the DOM
-              //   2.  Replace any expressions (e.g., {{user.name}}) in the DOM
-              //
-              // Because of this we'll only update the scroll height the second time we detect
-              // a change in the scroll container's scrollHeight
-              var changes = 0;
-              var watch = scope.$watch(function() {
-                return infiniteScrollContainer.scrollHeight;
-              },
-              function(newValue, oldValue) {
-                if (newValue != oldValue) {
-                  changes++;
-                  if (changes === 2) {
-                    // Take the user back to his original scrolling position
-                    infiniteScrollContainer.scrollTop = infiniteScrollContainer.scrollHeight - oldOffsetToBottom;
-
-                    // We can stop watching for changes now
-                    watch();
-                  }
-                }
-              });
+              oldOffsetToBottom = infiniteScrollContainer.clientHeight + scrollToBottom;
             }
           }
         };
@@ -149,7 +145,6 @@
 
         // Load the first set of results when the infinite scroll instance is initiated
         handleInfiniteScrollLoad();
-
       }
     };
   });

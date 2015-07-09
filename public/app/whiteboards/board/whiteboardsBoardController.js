@@ -17,7 +17,37 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere')
+  .filter('formatDate', function() {
+
+    /**
+     * Given a date, return an appropriate header. This outputs one of:
+     *  - `Today`
+     *  - `Yesterday`
+     *  - if the date fell in the last week: `Sunday`, `Monday`, `Tuesday`, ..., `Saturday`
+     *  - if the date was longer than a week ago, it will be formated as `Month date, year`. For example: `Jun 30, 2015`
+     *
+     * @param  {String}     input     The input date to format
+     * @return {String}               The formatted date
+     * @api private
+     */
+    return function(input) {
+      // Parse the date with moment and get rid of the time values. This allows us to do straight-
+      // forward `isSame` and `isBetween` checks
+      var date = moment(input).hours(0).minutes(0).seconds(0).milliseconds(0);
+
+      if (moment().isSame(date, 'day')) {
+        return 'Today';
+      } else if (moment().subtract(1, 'day').isSame(date, 'day')) {
+        return 'Yesterday';
+      } else if (moment().isBetween(moment().subtract(7, 'days'), moment())) {
+        return date.format('dddd');
+      } else {
+        return date.format('MMMM D, YYYY');
+      }
+    };
+  })
+  .controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -715,7 +745,6 @@
 
     // Variable that will keep track of the state of the chat list
     $scope.chatList = {
-      'lastMessage': {},
       'ready': true
     };
 
@@ -748,10 +777,6 @@
       // Reset the new chat message
       $scope.newChatMessage = null;
       $event.preventDefault();
-
-      // Scroll to the bottom of the chat messages container
-      var chatMessagesContainer = document.getElementById('whiteboards-board-chat-messages-container');
-      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight - chatMessagesContainer.clientHeight;
     };
 
     /**
@@ -761,8 +786,13 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.chatList.ready = false;
-      return whiteboardsFactory.getChatMessages(whiteboardId, $scope.chatList.lastMessage.created_at).success(function(chatMessages) {
-        // Oldest messages go on top
+
+      var lastId = null;
+      if ($scope.chatMessages[0]) {
+        lastId = $scope.chatMessages[0].id;
+      }
+      whiteboardsFactory.getChatMessages(whiteboardId, lastId).success(function(chatMessages) {
+        // The oldest messages go on top
         chatMessages.reverse();
 
         // Prepend the older messages
@@ -773,12 +803,24 @@
         if (chatMessages.length === 10) {
           $scope.chatList.ready = true;
         }
-
-        // Ensure that the next set of chat messages are older messages
-        if ($scope.chatMessages.length > 0) {
-          $scope.chatList.lastMessage = $scope.chatMessages[0];
-        }
       });
+    };
+
+    /**
+     * Whether two dates occur on different days
+     *
+     * @param  {String}   dateA         The first date to check
+     * @param  {String}   [dateB]       The second date to check
+     * @return {Boolean}                Whether the two dates occur on a different day
+     */
+    var isDifferentDay = $scope.isDifferentDay = function(dateA, dateB, chatMessageA, chatMessageB) {
+      if (!dateB) {
+        return true;
+      }
+
+      dateA = moment(dateA);
+      dateB = moment(dateB);
+      return !dateA.isSame(dateB, 'day');
     };
 
     /**
@@ -786,7 +828,18 @@
      * the list of chat messages
      */
     socket.on('chat', function(chatMessage) {
+      // Add the message to the set of chat messages
       $scope.chatMessages.push(chatMessage);
+
+      // Angular uses a `$$hashKey` property on each object to determine whether it needs to update
+      // the DOM. When the new chat message is added on a new day, we have to update all the date
+      // headers. By deleting the `$$hashKey` property we force Angular to re-render the entire list
+      if (isDifferentDay(chatMessage.created_at), $scope.chatMessages[$scope.chatMessages.length - 1].created_at) {
+        $scope.chatMessages.map(function(msg) {
+          delete msg.$$hashKey;
+          return msg;
+        });
+      }
     });
 
     /* SETTINGS */

@@ -106,10 +106,14 @@
 
 <div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
   <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
-    <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
+    <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="200" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
       <div id="whiteboards-board-chat-messages-table">
         <div id="whiteboards-board-chat-messages">
           <div class="media" data-ng-repeat="chatMessage in chatMessages">
+            <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at, chatMessage, chatMessages[$index - 1])">
+              <span class="whiteboards-board-chat-date-header">{{chatMessage.created_at | formatDate}}</span>
+            </div>
+
             <div class="media-left media-top">
               <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
             </div>
