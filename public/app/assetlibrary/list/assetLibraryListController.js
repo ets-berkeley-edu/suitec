@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryListFactory, userFactory, utilService, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, userFactory, utilService, $filter, $rootScope, $scope, $state) {
 
     // Variable that keeps track of the URL state
     $scope.state = $state;
@@ -48,7 +48,7 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
-      assetLibraryListFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
+      assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
@@ -66,7 +66,7 @@
      * the current scroll position in the list will be cached
      */
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-      if (fromState.name === 'assetlibrarylist') {
+      if (fromState.name === 'assetlibrarylist' && toState.name === 'assetlibrarylist.item') {
         utilService.getScrollInformation().then(function(scrollInformation) {
           scrollPosition = scrollInformation.scrollPosition;
           // Don't load additional results
@@ -111,6 +111,17 @@
      */
     $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
       $scope.isAdvancedSearch = isAdvancedView;
+    });
+
+    /**
+     * Listen for events indicating that an asset has been updated
+     */
+    $scope.$on('assetLibraryAssetUpdated', function(ev, updatedAsset) {
+      for (var i = 0; i < $scope.assets.length; i++) {
+        if ($scope.assets[i].id === updatedAsset.id) {
+          $scope.assets[i] = updatedAsset;
+        }
+      }
     });
 
     userFactory.getMe().success(function(me) {

@@ -17,7 +17,7 @@
 
   'use strict';
 
-  var app = angular.module('collabosphere').controller('AssetLibraryUploadController', function(assetLibraryCategoriesFactory, assetLibraryUploadFactory, $location, $scope) {
+  var app = angular.module('collabosphere').controller('AssetLibraryUploadController', function(assetLibraryCategoriesFactory, assetLibraryFactory, $location, $scope) {
 
     // Constant that defines the maximum allowed file size
     var MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -131,7 +131,7 @@
       // Pick the next file in the list of selected file and
       // upload it
       currentFile = $scope.files.pop();
-      assetLibraryUploadFactory.createFile(currentFile, function(ev) {
+      assetLibraryFactory.createFile(currentFile, function(ev) {
         // As `ev.loaded` reports the total number of bytes that have been transferred in the
         // HTTP request, this can end up being higher than just the file size. Therefore, we
         // ensure that the reported progress never goes above the size of the file that is currently

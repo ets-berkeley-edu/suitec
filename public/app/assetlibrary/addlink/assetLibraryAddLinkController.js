@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryCategoriesFactory, assetLibraryAddLinkFactory, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryCategoriesFactory, assetLibraryFactory, $location, $scope) {
 
     // Variable that will keep track of the new link to be created
     $scope.link = {};
@@ -29,7 +29,7 @@
      * Create a new link asset
      */
     var createLink = $scope.createLink = function() {
-      assetLibraryAddLinkFactory.createLink($scope.link).success(function() {
+      assetLibraryFactory.createLink($scope.link).success(function() {
         $location.path('/assetlibrary');
       });
     };
