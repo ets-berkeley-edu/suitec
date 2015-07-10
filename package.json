@@ -35,6 +35,7 @@
     "cookie": "latest",
     "cookie-parser": "latest",
     "cors": "latest",
+    "embdr": "latest",
     "express": "latest",
     "express-busboy": "latest",
     "fast-csv": "latest",

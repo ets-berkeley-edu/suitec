@@ -22,6 +22,10 @@
     "level": "info",
     "stream": "stdout"
   },
+  "embdr": {
+    "enabled": true,
+    "apiKey": "ABCDEF123456"
+  },
   "canvasPoller": {
     "enabled": true,
     "delay": 15
