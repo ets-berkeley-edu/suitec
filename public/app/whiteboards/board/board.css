@@ -122,6 +122,12 @@
   vertical-align: bottom;
 }
 
+#whiteboards-board-chat-messages .whiteboards-board-chat-date-header {
+  color: #ADADAD;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
 #whiteboards-board-chat-messages .whiteboards-board-chat-actor {
   margin-bottom: 5px;
 }

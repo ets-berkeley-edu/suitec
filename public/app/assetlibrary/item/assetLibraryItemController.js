@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryItemFactory, userFactory, utilService, $rootScope, $stateParams, $sce, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $stateParams, $sce, $scope) {
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
@@ -32,7 +32,7 @@
      * Get the current asset
      */
     var getCurrentAsset = function() {
-      assetLibraryItemFactory.getAsset(assetId).success(function(asset) {
+      assetLibraryFactory.getAsset(assetId).success(function(asset) {
 
         // Build a comment tree that will hold a flat list of comments where each
         // child comment should come after their parent. First, the top level comments
@@ -60,7 +60,21 @@
 
         asset.comments = comments;
         $scope.asset = asset;
+
+        // Make the latest metadata of the asset available
+        $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
       });
+    };
+
+    /**
+     * Check whether the current user is able to manage the current asset
+     *
+     * @return {Boolean}                      Whether the current user can manage the current asset
+     */
+    var canManageAsset = $scope.canManageAsset = function() {
+      if ($scope.asset) {
+        return $scope.me.is_admin || $scope.asset.user.id === $scope.me.id;
+      }
     };
 
     /**
@@ -93,13 +107,15 @@
      * Create a new comment on the current asset
      */
     var createComment = $scope.createComment = function() {
-      assetLibraryItemFactory.createComment(assetId, $scope.newComment.body).success(function(comment) {
+      assetLibraryFactory.createComment(assetId, $scope.newComment.body).success(function(comment) {
         // Add the created comment to the comment list
         comment.level = 0;
         $scope.asset.comments.unshift(comment);
         $scope.asset.comment_count++;
         // Clear the new comment
         $scope.newComment = null;
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
       });
     };
 
@@ -119,7 +135,7 @@
      * @param  {String}       body            The body of the reply
      */
     var replyComment = $scope.replyComment = function(comment, body) {
-      assetLibraryItemFactory.createComment(assetId, body, comment.id).success(function(reply) {
+      assetLibraryFactory.createComment(assetId, body, comment.id).success(function(reply) {
         reply.level = 1;
         // Add the created comment to the comment list
         for (var i = 0; i < $scope.asset.comments.length; i++) {
@@ -133,6 +149,8 @@
         flagCommentsWithReplies($scope.asset.comments);
         // Hide the reply form
         toggleReplyComment(comment);
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
       });
     };
 
@@ -158,7 +176,7 @@
      * @param  {Comment}      comment         The comment that is being edited
      */
     var editComment = $scope.editComment = function(comment) {
-      assetLibraryItemFactory.editComment(assetId, comment.id, comment.newBody).success(function() {
+      assetLibraryFactory.editComment(assetId, comment.id, comment.newBody).success(function() {
         comment.body = comment.newBody;
         toggleEditComment(comment);
       });
@@ -171,7 +189,7 @@
      */
     var deleteComment = $scope.deleteComment = function(comment) {
       if (confirm('Are you sure you want to delete this comment?')) {
-        assetLibraryItemFactory.deleteComment(assetId, comment.id).success(function() {
+        assetLibraryFactory.deleteComment(assetId, comment.id).success(function() {
           // Delete the comment from the comment list
           for (var i = 0; i < $scope.asset.comments.length; i++) {
             if ($scope.asset.comments[i].id === comment.id) {
@@ -181,9 +199,20 @@
           // Re-calculate which comments have replies
           flagCommentsWithReplies($scope.asset.comments);
           $scope.asset.comment_count--;
+          // Indicate that the asset has been updated
+          $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
         });
       }
     };
+
+    /**
+     * Listen for events indicating that the current asset has been updated
+     */
+    $scope.$on('assetLibraryAssetUpdated', function(ev, updatedAsset) {
+      if ($scope.asset.id === updatedAsset.id) {
+        $scope.asset = updatedAsset;
+      }
+    });
 
     userFactory.getMe().success(function(me) {
       $scope.me = me;

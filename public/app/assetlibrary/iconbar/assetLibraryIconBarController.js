@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryIconBarController', function(assetLibraryItemFactory, userFactory, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryIconBarController', function(assetLibraryFactory, userFactory, $scope) {
 
     /**
      * Like an asset. If the asset has been liked by the current user already, the like will be undone
@@ -26,13 +26,15 @@
      */
     $scope.like = function(asset) {
       var liked = (asset.liked === true) ? null : true;
-      assetLibraryItemFactory.like(asset.id, liked).success(function() {
+      assetLibraryFactory.like(asset.id, liked).success(function() {
         asset.liked = liked;
         if (liked === true) {
           asset.likes++;
         } else {
           asset.likes--;
         }
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', asset);
       });
     };
 
