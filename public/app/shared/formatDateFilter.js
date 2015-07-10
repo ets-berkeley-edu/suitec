@@ -20,7 +20,7 @@
   angular.module('collabosphere').filter('formatDate', function() {
 
     /**
-     * Given a date, return an appropriate header. This outputs one of:
+     * Given a date, return an appropriate user-friendly representation. This outputs one of:
      *  - `Today`
      *  - `Yesterday`
      *  - if the date fell in the last week: `Sunday`, `Monday`, `Tuesday`, ..., `Saturday`
