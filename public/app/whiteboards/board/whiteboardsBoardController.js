@@ -713,6 +713,11 @@
     // Variable that will keep track of the chat messages on the current whiteboard
     $scope.chatMessages = [];
 
+    // Variable that will keep track of the state of the chat list
+    $scope.chatList = {
+      'ready': true
+    };
+
     // Variable that will keep track of the current chat message
     $scope.newChatMessage = null;
 
@@ -745,14 +750,47 @@
     };
 
     /**
-     * Get the most recent chat messages
+     * Get the chat messages
      */
-    var getChatMessages = function() {
-      whiteboardsFactory.getChatMessages(whiteboardId).success(function(chatMessages) {
-        // Reverse the returned chat messages to ensure that the newest chat
-        // message is at the bottom
-        $scope.chatMessages = chatMessages.reverse();
+    var getChatMessages = $scope.getChatMessages = function() {
+      // Indicate the no further REST API requests should be made
+      // until the current request has completed
+      $scope.chatList.ready = false;
+
+      var lastId = null;
+      if ($scope.chatMessages[0]) {
+        lastId = $scope.chatMessages[0].id;
+      }
+      whiteboardsFactory.getChatMessages(whiteboardId, lastId).success(function(chatMessages) {
+        // The oldest messages go on top
+        chatMessages.reverse();
+
+        // Prepend the older messages
+        $scope.chatMessages = chatMessages.concat($scope.chatMessages);
+
+        // Only request another page of chat messages if the returned number of messages
+        // is the maximum number the REST API returns
+        if (chatMessages.length === 10) {
+          $scope.chatList.ready = true;
+        }
       });
+    };
+
+    /**
+     * Check whether two dates occur on different days
+     *
+     * @param  {String}   dateA         The first date to check
+     * @param  {String}   [dateB]       The second date to check
+     * @return {Boolean}                Whether the two dates occur on a different day
+     */
+    var isDifferentDay = $scope.isDifferentDay = function(dateA, dateB) {
+      if (!dateB) {
+        return true;
+      }
+
+      dateA = moment(dateA);
+      dateB = moment(dateB);
+      return !dateA.isSame(dateB, 'day');
     };
 
     /**
@@ -760,11 +798,19 @@
      * the list of chat messages
      */
     socket.on('chat', function(chatMessage) {
+      // Add the message to the set of chat messages
       $scope.chatMessages.push(chatMessage);
-    });
 
-    // Get the most recent chat messages
-    getChatMessages();
+      // Angular uses a `$$hashKey` property on each object to determine whether it needs to update
+      // the DOM. When the new chat message is added on a new day, we have to update all the date
+      // headers. By deleting the `$$hashKey` property we force Angular to re-render the entire list
+      if (isDifferentDay(chatMessage.created_at), $scope.chatMessages[$scope.chatMessages.length - 1].created_at) {
+        $scope.chatMessages.map(function(msg) {
+          delete msg.$$hashKey;
+          return msg;
+        });
+      }
+    });
 
     /* SETTINGS */
 

@@ -48,8 +48,12 @@ class WebDriverUtils
     end
   end
 
-  def self.base_url
-    @config['base_url']
+  def self.collabosphere_base_url
+    @config['collabosphere_base_url']
+  end
+
+  def self.canvas_base_url
+    @config['canvas_base_url']
   end
 
   def self.sub_account
