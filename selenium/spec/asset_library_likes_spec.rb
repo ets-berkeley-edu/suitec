@@ -53,7 +53,7 @@ describe 'Asset likes', :order => :defined do
     end
     it 'cannot be added on the detail view' do
       @asset_library.click_asset_link 0
-      @asset_library.wait_for_asset_detail(@driver, @asset_title)
+      @asset_library.wait_for_asset_detail(@asset_title)
       expect(@asset_library.enabled_like_buttons.any?).to be false
       @asset_library.click_back_to_asset_library_link
     end
@@ -122,7 +122,7 @@ describe 'Asset likes', :order => :defined do
       @asset_library.load_page(@driver, @asset_library_url)
       @asset_library.wait_for_asset_in_list_view(@driver, @asset_id)
       @asset_library.click_asset_link 0
-      @asset_library.wait_for_asset_detail(@driver, @asset_title)
+      @asset_library.wait_for_asset_detail(@asset_title)
     end
     it 'increase the asset\'s total likes' do
       @asset_library.wait_until { @asset_library.list_view_asset_likes_count_elements[0].text == '0' }
@@ -153,7 +153,7 @@ describe 'Asset likes', :order => :defined do
       @asset_library.load_page(@driver, @asset_library_url)
       @asset_library.wait_for_asset_in_list_view(@driver, @asset_id)
       @asset_library.click_asset_link 0
-      @asset_library.wait_for_asset_detail(@driver, @asset_title)
+      @asset_library.wait_for_asset_detail(@asset_title)
     end
     it 'decrease the asset\'s total likes' do
       @asset_library.toggle_list_view_item_like 0
