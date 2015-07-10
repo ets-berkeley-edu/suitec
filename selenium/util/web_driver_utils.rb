@@ -136,7 +136,8 @@ class WebDriverUtils
   end
 
   # Checks for the existence of an element on the page
-  # @param element [Selenium::WebDriver::Element]   - the element
+  # @param driver [Selenium::WebDriver]             - the browser
+  # @param element_xpath [String]                   - the element's xpath
   def self.element_present?(driver, element_xpath)
     driver.find_element(:xpath => element_xpath)
     true
