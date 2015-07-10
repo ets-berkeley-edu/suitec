@@ -17,20 +17,27 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryAddLinkController', function(assetLibraryCategoriesFactory, assetLibraryFactory, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryEditController', function(assetLibraryCategoriesFactory, assetLibraryFactory, userFactory, $stateParams, $scope) {
 
-    // Variable that will keep track of the new link to be created
-    $scope.link = {};
+    // Variable that keeps track of the current asset id
+    var assetId = $stateParams.assetId;
 
-    // Variable that will keep track of the categories in the current course
+    // Variable that keeps track of the current asset
+    $scope.asset = null;
+
+    // Variable that keeps track of the categories in the current course
     $scope.categories = null;
 
     /**
-     * Create a new link asset
+     * Get the current asset
      */
-    var createLink = $scope.createLink = function() {
-      assetLibraryFactory.createLink($scope.link).success(function() {
-        $location.path('/assetlibrary');
+    var getCurrentAsset = function() {
+      assetLibraryFactory.getAsset(assetId).success(function(asset) {
+        // TODO
+        if (asset.categories.length > 0) {
+          asset.categories = '' + asset.categories[0].id;
+        }
+        $scope.asset = asset;
       });
     };
 
@@ -43,7 +50,13 @@
       });
     };
 
-    getCategories();
+    userFactory.getMe().success(function(me) {
+      $scope.me = me;
+      // Load the categories for the current course
+      getCategories();
+      // Load the selected asset
+      setTimeout(getCurrentAsset, 2000);
+    });
 
   });
 
