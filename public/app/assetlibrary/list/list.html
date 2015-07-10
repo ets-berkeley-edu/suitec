@@ -15,7 +15,7 @@
   <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="window">
     <ul>
       <!-- UPLOAD / ADD LINK -->
-      <li class="list-inline col-xs-6 col-sm-4 col-md-3">
+      <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="!isSearch">
         <div class="col-list-item-container col-list-add-tile">
           <div class="col-list-item-tile">
             <div class="assetlibrary-list-item-add-container">
@@ -25,7 +25,7 @@
                   <div class="assetlibrary-list-item-add-action">Upload</div>
                 </a>
                 <a data-ng-href="/assetlibrary/addlink" class="text-center col-pane">
-                  <i class="fa fa-link "></i>
+                  <i class="fa fa-link"></i>
                   <div class="assetlibrary-list-item-add-action">Add Site</div>
                 </a>
               </div>
@@ -55,6 +55,9 @@
         </div>
       </li>
     </ul>
+  </div>
+  <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="isSearch && assets.length === 0">
+    No assets could be found
   </div>
 </div>
 
