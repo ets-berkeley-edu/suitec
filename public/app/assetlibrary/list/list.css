@@ -17,6 +17,12 @@
   margin-bottom: 12px;
 }
 
+/* NO RESULTS */
+
+.assetlibrary-list-noresults {
+  margin-top: 10px;
+}
+
 /* UPLOAD / ADD LINK */
 
 .assetlibrary-list-item-add-container {

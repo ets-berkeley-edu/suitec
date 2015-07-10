@@ -25,6 +25,9 @@
     // Variable that keeps track of whether the search component is in the advanced view state
     $scope.isAdvancedSearch = false;
 
+    // Variable that keeps track of whether a search is being done
+    $scope.isSearch = false;
+
     // Variable that keeps track of the search options
     $scope.searchOptions = {};
 
@@ -94,6 +97,12 @@
       $scope.list.page = 0;
       $scope.assets = [];
       $scope.searchOptions = searchOptions;
+      // Determine whether a search is being done
+      $scope.isSearch = false;
+      if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+        $scope.isSearch = true;
+      }
+      // Load the list of assets with the specified search options
       getAssets();
     });
 
