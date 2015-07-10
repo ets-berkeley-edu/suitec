@@ -82,7 +82,7 @@
      * @param  {String}               file.title                      The title of the file
      * @param  {String}               file.file                       The file to upload
      * @param  {String}               [file.description]              The description of the file
-     * @param  {Number[]}             [file.categories]               The ids of the categories to which the link should be associated
+     * @param  {Number[]}             [file.categories]               The ids of the categories to which the file should be associated
      * @param  {String}               [file.source]                   The source of the file
      * @param  {Function}             [progressCallback]              Callback function that will be informed of progress updates
      * @return {Promise<Asset>}                                       Promise returning the created file asset
@@ -165,7 +165,7 @@
      * Like or unlike an asset
      *
      * @param  {Number}               id                              The id of the asset that is liked or unliked
-     * @param  {Boolean}              like                            `true` when the asset should be liked, `null` when the asset should be unliked
+     * @param  {Boolean}              like                            `true` when the asset should be liked, `false` when the asset should be disliked. When `null` is provided, the previous like or dislike will be undone
      * @return {Promise}                                              $http promise
      */
     var like = function(id, like) {

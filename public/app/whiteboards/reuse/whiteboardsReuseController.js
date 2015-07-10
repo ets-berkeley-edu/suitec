@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryListFactory, $scope, $modalInstance) {
+  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $scope, $modalInstance) {
 
     $scope.searchOptions = {};
     $scope.assets = [];
@@ -66,7 +66,7 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
-      assetLibraryListFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
+      assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
