@@ -10,6 +10,10 @@
   </div>
 </div>
 
+<div class="alert alert-info whiteboards-list-noresults" data-ng-if="whiteboards.length === 0">
+  You're currently not in any whiteboards. <a data-ng-href="/whiteboards/create">Create one</a>
+</div>
+
 <div class="col-list-container" data-infinite-scroll="getWhiteboards()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="window">
   <ul>
     <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="whiteboard in whiteboards">
@@ -22,7 +26,7 @@
             </div>
             <div class="col-list-item-metadata">
               <h3 class="col-threedots">{{whiteboard.title}}</h3>
-              <small class="col-threedots">0 online</small>
+              <small class="col-threedots">{{whiteboard.online_count}} online</small>
             </div>
           </div>
         </a>

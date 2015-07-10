@@ -155,7 +155,19 @@ class WebDriverUtils
   # @param text [String]                            - the text to enter in the element
   def self.wait_for_element_and_type(element, text)
     element.when_present(timeout=page_update_wait)
+    element.click
+    element.clear
     element.send_keys text
+  end
+
+  # Checks for the existence of an element on the page
+  # @param driver [Selenium::WebDriver]             - the browser
+  # @param element_xpath [String]                   - the element's xpath
+  def self.element_present?(driver, element_xpath)
+    driver.find_element(:xpath => element_xpath)
+    true
+  rescue Selenium::WebDriver::Error::NoSuchElementError
+    false
   end
 
   # Clicks a link, verifies that the destination page loads in a new window, verifies the page title matches expectations,

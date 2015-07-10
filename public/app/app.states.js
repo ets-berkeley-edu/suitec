@@ -43,6 +43,15 @@
         },
         'url': '/assetlibrary/:assetId'
       })
+      .state('assetlibrarylist.item.edit', {
+        'views': {
+          'edit': {
+            'controller': 'AssetLibraryEditController',
+            'templateUrl': '/app/assetlibrary/edit/edit.html'
+          }
+        },
+        'url': '/assetlibrary/:assetId/edit'
+      })
       .state('assetlibraryupload', {
         'url': '/assetlibrary/upload',
         'templateUrl': '/app/assetlibrary/upload/upload.html',
@@ -91,7 +100,7 @@
         'url': '/whiteboards/:whiteboardId',
         'templateUrl': '/app/whiteboards/board/board.html',
         'controller': 'WhiteboardsBoardController'
-      })
+      });
 
   });
 

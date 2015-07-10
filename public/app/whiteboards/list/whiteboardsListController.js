@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsListController', function(userFactory, utilService, whiteboardsListFactory, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsListController', function(userFactory, utilService, whiteboardsFactory, $scope) {
 
     $scope.whiteboards = [];
     $scope.list = {
@@ -32,7 +32,7 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
-      whiteboardsListFactory.getWhiteboards($scope.list.page).success(function(whiteboards) {
+      whiteboardsFactory.getWhiteboards($scope.list.page).success(function(whiteboards) {
         $scope.whiteboards = $scope.whiteboards.concat(whiteboards.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a

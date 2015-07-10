@@ -17,13 +17,14 @@
 
   'use strict';
 
-  /**
+  /*!
    * The infinite scroll directive can be used to add infinite scrolling functionality to
    * a container. The following attributes should be applied to the infinite scrolling container:
    *
    * @param  {Function}       infinite-scroll               The function that fetches the next set of results
    * @param  {String}         [infinite-scroll-container]   `window` if the next set of results should be fetched when the user scroll approaches the end of the page. Otherwise, the id of the element in which the user scroll should approach the end before loading the next set of results
-   * @param  {Number}         [infinite-scroll-distance]    The distance in pixels between the current scroll position within the scroll container and the bottom of the scroll container at which the next set of results will be loaded. Defaults to 400px
+   * @param  {Number}         [infinite-scroll-distance]    The distance in pixels between the current scroll position within the scroll container and the end of the scroll container at which the next set of results will be loaded. Defaults to 400px
+   * @param  {String}         [infinite-scroll-direction]   The direction of the infinite scroll. One of `bottom` or `top`. Defaults to `bottom`
    * @param  {Boolean}        infinite-scroll-ready         Whether the infinite scroll container is ready to load more results.
    */
   angular.module('collabosphere').directive('infiniteScroll', function(utilService, $interval) {
@@ -38,6 +39,7 @@
         'infiniteScroll': '&',
         'infiniteScrollContainer': '@',
         'infiniteScrollDistance': '=',
+        'infiniteScrollDirection': '@',
         'infiniteScrollReady': '='
       },
       'link': function(scope, elem, attrs) {
@@ -48,10 +50,30 @@
         // Default whether infinite scrolling should happen against the window or the current element
         scope.infiniteScrollContainer = scope.infiniteScrollContainer || 'window';
 
+        // Default whether infinite scrolling should happen against the bottom or the top of the scroll container
+        scope.infiniteScrollDirection = scope.infiniteScrollDirection || 'bottom';
+
         // Cache the infinite scroll container when a container other than the browser window has been supplied
         var infiniteScrollContainer = null;
         if (scope.infiniteScrollContainer !== 'window') {
-          infiniteScrollContainer = document.querySelector('#' + scope.infiniteScrollContainer);
+          infiniteScrollContainer = document.getElementById(scope.infiniteScrollContainer);
+        }
+
+        if (scope.infiniteScrollDirection === 'top') {
+          // Variable that will keep track of what the original scroll offset to the bottom of
+          // the container is when requesting new data to add to the container
+          var oldOffsetToBottom = 0;
+
+          // Watch the height of the container (i.e., data gets added or rendered) and re-adjust the
+          // scroll position to where it was at the time extra data was requested. This makes it look
+          // like data was simply added on top
+          scope.$watch(function() {
+            return infiniteScrollContainer.scrollHeight;
+          }, function(newValue, oldValue) {
+            if (newValue != oldValue) {
+              infiniteScrollContainer.scrollTop = infiniteScrollContainer.scrollHeight - oldOffsetToBottom;
+            }
+          });
         }
 
         /**
@@ -63,13 +85,27 @@
 
         /**
          * Check whether the next set of results should be loaded. The next set of results should only be loaded
-         * when the infinite scroll instance is ready to accept more results and when the bottom of the page or element
+         * when the infinite scroll instance is ready to accept more results and when the edge of the page or element
          * is close enough
          *
          * @param  {Number}         scrollToBottom            When the browser window was supplied as the infiniteScrollContainer, the distance between the bottom of the browser and the bottom of the page. Otherwise, the distance between the bottom of the infinite scroll container and the current scroll position within that container
+         * @param  {Number}         scrollPosition            When the browser window was supplied as the infiniteScrollContainer, the distance between the top of the browser and the top of the page. Otherwise, the distance between the top of the infinite scroll container and the current scroll position within that container
          */
-        var checkInfiniteScrollLoad = function(scrollToBottom) {
-          if (scope.infiniteScrollReady && scrollToBottom < scope.infiniteScrollDistance) {
+        var checkInfiniteScrollLoad = function(scrollToBottom, scrollPosition) {
+          if (scope.infiniteScrollReady && (
+            (scope.infiniteScrollDirection === 'bottom' && scrollToBottom < scope.infiniteScrollDistance) ||
+            (scope.infiniteScrollDirection === 'top' && scrollPosition < scope.infiniteScrollDistance)
+            )
+          ) {
+
+            // When we're adding more data at the top of the container, we'll have to adjust the
+            // scroll position when we've added data. We retain the scrolling offset to the bottom
+            // of the container, so we can set it back when data was added
+            if (scope.infiniteScrollDirection === 'top') {
+              oldOffsetToBottom = infiniteScrollContainer.clientHeight + scrollToBottom;
+            }
+
+            // Load more data
             handleInfiniteScrollLoad();
           }
         };
@@ -83,11 +119,12 @@
           // Request the page scroll information when infinite scrolling should happen against the window
           if (scope.infiniteScrollContainer === 'window') {
             utilService.getScrollInformation().then(function(scrollInformation) {
-              checkInfiniteScrollLoad(scrollInformation.scrollToBottom);
+              checkInfiniteScrollLoad(scrollInformation.scrollToBottom, scrollInformation.scrollPosition);
             });
           } else {
             var scrollToBottom = infiniteScrollContainer.scrollHeight - infiniteScrollContainer.clientHeight - infiniteScrollContainer.scrollTop;
-            checkInfiniteScrollLoad(scrollToBottom);
+            var scrollPosition = infiniteScrollContainer.scrollTop;
+            checkInfiniteScrollLoad(scrollToBottom, scrollPosition);
           }
         }, 250);
 
@@ -101,7 +138,6 @@
 
         // Load the first set of results when the infinite scroll instance is initiated
         handleInfiniteScrollLoad();
-
       }
     };
   });

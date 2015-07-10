@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, utilService, whiteboardsBoardFactory, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -45,7 +45,7 @@
      * as the content of the whiteboard
      */
     var getWhiteboard = function() {
-      whiteboardsBoardFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {
+      whiteboardsFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {
         $scope.whiteboard = whiteboard;
 
         // Set the title of the window to the title of the whiteboard
@@ -64,13 +64,26 @@
     };
 
     /**
-     * When a user has joined or left the whiteboard, update the list of online users
+     * When a user has joined or left the whiteboard, update the online status on the list of members
      */
     socket.on('online', function(onlineUsers) {
       if ($scope.whiteboard) {
-        $scope.whiteboard.online = onlineUsers;
+        for (var i = 0; i < $scope.whiteboard.members.length; i++) {
+          var member = $scope.whiteboard.members[i];
+          var online = $filter('filter')(onlineUsers, {'user_id': member.id});
+          member.online = (online.length > 0);
+        }
       }
     });
+
+    /**
+     * Get the whiteboard members that are currently online
+     */
+    var getOnlineUsers = $scope.getOnlineUsers = function() {
+      if ($scope.whiteboard) {
+        return $filter('filter')($scope.whiteboard.members, {'online': true});
+      }
+    };
 
     /* CANVAS */
 
@@ -700,6 +713,11 @@
     // Variable that will keep track of the chat messages on the current whiteboard
     $scope.chatMessages = [];
 
+    // Variable that will keep track of the state of the chat list
+    $scope.chatList = {
+      'ready': true
+    };
+
     // Variable that will keep track of the current chat message
     $scope.newChatMessage = null;
 
@@ -721,22 +739,58 @@
 
     /**
      * Create a new chat message
+     *
+     * @param  {Event}          $event            The click event
      */
-    var createChatMessage = $scope.createChatMessage = function() {
+    var createChatMessage = $scope.createChatMessage = function($event) {
       socket.emit('chat', $scope.newChatMessage.body);
       // Reset the new chat message
       $scope.newChatMessage = null;
+      $event.preventDefault();
     };
 
     /**
-     * Get the most recent chat messages
+     * Get the chat messages
      */
-    var getChatMessages = function() {
-      whiteboardsBoardFactory.getChatMessages(whiteboardId).success(function(chatMessages) {
-        // Reverse the returned chat messages to ensure that the newest chat
-        // message is at the bottom
-        $scope.chatMessages = chatMessages.reverse();
+    var getChatMessages = $scope.getChatMessages = function() {
+      // Indicate the no further REST API requests should be made
+      // until the current request has completed
+      $scope.chatList.ready = false;
+
+      var lastId = null;
+      if ($scope.chatMessages[0]) {
+        lastId = $scope.chatMessages[0].id;
+      }
+      whiteboardsFactory.getChatMessages(whiteboardId, lastId).success(function(chatMessages) {
+        // The oldest messages go on top
+        chatMessages.reverse();
+
+        // Prepend the older messages
+        $scope.chatMessages = chatMessages.concat($scope.chatMessages);
+
+        // Only request another page of chat messages if the returned number of messages
+        // is the maximum number the REST API returns
+        if (chatMessages.length === 10) {
+          $scope.chatList.ready = true;
+        }
       });
+    };
+
+    /**
+     * Check whether two dates occur on different days
+     *
+     * @param  {String}   dateA         The first date to check
+     * @param  {String}   [dateB]       The second date to check
+     * @return {Boolean}                Whether the two dates occur on a different day
+     */
+    var isDifferentDay = $scope.isDifferentDay = function(dateA, dateB) {
+      if (!dateB) {
+        return true;
+      }
+
+      dateA = moment(dateA);
+      dateB = moment(dateB);
+      return !dateA.isSame(dateB, 'day');
     };
 
     /**
@@ -744,11 +798,51 @@
      * the list of chat messages
      */
     socket.on('chat', function(chatMessage) {
+      // Add the message to the set of chat messages
       $scope.chatMessages.push(chatMessage);
+
+      // Angular uses a `$$hashKey` property on each object to determine whether it needs to update
+      // the DOM. When the new chat message is added on a new day, we have to update all the date
+      // headers. By deleting the `$$hashKey` property we force Angular to re-render the entire list
+      if (isDifferentDay(chatMessage.created_at), $scope.chatMessages[$scope.chatMessages.length - 1].created_at) {
+        $scope.chatMessages.map(function(msg) {
+          delete msg.$$hashKey;
+          return msg;
+        });
+      }
     });
 
-    // Get the most recent chat messages
-    getChatMessages();
+    /* SETTINGS */
+
+    /**
+     * Launch the modal that allows for a whiteboard to be edited
+     */
+    var editWhiteboard = $scope.editWhiteboard = function() {
+      // Open the edit whiteboard modal dialog
+      var scope = $scope.$new();
+      scope.whiteboard = $scope.whiteboard;
+      var modalInstance = $modal.open({
+        'scope': scope,
+        'templateUrl': '/app/whiteboards/edit/edit.html',
+        'controller': 'WhiteboardsEditController'
+      });
+
+      // When the modal dialog is closed, the updated whiteboard will
+      // be passed back
+      modalInstance.result.then(function(updatedWhiteboard) {
+        if (updatedWhiteboard) {
+          $scope.whiteboard = updatedWhiteboard;
+          // Set the title of the window to the new title of the whiteboard
+          $rootScope.header = $scope.whiteboard.title;
+        }
+      });
+    };
+
+    /* INITIALIZATION */
+
+    userFactory.getMe().success(function(me) {
+      $scope.me = me;
+    });
 
   });
 

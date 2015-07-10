@@ -205,22 +205,26 @@ class CanvasPage
   # @param test_users [Hash]                    - the set of test users from which to draw
   # @param user_role [String]                   - the type of users to add to the course site (e.g., 'Teacher', 'Student')
   def add_users(course_id, test_users, user_role)
-    logger.info "Adding users with role #{user_role}"
-    load_users_page course_id
-    WebDriverUtils.wait_for_page_and_click add_people_button_element.when_visible
-    user_list_element.when_visible timeout=WebDriverUtils.page_update_wait
     users = ''
     test_users.each do |id, user|
       if user['role'] == user_role
         users << "#{user['uid'].to_s}, "
       end
     end
-    self.user_list = users
-    self.user_role = user_role
-    next_button
-    WebDriverUtils.wait_for_page_and_click add_button_element
-    add_users_success_element.when_visible timeout=WebDriverUtils.page_load_wait
-    done_button
+    if users.empty?
+      logger.warn "No test users with role #{user_role}"
+    else
+      logger.info "Adding users with role #{user_role}"
+      load_users_page course_id
+      WebDriverUtils.wait_for_page_and_click add_people_button_element.when_visible
+      user_list_element.when_visible timeout=WebDriverUtils.page_update_wait
+      self.user_list = users
+      self.user_role = user_role
+      next_button
+      WebDriverUtils.wait_for_page_and_click add_button_element
+      add_users_success_element.when_visible timeout=WebDriverUtils.page_load_wait
+      done_button
+    end
   end
 
   # LTI TOOLS

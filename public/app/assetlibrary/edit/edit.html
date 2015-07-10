@@ -1,0 +1,49 @@
+<a ui-sref="assetlibrarylist.item({assetId: asset.id})" class="col-back"><i class="fa fa-angle-left"></i> Back to the asset</a>
+
+<h2>Edit details</h2>
+
+<form name="assetlibraryEditForm" class="assetlibrary-edit-form" data-ng-submit="assetlibraryEditForm.$valid && editAsset()" novalidate>
+  <div class="clearfix assetlibrary-edit-container">
+    <!-- PREVIEW IMAGE -->
+    <div class="col-xs-3 text-center">
+      <div class="col-list-item-tile">
+        <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
+        <div class="text-center col-list-item-thumbnail-default col-list-item-no-metadata" data-ng-if="!asset.thumbnail_url">
+          <i class="fa fa-file-o" data-ng-if="asset.type === 'file'"></i>
+          <i class="fa fa-link" data-ng-if="asset.type === 'link'"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-9">
+      <!-- TITLE -->
+      <div class="form-group" data-ng-class="{'has-error': assetlibraryEditForm.$submitted && assetlibraryEditForm.assetlibraryEditTitle.$invalid}">
+        <label for="assetlibrary-upload-title" class="control-label">Title</label>
+        <input type="text" id="assetlibrary-edit-title" name="assetlibraryEditTitle" class="form-control" placeholder="Enter a title" data-ng-model="asset.title" data-ng-maxlength="255" required>
+        <div class="help-block" data-ng-messages="assetlibraryEditForm.assetlibraryEditTitle.$error">
+          <div data-ng-message="required">Please enter a title</div>
+          <div data-ng-message="maxlength">A title can only be 255 characters long</div>
+        </div>
+      </div>
+
+      <!-- CATEGORY -->
+      <div class="form-group">
+        <label for="assetlibrary-edit-category" class="control-label">Category</label>
+        <select id="assetlibrary-edit-category" class="form-control" data-value="{{asset.categories}}" data-ng-model="asset.categories" data-ng-options="category.id as category.title for category in categories">
+          <option value="" selected>Which assignment or topic is this related to</option>
+        </select>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="form-group">
+        <label for="assetlibrary-edit-description" class="control-label">Description</label>
+        <textarea id="assetlibrary-edit-description" class="form-control" placeholder="Add some more context to your asset. You can use plain text or #keywords" rows="3" data-ng-model="asset.description"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="form-group text-right">
+    <a ui-sref="assetlibrarylist.item({assetId: asset.id})" class="btn btn-default">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+</form>
