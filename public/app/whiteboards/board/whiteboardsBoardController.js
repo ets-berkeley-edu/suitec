@@ -17,37 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere')
-  .filter('formatDate', function() {
-
-    /**
-     * Given a date, return an appropriate header. This outputs one of:
-     *  - `Today`
-     *  - `Yesterday`
-     *  - if the date fell in the last week: `Sunday`, `Monday`, `Tuesday`, ..., `Saturday`
-     *  - if the date was longer than a week ago, it will be formated as `Month date, year`. For example: `Jun 30, 2015`
-     *
-     * @param  {String}     input     The input date to format
-     * @return {String}               The formatted date
-     * @api private
-     */
-    return function(input) {
-      // Parse the date with moment and get rid of the time values. This allows us to do straight-
-      // forward `isSame` and `isBetween` checks
-      var date = moment(input).hours(0).minutes(0).seconds(0).milliseconds(0);
-
-      if (moment().isSame(date, 'day')) {
-        return 'Today';
-      } else if (moment().subtract(1, 'day').isSame(date, 'day')) {
-        return 'Yesterday';
-      } else if (moment().isBetween(moment().subtract(7, 'days'), moment())) {
-        return date.format('dddd');
-      } else {
-        return date.format('MMMM D, YYYY');
-      }
-    };
-  })
-  .controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -807,13 +777,13 @@
     };
 
     /**
-     * Whether two dates occur on different days
+     * Check whether two dates occur on different days
      *
      * @param  {String}   dateA         The first date to check
      * @param  {String}   [dateB]       The second date to check
      * @return {Boolean}                Whether the two dates occur on a different day
      */
-    var isDifferentDay = $scope.isDifferentDay = function(dateA, dateB, chatMessageA, chatMessageB) {
+    var isDifferentDay = $scope.isDifferentDay = function(dateA, dateB) {
       if (!dateB) {
         return true;
       }

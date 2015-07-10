@@ -64,17 +64,9 @@
           // the container is when requesting new data to add to the container
           var oldOffsetToBottom = 0;
 
-          // Because of Angular's asynchronous two-way binding, the DOM isn't updated as soon
-          // as the infinite scroll's function returns. We have to wait until the DOM has been
-          // fully updated before we can re-adjust the scrolling position.
-          // On top of Angular's two-way binding we also need to take into account the templating
-          // process. Angular will actually make two changes to the DOM:
-          //   1.  Perform the two-way binding operation. This will add new elements in the DOM
-          //   2.  Replace any expressions (e.g., {{user.name}}) in the DOM
-          //
-          // It's easier to simply watch the height of the container (i.e., data gets added or rendered)
-          // and re-adjust the scroll position to where it was at the time extra data was requested.
-          // This makes it look like data was simply added on top
+          // Watch the height of the container (i.e., data gets added or rendered) and re-adjust the
+          // scroll position to where it was at the time extra data was requested. This makes it look
+          // like data was simply added on top
           scope.$watch(function() {
             return infiniteScrollContainer.scrollHeight;
           }, function(newValue, oldValue) {
@@ -106,14 +98,15 @@
             )
           ) {
 
-            // Load more data
-            handleInfiniteScrollLoad();
-
-            // When we're adding more data at the top of the container, we'll need to adjust
-            // the scroll position
+            // When we're adding more data at the top of the container, we'll have to adjust the
+            // scroll position when we've added data. We retain the scrolling offset to the bottom
+            // of the container, so we can set it back when data was added
             if (scope.infiniteScrollDirection === 'top') {
               oldOffsetToBottom = infiniteScrollContainer.clientHeight + scrollToBottom;
             }
+
+            // Load more data
+            handleInfiniteScrollLoad();
           }
         };
 

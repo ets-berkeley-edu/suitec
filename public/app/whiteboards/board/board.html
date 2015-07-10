@@ -110,7 +110,7 @@
       <div id="whiteboards-board-chat-messages-table">
         <div id="whiteboards-board-chat-messages">
           <div class="media" data-ng-repeat="chatMessage in chatMessages">
-            <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at, chatMessage, chatMessages[$index - 1])">
+            <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at)">
               <span class="whiteboards-board-chat-date-header">{{chatMessage.created_at | formatDate}}</span>
             </div>
 
