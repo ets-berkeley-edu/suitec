@@ -22,6 +22,7 @@
     'ngAria',
     'ngFileUpload',
     'ngMessages',
+    'ngMoment',
     'ngSanitize',
     'common.fabric',
     'common.fabric.utilities',
