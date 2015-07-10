@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryEditController', function(assetLibraryCategoriesFactory, assetLibraryFactory, userFactory, $stateParams, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryEditController', function(assetLibraryCategoriesFactory, assetLibraryFactory, userFactory, $state, $stateParams, $scope) {
 
     // Variable that keeps track of the current asset id
     var assetId = $stateParams.assetId;
@@ -33,9 +33,10 @@
      */
     var getCurrentAsset = function() {
       assetLibraryFactory.getAsset(assetId).success(function(asset) {
-        // TODO
+        // As the UI currently only allows for a single category to be selected,
+        // set the categories value to make it easier to work with
         if (asset.categories.length > 0) {
-          asset.categories = '' + asset.categories[0].id;
+          asset.categories = asset.categories[0].id;
         }
         $scope.asset = asset;
       });
@@ -50,12 +51,24 @@
       });
     };
 
+    /**
+     * Edit the current asset
+     */
+    var editAsset = $scope.editAsset = function() {
+      assetLibraryFactory.editAsset($scope.asset.id, $scope.asset).success(function(updatedAsset) {
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', updatedAsset);
+        // Redirect back to the asset item view
+        $state.go('assetlibrarylist.item', {'assetId': updatedAsset.id});
+      });
+    };
+
     userFactory.getMe().success(function(me) {
       $scope.me = me;
       // Load the categories for the current course
       getCategories();
       // Load the selected asset
-      setTimeout(getCurrentAsset, 2000);
+      getCurrentAsset();
     });
 
   });

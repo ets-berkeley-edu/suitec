@@ -28,7 +28,7 @@
       <!-- CATEGORY -->
       <div class="form-group">
         <label for="assetlibrary-edit-category" class="control-label">Category</label>
-        <select id="assetlibrary-edit-category" class="form-control" data-value="{{asset.categories}}" data-ng-model="asset.categories" data-ng-options="category.title for category in categories track by category.id">
+        <select id="assetlibrary-edit-category" class="form-control" data-value="{{asset.categories}}" data-ng-model="asset.categories" data-ng-options="category.id as category.title for category in categories">
           <option value="" selected>Which assignment or topic is this related to</option>
         </select>
       </div>

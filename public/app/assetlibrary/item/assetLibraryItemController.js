@@ -60,6 +60,9 @@
 
         asset.comments = comments;
         $scope.asset = asset;
+
+        // Make the latest metadata of the asset available
+        $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
       });
     };
 
@@ -201,6 +204,15 @@
         });
       }
     };
+
+    /**
+     * Listen for events indicating that the current asset has been updated
+     */
+    $scope.$on('assetLibraryAssetUpdated', function(ev, updatedAsset) {
+      if ($scope.asset.id === updatedAsset.id) {
+        $scope.asset = updatedAsset;
+      }
+    });
 
     userFactory.getMe().success(function(me) {
       $scope.me = me;

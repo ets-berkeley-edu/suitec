@@ -63,14 +63,11 @@
      * the current scroll position in the list will be cached
      */
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-      if (fromState.name === 'assetlibrarylist') {
+      if (fromState.name === 'assetlibrarylist' && toState.name === 'assetlibrarylist.item') {
         utilService.getScrollInformation().then(function(scrollInformation) {
           scrollPosition = scrollInformation.scrollPosition;
           // Don't load additional results
           $scope.list.ready = false;
-          // Increase the views count for the selected asset
-          var selectedAsset = $filter('filter')($scope.assets, {'id': parseInt(toParams.assetId, 10)})[0];
-          selectedAsset.views++;
         });
       }
     });

@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('assetLibraryFactory', function(utilService, $http) {
+  angular.module('collabosphere').factory('assetLibraryFactory', function(utilService, Upload, $http) {
 
     /**
      * Get an asset
