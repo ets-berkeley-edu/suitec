@@ -7,9 +7,6 @@
     "level": "trace",
     "stream": "logs/test.log"
   },
-  "embdr": {
-    "enabled": false
-  },
   "canvasPoller": {
     "enabled": false
   }
