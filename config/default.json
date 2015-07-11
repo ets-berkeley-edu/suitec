@@ -23,7 +23,7 @@
     "stream": "stdout"
   },
   "embdr": {
-    "enabled": true,
+    "enabled": false,
     "apiKey": "ABCDEF123456"
   },
   "canvasPoller": {
