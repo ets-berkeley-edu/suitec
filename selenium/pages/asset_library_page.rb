@@ -218,7 +218,7 @@ class AssetLibraryPage
     list_view_asset_elements[index_position].span_element(:xpath => '//span[@data-ng-bind="asset.comment_count | number"]').text
   end
 
-  # Returns the text of a comment at a given position in the collection of comments
+  # Returns the text of a comment or reply at a given position in the collection of comments
   # @param index_position [Integer]             - the position of the comment in the collection
   def comment_body(index_position)
     comment_elements[index_position].paragraph_element.text
@@ -230,7 +230,7 @@ class AssetLibraryPage
     comment_elements[index_position].link_element.text
   end
 
-  # Returns the first link within the body of a comment at a given position in the collection of comments
+  # Returns the first link with specified text within the body of a comment at a given position in the collection of comments
   # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection
   # @param link_text [String]                   - the text of the link
@@ -242,16 +242,18 @@ class AssetLibraryPage
   # both to check the element's existence and to interact with it.
   # @param index_position [Integer]             - the position of the comment in the collection
   # @return [String]                            - the element's xpath
-  def reply_button_xpath(index_position)
-    "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Reply')]"
+  def reply_button_element(driver, index_position)
+    driver.find_element(:xpath => "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Reply')]")
+  rescue Selenium::WebDriver::Error::NoSuchElementError
+    nil
   end
 
   # Clicks the reply button for a comment at a given position in the collection of comments
   # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection
   def click_reply_button(driver, index_position)
-    wait_until(timeout=WebDriverUtils.page_load_wait) { WebDriverUtils.element_present?(driver, reply_button_xpath(index_position)) }
-    driver.find_element(:xpath => reply_button_xpath(index_position)).click
+    wait_until(timeout=WebDriverUtils.page_load_wait) { !reply_button_element(driver, index_position).nil? }
+    reply_button_element(driver, index_position).click
   end
 
   # Returns the text area for replying to a comment
@@ -282,16 +284,18 @@ class AssetLibraryPage
   # check the element's existence and to interact with it.
   # @param index_position [Integer]             - the position of the comment in the collection
   # @return [String]                            - the element's xpath
-  def edit_button_xpath(index_position)
-    "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Edit')]"
+  def edit_button_element(driver, index_position)
+    driver.find_element(:xpath => "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Edit')]")
+  rescue Selenium::WebDriver::Error::NoSuchElementError
+    nil
   end
 
   # Clicks the edit button for a comment at a given position in the collection of comments
   # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection
   def click_edit_button(driver, index_position)
-    wait_until(timeout=WebDriverUtils.page_load_wait) { WebDriverUtils.element_present?(driver, edit_button_xpath(index_position)) }
-    driver.find_element(:xpath => edit_button_xpath(index_position)).click
+    wait_until(timeout=WebDriverUtils.page_load_wait) { !edit_button_element(driver, index_position).nil? }
+    edit_button_element(driver, index_position).click
   end
 
   # Returns the text area for editing a comment
@@ -327,16 +331,16 @@ class AssetLibraryPage
   # Returns the button for deleting a comment
   # @param index_position [Integer]             - the position of the comment in the collection of comments
   # @return [Selenium::WebDriver::Element]      - the delete button element
-  def delete_button_xpath(index_position)
-    "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Delete')]"
+  def delete_button_element(driver, index_position)
+    driver.find_element(:xpath => "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Delete')]")
   end
 
   # Clicks the delete button for a comment at a given position in the collection of comments
   # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection
   def click_delete_button(driver, index_position)
-    wait_until(timeout=WebDriverUtils.page_load_wait) { WebDriverUtils.element_present?(driver, delete_button_xpath(index_position)) }
-    driver.find_element(:xpath => delete_button_xpath(index_position)).click
+    wait_until(timeout=WebDriverUtils.page_load_wait) { !delete_button_element(driver, index_position).nil? }
+    delete_button_element(driver, index_position).click
   end
 
   # Deletes a comment at a given position in the collection of comments
