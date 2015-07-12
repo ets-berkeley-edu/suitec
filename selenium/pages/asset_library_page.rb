@@ -240,8 +240,9 @@ class AssetLibraryPage
 
   # Returns the xpath of the reply button element at a given position in the collection of comments.  The xpath is used
   # both to check the element's existence and to interact with it.
+  # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection
-  # @return [String]                            - the element's xpath
+  # @return [Selenium::WebDriver::Element]      - the reply button element
   def reply_button_element(driver, index_position)
     driver.find_element(:xpath => "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Reply')]")
   rescue Selenium::WebDriver::Error::NoSuchElementError
@@ -282,8 +283,9 @@ class AssetLibraryPage
 
   # Returns the xpath of the edit button at a given position in the collection of comments.  The xpath is used both to
   # check the element's existence and to interact with it.
+  # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection
-  # @return [String]                            - the element's xpath
+  # @return [Selenium::WebDriver::Element]      - the edit button element
   def edit_button_element(driver, index_position)
     driver.find_element(:xpath => "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Edit')]")
   rescue Selenium::WebDriver::Error::NoSuchElementError
@@ -329,6 +331,7 @@ class AssetLibraryPage
   end
 
   # Returns the button for deleting a comment
+  # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection of comments
   # @return [Selenium::WebDriver::Element]      - the delete button element
   def delete_button_element(driver, index_position)
