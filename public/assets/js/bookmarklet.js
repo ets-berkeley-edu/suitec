@@ -230,17 +230,12 @@
      * @param  {String}         [img.title]     The title of the image
      */
     var imageCallback = function(img) {
-      // Prepend the protocol if the original image was protocol neutral
-      if (img.url.substring(0, 2) === '//') {
-        img.url = window.parent.location.protocol + img.url;
-      }
-
       // Ensure that the same image is not re-added
       if (_.findWhere(pageItems, {'url': img.url}) === undefined) {
         // If no title for the image could be extracted, default the
         // title to the name of the image
         if (!img.title) {
-          img.title = img.url.split('/').pop();
+          img.title = decodeURIComponent(img.url.split('/').pop());
         }
 
         pageItems.push(img);
@@ -293,7 +288,7 @@
       // Ensure that the image is larger than the minimum dimensions
       if (this.naturalHeight > MIN_DIMENSIONS && this.naturalWidth > MIN_DIMENSIONS) {
         var img = {
-          'url': $(this).attr('src'),
+          'url': $(this)[0].src,
           // Try to extract a meaningful title
           'title': $(this).attr('alt')
         };
