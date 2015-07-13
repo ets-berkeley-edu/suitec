@@ -987,8 +987,7 @@
     /* ADD LINK */
 
     /**
-     * Launch the modal that allows for an existing asset to be added to
-     * whiteboard canvas
+     * Launch the modal that allows for a new link to be added
      */
     var addLink = $scope.addLink = function() {
       // Create a new scope for the modal dialog
@@ -1006,6 +1005,36 @@
       $modal({
         'scope': scope,
         'template': '/app/whiteboards/addlinkmodal/addlinkmodal.html'
+      });
+      // Switch the toolbar back to move mode. This will
+      // also close the add asset popover
+      setMode('move');
+    };
+
+    /* UPLOAD FILE(S) */
+
+    /**
+     * Launch the modal that allows for a new files to be uploaded
+     */
+    var uploadFiles = $scope.uploadFiles = function() {
+      // Create a new scope for the modal dialog
+      var scope = $scope.$new(true);
+      scope.closeModal = function(assets) {
+        if (assets) {
+          for (var i = 0; i < assets.length; i++) {
+            var asset = assets[i];
+            // TODO: Deal with assets that don't have thumbnail URL
+            if (asset.thumbnail_url) {
+              addAsset(asset.thumbnail_url);
+            }
+          }
+        }
+        this.$hide();
+      };
+      // Open the add link modal dialog
+      $modal({
+        'scope': scope,
+        'template': '/app/whiteboards/uploadmodal/uploadmodal.html'
       });
       // Switch the toolbar back to move mode. This will
       // also close the add asset popover

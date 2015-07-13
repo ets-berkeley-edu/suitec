@@ -23,12 +23,9 @@
      * Listen for events indicating that a new link has been added or
      * adding a new link has been cancelled
      */
-    var handleAddLink = function() {
+    $scope.$on('assetLibraryAddLinkDone', function() {
       $location.path('/assetlibrary');
-    };
-
-    $scope.$on('assetLibraryLinkCancel', handleAddLink);
-    $scope.$on('assetLibraryLinkAdded', handleAddLink);
+    });
 
   });
 

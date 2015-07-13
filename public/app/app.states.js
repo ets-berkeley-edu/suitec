@@ -54,8 +54,8 @@
       })
       .state('assetlibraryupload', {
         'url': '/assetlibrary/upload',
-        'templateUrl': '/app/assetlibrary/upload/upload.html',
-        'controller': 'AssetLibraryUploadController'
+        'templateUrl': '/app/assetlibrary/uploadcontainer/uploadcontainer.html',
+        'controller': 'AssetLibraryUploadContainerController'
       })
       .state('assetlibraryaddlink', {
         'url': '/assetlibrary/addlink',

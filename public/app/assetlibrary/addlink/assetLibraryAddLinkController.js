@@ -30,7 +30,7 @@
      */
     var createLink = $scope.createLink = function() {
       assetLibraryFactory.createLink($scope.link).success(function(asset) {
-        $scope.$emit('assetLibraryLinkAdded', asset);
+        $scope.$emit('assetLibraryAddLinkDone', asset);
       });
     };
 
@@ -38,7 +38,7 @@
      * Cancel creating a new link asset
      */
     var cancelCreateLink = $scope.cancelAddLink = function() {
-      $scope.$emit('assetLibraryLinkCancel');
+      $scope.$emit('assetLibraryAddLinkDone');
     };
 
     /**

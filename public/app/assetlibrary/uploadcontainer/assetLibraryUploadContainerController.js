@@ -17,14 +17,14 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsAddLinkController', function($scope) {
+  var app = angular.module('collabosphere').controller('AssetLibraryUploadContainerController', function($location, $scope) {
 
     /**
-     * Listen for events indicating that a new link has been added or
-     * adding a new link has been cancelled
+     * Listen for events indicating that new files have been uploaded or
+     * uploading new files has been cancelled
      */
-    $scope.$on('assetLibraryAddLinkDone', function(ev, asset) {
-      $scope.closeModal(asset);
+    $scope.$on('assetLibraryUploadDone', function() {
+      $location.path('/assetlibrary');
     });
 
   });
