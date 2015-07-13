@@ -28,9 +28,9 @@
     'common.fabric.utilities',
     'common.fabric.constants',
     'luegg.directives',
+    'mgcrea.ngStrap',
     'monospaced.elastic',
     'oi.multiselect',
-    'ui.bootstrap',
     'ui.router',
     'ui.utils'
   ]);

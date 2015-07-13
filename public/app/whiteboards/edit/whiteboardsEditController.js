@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsEditController', function(userFactory, whiteboardsFactory, $scope, $modalInstance) {
+  angular.module('collabosphere').controller('WhiteboardsEditController', function(userFactory, whiteboardsFactory, $scope) {
 
     // Variable that will keep track of all the users in the course
     $scope.users = [];
@@ -33,15 +33,8 @@
     var editWhiteboard = $scope.editWhiteboard = function() {
       whiteboardsFactory.editWhiteboard($scope.whiteboard.id, $scope.updatedWhiteboard).success(function(updatedWhiteboard) {
         // Pass the updated whiteboard back to where the modal dialog was invoked
-        $modalInstance.close(updatedWhiteboard);
+        $scope.closeModal(updatedWhiteboard);
       });
-    };
-
-    /**
-     * Close the modal dialog without editing the current whiteboard
-     */
-    var closeModal = $scope.closeModal = function() {
-      $modalInstance.close();
     };
 
     /**

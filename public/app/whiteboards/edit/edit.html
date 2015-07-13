@@ -1,38 +1,44 @@
-<div class="modal-header">
-  <button type="button" class="close" data-ng-click="closeModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <h3 class="modal-title">Edit Whiteboard Settings</h4>
-</div>
-<form name="whiteboardsEditForm" id="whiteboards-edit-form" class="form-horizontal whiteboards-edit-form" data-ng-submit="whiteboardsEditForm.$valid && editWhiteboard()" novalidate>
-  <div id="whiteboards-edit-container" class="modal-body whiteboards-edit-container">
-    <!-- TITLE -->
-    <div class="form-group" data-ng-class="{'has-error': whiteboardsEditForm.whiteboardsEditTitle.$invalid}">
-      <label for="whiteboards-edit-title" class="col-sm-2 control-label">Title</label>
-      <div class="col-sm-10">
-        <input type="text" id="whiteboards-edit-title" name="whiteboardsEditTitle" class="form-control" placeholder="Enter a title" data-ng-model="updatedWhiteboard.title" data-ng-maxlength="255" required>
-        <div class="help-block" data-ng-messages="whiteboardsEditForm.whiteboardsEditTitle.$error">
-          <div data-ng-message="required">Please enter a title</div>
-          <div data-ng-message="maxlength">A title can only be 255 characters long</div>
-        </div>
+<div class="modal" data-ng-controller="WhiteboardsEditController">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-ng-click="closeModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title">Edit Whiteboard Settings</h4>
       </div>
-    </div>
+      <form name="whiteboardsEditForm" id="whiteboards-edit-form" class="form-horizontal whiteboards-edit-form" data-ng-submit="whiteboardsEditForm.$valid && editWhiteboard()" novalidate>
+        <div id="whiteboards-edit-container" class="modal-body whiteboards-edit-container">
+          <!-- TITLE -->
+          <div class="form-group" data-ng-class="{'has-error': whiteboardsEditForm.whiteboardsEditTitle.$invalid}">
+            <label for="whiteboards-edit-title" class="col-sm-2 control-label">Title</label>
+            <div class="col-sm-10">
+              <input type="text" id="whiteboards-edit-title" name="whiteboardsEditTitle" class="form-control" placeholder="Enter a title" data-ng-model="updatedWhiteboard.title" data-ng-maxlength="255" required>
+              <div class="help-block" data-ng-messages="whiteboardsEditForm.whiteboardsEditTitle.$error">
+                <div data-ng-message="required">Please enter a title</div>
+                <div data-ng-message="maxlength">A title can only be 255 characters long</div>
+              </div>
+            </div>
+          </div>
 
-    <!-- MEMBERS -->
-    <div class="form-group" data-ng-class="{'has-error': whiteboardsEditForm.whiteboardsEditMembers.$invalid}">
-      <label for="whiteboards-edit-members" class="col-sm-2 control-label">Members</label>
-      <div class="col-sm-10">
-        <oi-multiselect name="whiteboardsEditMembers"
-          ng-options="user.id as user.canvas_full_name for user in users | orderBy: 'canvas_full_name.toLowerCase()' track by user.id "
-          oi-multiselect-options="{'searchFilter': 'usersSearch', 'dropdownFilter': 'usersDropdown'}"
-          ng-model="updatedWhiteboard.members" multiple placeholder="Enter the names of the people you want to add to this whiteboard" tabindex="-1" required>
-        </oi-multiselect>
-        <div class="help-block" data-ng-messages="whiteboardsEditForm.whiteboardsEditMembers.$error">
-          <div data-ng-message="required">A whiteboard requires at least 1 member</div>
+          <!-- MEMBERS -->
+          <div class="form-group" data-ng-class="{'has-error': whiteboardsEditForm.whiteboardsEditMembers.$invalid}">
+            <label for="whiteboards-edit-members" class="col-sm-2 control-label">Members</label>
+            <div class="col-sm-10">
+              <oi-multiselect name="whiteboardsEditMembers"
+                ng-options="user.id as user.canvas_full_name for user in users | orderBy: 'canvas_full_name.toLowerCase()' track by user.id "
+                oi-multiselect-options="{'searchFilter': 'usersSearch', 'dropdownFilter': 'usersDropdown'}"
+                ng-model="updatedWhiteboard.members" multiple placeholder="Enter the names of the people you want to add to this whiteboard" tabindex="-1" required>
+              </oi-multiselect>
+              <div class="help-block" data-ng-messages="whiteboardsEditForm.whiteboardsEditMembers.$error">
+                <div data-ng-message="required">A whiteboard requires at least 1 member</div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" data-ng-click="closeModal()">Cancel</button>
+          <button class="btn btn-primary" type="submit">Save Settings</button>
+        </div>
+      </form>
     </div>
   </div>
-  <div class="modal-footer">
-    <button class="btn btn-default" data-ng-click="closeModal()">Cancel</button>
-    <button class="btn btn-primary" type="submit">Save Settings</button>
-  </div>
-</form>
+</div>

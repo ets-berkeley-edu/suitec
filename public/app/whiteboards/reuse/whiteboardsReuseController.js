@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $scope, $modalInstance) {
+  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $scope) {
 
     $scope.searchOptions = {};
     $scope.assets = [];
@@ -26,13 +26,15 @@
       'ready': false
     };
 
-    // TODO
+    /**
+     * Add the selected assets to the current whiteboard
+     */
     var addSelectedAssets = $scope.addSelectedAssets = function() {
-      $modalInstance.close(getSelectedAssets());
+      $scope.closeModal(getSelectedAssets());
     };
 
     /**
-     * TODO
+     * Get the selected assets from the asset list
      */
     var getSelectedAssets = $scope.getSelectedAssets = function() {
       var selectedAssets = [];
@@ -46,17 +48,12 @@
     };
 
     /**
-     * TODO
+     * Toggle the selection of an asset
+     *
+     * @param  {Asset}          asset           The asset that should be toggled
      */
     var selectAsset = $scope.selectAsset = function(asset) {
       asset.selected = !asset.selected;
-    };
-
-    /**
-     * TODO
-     */
-    var closeModal = $scope.closeModal = function() {
-      $modalInstance.close();
     };
 
     /**
