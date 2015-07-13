@@ -59,8 +59,8 @@
       })
       .state('assetlibraryaddlink', {
         'url': '/assetlibrary/addlink',
-        'templateUrl': '/app/assetlibrary/addlink/addlink.html',
-        'controller': 'AssetLibraryAddLinkController'
+        'templateUrl': '/app/assetlibrary/addlinkcontainer/addlinkcontainer.html',
+        'controller': 'AssetLibraryAddLinkContainerController'
       })
       .state('assetlibrarycategories', {
         'url': '/assetlibrary/categories',
