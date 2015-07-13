@@ -214,7 +214,10 @@
     };
 
     /**
-     * TODO
+     * Set a unique id on a Fabric.js canvas element if the element doesn't have a
+     * unique id assigned
+     *
+     * @param  {Object}         element           The Fabric.js canvas element for which to set a unique id
      */
     var setCanvasElementId = function(element) {
       if (!element.get('uid')){
@@ -234,7 +237,6 @@
      * @param  {Object}         callback.element  The deserialized Fabric.js canvas element
      */
     var deserializeElement = function(element, callback) {
-      // TODO
       element = angular.copy(element);
 
       // Extract the type from the serialized element
@@ -544,27 +546,26 @@
     // Variable that will keep track of the actions the current user has taken
     $scope.actionQueue = [];
 
-    // TODO
+    // Variable that will keep track of the current position in the actions queue
     $scope.currentActionPosition = 0;
 
     /**
-     * TODO
+     * Add a new action to the actions queue
+     *
+     * @param  {String}         type              The type of the action to add to the actions queue. One of `add`, `update` or `delete
+     * @param  {Object}         element           The Fabric.js element on which the action took place. The state of the element reflects the state after the action took place
+     * @param  {Object}         [originalState]   The state of the Fabric.js element before the action took place
      */
     var addUndoAction = function(type, element, originalState) {
-      // Remove all actions that happened after the action
-      // TODO
+      // Remove all actions that happened after the current action in the actions queue
       $scope.actionQueue.splice($scope.currentActionPosition, $scope.actionQueue.length - $scope.currentActionPosition);
-      console.log('---------');
-      console.log($scope.actionQueue);
-      console.log($scope.currentActionPosition);
-      console.log('---------');
 
+      // Add the action to the actions queue
       $scope.actionQueue.push({
         'type': type,
         'element': angular.copy(element),
         'originalState': angular.copy(originalState)
       });
-      // TODO
       $scope.currentActionPosition++;
     };
 
