@@ -13,18 +13,76 @@
  * permissions and limitations under the License.
  */
 
+var addsrc = require('gulp-add-src');
 var csslint = require('gulp-csslint');
+var cssmin = require('gulp-cssmin');
 var gulp = require('gulp');
 var jscs = require('gulp-jscs');
+var minifyHtml = require('gulp-minify-html');
 var mocha = require('gulp-mocha');
+var ngAnnotate = require('gulp-ng-annotate');
+var rev = require('gulp-rev');
+var rimraf = require('rimraf');
 var runSequence = require('run-sequence');
+var templateCache = require('gulp-angular-templatecache');
+var uglify = require('gulp-uglify');
+var usemin = require('gulp-usemin');
+
+/**
+ * Delete the build directory
+ */
+gulp.task('clean', function(cb) {
+  rimraf('./dist', cb);
+});
+
+/**
+ * Copy the fonts to the build directory
+ */
+gulp.task('fonts', function() {
+  return gulp.src('public/lib/fontawesome/fonts/*')
+    .pipe(gulp.dest('./dist/fonts/'));
+});
+
+/**
+ * Minify the HTML, CSS and JS assets
+ */
+gulp.task('usemin', function() {
+  return gulp.src('./public/index.html')
+    .pipe(usemin({
+      'css': [cssmin(), rev()],
+      'html': [minifyHtml({'empty': true})],
+      'js': [ngAnnotate(), uglify(), rev()],
+      'js1': [ngAnnotate(), uglify(), rev()],
+
+      // Unfortunately, usemin has no way to determine the HTML partials from the index.html file.
+      // We have to explicitly specify a matching glob here. All HTML partials matching the glob
+      // will be returned and written to the templateCache.js
+      'templateCache': [
+          addsrc('public/app/**/*.html'),
+          templateCache('/lib/templateCache.js', {
+            'module': 'collabosphere.templates',
+            'root': '/app',
+            'standalone': true
+          }),
+          rev()
+      ]
+    }))
+    .pipe(gulp.dest('dist/'));
+});
+
+/**
+ * Create a build
+ */
+gulp.task('build', function() {
+  return runSequence('clean', ['fonts', 'usemin']);
+});
 
 /**
  * Run the JSCS code style linter
  */
 gulp.task('jscs', function() {
   return gulp
-    .src(['app.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js'])
+    .src(['app.js', 'gulpfile.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js'])
     .pipe(jscs());
 });
 
