@@ -1,1 +1,49 @@
 <a data-ng-href="/engagementindex" class="col-back"><i class="fa fa-angle-left"></i> Back to Engagement Index</a>
+
+<h2>Points configuration</h2>
+
+<!-- ENABLED ACTIVITIES -->
+<div class="points-container">
+  <table class="table-striped">
+    <tr>
+      <th>Activity</th>
+      <th class="text-center">Points</th>
+      <th class="text-center" data-ng-if="editMode">Action</th>
+    </tr>
+    <tr data-ng-repeat="activityType in activityTypeConfiguration | filter:{enabled: true}">
+      <td data-ng-bind="activityType.title"></td>
+      <td class="text-center" data-ng-bind="activityType.points" data-ng-if="!editMode"></td>
+      <td class="text-center" data-ng-if="editMode">
+        <label for="points-edit-{{activityType.type}}" class="sr-only" data-ng-bind="activityType.title"></label>
+        <input id="points-edit-{{activityType.type}}" data-ng-model="activityType.points" class="form-control text-center points-edit"/>
+      </td>
+      <td class="text-center" data-ng-if="editMode"><button class="btn btn-default" data-ng-click="disableActivityType(activityType)">Disable</button></td>
+    </tr>
+  </table>
+
+  <div data-ng-if="me.is_admin">
+
+    <!-- DISABLED ACTIVITIES -->
+    <div data-ng-show="hasDisabledActivities()">
+      <h3>Disabled Activities</h3>
+      <table class="table-striped">
+        <tr>
+          <th>Activity</th>
+          <th class="text-center">Points</th>
+          <th class="text-center" data-ng-if="editMode">Action</th>
+        </tr>
+        <tr data-ng-repeat="activityType in activityTypeConfiguration | filter:{enabled: false}">
+          <td data-ng-bind="activityType.title"></td>
+          <td class="text-center" data-ng-bind="activityType.points"></td>
+          <td class="text-center" data-ng-if="editMode"><button class="btn btn-default" data-ng-click="enableActivityType(activityType)">Enable</button></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="text-right points-actions">
+      <button type="button" class="btn btn-primary" data-ng-click="editActivityTypeConfiguration()" data-ng-if="!editMode">Edit</button>
+      <button type="button" class="btn btn-default" data-ng-click="cancelActivityTypeConfiguration()" data-ng-if="editMode">Cancel</button>
+      <button type="button" class="btn btn-primary" data-ng-click="saveActivityTypeConfiguration()" data-ng-if="editMode">Save</button>
+    </div>
+  </div>
+</div>
