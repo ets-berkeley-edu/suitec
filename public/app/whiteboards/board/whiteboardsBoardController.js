@@ -71,7 +71,7 @@
       {
         'name': 'Yellow',
         'color': 'rgb(189, 129, 0)'
-      },
+      }
     ];
 
     /* WHITEBOARD */
@@ -220,7 +220,7 @@
      * @param  {Object}         element           The Fabric.js canvas element for which to set a unique id
      */
     var setCanvasElementId = function(element) {
-      if (!element.get('uid')){
+      if (!element.get('uid')) {
         element.set('uid', Math.round(Math.random() * 1000000));
       }
     };
@@ -345,7 +345,8 @@
       // If the text element is empty, it can be removed from the whiteboard canvas
       var text = element.text.trim();
       if (!text) {
-        // TODO
+        // If the text element did not have a unique identifier, there's no need
+        // to persist the deletion to the back-end
         if (!element.get('uid')) {
           element.set('isHelper', true);
         }
@@ -364,7 +365,6 @@
         addUndoAction('update', element.toObject(), element.originalState);
       }
 
-      // TODO
       element.set('isUndoRedo', null);
 
       // Switch back to move mode
@@ -470,7 +470,9 @@
     $scope.zoomLevel = 1;
 
     /**
-     * TODO
+     * Zoom the Fabric.js canvas in or out
+     *
+     * @param  {Number}         zoomDelta         The level by which the current zoom level should be increased
      */
     var zoom = $scope.zoom = function(zoomDelta) {
       var currentZoom = $scope.zoomLevel;
@@ -570,7 +572,8 @@
     };
 
     /**
-     * TODO
+     * Undo the action at the current position in the actions queue
+     * TODO: Can undo and redo be consolidated?
      */
     var undo = $scope.undo = function() {
       $scope.currentActionPosition--;
@@ -593,7 +596,8 @@
           canvas.renderAll();
         });
 
-      // TODO
+      // The previous action was an element that was updated.
+      // Undoing this should undo the update
       } else if (previousAction.type === 'update') {
         var element = getCanvasElement(previousAction.element.uid);
         for (var property in previousAction.originalState) {
@@ -609,7 +613,7 @@
     };
 
     /**
-     * TODO
+     * Redo the action at the next position in the actions queue
      */
     var redo = $scope.redo = function() {
       var nextAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
@@ -632,7 +636,8 @@
         element.set('isUndoRedo', true);
         canvas.remove(element);
 
-      // TODO
+      // The next action was an element that was updated.
+      // Undoing this should re-apply the update
       } else if (nextAction.type === 'update') {
         var element = getCanvasElement(nextAction.element.uid);
         for (var property in nextAction.originalState) {
@@ -642,7 +647,6 @@
         }
         element.set('isUndoRedo', true);
         canvas.fire('object:modified', {'target': element});
-        // TODO
         canvas.absolutePan(currentCanvasPan);
         canvas.renderAll();
       }
