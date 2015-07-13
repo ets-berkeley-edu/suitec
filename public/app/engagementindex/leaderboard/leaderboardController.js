@@ -46,7 +46,9 @@
           }
 
           // Draw the boxplot showing how the current user ranks
-          drawBoxPlot();
+          if ($scope.me.share_points) {
+            drawBoxPlot();
+          }
         });
       }
     };
@@ -65,7 +67,7 @@
       setTimeout(function() {
         // Render the box plot using highcharts
         // @see http://api.highcharts.com/highcharts
-        chart = new Highcharts.Chart({
+        var chart = new Highcharts.Chart({
           'chart': {
             'backgroundColor': 'transparent',
             'inverted': true,

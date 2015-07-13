@@ -122,6 +122,24 @@ select option[value=''] {
   padding: 5px;
 }
 
+.table-striped {
+  border: 1px solid #CCC;
+  width: 100%;
+}
+
+.table-striped th {
+  border-bottom: 1px solid #CCC;
+}
+
+.table-striped th,
+.table-striped td {
+  padding: 10px;
+}
+
+table.table-striped tr.active {
+  background-color: #EFFAFF;
+}
+
 /* TILE LIST */
 
 .col-list-container {

@@ -13,25 +13,6 @@
  * permissions and limitations under the License.
  */
 
-.leaderboard-list-container {
-  margin-bottom: 30px;
-}
-
-.leaderboard-list-search-form {
-  display: inline-block;
-  max-width: 250px;
-  width: 100%;
-}
-
-.leaderboard-list-search-form .form-group {
-  margin-bottom: 10px;
-}
-
-.leaderboard-list-actions-container {
-  margin-bottom: 15px;
-}
-
-.leaderboard-avatar {
-  height: 40px;
-  width: 40px;
+.leaderboard-splash {
+  margin-bottom: 20px;
 }
