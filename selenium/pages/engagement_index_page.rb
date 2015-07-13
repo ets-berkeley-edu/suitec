@@ -42,6 +42,7 @@ class EngagementIndexPage
   end
 
   # Returns the current engagement score for a user
+  # @param user [Hash]                          - the user from the set of test users
   def user_score(user)
     score = String.new('')
     users_table_element.each { |row| score = row[3].text if row[1].text == user['fullName'] }

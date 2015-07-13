@@ -30,7 +30,7 @@ describe 'An asset library comment', :order => :defined do
   comment_2_by_viewer = 'Comment 2: Asset viewer comment'
   comment_2_reply_by_viewer = 'Comment 2 Reply 1: Asset viewer reply to self'
   comment_2_edit_by_viewer = 'Comment 2 Edit: Asset viewer comment edited'
-  comment_3_by_viewer = 'Comment 3: Asset viewer comment with link http://www.google.com'
+  comment_3_by_viewer = 'Comment 3: Asset viewer comment with link http://www.google.com in the body'
 
   before(:all) do
     @driver = WebDriverUtils.driver
@@ -71,7 +71,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(0)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(0)).to eql(comment_1_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('0')
+        expect(@asset_library.asset_comment_count(0)).to eql('1')
       end
       it 'can be added as a reply to an existing comment' do
         @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
@@ -83,7 +83,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(1)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(1)).to eql(comment_1_reply_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('1')
+        expect(@asset_library.asset_comment_count(0)).to eql('2')
       end
       it 'does not earn commenting points on the engagement index' do
         @engagement_index.load_page(@driver, @engagement_index_url)
@@ -121,7 +121,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(2)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(2)).to eql(comment_1_reply_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('2')
+        expect(@asset_library.asset_comment_count(0)).to eql('3')
       end
       it 'can be added as a reply to the user\'s own comment' do
         @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
@@ -137,7 +137,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(3)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(3)).to eql(comment_1_reply_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('3')
+        expect(@asset_library.asset_comment_count(0)).to eql('4')
       end
       it 'can be added as a reply to another user\'s comment' do
         @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
@@ -155,7 +155,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(4)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(4)).to eql(comment_1_reply_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('4')
+        expect(@asset_library.asset_comment_count(0)).to eql('5')
       end
       it 'earns "Comment" points on the engagement index for the user adding a comment or reply' do
         @engagement_index.load_page(@driver, @engagement_index_url)

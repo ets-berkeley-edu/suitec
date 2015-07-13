@@ -238,8 +238,7 @@ class AssetLibraryPage
     driver.find_element(:xpath => "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//p/a[text()='#{link_text}']" )
   end
 
-  # Returns the xpath of the reply button element at a given position in the collection of comments.  The xpath is used
-  # both to check the element's existence and to interact with it.
+  # Returns reply button element at a given position in the collection of comments
   # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection
   # @return [Selenium::WebDriver::Element]      - the reply button element
@@ -281,8 +280,7 @@ class AssetLibraryPage
     reply_add_button_element(index_position).click
   end
 
-  # Returns the xpath of the edit button at a given position in the collection of comments.  The xpath is used both to
-  # check the element's existence and to interact with it.
+  # Returns the edit button at a given position in the collection of comments
   # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection
   # @return [Selenium::WebDriver::Element]      - the edit button element
@@ -330,12 +328,14 @@ class AssetLibraryPage
     comment_elements[index_position].button_element(:xpath => '//button[contains(.,"Cancel")]')
   end
 
-  # Returns the button for deleting a comment
+  # Returns the button for deleting a comment at a given position in the collection of comments
   # @param driver [Selenium::WebDriver]         - the browser
   # @param index_position [Integer]             - the position of the comment in the collection of comments
   # @return [Selenium::WebDriver::Element]      - the delete button element
   def delete_button_element(driver, index_position)
     driver.find_element(:xpath => "//div[@data-ng-repeat='comment in asset.comments'][#{(index_position + 1).to_s}]//button[contains(.,'Delete')]")
+  rescue Selenium::WebDriver::Error::NoSuchElementError
+    nil
   end
 
   # Clicks the delete button for a comment at a given position in the collection of comments
