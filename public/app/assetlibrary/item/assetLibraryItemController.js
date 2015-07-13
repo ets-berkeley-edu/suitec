@@ -34,17 +34,6 @@
     var getCurrentAsset = function() {
       assetLibraryFactory.getAsset(assetId).success(function(asset) {
 
-        // Explicitly sort the comments so newest comments are at the bottom. In the next
-        // step we will iterate through the comments array and add top-level comments at
-        // the front of a new array as we go. This will allow us to eventually end up with
-        // a sorted data set where the very first item is a the latest top-level comment
-        // followed by its replies (if any)
-        asset.comments.sort(function(a, b) {
-          // The `created_at` field is an ISO8601 string that we can compare through
-          // String's `localeCompare` function
-          return a.created_at.localeCompare(b.created_at);
-        });
-
         // Build a comment tree that will hold a flat list of comments where each
         // child comment should come after their parent. First, the top level comments
         // are extracted
