@@ -26,7 +26,7 @@ var minifyHtml = require('gulp-minify-html');
 var mocha = require('gulp-mocha');
 var ngAnnotate = require('gulp-ng-annotate');
 var rev = require('gulp-rev');
-var revReplace = require("gulp-rev-replace");
+var revReplace = require('gulp-rev-replace');
 var runSequence = require('run-sequence');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
@@ -151,7 +151,7 @@ gulp.task('optimizeImages', function() {
 
     // Optimize the images
     .pipe(imagemin({
-        'progressive': true
+      'progressive': true
     }))
 
     // Hash each image and append a version string at the end of the file
