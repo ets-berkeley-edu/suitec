@@ -33,11 +33,14 @@ npm install
 rm -rf public/lib
 node_modules/.bin/bower install
 
+# Run the production build
+node_modules/.bin/gulp build
+
 # Kill the existing node process
 ./deploy/stop.sh
 
 # Copy the static files over to the apache directory
-cp -R public/* ${DOCUMENT_ROOT}
+cp -R dist/* ${DOCUMENT_ROOT}
 
 # Start the new node process
 ./deploy/start.sh

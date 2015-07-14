@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title data-ng-bind="header"></title>
-  <!-- build:css /lib/style.css -->
+  <!-- build:css /static/style.css -->
   <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css" />
   <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.css" />
   <link rel="stylesheet" href="/lib/oi.multiselect/dist/multiselect.css" />
@@ -29,7 +29,7 @@
   <!-- endbuild -->
 </head>
 <body ui-view>
-  <!-- build:js /lib/vendor.js -->
+  <!-- build:vendor /static/vendor.js -->
   <script src="/lib/angular/angular.js"></script>
   <script src="/lib/angular-aria/angular-aria.js"></script>
   <script src="/lib/angular-elastic/elastic.js"></script>
@@ -60,11 +60,11 @@
   <script src="/lib/socket.io-client/socket.io.js"></script>
   <!-- endbuild -->
 
-  <!-- build:templateCache /lib/templateCache.js -->
+  <!-- build:templateCache /static/templateCache.js -->
   <script src="/app/templateCachePlaceholder.js"></script>
   <!-- endbuild -->
 
-  <!-- build:js1 /lib/app.js -->
+  <!-- build:app /static/app.js -->
   <script src="/app/app.module.js"></script>
   <script src="/app/app.config.js"></script>
   <script src="/app/app.states.js"></script>

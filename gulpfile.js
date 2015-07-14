@@ -38,35 +38,53 @@ gulp.task('clean', function(cb) {
 /**
  * Copy the fonts to the build directory
  */
-gulp.task('fonts', function() {
+gulp.task('copyFonts', function() {
   return gulp.src('public/lib/fontawesome/fonts/*')
     .pipe(gulp.dest('./dist/fonts/'));
 });
 
 /**
+ * Copy all the bookmarklet assets to the build directory
+ */
+gulp.task('copyBookmarkletAssets', function() {
+  return gulp.src([
+      'public/**/*.js',
+      'public/**/*.css',
+      'public/**/*.jpg',
+      'public/bookmarklet.html'
+    ])
+    .pipe(gulp.dest('./dist/'));
+});
+
+/**
  * Minify the HTML, CSS and JS assets
  */
-gulp.task('usemin', function() {
-  return gulp.src('./public/index.html')
-    .pipe(usemin({
-      'css': [cssmin(), rev()],
-      'html': [minifyHtml({'empty': true})],
-      'js': [ngAnnotate(), uglify(), rev()],
-      'js1': [ngAnnotate(), uglify(), rev()],
+gulp.task('minify', function() {
+  var pipelines = {
+    'css': [cssmin({'keepSpecialComments': 0}), rev()],
+    'html': [minifyHtml({'empty': true})],
 
-      // Unfortunately, usemin has no way to determine the HTML partials from the index.html file.
-      // We have to explicitly specify a matching glob here. All HTML partials matching the glob
-      // will be returned and written to the templateCache.js
-      'templateCache': [
-          addsrc('public/app/**/*.html'),
-          templateCache('/lib/templateCache.js', {
-            'module': 'collabosphere.templates',
-            'root': '/app',
-            'standalone': true
-          }),
-          rev()
-      ]
-    }))
+    // We need to register 2 pipelines with usemin as it's not able to re-use a pipeline
+    // for multiple result files
+    'vendor': [ngAnnotate(), uglify(), rev()],
+    'app': [ngAnnotate(), uglify(), rev()],
+
+    // Unfortunately, usemin has no way to determine the HTML partials from the index.html file.
+    // We have to explicitly specify a matching glob here. All HTML partials matching the glob
+    // will be returned and written to the templateCache.js
+    'templateCache': [
+        addsrc('public/app/**/*.html'),
+        templateCache('/static/templateCache.js', {
+          'module': 'collabosphere.templates',
+          'root': '/app',
+          'standalone': true
+        }),
+        rev()
+    ]
+  };
+
+  return gulp.src('./public/index.html')
+    .pipe(usemin(pipelines))
     .pipe(gulp.dest('dist/'));
 });
 
@@ -74,7 +92,7 @@ gulp.task('usemin', function() {
  * Create a build
  */
 gulp.task('build', function() {
-  return runSequence('clean', ['fonts', 'usemin']);
+  return runSequence('clean', ['copyBookmarkletAssets', 'copyFonts', 'minify']);
 });
 
 /**
