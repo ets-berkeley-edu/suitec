@@ -62,6 +62,7 @@
     "gulp-angular-templatecache": "latest",
     "gulp-csslint": "latest",
     "gulp-cssmin": "latest",
+    "gulp-filter": "latest",
     "gulp-jscs": "latest",
     "gulp-minify-html": "latest",
     "gulp-mocha": "latest",

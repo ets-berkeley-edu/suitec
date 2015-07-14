@@ -16,6 +16,8 @@
 var addsrc = require('gulp-add-src');
 var csslint = require('gulp-csslint');
 var cssmin = require('gulp-cssmin');
+var filter = require('gulp-filter');
+var fs = require('fs');
 var gulp = require('gulp');
 var jscs = require('gulp-jscs');
 var minifyHtml = require('gulp-minify-html');
@@ -32,7 +34,7 @@ var usemin = require('gulp-usemin');
  * Delete the build directory
  */
 gulp.task('clean', function(cb) {
-  rimraf('./dist', cb);
+  rimraf('dist', cb);
 });
 
 /**
@@ -40,20 +42,78 @@ gulp.task('clean', function(cb) {
  */
 gulp.task('copyFonts', function() {
   return gulp.src('public/lib/fontawesome/fonts/*')
-    .pipe(gulp.dest('./dist/fonts/'));
+    .pipe(gulp.dest('dist/fonts/'));
 });
 
 /**
- * Copy all the bookmarklet assets to the build directory
+ * Copy the bookmarklet files. Note that the init script cannot be versioned as this is part of the
+ * javascript logic that gets copied in the bookmarks bar
  */
-gulp.task('copyBookmarkletAssets', function() {
+gulp.task('copyBookmarkletFiles', function() {
   return gulp.src([
-      'public/**/*.js',
-      'public/**/*.css',
-      'public/**/*.jpg',
+      'public/assets/img/*',
+      'public/assets/js/bookmarklet-init.js',
       'public/bookmarklet.html'
-    ])
-    .pipe(gulp.dest('./dist/'));
+    ], {'base': 'public'})
+    .pipe(gulp.dest('dist'));
+});
+
+/**
+ * Copy the bookmarklet dependencies to the build directory
+ */
+gulp.task('minifyBookmarkletFiles', ['copyBookmarkletFiles'], function() {
+  // Parse the dependencies out of the bookmarklet init script
+  var contents = fs.readFileSync('./public/assets/js/bookmarklet-init.js').toString('utf8');
+  var re = new RegExp('baseUrl \\+ \'(.+?)"', 'g');
+  var matches = contents.match(re);
+
+  // Map the matched dependencies to their path on disk
+  matches = matches.map(function(match) {
+    return 'public/' + match.substring(12, match.length - 1);
+  });
+
+  var jsFilter = filter('**/*.js');
+  var cssFilter = filter('**/*.css');
+
+  // Hash and version the dependencies
+  return gulp.src(matches, {'base': 'public'})
+    // Hash the JS files
+    .pipe(jsFilter)
+    .pipe(uglify())
+    .pipe(rev())
+    .pipe(gulp.dest('dist/static'))
+    .pipe(jsFilter.restore())
+
+    // Hash the CSS files
+    .pipe(cssFilter)
+    .pipe(cssmin({'keepSpecialComments': 0}))
+    .pipe(rev())
+    .pipe(gulp.dest('dist/static/'))
+    .pipe(cssFilter.restore())
+
+    // Write out a file that maps the original filename to its hashed counterpart
+    .pipe(rev.manifest('bookmarklet-rev-manifest.json'))
+    .pipe(gulp.dest('dist'));
+});
+
+/**
+ * Replace the dependencies in the bookmarklet init file with their hashed counterparts
+ */
+gulp.task('replaceBookmarkletDependencies', ['minifyBookmarkletFiles'], function() {
+  var mapping = require('./dist/bookmarklet-rev-manifest.json');
+  var contents = fs.readFileSync('./public/assets/js/bookmarklet-init.js').toString('utf8');
+
+  // Update the dependencies with their hashed filename
+  Object.keys(mapping).forEach(function(originalDependency) {
+    var hashedDependency = 'static/' + mapping[originalDependency];
+    contents = contents.replace(originalDependency, hashedDependency);
+  });
+
+  // Write the file back out
+  fs.writeFileSync('./dist/assets/js/bookmarklet-init.js', contents);
+
+  // The manifest file is no longer required and can be removed
+  fs.unlinkSync('./dist/bookmarklet-rev-manifest.json');
 });
 
 /**
@@ -85,14 +145,14 @@ gulp.task('minify', function() {
 
   return gulp.src('./public/index.html')
     .pipe(usemin(pipelines))
-    .pipe(gulp.dest('dist/'));
+    .pipe(gulp.dest('dist'));
 });
 
 /**
  * Create a build
  */
 gulp.task('build', function() {
-  return runSequence('clean', ['copyBookmarkletAssets', 'copyFonts', 'minify']);
+  return runSequence('clean', ['replaceBookmarkletDependencies', 'copyFonts', 'minify']);
 });
 
 /**
