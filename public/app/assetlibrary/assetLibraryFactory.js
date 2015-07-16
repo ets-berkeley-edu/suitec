@@ -62,20 +62,6 @@
     };
 
     /**
-     * Edit an asset
-     *
-     * @param  {Number}               id                              The id of the asset that is being edited
-     * @param  {Object}               updatedAsset                    The object representing the updated asset
-     * @param  {String}               updatedAsset.title              The updated title of the asset
-     * @param  {Number[]}             [updatedAsset.categories]       The updated ids of the categories to which the asset should be associated. If no categories are provided, any existing associated categories will be removed from the asset
-     * @param  {String}               [updatedAsset.description]      The updated description of the asset
-     * @return {Promise<Asset>}                                       $http promise returning the updated asset
-     */
-    var editAsset = function(id, updatedAsset) {
-      return $http.post(utilService.getApiUrl('/assets/' + id), updatedAsset);
-    };
-
-    /**
      * Create a new file asset
      *
      * @param  {Object}               file                            The object representing the file that should be created
@@ -117,6 +103,20 @@
     var createLink = function(link) {
       link.type = 'link';
       return $http.post(utilService.getApiUrl('/assets'), link);
+    };
+
+    /**
+     * Edit an asset
+     *
+     * @param  {Number}               id                              The id of the asset that is being edited
+     * @param  {Object}               updatedAsset                    The object representing the updated asset
+     * @param  {String}               updatedAsset.title              The updated title of the asset
+     * @param  {Number[]}             [updatedAsset.categories]       The updated ids of the categories to which the asset should be associated. If no categories are provided, any existing associated categories will be removed from the asset
+     * @param  {String}               [updatedAsset.description]      The updated description of the asset
+     * @return {Promise<Asset>}                                       $http promise returning the updated asset
+     */
+    var editAsset = function(id, updatedAsset) {
+      return $http.post(utilService.getApiUrl('/assets/' + id), updatedAsset);
     };
 
     /**
@@ -175,7 +175,6 @@
     return {
       'getAsset': getAsset,
       'getAssets': getAssets,
-      'editAsset': editAsset,
       'createFile': createFile,
       'createLink': createLink,
       'editAsset': editAsset,
