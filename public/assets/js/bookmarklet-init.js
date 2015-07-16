@@ -44,6 +44,9 @@
                '<head>' +
                  '<meta charset="utf-8">' +
                  '<meta http-equiv="X-UA-Compatible" content="IE=edge">' +
+
+                 // Note that these dependencies are parsed by the production build. Take caution
+                 // when adjusting the formatting or when adding new dependencies
                  '<link href="' + baseUrl + '/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">' +
                  '<link href="' + baseUrl + '/assets/css/main.css" rel="stylesheet">' +
                  '<link href="' + baseUrl + '/assets/css/bookmarklet.css" rel="stylesheet">' +
