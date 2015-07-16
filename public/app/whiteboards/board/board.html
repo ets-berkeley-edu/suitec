@@ -11,6 +11,11 @@
         <span class="sr-only">Move and transform</span>
       </i>
     </button>
+    <button type="button" class="btn btn-default" title="Text" data-ng-click="setMode('text')" data-ng-class="{'active': mode === 'text'}" data-title="" data-content-template="textPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
+      <i class="fa fa-font">
+        <span class="sr-only">Text</span>
+      </i>
+    </button>
     <button type="button" class="btn btn-default" title="Draw" data-ng-click="setMode('draw')" data-ng-class="{'active': mode === 'draw'}" data-title="" data-content-template="drawPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
       <i class="fa fa-paint-brush">
         <span class="sr-only">Draw</span>
@@ -19,11 +24,6 @@
     <button type="button" class="btn btn-default" title="Shape" data-ng-click="setMode('shape')" data-ng-class="{'active': mode === 'shape'}" data-title="" data-content-template="shapePopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
       <i class="fa fa-square-o">
         <span class="sr-only">Shape</span>
-      </i>
-    </button>
-    <button type="button" class="btn btn-default" title="Text" data-ng-click="setMode('text')" data-ng-class="{'active': mode === 'text'}" data-title="" data-content-template="textPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
-      <i class="fa fa-font">
-        <span class="sr-only">Text</span>
       </i>
     </button>
     <button type="button" class="btn btn-default" title="Erase" data-ng-click="setMode('erase')"  data-ng-class="{'active': mode === 'erase'}">
@@ -64,7 +64,7 @@
   </div>
   <div class="btn-group" role="group">
     <button type="button" class="btn btn-default" title="Export" data-ng-click="setMode('export')" data-ng-class="{'active': mode === 'export'}" data-title="" data-content-template="exportPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
-      <i class="fa fa-download"></i>
+      <i class="fa fa-share-square-o"></i>
       <span>Export</span>
     </button>
   </div>
@@ -169,7 +169,7 @@
   <ul class="whiteboards-popover-button-list whiteboards-popover-asset">
     <li>
       <button class="btn btn-default" data-ng-click="reuseAsset()">
-        <i class="fa fa-th"></i> Reuse Asset
+        <i class="fa fa-th"></i> Use existing
       </button>
     </li>
     <li>
