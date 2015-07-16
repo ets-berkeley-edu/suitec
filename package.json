@@ -58,6 +58,7 @@
     "bower": "latest",
     "coveralls": "latest",
     "del": "latest",
+    "event-stream": "latest",
     "gulp": "latest",
     "gulp-add-src": "latest",
     "gulp-angular-templatecache": "latest",

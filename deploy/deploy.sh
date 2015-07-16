@@ -40,7 +40,7 @@ node_modules/.bin/gulp build
 ./deploy/stop.sh
 
 # Copy the static files over to the apache directory
-cp -R dist/* ${DOCUMENT_ROOT}
+cp -R target/* ${DOCUMENT_ROOT}
 
 # Start the new node process
 ./deploy/start.sh
