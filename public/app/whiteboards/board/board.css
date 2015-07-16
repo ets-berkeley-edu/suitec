@@ -60,6 +60,11 @@
   font-size: 18px;
 }
 
+#whiteboards-board-toolbar > .btn-group > button > i.fa-share-square-o {
+  position: relative;         /* Align the export icon with the text */
+  top: 1px;
+}
+
 #whiteboards-board-toolbar > .btn-group > button > span {
   position: relative;
   top: -2px;
