@@ -33,7 +33,7 @@ describe 'Asset likes', :order => :defined do
     @asset_library_url = @canvas.click_asset_library_link @driver
     @engagement_index = EngagementIndexPage.new @driver
     @engagement_index_url = @canvas.click_engagement_index_link @driver
-    @canvas.log_out
+    @canvas.log_out @driver
     @cal_net.logout_success_message_element.when_visible WebDriverUtils.page_load_wait
     @canvas.load_homepage
     @cal_net.log_in(test_uploader['username'], WebDriverUtils.test_user_password)
@@ -62,7 +62,7 @@ describe 'Asset likes', :order => :defined do
   context 'when added on the list view' do
     before(:all) do
       @canvas.load_homepage
-      @canvas.log_out
+      @canvas.log_out @driver
       @canvas.load_course_site @course_id
       @cal_net.log_in(test_liker['username'], WebDriverUtils.test_user_password)
       @canvas.accept_login_messages @course_id
@@ -83,11 +83,11 @@ describe 'Asset likes', :order => :defined do
       expect(@engagement_index.users_table_element[1][3].text).to eql('6')
     end
     it 'add the liker\'s "like" activity to the activities csv' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
       expect(scores).to include("#{test_liker['fullName']}, like, 1")
     end
     it 'add the asset creator\'s "get_like" activity to the activities csv' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
       expect(scores).to include("#{test_uploader['fullName']}, get_like, 1")
     end
   end
@@ -108,11 +108,11 @@ describe 'Asset likes', :order => :defined do
       expect(@engagement_index.users_table_element[1][3].text).to eql('5')
     end
     it 'remove the un-liker\'s "like" activity from the activities csv' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
       expect(scores).not_to include("#{test_liker['fullName']}, like, 1")
     end
     it 'remove the asset creator\'s "get_like" activity from the activities csv' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
       expect(scores).not_to include("#{test_uploader['fullName']}, get_like, 1")
     end
   end
@@ -139,11 +139,11 @@ describe 'Asset likes', :order => :defined do
       expect(@engagement_index.users_table_element[1][3].text).to eql('6')
     end
     it 'add the liker\'s "like" activity to the activities csv' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
       expect(scores).to include("#{test_liker['fullName']}, like, 1")
     end
     it 'add the asset creator\'s "get_like" activity to the activities csv' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
       expect(scores).to include("#{test_uploader['fullName']}, get_like, 1")
     end
   end
@@ -170,11 +170,11 @@ describe 'Asset likes', :order => :defined do
       expect(@engagement_index.user_score test_uploader).to eql('5')
     end
     it 'remove the un-liker\'s "like" activity from the activities csv' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
       expect(scores).not_to include("#{test_liker['fullName']}, like, 1")
     end
     it 'remove the asset creator\'s "get_like" activity from the activities csv' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
       expect(scores).not_to include("#{test_uploader['fullName']}, get_like, 1")
     end
   end

@@ -59,6 +59,11 @@ class AssetLibraryPage
   elements(:list_view_asset_likes_count, :span, :xpath => '//span[@data-ng-bind="asset.likes | number"]')
   elements(:list_view_asset_comments_count, :span, :xpath => '//span[@data-ng-bind="asset.comment_count | number"]')
   h2(:detail_view_asset_title, :xpath => '//h2')
+  div(:detail_view_asset_owner_link, :xpath => '//div[@class="assetlibrary-item-metadata"]//a')
+  div(:detail_view_asset_desc, :xpath => '//div[text()="Description"]/following-sibling::div/div')
+  elements(:detail_view_asset_category, :link, :xpath => '//div[@data-ng-repeat="category in asset.categories"]/a')
+  link(:detail_view_asset_source, :xpath => '//div[@data-ng-if="asset.source || asset.url"]/a')
+  div(:detail_view_asset_nil_source, :xpath => '//div[@data-ng-if="!asset.source && !asset.url"]')
 
   # COMMENTS
   span(:asset_detail_comment_count, :xpath => '//div[@class="assetlibrary-item-metadata"]//span[@data-ng-bind="asset.comment_count | number"]')
@@ -128,18 +133,19 @@ class AssetLibraryPage
   end
 
   # Populates the advanced search form and submits the search
+  # @param driver [Selenium::WebDriver]         - the browser
   # @param keyword [String]                     - the keyword string
   # @param category [String]                    - the category name from among the select options
   # @param uploader [String]                    - the uploader name from among the select options
   # @param asset_type [String]                  - the asset type from among the select options
-  def advanced_search(keyword, category, uploader, asset_type)
+  def advanced_search(driver, keyword, category, uploader, asset_type)
     logger.info "Performing advanced search of asset library by keyword '#{keyword}', category '#{category}', uploader '#{uploader}', and asset type '#{asset_type}'."
     WebDriverUtils.wait_for_page_and_click advanced_search_button_element
     keyword_search_input_element.when_visible timeout=WebDriverUtils.page_update_wait
     self.keyword_search_input = keyword unless keyword.nil?
-    self.category_select = category unless category.nil?
-    self.uploader_select = uploader unless uploader.nil?
-    self.asset_type_select = asset_type unless asset_type.nil?
+    WebDriverUtils.wait_for_element_and_select(driver, category_select_element, category)
+    WebDriverUtils.wait_for_element_and_select(driver, uploader_select_element, uploader)
+    WebDriverUtils.wait_for_element_and_select(driver, asset_type_select_element, asset_type)
     WebDriverUtils.wait_for_element_and_click advanced_search_submit_element
   end
 

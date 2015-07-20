@@ -28,7 +28,7 @@ describe 'Adding Asset Library URLs' do
     cal_net= CalNetPage.new @driver
     cal_net.log_in(WebDriverUtils.admin_username, WebDriverUtils.admin_password)
     @course_id = canvas.create_complete_test_course(test_id, test_users)
-    canvas.log_out
+    canvas.log_out @driver
     cal_net.logout_success_message_element.when_visible WebDriverUtils.page_load_wait
     canvas.load_homepage
     cal_net.log_in(test_teacher['username'], WebDriverUtils.test_user_password)

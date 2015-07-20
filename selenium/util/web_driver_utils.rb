@@ -160,6 +160,16 @@ class WebDriverUtils
     element.send_keys text
   end
 
+  # Waits for a select element to be visible on a page then selects an option
+  # @param element [Selenium::WebDriver::Element]   - the select element
+  # @param option [String]                          - the option to be selected
+  def self.wait_for_element_and_select(driver, element, option)
+    element.when_visible(timeout=page_update_wait)
+    wait = Selenium::WebDriver::Wait.new(:timeout => WebDriverUtils.page_update_wait)
+    wait.until { element.include? option }
+    element.select option
+  end
+
   # Checks for the existence of an element on the page
   # @param driver [Selenium::WebDriver]             - the browser
   # @param element_xpath [String]                   - the element's xpath

@@ -47,249 +47,35 @@ describe 'A Canvas assignment submission', :order => :defined do
     end
   end
 
-  describe 'JPEG file' do
+  students.each do |student|
 
-    let(:student) { students.find { |user| user['submission'] == 'JPEG' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
+    it 'earns "Submit an Assignment" points on the Engagement Index' do
       expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
     end
 
     it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
+      scores = @engagement_index.download_csv(@driver, @course_id, @engagement_index_url)
+      expect(scores).to include("#{student['fullName']}, submit_assignment, 20, 20")
     end
 
     it 'appears in the Asset Library' do
       @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'File')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
+      @asset_library.advanced_search(@driver, nil, assignment_name, student['fullName'], student['submissionType'])
+      @asset_library.wait_until(timeout) { @asset_library.list_view_asset_elements.length == 1 }
+      @asset_library.wait_until(timeout) { @asset_library.list_view_asset_owner_name_elements[0].text.include? student['fullName'] }
+      asset_id = @asset_library.get_first_asset_id
+      @asset_library.click_asset_link(asset_id)
+      @asset_library.wait_until(timeout) { @asset_library.detail_view_asset_owner_link == student['fullName'] }
+      @asset_library.wait_until(timeout) { @asset_library.detail_view_asset_desc == 'No description' }
+      @asset_library.wait_until(timeout) { @asset_library.detail_view_asset_category_elements[0].text == assignment_name }
+      if student['submissionType'] == 'Link'
+        @asset_library.wait_until(timeout) { @asset_library.detail_view_asset_source_element.text == student['testData'] }
+      else
+        @asset_library.wait_until(timeout) { @asset_library.detail_view_asset_nil_source == 'No source' }
+      end
     end
+
   end
-
-  describe 'animated GIF file' do
-
-    let(:student) { students.find { |user| user['submission'] == 'GIF' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'File')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'PNG file' do
-
-    let(:student) { students.find { |user| user['submission'] == 'PNG' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'File')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'SVG file' do
-
-    let(:student) { students.find { |user| user['submission'] == 'SVG' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'File')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'BMP file' do
-
-    let(:student) { students.find { |user| user['submission'] == 'BMP' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'File')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'very large image file' do
-
-    let(:student) { students.find { |user| user['submission'] == 'BIG' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'File')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'PDF file' do
-
-    let(:student) { students.find { |user| user['submission'] == 'PDF' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'File')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'Word file' do
-
-    let(:student) { students.find { |user| user['submission'] == 'DOC' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'File')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'YouTube video' do
-
-    let(:student) { students.find { |user| user['submission'] == 'YOUTUBE' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'Link')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'Vimeo file' do
-
-    let(:student) { students.find { |user| user['submission'] == 'VIMEO' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'Link')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-  describe 'non-media website URL' do
-
-    let(:student) { students.find { |user| user['submission'] == 'NEWHIVE' } }
-
-    it 'earns "Submit an Assignment to the Gallery" points on the Engagement Index' do
-      expect(@engagement_index.user_score_updated?(@driver, @engagement_index_url, student, '20')).to be true
-    end
-
-    it 'shows "submit_assignment" activity on the CSV export' do
-      scores = @engagement_index.download_csv(@driver, @engagement_index_url)
-      expect(scores).to include("#{student['fullName']}, submit_assignment, 20")
-    end
-
-    it 'appears in the Asset Library' do
-      @asset_library.load_page(@driver, @asset_library_url)
-      @asset_library.advanced_search(nil, nil, student['fullName'], 'Link')
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_elements.length == 1 }
-      @asset_library.wait_until(timeout) { @asset_library.gallery_asset_owner_name_elements[0] == student['fullName'] }
-      # TODO: verify asset title, link, source, description, category
-    end
-  end
-
-# TODO: add tests for other file types if necessary, e.g., media (audio, video)
 
   after(:all) { @driver.quit }
 

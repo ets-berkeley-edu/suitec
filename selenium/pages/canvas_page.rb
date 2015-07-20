@@ -66,11 +66,15 @@ class CanvasPage
   text_area(:discussion_title, :id => 'discussion-title')
   checkbox(:threaded_discussion_cbx, :id => 'threaded')
   checkbox(:graded_discussion_cbx, :id => 'use_for_grading')
-  link(:discussion_reply_link, :xpath => '//a[@data-event="addReply"]')
-  link(:html_editor_link, :xpath => '//a[contains(.,"HTML Editor")]')
-  text_area(:reply_input, :class => 'reply-textarea')
-  button(:post_reply_button, :xpath => '//button[contains(.,"Post Reply")]')
-  elements(:discussion_reply, :unordered_list, :class => 'entry')
+  elements(:discussion_reply, :list_item, :xpath => '//ul[@class="discussion-entries"]/li')
+  link(:primary_reply_link, :xpath => '//article[@id="discussion_topic"]//a[@data-event="addReply"]')
+  link(:primary_html_editor_link, :xpath => '//article[@id="discussion_topic"]//a[contains(.,"HTML Editor")]')
+  text_area(:primary_reply_input, :xpath => '//article[@id="discussion_topic"]//textarea[@class="reply-textarea"]')
+  button(:primary_post_reply_button, :xpath => '//article[@id="discussion_topic"]//button[contains(.,"Post Reply")]')
+  elements(:secondary_reply_link, :link, :xpath => '//li[@class="entry"]//a[@data-event="addReply"]')
+  elements(:secondary_html_editor_link, :link, :xpath => '//li[@class="entry"]//a[contains(.,"HTML Editor")]')
+  elements(:secondary_reply_input, :text_area, :xpath => '//li[@class="entry"]//textarea[@class="reply-textarea"]')
+  elements(:secondary_post_reply_button, :button, :xpath => '//li[@class="entry"]//button[contains(.,"Post Reply")]')
 
   # Assignments
   link(:new_assignment_link, :text => 'Assignment')
@@ -119,7 +123,9 @@ class CanvasPage
   end
 
   # Logs out of Canvas
-  def log_out
+  # @param driver [Selenium::WebDriver]         - the browser
+  def log_out(driver)
+    driver.switch_to.default_content
     WebDriverUtils.wait_for_element_and_click logout_link_element
   end
 
@@ -311,7 +317,7 @@ class CanvasPage
 
   # DISCUSSIONS
 
-  # Creates and publishes a discussion as a Teacher and returns the discussion's URL
+  # Creates and publishes a discussion and returns the discussion's URL
   # @param course_id [String]                   - the Canvas course id
   # @param discussion_name [String]             - the title of the discussion
   # @return [String]                            - the URL of the discussion
@@ -327,37 +333,31 @@ class CanvasPage
     current_url
   end
 
-  # Adds a new top-level reply to an existing discussion
+  # Adds a reply to a discussion. If index_position is nil, then adds a reply to the topic; else adds a reply to an existing
+  # reply at the index position in the collection of replies
   # @param discussion_url [String]              - the URL of the discussion assignment
+  # @param index_position [Integer]             - the position of the existing reply in the array of replies
   # @param reply_body [String]                  - the text of the reply
-  def post_discussion_reply(discussion_url, reply_body)
-    logger.info 'Posting a discussion reply'
+  def add_reply(discussion_url, index_position, reply_body)
     navigate_to discussion_url
-    WebDriverUtils.wait_for_page_and_click discussion_reply_link_element
-    replies = discussion_reply_elements.length
-    html_editor_link if html_editor_link_element.visible?
-    reply_input_element.when_present timeout=WebDriverUtils.page_update_wait
-    self.reply_input = reply_body
-    post_reply_button
-    wait_until(timeout) { replies += 1 }
-  end
-
-  # Returns the title element of a reply at a specified position in the list of replies
-  # @param index_position [Integer]             - the position of the reply in the reply list
-  def discussion_reply_title(index_position)
-    discussion_reply_elements[index_position].div_element(:class => 'discussion-title')
-  end
-
-  # Deletes a top-level discussion reply at a specified position in the list of replies
-  # @param discussion_url [String]              - the URL of the discussion assignment
-  # @param index_position [Integer]             - the position of the reply in the reply list
-  def delete_discussion_reply(discussion_url, index_position)
-    logger.info 'Deleting a discussion reply'
-    navigate_to discussion_url
-    wait_until(timeout=WebDriverUtils.page_load_wait) { discussion_reply_elements.any? }
-    WebDriverUtils.wait_for_page_and_click discussion_reply_elements[index_position].link_element(:class => 'al-trigger')
-    confirm(true) { WebDriverUtils.wait_for_element_and_click discussion_reply_elements[index_position].link_element(:id => 'ui-id-4') }
-    wait_until(timeout=WebDriverUtils.page_update_wait) { discussion_reply_elements[index_position].div_element(:class => 'discussion-title').text.include?('Deleted') }
+    if index_position.nil?
+      logger.info 'Replying to discussion topic'
+      WebDriverUtils.wait_for_page_and_click primary_reply_link_element
+      primary_html_editor_link if primary_html_editor_link_element.visible?
+      WebDriverUtils.wait_for_element_and_type(primary_reply_input_element, reply_body)
+      replies = discussion_reply_elements.length
+      primary_post_reply_button
+    else
+      logger.info 'Replying to reply'
+      wait_until(timeout=WebDriverUtils.page_load_wait) { secondary_reply_link_elements.any? }
+      WebDriverUtils.wait_for_page_and_click secondary_reply_link_elements[index_position]
+      secondary_html_editor_link_elements[index_position].click if secondary_html_editor_link_elements[index_position].visible?
+      wait_until(timeout=WebDriverUtils.page_update_wait) { secondary_reply_input_elements.any? }
+      WebDriverUtils.wait_for_element_and_type(secondary_reply_input_elements[index_position], reply_body)
+      replies = discussion_reply_elements.length
+      secondary_post_reply_button_elements[index_position].click
+    end
+    wait_until(timeout=WebDriverUtils.page_update_wait) { discussion_reply_elements.length == replies + 1 }
   end
 
   # SUBMISSION ASSIGNMENTS
@@ -390,18 +390,19 @@ class CanvasPage
     navigate_to assignment_url
     WebDriverUtils.wait_for_page_and_click submit_assignment_link_element
     case user['submissionType']
-      when 'fileUpload'
-        WebDriverUtils.wait_for_element_and_type(file_upload_input_element, WebDriverUtils.test_data_file_path(user['testData']))
+      when 'File'
+        file_upload_input_element.when_visible(timeout=WebDriverUtils.page_update_wait)
+        self.file_upload_input_element.send_keys WebDriverUtils.test_data_file_path(user['testData'])
         WebDriverUtils.wait_for_element_and_click file_upload_submit_button_element
-        assignment_submission_conf_element.when_visible timeout=WebDriverUtils.file_upload_wait
-      when 'url'
+      when 'Link'
         WebDriverUtils.wait_for_page_and_click assignment_site_url_tab_element
-        WebDriverUtils.wait_for_element_and_type(url_upload_input_element, user['testData'])
+        url_upload_input_element.when_visible(timeout=WebDriverUtils.page_update_wait)
+        self.url_upload_input = user['testData']
         WebDriverUtils.wait_for_element_and_click url_upload_submit_button_element
-        assignment_submission_conf_element.when_visible timeout=WebDriverUtils.file_upload_wait
       else
         logger.error 'Unsupported submission type in test data'
     end
+    assignment_submission_conf_element.when_visible timeout=WebDriverUtils.file_upload_wait
   end
 
 end
