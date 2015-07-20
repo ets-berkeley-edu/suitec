@@ -24,6 +24,8 @@
      * adding a new link has been cancelled
      */
     $scope.$on('assetLibraryUploadDone', function(ev, assets) {
+      // The `closeModal` is added on the scope by the caller and allows
+      // the caller to deal with the results coming out of the modal
       $scope.closeModal(assets);
     });
 

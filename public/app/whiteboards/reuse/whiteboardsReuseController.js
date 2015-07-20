@@ -30,6 +30,8 @@
      * Add the selected assets to the current whiteboard
      */
     var addSelectedAssets = $scope.addSelectedAssets = function() {
+      // The `closeModal` is added on the scope by the caller and allows
+      // the caller to deal with the results coming out of the modal
       $scope.closeModal(getSelectedAssets());
     };
 

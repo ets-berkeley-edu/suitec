@@ -32,7 +32,8 @@
      */
     var editWhiteboard = $scope.editWhiteboard = function() {
       whiteboardsFactory.editWhiteboard($scope.whiteboard.id, $scope.updatedWhiteboard).success(function(updatedWhiteboard) {
-        // Pass the updated whiteboard back to where the modal dialog was invoked
+        // The `closeModal` is added on the scope by the caller and allows
+        // the caller to deal with the results coming out of the modal
         $scope.closeModal(updatedWhiteboard);
       });
     };

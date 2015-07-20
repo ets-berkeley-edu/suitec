@@ -184,6 +184,10 @@
 
 /* POPOVERS */
 
+.popover-title {
+  display: none;
+}
+
 .popover-content ul.whiteboards-popover-button-list {
   list-style-type: none;
   margin: 0;
