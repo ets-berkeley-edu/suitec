@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title data-ng-bind="header"></title>
-  <!-- TODO: Inject CSS styles -->
+  <!-- build:css /static/style.css -->
   <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css" />
   <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.css" />
   <link rel="stylesheet" href="/lib/oi.multiselect/dist/multiselect.css" />
@@ -19,14 +19,17 @@
   <link rel="stylesheet" href="/app/assetlibrary/upload/upload.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/list.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/share.css" />
+  <link rel="stylesheet" href="/app/engagementindex/leaderboard/splash.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/userinfo.css" />
+  <link rel="stylesheet" href="/app/engagementindex/points/points.css" />
   <link rel="stylesheet" href="/app/whiteboards/list/list.css" />
   <link rel="stylesheet" href="/app/whiteboards/board/board.css" />
   <link rel="stylesheet" href="/app/whiteboards/create/create.css" />
   <link rel="stylesheet" href="/app/whiteboards/reuse/reuse.css" />
+  <!-- endbuild -->
 </head>
 <body ui-view>
-  <!-- TODO: Inject JS styles -->
+  <!-- build:vendor /static/vendor.js -->
   <script src="/lib/angular/angular.js"></script>
   <script src="/lib/angular-aria/angular-aria.js"></script>
   <script src="/lib/angular-elastic/elastic.js"></script>
@@ -51,11 +54,17 @@
   <script src="/lib/highcharts-release/highcharts.js"></script>
   <script src="/lib/highcharts-release/highcharts-more.js"></script>
   <script src="/lib/moment/moment.js"></script>
-  <script src="/lib/ng-file-upload/ng-file-upload-all.min.js"></script>
+  <script src="/lib/ng-file-upload/ng-file-upload.js"></script>
   <script src="/lib/oi.multiselect/dist/multiselect.js"></script>
   <script src="/lib/oi.multiselect/dist/multiselect-tpls.js"></script>
   <script src="/lib/socket.io-client/socket.io.js"></script>
+  <!-- endbuild -->
 
+  <!-- build:templateCache /static/templateCache.js -->
+  <script src="/app/templateCachePlaceholder.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:app /static/app.js -->
   <script src="/app/app.module.js"></script>
   <script src="/app/app.config.js"></script>
   <script src="/app/app.states.js"></script>
@@ -79,10 +88,12 @@
   <script src="/app/assetlibrary/upload/assetLibraryUploadController.js"></script>
   <script src="/app/engagementindex/leaderboard/leaderboardController.js"></script>
   <script src="/app/engagementindex/points/pointsController.js"></script>
+  <script src="/app/engagementindex/points/pointsFactory.js"></script>
   <script src="/app/whiteboards/whiteboardsFactory.js"></script>
   <script src="/app/whiteboards/board/whiteboardsBoardController.js"></script>
   <script src="/app/whiteboards/create/whiteboardsCreateController.js"></script>
   <script src="/app/whiteboards/edit/whiteboardsEditController.js"></script>
   <script src="/app/whiteboards/list/whiteboardsListController.js"></script>
   <script src="/app/whiteboards/reuse/whiteboardsReuseController.js"></script>
+  <!-- endbuild -->
 </body>

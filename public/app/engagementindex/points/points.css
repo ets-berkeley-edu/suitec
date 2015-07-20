@@ -13,34 +13,21 @@
  * permissions and limitations under the License.
  */
 
-.leaderboard-list-container {
-  margin-bottom: 30px;
+.points-container {
+  max-width: 600px;
 }
 
-.leaderboard-list-search-form {
+.points-container .table-striped th,
+.points-container .table-striped td {
+  padding: 15px;
+}
+
+.points-edit {
   display: inline-block;
-  max-width: 250px;
-  width: 100%;
+  width: 50px;
 }
 
-.leaderboard-list-search-form .form-group {
-  margin-bottom: 10px;
-}
-
-.leaderboard-list-actions-container {
-  margin-bottom: 15px;
-}
-
-.leaderboard-list-table {
-  border: 1px solid #CCC;
-  width: 100%;
-}
-
-.leaderboard-list-table th,
-.leaderboard-list-table td {
-  padding: 10px;
-}
-
-.leaderboard-list-table.table-striped .leaderboard-list-highlight {
-  background-color: #EDEDED;
+.points-container h3,
+.points-actions {
+  margin-top: 30px;
 }

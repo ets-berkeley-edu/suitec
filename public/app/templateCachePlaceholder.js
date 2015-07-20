@@ -13,25 +13,13 @@
  * permissions and limitations under the License.
  */
 
-.leaderboard-list-container {
-  margin-bottom: 30px;
-}
+(function(angular) {
 
-.leaderboard-list-search-form {
-  display: inline-block;
-  max-width: 250px;
-  width: 100%;
-}
+  'use strict';
 
-.leaderboard-list-search-form .form-group {
-  margin-bottom: 10px;
-}
+  // This placeholder file gets overwritten during the production build. A `templateCache` entry
+  // will be added for each HTML template in the application. The production build will automatically
+  // revision this file, which means all HTML partials can be safely cached forever
+  angular.module('collabosphere.templates', []);
 
-.leaderboard-list-actions-container {
-  margin-bottom: 15px;
-}
-
-.leaderboard-avatar {
-  height: 40px;
-  width: 40px;
-}
+})(window.angular);

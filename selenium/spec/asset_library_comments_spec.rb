@@ -30,7 +30,7 @@ describe 'An asset library comment', :order => :defined do
   comment_2_by_viewer = 'Comment 2: Asset viewer comment'
   comment_2_reply_by_viewer = 'Comment 2 Reply 1: Asset viewer reply to self'
   comment_2_edit_by_viewer = 'Comment 2 Edit: Asset viewer comment edited'
-  comment_3_by_viewer = 'Comment 3: Asset viewer comment with link http://www.google.com'
+  comment_3_by_viewer = 'Comment 3: Asset viewer comment with link http://www.google.com in the body'
 
   before(:all) do
     @driver = WebDriverUtils.driver
@@ -71,7 +71,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(0)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(0)).to eql(comment_1_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('0')
+        expect(@asset_library.asset_comment_count(0)).to eql('1')
       end
       it 'can be added as a reply to an existing comment' do
         @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
@@ -83,7 +83,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(1)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(1)).to eql(comment_1_reply_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('1')
+        expect(@asset_library.asset_comment_count(0)).to eql('2')
       end
       it 'does not earn commenting points on the engagement index' do
         @engagement_index.load_page(@driver, @engagement_index_url)
@@ -121,7 +121,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(2)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(2)).to eql(comment_1_reply_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('2')
+        expect(@asset_library.asset_comment_count(0)).to eql('3')
       end
       it 'can be added as a reply to the user\'s own comment' do
         @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
@@ -137,7 +137,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(3)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(3)).to eql(comment_1_reply_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('3')
+        expect(@asset_library.asset_comment_count(0)).to eql('4')
       end
       it 'can be added as a reply to another user\'s comment' do
         @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
@@ -155,7 +155,7 @@ describe 'An asset library comment', :order => :defined do
         expect(@asset_library.commenter_name(4)).to include(asset_creator['fullName'])
         expect(@asset_library.comment_body(4)).to eql(comment_1_reply_by_uploader)
         @asset_library.click_back_to_asset_library_link
-        expect(@asset_library.asset_comment_count(0)).to eql('4')
+        expect(@asset_library.asset_comment_count(0)).to eql('5')
       end
       it 'earns "Comment" points on the engagement index for the user adding a comment or reply' do
         @engagement_index.load_page(@driver, @engagement_index_url)
@@ -186,8 +186,8 @@ describe 'An asset library comment', :order => :defined do
       it 'cannot be added as a reply to a reply' do
         @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
         @asset_library.wait_until(timeout) { @asset_library.comment_elements.length == 6 }
-        expect(WebDriverUtils.element_present?(@driver, @asset_library.reply_button_xpath(0))).to be true
-        expect(WebDriverUtils.element_present?(@driver, @asset_library.reply_button_xpath(1))).to be false
+        expect(@asset_library.reply_button_element(@driver, 0)).to be_truthy
+        expect(@asset_library.reply_button_element(@driver, 1)).to be_falsy
       end
       it 'can be canceled when a reply' do
         @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
@@ -213,12 +213,12 @@ describe 'An asset library comment', :order => :defined do
       expect(@asset_library.comment_body(5)).to eql(comment_1_reply_by_uploader)
     end
     it 'can be done to any comment when the user is a teacher' do
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.edit_button_xpath(0))).to be true
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.edit_button_xpath(1))).to be true
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.edit_button_xpath(2))).to be true
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.edit_button_xpath(3))).to be true
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.edit_button_xpath(4))).to be true
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.edit_button_xpath(5))).to be true
+      expect(@asset_library.edit_button_element(@driver, 0)).to be_truthy
+      expect(@asset_library.edit_button_element(@driver, 1)).to be_truthy
+      expect(@asset_library.edit_button_element(@driver, 2)).to be_truthy
+      expect(@asset_library.edit_button_element(@driver, 3)).to be_truthy
+      expect(@asset_library.edit_button_element(@driver, 4)).to be_truthy
+      expect(@asset_library.edit_button_element(@driver, 5)).to be_truthy
     end
     it 'can be canceled' do
       @asset_library.load_asset_detail(@driver, @asset_library_url, asset_title, @asset_id)
@@ -250,11 +250,11 @@ describe 'An asset library comment', :order => :defined do
       expect(@asset_library.comment_body(4)).to eql(comment_1_reply_by_uploader)
     end
     it 'cannot be done if the comment has associated replies' do
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.delete_button_xpath(0))).to be false
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.delete_button_xpath(1))).to be true
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.delete_button_xpath(2))).to be false
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.delete_button_xpath(3))).to be true
-      expect(WebDriverUtils.element_present?(@driver, @asset_library.delete_button_xpath(4))).to be true
+      expect(@asset_library.delete_button_element(@driver, 0)).to be_falsy
+      expect(@asset_library.delete_button_element(@driver, 0)).to be_truthy
+      expect(@asset_library.delete_button_element(@driver, 0)).to be_falsy
+      expect(@asset_library.delete_button_element(@driver, 0)).to be_truthy
+      expect(@asset_library.delete_button_element(@driver, 0)).to be_truthy
     end
     it 'removes engagement index points earned for the comment' do
       @engagement_index.load_page(@driver, @engagement_index_url)

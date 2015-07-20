@@ -11,30 +11,33 @@
     </div>
   </div>
 
-  <table class="table-striped leaderboard-list-table">
-    <thead>
-      <tr>
-        <th data-ng-click="sort('rank')" data-ng-class="{dropup: reverse}">Rank <span class="caret" data-ng-if="sortBy === 'rank'"></span></th>
-        <th data-ng-click="sort('canvas_full_name')" data-ng-class="{dropup: reverse}">Name <span class="caret" data-ng-if="sortBy === 'canvas_full_name'"></span></th>
-        <th data-ng-click="sort('share_points')" data-ng-class="{dropup: reverse}" data-ng-if="me.is_admin">Share <span class="caret" data-ng-if="sortBy === 'share_points'"></span></th>
-        <th data-ng-click="sort('points')" data-ng-class="{dropup: reverse}">Points <span class="caret" data-ng-if="sortBy === 'points'"></span></th>
-        <th data-ng-click="sort('last_activity')" data-ng-class="{dropup: reverse}">Last Activity <span class="caret" data-ng-if="sortBy === 'last_activity'"></span></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr data-ng-repeat="user in users | orderBy:sortBy:!reverse | filter:query:strict" data-ng-class="{'leaderboard-list-highlight': user.id === me.id}">
-        <td class="col-sm-1" data-ng-bind="user.rank"></td>
-        <td class="col-sm-5">
-          <i class="fa fa-graduation-cap" data-ng-if="user.is_admin"></i>
-          <span data-ng-bind="user.canvas_full_name"></span>
-        </td>
-        <td class="col-sm-1" data-ng-if="me.is_admin" >
-          <span data-ng-if="user.share_points">Yes</span>
-          <span data-ng-if="!user.share_points">No</span>
-        </td>
-        <td class="col-sm-1" data-ng-bind="user.points"></td>
-        <td class="col-sm-2"><span data-ng-if="user.last_activity" data-ng-bind="user.last_activity | date:'MM/dd/yyyy h:mm a'"></span></td>
-      </tr>
-    </tbody>
+  <table class="table-striped">
+    <tr>
+      <th class="text-center" data-ng-click="sort('rank')" data-ng-class="{dropup: reverse}">Rank <span class="caret" data-ng-if="sortBy === 'rank'"></span></th>
+      <th data-ng-click="sort('canvas_full_name')" data-ng-class="{dropup: reverse}">Name <span class="caret" data-ng-if="sortBy === 'canvas_full_name'"></span></th>
+      <th class="text-center" data-ng-click="sort('share_points')" data-ng-class="{dropup: reverse}" data-ng-if="me.is_admin">Share <span class="caret" data-ng-if="sortBy === 'share_points'"></span></th>
+      <th class="text-center" data-ng-click="sort('points')" data-ng-class="{dropup: reverse}">Points <span class="caret" data-ng-if="sortBy === 'points'"></span></th>
+      <th data-ng-click="sort('last_activity')" data-ng-class="{dropup: reverse}">Last Activity <span class="caret" data-ng-if="sortBy === 'last_activity'"></span></th>
+    </tr>
+    <tr data-ng-repeat="user in users | orderBy:sortBy:!reverse | filter:query:strict" data-ng-class="{'active': user.id === me.id}">
+      <td class="col-sm-1 text-center" data-ng-bind="user.rank"></td>
+      <td class="col-sm-5">
+        <div class="media">
+          <div class="media-left media-middle">
+            <div class="media-object col-avatar leaderboard-avatar" data-ng-style="{'background-image': 'url(' + user.canvas_image + ')'}"></div>
+          </div>
+          <div class="media-body media-middle">
+            <i class="fa fa-graduation-cap" data-ng-if="user.is_admin"></i>
+            <span data-ng-bind="user.canvas_full_name"></span>
+          </div>
+        </div>
+      </td>
+      <td class="col-sm-1 text-center" data-ng-if="me.is_admin" >
+        <span data-ng-if="user.share_points">Yes</span>
+        <span data-ng-if="!user.share_points">No</span>
+      </td>
+      <td class="col-sm-1 text-center" data-ng-bind="user.points"></td>
+      <td class="col-sm-2"><span data-ng-if="user.last_activity" data-ng-bind="user.last_activity | date:'MM/dd/yyyy h:mm a'"></span></td>
+    </tr>
   </table>
 </div>
