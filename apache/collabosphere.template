@@ -32,4 +32,37 @@
     RewriteRule ^/engagementindex      <%= documentRoot %>/index.html
     RewriteRule ^/whiteboards          <%= documentRoot %>/index.html
 
+
+    # GZIP all responses using mod_deflate
+    <IfModule deflate>
+        SetOutputFilter DEFLATE
+        AddOutputFilterByType DEFLATE text/plain
+        AddOutputFilterByType DEFLATE text/html
+        AddOutputFilterByType DEFLATE text/xml
+        AddOutputFilterByType DEFLATE text/css
+        AddOutputFilterByType DEFLATE application/json
+        AddOutputFilterByType DEFLATE application/xml
+        AddOutputFilterByType DEFLATE application/xhtml+xml
+        AddOutputFilterByType DEFLATE application/rss+xml
+        AddOutputFilterByType DEFLATE application/javascript
+        AddOutputFilterByType DEFLATE application/x-javascript
+    </IfModule>
+
+    # The production build makes all cache-able assets available under `/static`. We can aggressively
+    # cache these as they should be properly versioned.
+    <LocationMatch "^/static">
+        ExpiresActive On
+        ExpiresDefault "access plus 1 year"
+    </LocationMatch>
+
+    # Don't cache the root HTML pages or the bookmarklet init script
+    <LocationMatch "^(/assets/js/bookmarklet-init.js|/bookmarklet.html)">
+        <IfModule mod_headers.c>
+             Header unset ETag
+             Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+             Header set Pragma "no-cache"
+             Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+        </IfModule>
+    </LocationMatch>
+
 </VirtualHost>
