@@ -8,7 +8,7 @@
             "email": "teacher@berkeley.edu",
             "role": "Teacher",
             "canvasId": 162534,
-            "submissionType": "fileUpload",
+            "submissionType": "File",
             "submission": "JPEG",
             "testData": "file.jpg"
         },
@@ -20,7 +20,7 @@
             "email": "designer@berkeley.edu",
             "role": "Designer",
             "canvasId": 615243,
-            "submissionType": "url",
+            "submissionType": "Link",
             "submission": "YOUTUBE",
             "testData": "http://www.youtube.com"
         },
@@ -32,7 +32,7 @@
             "email": "student@berkeley.edu",
             "role": "Student",
             "canvasId": "456321",
-            "submissionType": "fileUpload",
+            "submissionType": "File",
             "submission": "PDF",
             "testData": "file.pdf"
         }
