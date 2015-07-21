@@ -7,7 +7,8 @@
     <div class="leaderboard-userinfo-badge-title">My Points</div>
     <span class="leaderboard-userinfo-badge-value" data-ng-bind="me.points"></span>
   </div>
-  <div class="leaderboard-userinfo-badge leaderboard-userinfo-boxplot-container" data-ng-if="me.share_points">
+  {{$scope.users.length}}
+  <div class="leaderboard-userinfo-badge leaderboard-userinfo-boxplot-container" data-ng-if="me.share_points && users.length >= 3">
     <div class="leaderboard-userinfo-badge-title">How do I compare</div>
     <div id="leaderboard-userinfo-boxplot" class="leaderboard-userinfo-boxplot"></div>
   </div>

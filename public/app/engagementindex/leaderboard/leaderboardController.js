@@ -45,8 +45,9 @@
             }
           }
 
-          // Draw the boxplot showing how the current user ranks
-          if ($scope.me.share_points) {
+          // Draw the boxplot showing how the current user ranks. The boxplot
+          // is only shown when sufficient users share their score
+          if ($scope.me.share_points && $scope.users.length >= 3) {
             drawBoxPlot();
           }
         });
