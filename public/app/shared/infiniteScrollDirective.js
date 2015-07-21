@@ -56,11 +56,7 @@
         // Cache the infinite scroll container when a container other than the browser window has been supplied
         var infiniteScrollContainer = null;
         if (scope.infiniteScrollContainer !== 'window') {
-          console.log(scope.infiniteScrollContainer);
           infiniteScrollContainer = document.getElementById(scope.infiniteScrollContainer);
-          setTimeout(function() {
-            console.log(document.getElementById(scope.infiniteScrollContainer));
-          }, 1000);
         }
 
         if (scope.infiniteScrollDirection === 'top') {
