@@ -51,7 +51,7 @@
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Description</div>
             <div class="col-xs-9">
-              <div data-ng-if="asset.description">{{asset.description}}</div>
+              <div data-ng-if="asset.description" data-ng-bind-html="asset.description | linky:'_blank'"></div>
               <div data-ng-if="!asset.description">No description</div>
             </div>
           </div>
@@ -135,7 +135,7 @@
             </button>
           </div>
         </div>
-        <p data-ng-if="!comment.editing" data-ng-bind-html="comment.body | linky"></p>
+        <p data-ng-if="!comment.editing" data-ng-bind-html="comment.body | linky:'_blank'"></p>
         <!-- EDIT -->
         <form name="assetlibraryEditForm" class="assetlibrary-item-edit-form" data-ng-submit="assetlibraryEditForm.$valid && editComment(comment)" data-ng-if="comment.editing" novalidate>
           <div class="form-group assetlibrary-item-addcomment-comment">
