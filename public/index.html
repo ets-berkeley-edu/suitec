@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="/lib/oi.multiselect/dist/multiselect.css" />
   <link rel="stylesheet" href="/assets/css/main.css" />
   <link rel="stylesheet" href="/app/assetlibrary/addbookmarklet/addbookmarklet.css" />
-  <link rel="stylesheet" href="/app/assetlibrary/addlink/addlink.css" />
+  <link rel="stylesheet" href="/app/assetlibrary/addlinkcontainer/addlinkcontainer.css" />
   <link rel="stylesheet" href="/app/assetlibrary/categories/categories.css" />
   <link rel="stylesheet" href="/app/assetlibrary/edit/edit.css" />
   <link rel="stylesheet" href="/app/assetlibrary/iconbar/iconbar.css" />
@@ -17,15 +17,18 @@
   <link rel="stylesheet" href="/app/assetlibrary/list/list.css" />
   <link rel="stylesheet" href="/app/assetlibrary/search/search.css" />
   <link rel="stylesheet" href="/app/assetlibrary/upload/upload.css" />
+  <link rel="stylesheet" href="/app/assetlibrary/uploadcontainer/uploadcontainer.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/list.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/share.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/splash.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/userinfo.css" />
   <link rel="stylesheet" href="/app/engagementindex/points/points.css" />
+  <link rel="stylesheet" href="/app/whiteboards/addlinkmodal/addlinkmodal.css" />
   <link rel="stylesheet" href="/app/whiteboards/list/list.css" />
   <link rel="stylesheet" href="/app/whiteboards/board/board.css" />
   <link rel="stylesheet" href="/app/whiteboards/create/create.css" />
   <link rel="stylesheet" href="/app/whiteboards/reuse/reuse.css" />
+  <link rel="stylesheet" href="/app/whiteboards/uploadmodal/uploadmodal.css" />
   <!-- endbuild -->
 </head>
 <body ui-view>
@@ -45,6 +48,8 @@
   <script src="/lib/angular-sanitize/angular-sanitize.js"></script>
   <script src="/lib/angular-scroll-glue/src/scrollglue.js"></script>
   <script src="/lib/angular-socket-io/socket.js"></script>
+  <script src="/lib/angular-strap/dist/angular-strap.js"></script>
+  <script src="/lib/angular-strap/dist/angular-strap.tpl.js"></script>
   <script src="/lib/angular-ui-bootstrap-bower/ui-bootstrap.js"></script>
   <script src="/lib/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
   <script src="/lib/angular-ui-router/release/angular-ui-router.js"></script>
@@ -78,6 +83,7 @@
   <script src="/app/assetlibrary/addbookmarklet/assetLibraryAddBookmarkletController.js"></script>
   <script src="/app/assetlibrary/addlink/assetLibraryAddLinkController.js"></script>
   <script src="/app/assetlibrary/addlink/httpPrefixDirective.js"></script>
+  <script src="/app/assetlibrary/addlinkcontainer/assetLibraryAddLinkContainerController.js"></script>
   <script src="/app/assetlibrary/categories/assetLibraryCategoriesController.js"></script>
   <script src="/app/assetlibrary/edit/assetLibraryEditController.js"></script>
   <script src="/app/assetlibrary/iconbar/assetLibraryIconBarController.js"></script>
@@ -86,14 +92,17 @@
   <script src="/app/assetlibrary/list/assetLibraryListController.js"></script>
   <script src="/app/assetlibrary/search/assetLibrarySearchController.js"></script>
   <script src="/app/assetlibrary/upload/assetLibraryUploadController.js"></script>
+  <script src="/app/assetlibrary/uploadcontainer/assetLibraryUploadContainerController.js"></script>
   <script src="/app/engagementindex/leaderboard/leaderboardController.js"></script>
   <script src="/app/engagementindex/points/pointsController.js"></script>
   <script src="/app/engagementindex/points/pointsFactory.js"></script>
   <script src="/app/whiteboards/whiteboardsFactory.js"></script>
+  <script src="/app/whiteboards/addlinkmodal/whiteboardsAddLinkController.js"></script>
   <script src="/app/whiteboards/board/whiteboardsBoardController.js"></script>
   <script src="/app/whiteboards/create/whiteboardsCreateController.js"></script>
   <script src="/app/whiteboards/edit/whiteboardsEditController.js"></script>
   <script src="/app/whiteboards/list/whiteboardsListController.js"></script>
   <script src="/app/whiteboards/reuse/whiteboardsReuseController.js"></script>
+  <script src="/app/whiteboards/uploadmodal/whiteboardsUploadController.js"></script>
   <!-- endbuild -->
 </body>

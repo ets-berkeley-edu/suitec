@@ -37,30 +37,35 @@
   right: 0;
 }
 
-#whiteboards-board-toolbar button {
+#whiteboards-board-toolbar > .btn-group > button {
   border: 1px solid #D3D3D3;
   color: #666;
 }
 
-#whiteboards-board-toolbar button.active {
+#whiteboards-board-toolbar > .btn-group > button.active {
   background-color: #6B6B6B;
   color: #F5FCFF;
 }
 
-#whiteboards-board-toolbar button:not(:first-child) {
+#whiteboards-board-toolbar > .btn-group > button:not(:first-child) {
   border-left: none;
 }
 
-#whiteboards-board-toolbar button:not(:last-child) {
+#whiteboards-board-toolbar > .btn-group > button:not(:last-child) {
   border-right: none;
 }
 
-#whiteboards-board-toolbar button > i {
+#whiteboards-board-toolbar > .btn-group > button > i {
   font-weight: bold;
   font-size: 18px;
 }
 
-#whiteboards-board-toolbar button > span {
+#whiteboards-board-toolbar > .btn-group > button > i.fa-share-square-o {
+  position: relative;         /* Align the export icon with the text */
+  top: 1px;
+}
+
+#whiteboards-board-toolbar > .btn-group > button > span {
   position: relative;
   top: -2px;
 }
@@ -179,28 +184,113 @@
 
 /* POPOVERS */
 
-.popover-content ul {
+.popover-title {
+  display: none;
+}
+
+.popover-content ul.whiteboards-popover-button-list {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-.popover-content li {
+.popover-content ul.whiteboards-popover-button-list li {
   margin-bottom: 5px;
 }
 
-.popover-content li:last-child {
+.popover-content ul.whiteboards-popover-button-list li:last-child {
   margin-bottom: 0;
 }
 
-.popover-content ul button {
+.popover-content ul.whiteboards-popover-button-list button {
   text-align: left;
+}
+
+.popover-content ul.whiteboards-popover-asset button {
   width: 130px;
 }
 
-.popover-content ul button > i {
+.popover-content ul.whiteboards-popover-export button {
+  width: 185px;
+}
+
+.popover-content ul.whiteboards-popover-button-list button > i {
   font-size: 16px;
   margin-right: 5px;
   position: relative;
   top: 1px;
+}
+
+.whiteboards-popover-toolbar {
+  padding: 10px 10px 7px;
+  width: 200px;
+}
+
+.whiteboards-popover-toolbar .form-group {
+  margin-bottom: 10px;
+}
+
+.whiteboards-popover-toolbar .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.whiteboards-popover-toolbar .form-group > label {
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+.whiteboards-popover-select-label {
+  line-height: 30px;
+}
+
+.whiteboards-popover-select {
+  padding: 4px;
+}
+
+.whiteboards-popover-select + .dropdown-menu {
+  overflow: auto;
+  max-height: 100px;
+  min-width: 68px;
+  padding: 0
+}
+
+.whiteboards-popover-select + .dropdown-menu > li {
+  text-align: center;
+}
+
+.whiteboards-popover-select + .dropdown-menu > li > a {
+  padding: 5px;
+}
+
+/* COLOR PICKER */
+
+.whiteboards-color-container {
+  display: inline;
+}
+
+.whiteboards-color-container label {
+  border: 2px solid #E3E3E3;
+  border-radius: 4px;
+  display: inline-block;
+  height: 24px;
+  margin-bottom: 0;
+  position: relative;
+  width: 24px;
+}
+
+/* Position the actual radio buttons off screen */
+.whiteboards-color-container label input {
+  left: -10000px;
+  position: absolute;
+}
+
+.whiteboards-color-container label i {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  color: #FFF;
+  font-size: 11px;
+  left: 3px;
+  padding: 2px;
+  position: absolute;
+  top: 2px;
 }

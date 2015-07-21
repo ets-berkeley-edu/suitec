@@ -18,9 +18,9 @@
   <ul>
     <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="whiteboard in whiteboards">
       <div class="col-list-item-container">
-        <a data-ng-click="openWhiteboard(whiteboard, $event)" data-ng-href="/whiteboards/{{whiteboard.id}}">
+        <a target="_blank" data-ng-href="{{generateWhiteboardURL(whiteboard)}}">
           <div class="col-list-item-tile">
-            <img class="img-responsive" data-ng-src="{{asset.url}}" data-ng-if="whiteboard.thumbnail_url">
+            <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="whiteboard.thumbnail_url">
             <div class="text-center col-list-item-thumbnail-default" data-ng-if="!whiteboard.thumbnail_url">
               <i class="fa fa-calendar-o"></i>
             </div>

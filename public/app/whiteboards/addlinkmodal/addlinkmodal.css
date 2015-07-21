@@ -13,19 +13,6 @@
  * permissions and limitations under the License.
  */
 
-.whiteboards-reuse-list-container {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-@media only screen and (min-height : 768px) {
-  .whiteboards-reuse-list-container {
-    max-height: 500px;
-  }
-}
-
-@media only screen and (min-height : 968px) {
-  .whiteboards-reuse-list-container {
-    max-height: 750px;
-  }
+.whiteboards-addlink-modal {
+  padding: 20px 20px 0;
 }

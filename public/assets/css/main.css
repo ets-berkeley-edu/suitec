@@ -140,6 +140,10 @@ table.table-striped tr.active {
   background-color: #EFFAFF;
 }
 
+.modal-backdrop {
+  opacity: 0.5;
+}
+
 /* TILE LIST */
 
 .col-list-container {

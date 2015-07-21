@@ -46,20 +46,19 @@
     };
 
     /**
-     * Open a whiteboard in a new window
+     * Generate the full URL for a whiteboard. This includes the launch parameters that were passed in
+     * when the LTI tool was launched
      *
-     * @param  {Whiteboard}       whiteboard          The whiteboard to open
-     * @param  {Event}            $event              The click event
+     * @param  {Whiteboard}       whiteboard          The whiteboard for which to generate the full URL
+     * @return {String}                               The full whiteboard URL
      */
-    var openWhiteboard = $scope.openWhiteboard = function(whiteboard, $event) {
+    var generateWhiteboardURL = $scope.generateWhiteboardURL = function(whiteboard) {
       var launchParams = utilService.getLaunchParams();
-      // TODO
       var url = '/whiteboards/' + whiteboard.id;
       url += '?api_domain=' + launchParams.apiDomain;
       url += '&course_id=' + launchParams.courseId;
       url += '&tool_url=' + launchParams.toolUrl;
-      window.open(url, '_blank', 'width=1100, height=600, toolbar=no, titlebar=no, status=no, menubar=no, location=no');
-      $event.preventDefault();
+      return url;
     };
 
     userFactory.getMe().success(function(me) {

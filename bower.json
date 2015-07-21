@@ -16,7 +16,7 @@
     "angular-sanitize": "latest",
     "angular-scroll-glue": "latest",
     "angular-socket-io": "latest",
-    "angular-ui-bootstrap-bower": "latest",
+    "angular-strap": "latest",
     "angular-ui-router": "latest",
     "angular-ui-utils": "latest",
     "bootstrap": "latest",

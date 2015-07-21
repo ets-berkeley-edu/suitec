@@ -17,7 +17,7 @@
 
   'use strict';
 
-  var app = angular.module('collabosphere').controller('AssetLibraryUploadController', function(assetLibraryCategoriesFactory, assetLibraryFactory, $location, $scope) {
+  var app = angular.module('collabosphere').controller('AssetLibraryUploadController', function(assetLibraryCategoriesFactory, assetLibraryFactory, $scope) {
 
     // Constant that defines the maximum allowed file size
     var MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -46,6 +46,9 @@
 
     // Variable that will keep track of the file that is currently being uploaded
     var currentFile = null;
+
+    // Variable that will keep track of the returned response for all files that have been uploaded
+    var uploadedFiles = [];
 
     /**
      * Function invoked when a new file or set of files has been selected in the file dialog
@@ -97,6 +100,13 @@
     };
 
     /**
+     * Cancel uploading the selected files
+     */
+    var cancelUpload = $scope.cancelUpload = function() {
+      return $scope.$emit('assetLibraryUploadDone');
+    };
+
+    /**
      * Upload the selected files and their metadata
      */
     var createFiles = $scope.createFiles = function() {
@@ -115,10 +125,10 @@
      * Upload the next file from the list of selected files
      */
     var createFile = function() {
-      // If no more files need to be uploaded, return to
-      // the asset library list
+      // If no more files need to be uploaded, emit an event that
+      // indicates that all files have been uploaded
       if ($scope.files.length === 0) {
-        return $location.path('/assetlibrary');
+        return $scope.$emit('assetLibraryUploadDone', uploadedFiles);
       }
 
       // Calculate the total size of the files that have been
@@ -138,7 +148,11 @@
         // being uploaded
         var loaded = ev.loaded > currentFile.file.size ? currentFile.file.size : ev.loaded;
         calculateProgress(uploadedSize + loaded);
-      }).success(createFile);
+      }).success(function(asset) {
+        uploadedFiles.push(asset);
+        // Process the next file
+        createFile();
+      });
     };
 
     /**
