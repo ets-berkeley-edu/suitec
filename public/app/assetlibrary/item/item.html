@@ -3,12 +3,12 @@
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
-    <div class="col-xs-{{ canManageAsset() ? 8 : 12 }}">
-      <h2 class="col-threedots">{{asset.title}}</h2>
+    <div class="col-xs-{{ canManageAsset() ? 10 : 12 }}">
+      <h2>{{asset.title}}</h2>
     </div>
 
     <!-- EDIT DETAILS -->
-    <div class="col-xs-4 text-right" data-ng-show="canManageAsset()">
+    <div class="col-xs-2 text-right" data-ng-show="canManageAsset()">
       <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default">
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
