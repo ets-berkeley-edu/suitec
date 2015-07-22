@@ -90,6 +90,10 @@ select option[value=''] {
   color: #999;
 }
 
+textarea {
+  resize: vertical;
+}
+
 .btn {
   padding: 8px 12px;
 }
