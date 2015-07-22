@@ -222,7 +222,7 @@
                 </a>
                 <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
               </div>
-              <p data-ng-bind-html="chatMessage.body | linky"></p>
+              <p data-ng-bind-html="chatMessage.body | linky:'_blank'"></p>
             </div>
           </div>
         </div>

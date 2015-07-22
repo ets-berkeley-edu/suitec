@@ -67,6 +67,7 @@
 .assetlibrary-item-metadata-column {
   padding-left: 0;
   padding-right: 0;
+  word-wrap: break-word;
 }
 
 .assetlibrary-item-metadata .col-avatar {
