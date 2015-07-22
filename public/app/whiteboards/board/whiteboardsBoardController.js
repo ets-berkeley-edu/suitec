@@ -1079,13 +1079,18 @@
     /**
      * Create a new chat message
      *
-     * @param  {Event}          $event            The click event
+     * @param  {Event}          $event            The keypress event
      */
     var createChatMessage = $scope.createChatMessage = function($event) {
-      socket.emit('chat', $scope.newChatMessage.body);
-      // Reset the new chat message
-      $scope.newChatMessage = null;
-      $event.preventDefault();
+      // Only submit the chat message when the enter button is pressed
+      if ($event.which === 13) {
+        if ($scope.newChatMessage.body) {
+          socket.emit('chat', $scope.newChatMessage.body);
+        }
+        // Reset the new chat message
+        $scope.newChatMessage = null;
+        $event.preventDefault();
+      }
     };
 
     /**

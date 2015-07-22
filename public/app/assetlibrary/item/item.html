@@ -3,12 +3,12 @@
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
-    <div class="col-xs-{{ canManageAsset() ? 8 : 12 }}">
-      <h2 class="col-threedots">{{asset.title}}</h2>
+    <div class="col-xs-{{ canManageAsset() ? 10 : 12 }}">
+      <h2>{{asset.title}}</h2>
     </div>
 
     <!-- EDIT DETAILS -->
-    <div class="col-xs-4 text-right" data-ng-show="canManageAsset()">
+    <div class="col-xs-2 text-right" data-ng-show="canManageAsset()">
       <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default">
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
@@ -51,7 +51,7 @@
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Description</div>
             <div class="col-xs-9">
-              <div data-ng-if="asset.description">{{asset.description}}</div>
+              <div data-ng-if="asset.description" data-ng-bind-html="asset.description | linky:'_blank'"></div>
               <div data-ng-if="!asset.description">No description</div>
             </div>
           </div>
@@ -135,7 +135,7 @@
             </button>
           </div>
         </div>
-        <p data-ng-if="!comment.editing" data-ng-bind-html="comment.body | linky"></p>
+        <p data-ng-if="!comment.editing" data-ng-bind-html="comment.body | linky:'_blank'"></p>
         <!-- EDIT -->
         <form name="assetlibraryEditForm" class="assetlibrary-item-edit-form" data-ng-submit="assetlibraryEditForm.$valid && editComment(comment)" data-ng-if="comment.editing" novalidate>
           <div class="form-group assetlibrary-item-addcomment-comment">
