@@ -20,6 +20,7 @@
   // Initialize the Collabosphere module
   angular.module('collabosphere', [
     'ngAria',
+    'ngCookies',
     'ngFileUpload',
     'ngMessages',
     'ngMoment',

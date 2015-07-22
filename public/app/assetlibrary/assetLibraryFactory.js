@@ -37,7 +37,7 @@
      * @param  {String}               [searchOptions.keywords]        A string to filter the assets by
      * @param  {Number}               [searchOptions.category]        The id of the category to filter the assets by
      * @param  {Number}               [searchOptions.user]            The id of the user who created the assets
-     * @param  {Number}               [searchOptions.type]            The type of assets
+     * @param  {String[]}             [searchOptions.type]            The type of assets
      * @return {Promise<Object>}                                      $http promise returning the total number of assets for the current course and the assets in the current page
      */
     var getAssets = function(page, searchOptions) {
@@ -56,7 +56,9 @@
         url += '&user=' + searchOptions.user;
       }
       if (searchOptions.type) {
-        url += '&type=' + searchOptions.type;
+        searchOptions.type.forEach(function(type) {
+          url += '&type=' + type;
+        });
       }
       return $http.get(utilService.getApiUrl(url));
     };

@@ -1,0 +1,62 @@
+<div class="modal" data-ng-controller="WhiteboardsExportAsAssetController">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content whiteboards-exportasasset-modal">
+      <button type="button" class="close" data-ng-click="closeModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+      <div>
+        <h2>Add Whiteboard to Asset Library</h2>
+        <form name="whiteboardsExportAsAssetForm" data-ng-submit="whiteboardsExportAsAssetForm.$valid && exportAsAsset()" novalidate>
+
+          <div class="row whiteboards-exportasset-container">
+            <!-- PREVIEW IMAGE -->
+            <div class="col-xs-3 text-center">
+              <div class="col-list-item-tile">
+                <img class="img-responsive" data-ng-src="{{whiteboard.thumbnail_url}}" data-ng-if="whiteboard.thumbnail_url">
+                <div class="text-center col-list-item-thumbnail-default col-list-item-no-metadata" data-ng-if="!whiteboard.thumbnail_url">
+                  <i class="fa fa-calendar-o"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-9">
+              <!-- TITLE -->
+              <div class="form-group" data-ng-class="{'has-error': whiteboardsExportAsAssetForm.$submitted && whiteboardsExportAsAssetForm.whiteboardsExportAsAssetTitle.$invalid}">
+                <label for="whiteboards-exportasasset-title" class="control-label">Title</label>
+                <input type="text" id="whiteboards-exportasasset-title" name="whiteboardsExportAsAssetTitle" class="form-control" placeholder="Enter a title" data-ng-model="asset.title" data-ng-maxlength="255" required ng-disabled="isExporting">
+                <div class="help-block" data-ng-messages="whiteboardsExportAsAssetForm.whiteboardsExportAsAssetTitle.$error">
+                  <div data-ng-message="required">Please enter a title</div>
+                  <div data-ng-message="maxlength">A title can only be 255 characters long</div>
+                </div>
+              </div>
+
+              <!-- CATEGORY -->
+              <div class="form-group">
+                <label for="whiteboards-exportasasset-category" class="control-label">Category</label>
+                <select id="whiteboards-exportasasset-category" class="form-control" data-value="{{asset.categories}}" data-ng-model="asset.categories" ng-disabled="isExporting">
+                  <option value="" selected>Which assignment or topic is this related to</option>
+                  <option data-ng-value="category.id" data-ng-repeat="category in categories">{{category.title}}</option>
+                </select>
+              </div>
+
+              <!-- DESCRIPTION -->
+              <div class="form-group">
+                <label for="whiteboards-exportasasset-description" class="control-label">Description</label>
+                <textarea id="whiteboards-exportasasset-description" class="form-control" placeholder="Add some more context to your whiteboard. You can use plain text or #keywords" rows="3" data-ng-model="asset.description" ng-disabled="isExporting"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- BUTTONS -->
+          <div class="form-group text-right whiteboards-exportasasset-buttons">
+            <button type="button" class="btn btn-default" data-ng-click="closeModal()" ng-disabled="isExporting">Cancel</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="isExporting">
+              <i class="fa fa-spinner fa-spin" data-ng-if="isExporting"></i>
+              <span data-ng-if="!isExporting">Add to Asset Library</span>
+              <span data-ng-if="isExporting">Adding to Asset Library</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

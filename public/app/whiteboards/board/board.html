@@ -1,3 +1,9 @@
+<!-- NOTIFICATIONS -->
+<div class="alert alert-success alert-dismissible text-center" id="whiteboards-board-exported-notification" style="display: none">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  This board has been succesfully added to the <strong>Asset Library</strong>
+</div>
+
 <!-- WHITEBOARD -->
 <div id="whiteboards-board-viewport">
   <canvas id="whiteboards-board-board"></canvas>
@@ -189,14 +195,15 @@
 <script type="text/ng-template" id="exportPopoverTemplate">
   <ul class="whiteboards-popover-button-list whiteboards-popover-export">
     <li class="clearfix">
-      <button class="btn btn-default">
+      <button class="btn btn-default" data-ng-click="exportAsAsset()" data-ng-disabled="getNumberOfElements() === 0">
         <i class="fa fa-th"></i> Add to Asset Library
       </button>
     </li>
     <li class="clearfix">
-      <button class="btn btn-default">
-        <i class="fa fa-download"></i> Download as image
-      </button>
+      <a class="btn btn-default" data-ng-href="{{exportPngUrl}}" data-ng-click="exportAsPng()" data-ng-disabled="isExportingAsPng || getNumberOfElements() === 0">
+        <span data-ng-if="isExportingAsPng"><i class="fa fa-spin fa-spinner"></i> Downloading image</span>
+        <span data-ng-if="!isExportingAsPng"><i class="fa fa-download"></i> Download as image</span>
+      </a>
     </li>
   </ul>
 </script>

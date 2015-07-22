@@ -38,6 +38,7 @@
     "embdr": "latest",
     "express": "latest",
     "express-busboy": "latest",
+    "fabric": "1.4.13",
     "fast-csv": "latest",
     "forever": "latest",
     "ims-lti": "latest",

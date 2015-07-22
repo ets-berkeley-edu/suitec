@@ -13,6 +13,13 @@
  * permissions and limitations under the License.
  */
 
+#whiteboards-board-exported-notification {
+  left: 25%;
+  position: absolute;
+  width: 50%;
+  z-index: 10000000000;
+}
+
 /* WHITEBOARD */
 
 #whiteboards-board-viewport {
@@ -27,7 +34,7 @@
 
 /* TOOLBAR */
 
-#whiteboards-board-toolbar {
+.btn-toolbar {
   background-color: #FFF;
   border: 1px solid #D3D3D3;
   border-radius: 4px;
@@ -37,47 +44,47 @@
   right: 0;
 }
 
-#whiteboards-board-toolbar > .btn-group > button {
+.btn-toolbar > .btn-group > .btn {
   border: 1px solid #D3D3D3;
   color: #666;
 }
 
-#whiteboards-board-toolbar > .btn-group > button.active {
+.btn-toolbar > .btn-group > .btn.active {
   background-color: #6B6B6B;
   color: #F5FCFF;
 }
 
-#whiteboards-board-toolbar > .btn-group > button:not(:first-child) {
+.btn-toolbar > .btn-group > .btn:not(:first-child) {
   border-left: none;
 }
 
-#whiteboards-board-toolbar > .btn-group > button:not(:last-child) {
+.btn-toolbar > .btn-group > .btn:not(:last-child) {
   border-right: none;
 }
 
-#whiteboards-board-toolbar > .btn-group > button > i {
+.btn-toolbar > .btn-group > .btn > i {
   font-weight: bold;
   font-size: 18px;
 }
 
-#whiteboards-board-toolbar > .btn-group > button > i.fa-share-square-o {
+.btn-toolbar > .btn-group > .btn > i.fa-share-square-o {
   position: relative;         /* Align the export icon with the text */
   top: 1px;
 }
 
-#whiteboards-board-toolbar > .btn-group > button > span {
+.btn-toolbar > .btn-group > .btn > span {
   position: relative;
   top: -2px;
 }
 
-#whiteboards-board-toolbar .whiteboards-board-toolbar-collaborators .badge {
+.btn-toolbar .whiteboards-board-toolbar-collaborators .badge {
   background-color: #999;
   font-size: 10px;
   margin-left: -1px;
   margin-right: -5px;
 }
 
-#whiteboards-board-toolbar .whiteboards-board-toolbar-chat {
+.btn-toolbar .whiteboards-board-toolbar-chat {
   padding-left: 8px;
 }
 
@@ -202,19 +209,19 @@
   margin-bottom: 0;
 }
 
-.popover-content ul.whiteboards-popover-button-list button {
+.popover-content ul.whiteboards-popover-button-list .btn {
   text-align: left;
 }
 
-.popover-content ul.whiteboards-popover-asset button {
+.popover-content ul.whiteboards-popover-asset .btn {
   width: 130px;
 }
 
-.popover-content ul.whiteboards-popover-export button {
+.popover-content ul.whiteboards-popover-export .btn {
   width: 185px;
 }
 
-.popover-content ul.whiteboards-popover-button-list button > i {
+.popover-content ul.whiteboards-popover-button-list .btn > i {
   font-size: 16px;
   margin-right: 5px;
   position: relative;
