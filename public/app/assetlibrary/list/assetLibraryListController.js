@@ -23,13 +23,18 @@
     $scope.state = $state;
 
     // Variable that keeps track of whether the search component is in the advanced view state
-    $scope.isAdvancedSearch = false;
+    $scope.isAdvancedSearch = !!($state.params.category || $state.params.user || $state.params.type);
 
     // Variable that keeps track of whether a search is being done
-    $scope.isSearch = false;
+    $scope.isSearch = !!($state.params.keywords || $state.params.category || $state.params.user || $state.params.type);
 
     // Variable that keeps track of the search options
-    $scope.searchOptions = {};
+    $scope.searchOptions = {
+      'keywords': $state.params.keywords || '',
+      'category': parseInt($state.params.category, 10) || '',
+      'user': parseInt($state.params.user, 10) || '',
+      'type': $state.params.type || ''
+    };
 
     // Variable that keeps track of the assets in the list
     $scope.assets = [];
@@ -97,20 +102,15 @@
       $scope.list.page = 0;
       $scope.assets = [];
       $scope.searchOptions = searchOptions;
+
       // Determine whether a search is being done
       $scope.isSearch = false;
       if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
         $scope.isSearch = true;
       }
+
       // Load the list of assets with the specified search options
       getAssets();
-    });
-
-    /**
-     * Listen for events indicating that the search view is toggled to or from the advanced view
-     */
-    $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
-      $scope.isAdvancedSearch = isAdvancedView;
     });
 
     /**

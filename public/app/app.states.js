@@ -30,7 +30,7 @@
     $stateProvider
       // Asset Library routes
       .state('assetlibrarylist', {
-        'url': '/assetlibrary',
+        'url': '/assetlibrary?category&user&keywords&types',
         'templateUrl': '/app/assetlibrary/list/list.html',
         'controller': 'AssetLibraryListController'
       })

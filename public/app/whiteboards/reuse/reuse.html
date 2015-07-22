@@ -6,7 +6,7 @@
         <h3 class="modal-title">Add asset(s)</h3>
       </div>
       <div id="whiteboards-reuse-list-container" class="modal-body whiteboards-reuse-list-container">
-        <div data-ng-include="'/app/assetlibrary/search/search.html'"></div>
+        <search></search>
         <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="whiteboards-reuse-list-container">
           <ul>
             <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">

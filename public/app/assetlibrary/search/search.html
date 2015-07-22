@@ -1,4 +1,4 @@
-<div data-ng-controller="AssetLibrarySearchController">
+<div>
 
   <!-- SIMPLE SEARCH -->
   <div data-ng-show="!isAdvancedSearch">
@@ -37,15 +37,13 @@
       <div class="form-group">
         <label for="assetlibrary-search-category" class="col-sm-1 control-label">Filter by</label>
         <div class="col-sm-4">
-          <select id="assetlibrary-search-category" class="form-control" data-ng-model="searchOptions.category" data-value="{{searchOptions.category}}">
+          <select id="assetlibrary-search-category" class="form-control" data-ng-model="searchOptions.category" data-value="{{searchOptions.category}}" data-ng-options="category.id as category.title for category in categories">
             <option value="" selected>Category</option>
-            <option data-ng-value="category.id" data-ng-repeat="category in categories">{{category.title}}</option>
           </select>
         </div>
         <div class="col-sm-4">
-          <select id="assetlibrary-search-user" class="form-control" data-ng-model="searchOptions.user" data-value="{{searchOptions.user}}">
+        <select id="assetlibrary-search-user" class="form-control" data-ng-model="searchOptions.user" data-value="{{searchOptions.user}}" data-ng-options="user.id as user.canvas_full_name for user in users">
             <option value="" selected>Uploader</option>
-            <option data-ng-value="user.id" data-ng-repeat="user in users">{{user.canvas_full_name}}</option>
           </select>
         </div>
         <div class="col-sm-3">

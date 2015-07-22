@@ -1,7 +1,7 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist'">
   <div class="row assetlibrary-list-top">
     <!-- SEARCH -->
-    <div class="assetlibrary-list-search-container col-xs-{{ isAdvancedSearch ? 12 : 8 }}" data-ng-include="'/app/assetlibrary/search/search.html'"></div>
+    <search class="assetlibrary-list-search-container col-xs-{{ isAdvancedSearch ? 12 : 8 }}"></search>
 
     <!-- MANAGE CATEGORIES -->
     <div class="col-xs-4 text-right" data-ng-show="!isAdvancedSearch">
@@ -39,7 +39,7 @@
       <!-- LIST ITEM -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
         <div class="col-list-item-container">
-          <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+          <a ui-sref="assetlibrarylist.item({assetId: asset.id})" ui-sref-opts="{'inherit': false}">
             <div class="col-list-item-tile">
               <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
               <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
