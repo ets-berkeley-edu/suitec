@@ -214,6 +214,7 @@ gulp.task('csslint', function() {
     .pipe(csslint({
       'adjoining-classes': false,
       'box-model': false,
+      'ids': false,
       'overqualified-elements': false,
       'qualified-headings': false
     }))

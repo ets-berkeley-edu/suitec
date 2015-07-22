@@ -167,17 +167,17 @@
 <!-- ADD ASSET POPOVER -->
 <script type="text/ng-template" id="addAssetPopoverTemplate">
   <ul class="whiteboards-popover-button-list whiteboards-popover-asset">
-    <li>
+    <li class="clearfix">
       <button class="btn btn-default" data-ng-click="reuseAsset()">
         <i class="fa fa-th"></i> Use existing
       </button>
     </li>
-    <li>
+    <li class="clearfix">
       <button class="btn btn-default" data-ng-click="uploadFiles()">
         <i class="fa fa-laptop"></i> Upload New
       </button>
     </li>
-    <li>
+    <li class="clearfix">
       <button class="btn btn-default" data-ng-click="addLink()">
         <i class="fa fa-link"></i> Add Site
       </button>
@@ -188,12 +188,12 @@
 <!-- EXPORT POPOVER -->
 <script type="text/ng-template" id="exportPopoverTemplate">
   <ul class="whiteboards-popover-button-list whiteboards-popover-export">
-    <li>
+    <li class="clearfix">
       <button class="btn btn-default">
         <i class="fa fa-th"></i> Add to Asset Library
       </button>
     </li>
-    <li>
+    <li class="clearfix">
       <button class="btn btn-default">
         <i class="fa fa-download"></i> Download as image
       </button>
@@ -229,7 +229,7 @@
       </div>
     </div>
     <div id="whiteboards-board-chat-new">
-      <form ui-keypress="{13:'createChatMessage($event)'}">
+      <form data-ng-keypress="createChatMessage($event)">
         <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
       </form>
     </div>

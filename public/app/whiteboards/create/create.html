@@ -19,11 +19,11 @@
   <div class="form-group">
     <label for="whiteboards-create-members" class="col-sm-2 control-label">Members</label>
     <div class="col-sm-10">
-      <oi-multiselect
-        ng-options="user.id as user.canvas_full_name for user in users | orderBy: 'canvas_full_name.toLowerCase()' track by user.id "
-        oi-multiselect-options="{'searchFilter': 'usersSearch', 'dropdownFilter': 'usersDropdown'}"
+      <oi-select
+        oi-options="user.id as user.canvas_full_name for user in users track by user.id | orderBy: 'canvas_full_name.toLowerCase()'"
+        oi-select-options="{'searchFilter': 'usersSearch', 'dropdownFilter': 'usersDropdown'}"
         ng-model="whiteboard.members" multiple placeholder="Enter the names of the people you want to add to this whiteboard" tabindex="-1">
-      </oi-multiselect>
+      </oi-select>
     </div>
   </div>
 
