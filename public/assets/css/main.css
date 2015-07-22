@@ -144,6 +144,38 @@ table.table-striped tr.active {
   opacity: 0.5;
 }
 
+/* OI SELECT OVERRIDES */
+
+oi-select .select-dropdown-optgroup-option {
+  padding-left: 10px;
+}
+
+oi-select .select-dropdown-optgroup-option.active:not(.disabled)  {
+  background-color: #0299E5;
+  color: #FFFFFF;
+}
+
+oi-select .select-search-list .btn.select-search-list-item {
+  background-color: #D9EDF7;
+  border-color: #BCE9F1;
+  color: #3A87AD;
+  padding: 3px 9px;
+}
+
+/* Style the close icon in the selected users bubbles */
+oi-select .select-search-list .btn.select-search-list-item .close {
+  color: #3A87AD;
+  font-size: 15px;
+  line-height: 22px;
+  margin-left: 7px;
+  opacity: 1;
+}
+
+/* Add some spacing between the graduation cap and the label in the selected bubble */
+oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
+  margin-right: 5px;
+}
+
 /* TILE LIST */
 
 .col-list-container {
@@ -219,7 +251,7 @@ table.table-striped tr.active {
   right: 0;
 }
 
-.col-list-item-metadata h3 {
+.col-list-item-metadata span {
   font-size: 14px;
   font-weight: 400;
   margin-bottom: 5px;
