@@ -946,9 +946,9 @@
         if (selectedAssets) {
           for (var i = 0; i < selectedAssets.length; i++) {
             var asset = selectedAssets[i];
-            // TODO: Deal with assets that don't have thumbnail URL
-            if (asset.thumbnail_url) {
-              addAsset(asset.thumbnail_url);
+            // TODO: Deal with assets that don't have a large image URL
+            if (asset.image_url) {
+              addAsset(asset.image_url);
             }
           }
         }
@@ -975,6 +975,23 @@
       // Add the asset to the center of the whiteboard canvas
       fabric.Image.fromURL(url, function(element) {
         var canvasCenter = getCanvasCenter();
+
+        // Scale the element if it is too large to fit onto the viewport
+        var toolbarHeight = document.getElementById('whiteboards-board-toolbar').clientHeight;
+        var sidebarWidth = document.getElementById('whiteboards-board-sidebar').clientWidth;
+
+        var maxWidth = viewport.clientWidth - (viewport.clientWidth / 5);
+        if ($scope.sidebarExpanded) {
+          maxWidth -= sidebarWidth;
+        }
+        if (element.width > maxWidth) {
+          element.scale(maxWidth / element.width);
+        }
+        var maxHeight = viewport.clientHeight - (viewport.clientHeight / 5) - toolbarHeight;
+        if (element.height > maxHeight) {
+          element.scale(maxHeight / element.height);
+        }
+
         element.left = canvasCenter.x;
         element.top = canvasCenter.y;
         canvas.add(element);

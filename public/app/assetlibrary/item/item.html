@@ -3,12 +3,12 @@
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
-    <div class="col-xs-{{ canManageAsset() ? 10 : 12 }}">
+    <div class="col-xs-{{ canManageAsset() ? 8 : 12 }} col-sm-{{ canManageAsset() ? 10 : 12 }}">
       <h2>{{asset.title}}</h2>
     </div>
 
     <!-- EDIT DETAILS -->
-    <div class="col-xs-2 text-right" data-ng-show="canManageAsset()">
+    <div class="col-xs-4 col-sm-2 text-right" data-ng-show="canManageAsset()">
       <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default">
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
@@ -18,16 +18,7 @@
 
   <div class="col-pane">
     <!-- PREVIEW -->
-    <div class="text-center assetlibrary-item-preview">
-      <!-- IMAGE PREVIEW -->
-      <div class="assetlibrary-item-preview-image" data-ng-if="asset.thumbnail_url">
-        <img data-ng-src="{{asset.thumbnail_url}}" alt="{{asset.title}}">
-      </div>
-      <!-- IFRAME PREVIEW -->
-      <div class="assetlibrary-item-preview-iframe" data-ng-if="asset.url && !asset.thumbnail_url">
-        <iframe data-ng-src="{{trustIFrameSrc(asset.url)}}"></iframe>
-      </div>
-    </div>
+    <div class="text-center assetlibrary-item-preview" data-ng-bind-html="asset.embed_code | sanitize"></div>
 
     <!-- METADATA -->
     <div class="assetlibrary-item-metadata">
