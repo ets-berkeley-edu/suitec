@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $stateParams, $sce, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $stateParams, $scope) {
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
@@ -92,15 +92,6 @@
           comment.has_replies = false;
         }
       }
-    };
-
-    /**
-     * Allow every URL as an iFrame source URL
-     *
-     * @param  {String}       url             The URL to trust as an iframe source
-     */
-    var trustIFrameSrc = $scope.trustIFrameSrc = function(url) {
-      return $sce.trustAsResourceUrl(url);
     };
 
     /**

@@ -20,33 +20,15 @@
 /* PREVIEW */
 
 .assetlibrary-item-preview {
+  overflow-y: hidden;
   padding: 5px;
-}
-
-.assetlibrary-item-preview-image img {
-  max-width: 100%;
 }
 
 @media only screen and (min-width : 768px) {
   .assetlibrary-item-preview {
+    line-height: 400px;
     min-height: 400px;
   }
-
-  .assetlibrary-item-preview-image {
-    line-height: 400px;
-  }
-}
-
-.assetlibrary-item-preview-iframe {
-  overflow-y: hidden;
-}
-
-.assetlibrary-item-preview-iframe,
-.assetlibrary-item-preview-iframe iframe {
-  background-color: #FFF;
-  border: none;
-  height: 600px;
-  width: 100%;
 }
 
 /* METADATA */
