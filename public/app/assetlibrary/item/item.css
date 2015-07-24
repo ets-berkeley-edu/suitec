@@ -24,10 +24,26 @@
   padding: 5px;
 }
 
+.assetlibrary-item-preview .embdr-document {
+    width: 100%;
+    height: 400px;
+}
+
 @media only screen and (min-width : 768px) {
   .assetlibrary-item-preview {
+      min-height: 400px;
+  }
+
+  .assetlibrary-item-preview .embdr-image {
     line-height: 400px;
-    min-height: 400px;
+  }
+
+  .assetlibrary-item-preview .embdr-iframe {
+      height: 600px;
+  }
+
+  .assetlibrary-item-preview .embdr-document {
+      height: 600px;
   }
 }
 
