@@ -24,8 +24,9 @@
 }
 
 .assetlibrary-item-preview .embdr-document {
-    width: 100%;
+    border-bottom: 1px solid #D3D3D3;
     height: 400px;
+    width: 100%;
 }
 
 @media only screen and (min-width : 768px) {
