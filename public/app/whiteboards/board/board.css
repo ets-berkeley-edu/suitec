@@ -13,11 +13,11 @@
  * permissions and limitations under the License.
  */
 
-#whiteboards-board-exported-notification {
-  left: 25%;
+#whiteboards-board-notifications {
+  left: 10px;
   position: absolute;
-  width: 50%;
-  z-index: 10000000000;
+  right: 270px;
+  top: 20px;
 }
 
 /* WHITEBOARD */

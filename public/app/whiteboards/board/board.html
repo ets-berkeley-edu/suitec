@@ -1,9 +1,3 @@
-<!-- NOTIFICATIONS -->
-<div class="alert alert-success alert-dismissible text-center" id="whiteboards-board-exported-notification" style="display: none">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  This board has been succesfully added to the <strong>Asset Library</strong>
-</div>
-
 <!-- WHITEBOARD -->
 <div id="whiteboards-board-viewport">
   <canvas id="whiteboards-board-board"></canvas>
@@ -12,7 +6,7 @@
 <!-- TOOLBAR -->
 <div id="whiteboards-board-toolbar" class="btn-toolbar" role="toolbar" aria-label="Whiteboard Toolbar">
   <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default active" title="Move and transform" data-ng-click="setMode('move')" data-ng-class="{'active': mode === 'move'}">
+    <button id="whiteboards-board-toolbar-move" type="button" class="btn btn-default active" title="Move and transform" data-ng-click="setMode('move')" data-ng-class="{'active': mode === 'move'}">
       <i class="fa fa-arrows">
         <span class="sr-only">Move and transform</span>
       </i>
@@ -208,48 +202,54 @@
   </ul>
 </script>
 
-<div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
-  <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
-    <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="200" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
-      <div id="whiteboards-board-chat-messages-table">
-        <div id="whiteboards-board-chat-messages">
-          <div class="media" data-ng-repeat="chatMessage in chatMessages">
-            <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at)">
-              <span class="whiteboards-board-chat-date-header">{{chatMessage.created_at | formatDate}}</span>
-            </div>
+<div>
+  <!-- NOTIFICATIONS -->
+  <div id="whiteboards-board-notifications"></div>
 
-            <div class="media-left media-top">
-              <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
-            </div>
-            <div class="media-body media-top">
-              <div class="whiteboards-board-chat-actor">
-                <a>
-                  <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
-                  <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
-                </a>
-                <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+  <!-- SIDEBAR -->
+  <div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
+    <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
+      <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="200" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
+        <div id="whiteboards-board-chat-messages-table">
+          <div id="whiteboards-board-chat-messages">
+            <div class="media" data-ng-repeat="chatMessage in chatMessages">
+              <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at)">
+                <span class="whiteboards-board-chat-date-header">{{chatMessage.created_at | formatDate}}</span>
               </div>
-              <p data-ng-bind-html="chatMessage.body | linky:'_blank'"></p>
+
+              <div class="media-left media-top">
+                <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
+              </div>
+              <div class="media-body media-top">
+                <div class="whiteboards-board-chat-actor">
+                  <a>
+                    <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
+                    <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
+                  </a>
+                  <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+                </div>
+                <p data-ng-bind-html="chatMessage.body | linky:'_blank'"></p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div id="whiteboards-board-chat-new">
-      <form data-ng-keypress="createChatMessage($event)">
-        <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
-      </form>
-    </div>
-  </div>
-  <div id="whiteboards-board-members" data-ng-if="sidebarMode === 'online'">
-    <h3 class="whiteboard-board-members-title">Board collaborators ({{whiteboard.members.length}})</h3>
-    <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">
-      <div class="media-left media-middle">
-        <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}"></div>
+      <div id="whiteboards-board-chat-new">
+        <form data-ng-keypress="createChatMessage($event)">
+          <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
+        </form>
       </div>
-      <div class="media-body media-middle">
-        <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}
-        <span data-ng-if="me.id === member.id">(me)</span>
+    </div>
+    <div id="whiteboards-board-members" data-ng-if="sidebarMode === 'online'">
+      <h3 class="whiteboard-board-members-title">Board collaborators ({{whiteboard.members.length}})</h3>
+      <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">
+        <div class="media-left media-middle">
+          <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}"></div>
+        </div>
+        <div class="media-body media-middle">
+          <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}
+          <span data-ng-if="me.id === member.id">(me)</span>
+        </div>
       </div>
     </div>
   </div>

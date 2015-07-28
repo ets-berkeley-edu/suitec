@@ -22,7 +22,7 @@
               <!-- TITLE -->
               <div class="form-group" data-ng-class="{'has-error': whiteboardsExportAsAssetForm.$submitted && whiteboardsExportAsAssetForm.whiteboardsExportAsAssetTitle.$invalid}">
                 <label for="whiteboards-exportasasset-title" class="control-label">Title</label>
-                <input type="text" id="whiteboards-exportasasset-title" name="whiteboardsExportAsAssetTitle" class="form-control" placeholder="Enter a title" data-ng-model="asset.title" data-ng-maxlength="255" required ng-disabled="isExporting">
+                <input type="text" id="whiteboards-exportasasset-title" autofocus name="whiteboardsExportAsAssetTitle" class="form-control" placeholder="Enter a title" data-ng-model="asset.title" data-ng-maxlength="255" required ng-disabled="isExporting">
                 <div class="help-block" data-ng-messages="whiteboardsExportAsAssetForm.whiteboardsExportAsAssetTitle.$error">
                   <div data-ng-message="required">Please enter a title</div>
                   <div data-ng-message="maxlength">A title can only be 255 characters long</div>

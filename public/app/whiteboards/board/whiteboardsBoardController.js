@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $cookies, $filter, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $alert, $cookies, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -1272,7 +1272,15 @@
       scope.closeModal = function(asset) {
         if (asset) {
           // Show a notification indicating the whiteboard was exported
-          document.getElementById('whiteboards-board-exported-notification').style.display = 'block';
+          var myAlert = $alert({
+            'container': '#whiteboards-board-notifications',
+            'content': 'This board has been successfully added to the <strong>Asset Library</strong>.',
+            // 'duration': 5,
+            'keyboard': true,
+            'show': true,
+            'templateUrl': 'alert.html',
+            'type': 'success'
+          });
         }
         this.$hide();
       };
@@ -1280,7 +1288,7 @@
       // Open the export as asset modal dialog
       $modal({
         'scope': scope,
-        'template': '/app/whiteboards/exportasassetmodal/exportasasset.html'
+        'templateUrl': '/app/whiteboards/exportasassetmodal/exportasasset.html'
       });
     };
 
