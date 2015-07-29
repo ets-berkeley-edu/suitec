@@ -225,6 +225,20 @@
       }
     };
 
+    /**
+     * Enable or disable all elements on the whiteboard canvas. When an element is disabled, it will not be possible
+     * to select, move or modify it
+     *
+     * @param  {Boolean}        enabled           Whether the elements on the whiteboard canvas should be enabled or disabled
+     */
+    var enableCanvasElements = function(enabled) {
+      canvas.selection = enabled;
+      var elements = canvas.getObjects();
+      for (var i = 0; i < elements.length; i++) {
+        elements[i].selectable = enabled;
+      }
+    };
+
     initializeCanvas();
 
     /* CONCURRENT EDITING */
@@ -368,7 +382,7 @@
       element.set('isUndoRedo', null);
 
       // Switch back to move mode
-      $scope.mode = 'move';
+      setMode('move');
     });
 
     /**
@@ -402,67 +416,8 @@
 
     /* INFINITE CANVAS SCROLLING */
 
-    // Variable that will keep track of whether the whiteboard canvas is currently being infinitely dragged
-    // var isDraggingCanvas = false;
-
     // Variable that will keep track of the current whiteboard canvas top left position
      var currentCanvasPan = new fabric.Point(0, 0);
-
-    // Variable that will keep track of the previous mouse position when the whiteboard canvas is being dragged
-    // var previousMousePosition = new fabric.Point(0, 0);
-
-    /**
-     * The mouse is pressed down on the whiteboard canvas
-     */
-    // canvas.on('mouse:down', function(ev) {
-      // Only start the whiteboard canvas infinite scrolling when no whiteboard
-      // element has been clicked and the canvas is not in draw or shape mode
-    //  if (!canvas.getActiveObject() && !canvas.isDrawingMode && $scope.mode !== 'shape') {
-        // Indicate that infinite scrolling has started
-     //   isDraggingCanvas = true;
-        // Indicate that no element selections can currently be made
-     //   canvas.selection = false;
-
-        // Keep track of the point where the infinite scrolling started
-      //  previousMousePosition.setXY(ev.e.clientX, ev.e.clientY);
-        // Change the cursors to a grabbing icon
-      //  canvas.setCursor('grabbing');
-     // }
-    //});
-
-    /**
-     * The mouse is moved on the whiteboard canvas
-     */
-    //canvas.on('mouse:move', function(ev) {
-      // Only move the whiteboard canvas when the whiteboard canvas is in infinite scrolling mode
-    //  if (isDraggingCanvas) {
-        // Get the current position of the mouse
-    //    var currentMousePosition = new fabric.Point(ev.e.clientX, ev.e.clientY);
-
-        // Calculate the new top left of the whiteboard canvas based on the difference
-        // between the current mouse position and the previous mouse position
-    //    currentCanvasPan.x = currentCanvasPan.x - (currentMousePosition.x - previousMousePosition.x);
-     //   currentCanvasPan.y = currentCanvasPan.y - (currentMousePosition.y - previousMousePosition.y);
-     //   canvas.absolutePan(currentCanvasPan);
-
-        // Keep track of the point where the mouse is currently at
-     //   previousMousePosition = currentMousePosition;
-     // }
-    //});
-
-    /**
-     * The mouse is released on the whiteboard canvas
-     */
-    //canvas.on('mouse:up', function() {
-    //  if (isDraggingCanvas) {
-    //    // Indicate that infinite scrolling has stopped
-    //    isDraggingCanvas = false;
-    //    // Indicate that element selections can be made again
-    //    canvas.selection = true;
-   //     // Change the cursors back to the default cursor
-   //     canvas.setCursor('default');
-   //   }
-   // });
 
     /* ZOOMING */
 
@@ -492,31 +447,23 @@
     /**
      * Set the mode of the whiteboard toolbar
      *
-     * @param  {Boolean}        newMode           The mode the toolbar should be put in. Accepted values are `move`, `erase`, `draw`, `shape`, `text`, `asset` and `whiteboard`
+     * @param  {Boolean}        newMode           The mode the toolbar should be put in. Accepted values are `move`, `draw`, `shape`, `text` and `asset`
      */
     var setMode = $scope.setMode = function(newMode) {
       // Deactivate the currently selected item
-      var activeElement = canvas.getActiveObject();
-      if (activeElement && activeElement.type === 'i-text') {
-        activeElement.exitEditing();
-      }
       canvas.deactivateAll().renderAll();
 
       // Revert the cursor
-      canvas.hoverCursor = 'default';
+      // canvas.hoverCursor = 'default';
       // Disable drawing mode
       setDrawMode(false);
 
       // Prevent the canvas items from being modified unless
       // the whiteboard is in 'move' mode
-      enableWhiteboardElements(false);
+      enableCanvasElements(false);
 
       if (newMode === 'move') {
-        enableWhiteboardElements(true);
-      // Erase mode has been selected
-      // } else if (newMode === 'erase') {
-        // Change the cursor to delete mode when hovering over an object
-      //  canvas.hoverCursor = 'not-allowed';
+        enableCanvasElements(true);
       // Draw mode has been selected
       } else if (newMode === 'draw') {
         setDrawMode(true);
@@ -861,27 +808,23 @@
     /* ERASE */
 
     /**
-     * Enable or disable all elements on the whiteboard canvas. When an element is disabled, it will not be possible
-     * to select, move or modify it
-     *
-     * @param  {Boolean}        enabled             Whether the elements on the whiteboard canvas should be enabled or disabled
+     * Delete the selected whiteboard element(s)
      */
-    var enableWhiteboardElements = function(enabled) {
-      var elements = canvas.getObjects();
-      for (var i = 0; i < elements.length; i++) {
-        elements[i].selectable = enabled;
+    viewport.addEventListener('keydown', function($event) {
+      // Only remove the selected elements when the delete or backspace key is pressed
+      if ($event.which === 8 || $event.which === 46) {
+        if (canvas.getActiveObject()) {
+          canvas.remove(canvas.getActiveObject());
+        // Remove all selected elements when multiple elements are selected
+        } else if (canvas.getActiveGroup()) {
+          var elements = canvas.getActiveGroup().getObjects();
+          for (var i = 0; i < elements.length; i++) {
+            canvas.remove(elements[i]);
+          }
+          canvas.discardActiveGroup().renderAll();
+        }
       }
-    };
-
-    /**
-     * Delete the selected whiteboard item when the whiteboard
-     * is in erase mode
-     */
-    canvas.on('object:selected', function() {
-      if ($scope.mode === 'erase') {
-        canvas.remove(canvas.getActiveObject());
-      }
-    });
+    }, false);
 
     /* TEXT */
 
@@ -922,6 +865,8 @@
 
         // Put the editable text field in edit mode straight away
         setTimeout(function() {
+          // Switch the toolbar back to move mode
+          // setMode('move');
           canvas.setActiveObject(text);
           text.enterEditing();
           // The textarea needs to be put in edit mode manually
