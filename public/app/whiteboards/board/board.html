@@ -216,10 +216,8 @@
             </div>
             <div class="media-body media-top">
               <div class="whiteboards-board-chat-actor">
-                <a>
-                  <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
-                  <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
-                </a>
+                <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
+                <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
                 <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
               </div>
               <p data-ng-bind-html="chatMessage.body | linky:'_blank'"></p>
