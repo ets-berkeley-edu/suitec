@@ -18,6 +18,10 @@
   overflow-y: auto;
 }
 
+.whiteboards-reuse-list-noresults {
+    margin-top: 15px;
+}
+
 @media only screen and (min-height : 768px) {
   .whiteboards-reuse-list-container {
     max-height: 500px;

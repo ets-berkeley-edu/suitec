@@ -93,7 +93,9 @@
       <div class="media-body media-middle">
         <form name="assetlibraryNewCommentForm" class="assetlibrary-item-newcomment-form" data-ng-submit="assetlibraryNewCommentForm.$valid && createComment()" novalidate>
           <div class="assetlibrary-item-addcomment-commenter">
-            <a><i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}</a> (me)
+            <a ui-sref="assetlibrarylist({'user': me.id})" ui-sref-opts="{'inherit': false}">
+              <i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}
+            </a> (me)
           </div>
           <div class="form-group assetlibrary-item-newcomment-comment">
             <label for="assetlibrary-item-newcomment-body" class="sr-only">Comment</label>
@@ -118,7 +120,7 @@
       </div>
       <div class="media-body media-top">
         <div class="assetlibrary-item-addcomment-commenter">
-          <a>
+          <a ui-sref="assetlibrarylist({'user': comment.user.id})" ui-sref-opts="{'inherit': false}">
             <i class="fa fa-graduation-cap" data-ng-if="comment.user.is_admin"></i> {{comment.user.canvas_full_name}}
             <span data-ng-if="me.id === comment.user.id">(me)</span>
           </a>
@@ -156,7 +158,9 @@
           <div class="media-body media-middle">
             <form name="assetlibraryReplyForm" class="assetlibrary-item-reply-form" data-ng-submit="assetlibraryReplyForm.$valid && replyComment(comment, reply)" novalidate>
               <div class="assetlibrary-item-addcomment-commenter">
-                <a><i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}</a> (me)
+                <a ui-sref="assetlibrarylist({'user': me.id})" ui-sref-opts="{'inherit': false}">
+                  <i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}
+                </a> (me)
               </div>
               <div class="form-group assetlibrary-item-addcomment-comment">
                 <label for="assetlibrary-item-addcomment-body" class="sr-only">Reply</label>

@@ -19,13 +19,7 @@
 
   angular.module('collabosphere').directive('search', function() {
 
-    // This controller will be used by the search directive.
-    // Unfortunately, the controller doesn't seem to inherit from the parent scope when it's
-    // passed in by reference, so we declare it in the directive statement
-    // It will inherit the following parameters from the parent scope:
-    //  - isAdvancedSearch   -   Whether the advanced search view should be toggled
-    //  - searchOptions      -   The `keywords`, `category`, `user` and `type` search options
-    //
+    // This controller will be used by the search directive
     var controller = function($scope, assetLibraryCategoriesFactory, userFactory) {
 
       // Variable that keeps track of the categories in the current course
@@ -39,28 +33,16 @@
        */
       var search = $scope.search = function() {
         if ($scope.isAdvancedSearch) {
-          $scope.$emit('assetLibrarySearchSearch', $scope.searchOptions);
+          var searchOptions = {
+            'keywords': $scope.keywords,
+            'category': $scope.category,
+            'user': $scope.user,
+            'type': $scope.type
+          };
+          $scope.$emit('assetLibrarySearchSearch', searchOptions);
         } else {
-          $scope.$emit('assetLibrarySearchSearch', {'keywords': $scope.searchOptions.keywords});
+          $scope.$emit('assetLibrarySearchSearch', {'keywords': $scope.keywords});
         }
-      };
-
-      /**
-       * Get the categories for the current course
-       */
-      var getCategories = function() {
-        assetLibraryCategoriesFactory.getCategories().success(function(categories) {
-          $scope.categories = categories;
-        });
-      };
-
-      /**
-       * Get all users in the current course
-       */
-      var getAllUsers = function() {
-        userFactory.getAllUsers().success(function(response) {
-          $scope.users = response;
-        });
       };
 
       /**
@@ -68,12 +50,6 @@
        */
       var showSimpleView = $scope.showSimpleView = function() {
         $scope.isAdvancedSearch = false;
-        $scope.searchOptions = {
-          'keywords': '',
-          'category': '',
-          'user': '',
-          'type': ''
-        };
 
         // Trigger a search so other components can re-initialize the list
         search();
@@ -87,20 +63,37 @@
 
         // If we haven't loaded the asset categories or users yet, we'll fetch them now
         if (!$scope.categories) {
-          getCategories();
-          getAllUsers();
+          getAdvancedViewData();
         }
       };
 
+      /**
+       * Get all users and categories in the current course
+       */
+      var getAdvancedViewData = function() {
+        userFactory.getAllUsers().success(function(response) {
+          $scope.users = response;
+        });
+        assetLibraryCategoriesFactory.getCategories().success(function(categories) {
+          $scope.categories = categories;
+        });
+      };
+
       if ($scope.isAdvancedSearch && !$scope.categories) {
-        getCategories();
-        getAllUsers();
+        getAdvancedViewData();
       }
 
     };
 
     return {
       'controller': controller,
+      'scope': {
+        'isAdvancedSearch': '=isAdvancedSearch',
+        'keywords': '=searchOptionsKeywords',
+        'category': '=searchOptionsCategory',
+        'user': '=searchOptionsUser',
+        'type': '=searchOptionsType'
+      },
       'restrict': 'E',
       'templateUrl': '/app/assetlibrary/search/search.html'
     };

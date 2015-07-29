@@ -26,6 +26,12 @@
       'ready': false
     };
 
+    // Variable that keeps track of whether a search is being done. Note that we can't make this
+    // into a function that checks `$scope.searchOptions` as the options are passed into the search
+    // directive which will update the options as soon as an input field changes. If we were to do
+    // that, we might start showing certain interactions too soon (e.g., the "No assets could be found" alert)
+    $scope.isSearch = false;
+
     /**
      * Add the selected assets to the current whiteboard
      */
@@ -65,8 +71,14 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
+      $scope.isSearch = false;
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
+        // Indicate whether a search was performed
+        $scope.isSearch = !!($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type);
+
+        // Add the new assets
         $scope.assets = $scope.assets.concat(assets.results);
+
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
         // retrieved asset library page
