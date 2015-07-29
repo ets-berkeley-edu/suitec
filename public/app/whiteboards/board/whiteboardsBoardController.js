@@ -403,66 +403,66 @@
     /* INFINITE CANVAS SCROLLING */
 
     // Variable that will keep track of whether the whiteboard canvas is currently being infinitely dragged
-    var isDraggingCanvas = false;
+    // var isDraggingCanvas = false;
 
     // Variable that will keep track of the current whiteboard canvas top left position
-    var currentCanvasPan = new fabric.Point(0, 0);
+     var currentCanvasPan = new fabric.Point(0, 0);
 
     // Variable that will keep track of the previous mouse position when the whiteboard canvas is being dragged
-    var previousMousePosition = new fabric.Point(0, 0);
+    // var previousMousePosition = new fabric.Point(0, 0);
 
     /**
      * The mouse is pressed down on the whiteboard canvas
      */
-    canvas.on('mouse:down', function(ev) {
+    // canvas.on('mouse:down', function(ev) {
       // Only start the whiteboard canvas infinite scrolling when no whiteboard
       // element has been clicked and the canvas is not in draw or shape mode
-      if (!canvas.getActiveObject() && !canvas.isDrawingMode && $scope.mode !== 'shape') {
+    //  if (!canvas.getActiveObject() && !canvas.isDrawingMode && $scope.mode !== 'shape') {
         // Indicate that infinite scrolling has started
-        isDraggingCanvas = true;
+     //   isDraggingCanvas = true;
         // Indicate that no element selections can currently be made
-        canvas.selection = false;
+     //   canvas.selection = false;
 
         // Keep track of the point where the infinite scrolling started
-        previousMousePosition.setXY(ev.e.clientX, ev.e.clientY);
+      //  previousMousePosition.setXY(ev.e.clientX, ev.e.clientY);
         // Change the cursors to a grabbing icon
-        canvas.setCursor('grabbing');
-      }
-    });
+      //  canvas.setCursor('grabbing');
+     // }
+    //});
 
     /**
      * The mouse is moved on the whiteboard canvas
      */
-    canvas.on('mouse:move', function(ev) {
+    //canvas.on('mouse:move', function(ev) {
       // Only move the whiteboard canvas when the whiteboard canvas is in infinite scrolling mode
-      if (isDraggingCanvas) {
+    //  if (isDraggingCanvas) {
         // Get the current position of the mouse
-        var currentMousePosition = new fabric.Point(ev.e.clientX, ev.e.clientY);
+    //    var currentMousePosition = new fabric.Point(ev.e.clientX, ev.e.clientY);
 
         // Calculate the new top left of the whiteboard canvas based on the difference
         // between the current mouse position and the previous mouse position
-        currentCanvasPan.x = currentCanvasPan.x - (currentMousePosition.x - previousMousePosition.x);
-        currentCanvasPan.y = currentCanvasPan.y - (currentMousePosition.y - previousMousePosition.y);
-        canvas.absolutePan(currentCanvasPan);
+    //    currentCanvasPan.x = currentCanvasPan.x - (currentMousePosition.x - previousMousePosition.x);
+     //   currentCanvasPan.y = currentCanvasPan.y - (currentMousePosition.y - previousMousePosition.y);
+     //   canvas.absolutePan(currentCanvasPan);
 
         // Keep track of the point where the mouse is currently at
-        previousMousePosition = currentMousePosition;
-      }
-    });
+     //   previousMousePosition = currentMousePosition;
+     // }
+    //});
 
     /**
      * The mouse is released on the whiteboard canvas
      */
-    canvas.on('mouse:up', function() {
-      if (isDraggingCanvas) {
-        // Indicate that infinite scrolling has stopped
-        isDraggingCanvas = false;
-        // Indicate that element selections can be made again
-        canvas.selection = true;
-        // Change the cursors back to the default cursor
-        canvas.setCursor('default');
-      }
-    });
+    //canvas.on('mouse:up', function() {
+    //  if (isDraggingCanvas) {
+    //    // Indicate that infinite scrolling has stopped
+    //    isDraggingCanvas = false;
+    //    // Indicate that element selections can be made again
+    //    canvas.selection = true;
+   //     // Change the cursors back to the default cursor
+   //     canvas.setCursor('default');
+   //   }
+   // });
 
     /* ZOOMING */
 
@@ -501,19 +501,22 @@
         activeElement.exitEditing();
       }
       canvas.deactivateAll().renderAll();
-      lockObjects(false);
 
       // Revert the cursor
       canvas.hoverCursor = 'default';
       // Disable drawing mode
       setDrawMode(false);
 
+      // Prevent the canvas items from being modified unless
+      // the whiteboard is in 'move' mode
+      enableWhiteboardElements(false);
+
+      if (newMode === 'move') {
+        enableWhiteboardElements(true);
       // Erase mode has been selected
-      if (newMode === 'erase') {
-        // Prevent objects from being moved when deleting
-        lockObjects(true);
+      // } else if (newMode === 'erase') {
         // Change the cursor to delete mode when hovering over an object
-        canvas.hoverCursor = 'not-allowed';
+      //  canvas.hoverCursor = 'not-allowed';
       // Draw mode has been selected
       } else if (newMode === 'draw') {
         setDrawMode(true);
@@ -759,8 +762,6 @@
       if ($scope.mode === 'shape') {
         // Indicate that drawing a shape has started
         isDrawingShape = true;
-        // Indicate that no element selections can currently be made
-        canvas.selection = false;
 
         // Keep track of the point where drawing the shape started
         startShapePointer = canvas.getPointer(ev.e);
@@ -839,8 +840,6 @@
       if (isDrawingShape) {
         // Indicate that shape drawing has stopped
         isDrawingShape = false;
-        // Indicate that element selections can be made again
-        canvas.selection = true;
         // Switch the toolbar back to move mode
         setMode('move');
         // Clone the drawn shape and add the clone to the canvas.
@@ -862,16 +861,15 @@
     /* ERASE */
 
     /**
-     * Lock or unlock all elements on the whiteboard canvas
+     * Enable or disable all elements on the whiteboard canvas. When an element is disabled, it will not be possible
+     * to select, move or modify it
      *
-     * @param  {Boolean}        lock              Whether the elements on the whiteboard canvas should be locked or unlocked
+     * @param  {Boolean}        enabled             Whether the elements on the whiteboard canvas should be enabled or disabled
      */
-    var lockObjects = function(lock) {
+    var enableWhiteboardElements = function(enabled) {
       var elements = canvas.getObjects();
       for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        element.lockMovementX = lock;
-        element.lockMovementY = lock;
+        elements[i].selectable = enabled;
       }
     };
 
