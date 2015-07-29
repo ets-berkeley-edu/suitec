@@ -23,10 +23,15 @@
      * Get an asset
      *
      * @param  {Number}               id                              The id of the asset
+     * @param  {Boolean}              [incrementViews]                Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
      * @return {Promise<Asset>}                                       $http promise returning the requested asset
      */
-    var getAsset = function(id) {
-      return $http.get(utilService.getApiUrl('/assets/' + id));
+    var getAsset = function(id, incrementViews) {
+      var url = '/assets/' + id;
+      if (incrementViews === false) {
+        url += '?incrementViews=false';
+      }
+      return $http.get(utilService.getApiUrl(url));
     };
 
     /**
