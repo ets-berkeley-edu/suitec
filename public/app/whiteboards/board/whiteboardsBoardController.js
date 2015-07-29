@@ -94,6 +94,8 @@
             canvas.add(element);
             element.moveTo(element.get('index'));
             canvas.renderAll();
+            // TODO
+            setCanvasDimensions();
           });
         }
       });
@@ -150,7 +152,7 @@
       // Set the pencil brush as the drawing brush
       canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
       // Set the width and height of the canvas
-      setCanvasDimensions();
+      // setCanvasDimensions();
       // Load the whiteboard information, including the whiteboard's content
       getWhiteboard();
     };
@@ -159,10 +161,38 @@
      * Set the width and height of the whiteboard canvas to be the same
      * as the surrounding viewport. This will allow the canvas to be
      * infinitely scrollable
+     *
+     * TODO
      */
     var setCanvasDimensions = function() {
-      canvas.setHeight(viewport.clientHeight * 2);
-      canvas.setWidth(viewport.clientWidth * 2);
+      // TODO: Calculate zoomlevel
+      var REFERENCE_WIDTH = 1000;
+      var viewportWidth = viewport.clientWidth;
+      var zoom = viewportWidth / REFERENCE_WIDTH;
+      canvas.setZoom(zoom);
+
+      // TODO: Calculate mosr right and most bottom point
+      var maxRight = 0;
+      var maxBottom = 0;
+      // TODO
+      canvas.forEachObject(function(element) {
+        var bound = element.getBoundingRect();
+        if (bound.left + bound.width > maxRight) {
+          maxRight = bound.left + bound.width;
+        }
+        if (bound.top + bound.height > maxBottom) {
+          maxBottom = bound.top + bound.height;
+        }
+      });
+      if (maxRight < viewportWidth) {
+        maxRight = viewportWidth;
+      }
+      if (maxBottom < viewport.clientHeight) {
+        maxBottom = viewport.clientHeight;
+      }
+
+      canvas.setHeight(maxBottom);
+      canvas.setWidth(maxRight);
     };
 
     // Resize the viewport when the window is resized
@@ -239,6 +269,23 @@
       }
     };
 
+    /**
+     * Detect keydown events in the whiteboard to respond to keyboard shortcuts
+     */
+    viewport.addEventListener('keydown', function($event) {
+      console.log($event);
+      // Remove the selected elements when the delete or backspace key is pressed
+      if ($event.keyCode === 8 || $event.keyCode === 46) {
+        deleteActiveElements();
+      // Undo the previous action when Ctrl+Z is pressed
+      } else if ($event.keyCode === 90 && $event.metaKey) {
+        undo();
+      // Redo the previous action when Ctrl+Y is pressed
+      } else if ($event.keyCode === 89 && $event.metaKey) {
+        redo();
+      }
+    }, false);
+
     initializeCanvas();
 
     /* CONCURRENT EDITING */
@@ -277,6 +324,9 @@
      * A new element was added to the whiteboard canvas by the current user
      */
     canvas.on('object:added', function(ev) {
+      // TODO
+      setCanvasDimensions();
+
       var element = ev.target;
 
       // Don't add a new text element until text has been entered
@@ -316,6 +366,13 @@
      * A whiteboard canvas element was updated by the current user
      */
     canvas.on('object:modified', function(ev) {
+      console.log('MODIFIED');
+      console.log(ev.target);
+      // TODO
+      setTimeout(function() {
+        setCanvasDimensions();
+      }, 1);
+
       var element = ev.target;
 
       // Only notify the server if the element was updated by the current user
@@ -389,6 +446,9 @@
      * A whiteboard canvas element was deleted by the current user
      */
     canvas.on('object:removed', function(ev) {
+      // TODO
+      setCanvasDimensions();
+
       var element = ev.target;
       // Only notify the server if the element was deleted by the current user
       if (!element.get('isSocketUpdate')) {
@@ -429,15 +489,15 @@
      *
      * @param  {Number}         zoomDelta         The level by which the current zoom level should be increased
      */
-    var zoom = $scope.zoom = function(zoomDelta) {
-      var currentZoom = $scope.zoomLevel;
+    //var zoom = $scope.zoom = function(zoomDelta) {
+    //  var currentZoom = $scope.zoomLevel;
       // Modify the zoom level
-      $scope.zoomLevel = currentZoom + zoomDelta;
+    //  $scope.zoomLevel = currentZoom + zoomDelta;
       // TODO: Recalculate the pan point and zoom to center
       // canvas.zoomToPoint(new fabric.Point(getCanvasCenter().x, getCanvasCenter().y), $scope.zoomLevel);
-      canvas.setZoom($scope.zoomLevel);
-      canvas.absolutePan(currentCanvasPan);
-    };
+    //  canvas.setZoom($scope.zoomLevel);
+    //  canvas.absolutePan(currentCanvasPan);
+    //};
 
     /* TOOLBAR */
 
@@ -524,39 +584,44 @@
      * TODO: Can undo and redo be consolidated?
      */
     var undo = $scope.undo = function() {
-      $scope.currentActionPosition--;
-      var previousAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
+      if ($scope.currentActionPosition !== 0) {
+        // Deactivate the currently selected item
+        canvas.deactivateAll().renderAll();
 
-      // The previous action was an element that was added.
-      // Undoing this should delete the element again
-      if (previousAction.type === 'add') {
-        var element = getCanvasElement(previousAction.element.uid);
-        element.set('isUndoRedo', true);
-        canvas.remove(element);
+        $scope.currentActionPosition--;
+        var previousAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
 
-      // The previous action was an element that was deleted.
-      // Undoing this should add the element again
-      } else if (previousAction.type === 'delete') {
-        deserializeElement(previousAction.element, function(element) {
+        // The previous action was an element that was added.
+        // Undoing this should delete the element again
+        if (previousAction.type === 'add') {
+          var element = getCanvasElement(previousAction.element.uid);
           element.set('isUndoRedo', true);
-          canvas.add(element);
-          element.moveTo(element.get('index'));
-          canvas.renderAll();
-        });
+          canvas.remove(element);
 
-      // The previous action was an element that was updated.
-      // Undoing this should undo the update
-      } else if (previousAction.type === 'update') {
-        var element = getCanvasElement(previousAction.element.uid);
-        for (var property in previousAction.originalState) {
-          if (element[property] !== previousAction.originalState[property]) {
-            element.set(property, previousAction.originalState[property]);
+        // The previous action was an element that was deleted.
+        // Undoing this should add the element again
+        } else if (previousAction.type === 'delete') {
+          deserializeElement(previousAction.element, function(element) {
+            element.set('isUndoRedo', true);
+            canvas.add(element);
+            element.moveTo(element.get('index'));
+            canvas.renderAll();
+          });
+
+        // The previous action was an element that was updated.
+        // Undoing this should undo the update
+        } else if (previousAction.type === 'update') {
+          var element = getCanvasElement(previousAction.element.uid);
+          for (var property in previousAction.originalState) {
+            if (element[property] !== previousAction.originalState[property]) {
+              element.set(property, previousAction.originalState[property]);
+            }
           }
+          element.set('isUndoRedo', true);
+          canvas.fire('object:modified', {'target': element});
+          canvas.absolutePan(currentCanvasPan);
+          canvas.renderAll();
         }
-        element.set('isUndoRedo', true);
-        canvas.fire('object:modified', {'target': element});
-        canvas.absolutePan(currentCanvasPan);
-        canvas.renderAll();
       }
     };
 
@@ -564,39 +629,44 @@
      * Redo the action at the next position in the actions queue
      */
     var redo = $scope.redo = function() {
-      var nextAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
-      $scope.currentActionPosition++;
+      if ($scope.currentActionPosition !== $scope.actionQueue.length) {
+        // Deactivate the currently selected item
+        canvas.deactivateAll().renderAll();
 
-      // The next action was an element that was added.
-      // Redoing this should add the element again
-      if (nextAction.type === 'add') {
-        deserializeElement(nextAction.element, function(element) {
+        var nextAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
+        $scope.currentActionPosition++;
+
+        // The next action was an element that was added.
+        // Redoing this should add the element again
+        if (nextAction.type === 'add') {
+          deserializeElement(nextAction.element, function(element) {
+            element.set('isUndoRedo', true);
+            canvas.add(element);
+            element.moveTo(element.get('index'));
+            canvas.renderAll();
+          });
+
+        // The next action was an element that was deleted.
+        // Undoing this should delete the element again
+        } else if (nextAction.type === 'delete') {
+          var element = getCanvasElement(nextAction.element.uid);
           element.set('isUndoRedo', true);
-          canvas.add(element);
-          element.moveTo(element.get('index'));
-          canvas.renderAll();
-        });
+          canvas.remove(element);
 
-      // The next action was an element that was deleted.
-      // Undoing this should delete the element again
-      } else if (nextAction.type === 'delete') {
-        var element = getCanvasElement(nextAction.element.uid);
-        element.set('isUndoRedo', true);
-        canvas.remove(element);
-
-      // The next action was an element that was updated.
-      // Undoing this should re-apply the update
-      } else if (nextAction.type === 'update') {
-        var element = getCanvasElement(nextAction.element.uid);
-        for (var property in nextAction.originalState) {
-          if (element[property] !== nextAction.element[property]) {
-            element.set(property, nextAction.element[property]);
+        // The next action was an element that was updated.
+        // Undoing this should re-apply the update
+        } else if (nextAction.type === 'update') {
+          var element = getCanvasElement(nextAction.element.uid);
+          for (var property in nextAction.originalState) {
+            if (element[property] !== nextAction.element[property]) {
+              element.set(property, nextAction.element[property]);
+            }
           }
+          element.set('isUndoRedo', true);
+          canvas.fire('object:modified', {'target': element});
+          canvas.absolutePan(currentCanvasPan);
+          canvas.renderAll();
         }
-        element.set('isUndoRedo', true);
-        canvas.fire('object:modified', {'target': element});
-        canvas.absolutePan(currentCanvasPan);
-        canvas.renderAll();
       }
     };
 
@@ -808,21 +878,18 @@
     /**
      * Delete the selected whiteboard element(s)
      */
-    viewport.addEventListener('keydown', function($event) {
-      // Only remove the selected elements when the delete or backspace key is pressed
-      if ($event.which === 8 || $event.which === 46) {
-        if (canvas.getActiveObject()) {
-          canvas.remove(canvas.getActiveObject());
-        // Remove all selected elements when multiple elements are selected
-        } else if (canvas.getActiveGroup()) {
-          var elements = canvas.getActiveGroup().getObjects();
-          for (var i = 0; i < elements.length; i++) {
-            canvas.remove(elements[i]);
-          }
-          canvas.discardActiveGroup().renderAll();
+    var deleteActiveElements = function() {
+      if (canvas.getActiveObject()) {
+        canvas.remove(canvas.getActiveObject());
+      // Remove all selected elements when multiple elements are selected
+      } else if (canvas.getActiveGroup()) {
+        var elements = canvas.getActiveGroup().getObjects();
+        for (var i = 0; i < elements.length; i++) {
+          canvas.remove(elements[i]);
         }
+        canvas.discardActiveGroup().renderAll();
       }
-    }, false);
+    };
 
     /* TEXT */
 

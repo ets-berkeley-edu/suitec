@@ -27,14 +27,22 @@
 
 /* TOOLBAR */
 
+#whiteboards-board-toolbar-container {
+  bottom: 50px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
 #whiteboards-board-toolbar {
   background-color: #FFF;
   border: 1px solid #D3D3D3;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  bottom: 0;
+  display: inline-block;
+  margin-left: 20px;
+  margin-right: 20px;
   padding: 7px;
-  position: absolute;
-  right: 0;
 }
 
 #whiteboards-board-toolbar > .btn-group > button {
