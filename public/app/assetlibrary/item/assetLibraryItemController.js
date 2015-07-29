@@ -33,37 +33,48 @@
      */
     var getCurrentAsset = function() {
       assetLibraryFactory.getAsset(assetId).success(function(asset) {
+        // Build a tree for the asset's comments
+        buildCommentTree(asset);
 
-        // Build a comment tree that will hold a flat list of comments where each
-        // child comment should come after their parent. First, the top level comments
-        // are extracted
-        var comments = [];
-        for (var i = 0; i < asset.comments.length; i++) {
-          var comment = asset.comments[i];
-          if (!comment.parent_id) {
-            comment.level = 0;
-            comments.unshift(comment);
-
-            // Find all replies for the current comment
-            for (var r = 0; r < asset.comments.length; r++) {
-              var reply = asset.comments[r];
-              if (reply.parent_id === comment.id) {
-                reply.level = 1;
-                comments.splice(1, 0, reply);
-              }
-            }
-          }
-        }
-
-        // Calculate which comments have replies
-        flagCommentsWithReplies(comments);
-
-        asset.comments = comments;
+        // Keep track of the asset
         $scope.asset = asset;
 
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
       });
+    };
+
+    /**
+     * Given an asset, build a comment tree that will hold a flat list of comments where each
+     * child comment should come after their parent
+     *
+     * @param  {Asset}    asset   The asset to build the comment tree for. The comments will be replaced with the comments tree
+     */
+    var buildCommentTree = function(asset) {
+      // Build . First, the top level comments
+      // are extracted
+      var comments = [];
+      for (var i = 0; i < asset.comments.length; i++) {
+        var comment = asset.comments[i];
+        if (!comment.parent_id) {
+          comment.level = 0;
+          comments.unshift(comment);
+
+          // Find all replies for the current comment
+          for (var r = 0; r < asset.comments.length; r++) {
+            var reply = asset.comments[r];
+            if (reply.parent_id === comment.id) {
+              reply.level = 1;
+              comments.splice(1, 0, reply);
+            }
+          }
+        }
+      }
+
+      // Calculate which comments have replies
+      flagCommentsWithReplies(comments);
+
+      asset.comments = comments;
     };
 
     /**
@@ -201,6 +212,10 @@
      */
     $scope.$on('assetLibraryAssetUpdated', function(ev, updatedAsset) {
       if ($scope.asset.id === updatedAsset.id) {
+        // Build a tree for the asset's comments
+        buildCommentTree(updatedAsset);
+
+        // Keep track of the updated asset
         $scope.asset = updatedAsset;
       }
     });
