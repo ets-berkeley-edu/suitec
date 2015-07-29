@@ -161,8 +161,8 @@
      * infinitely scrollable
      */
     var setCanvasDimensions = function() {
-      canvas.setHeight(viewport.clientHeight);
-      canvas.setWidth(viewport.clientWidth);
+      canvas.setHeight(viewport.clientHeight * 2);
+      canvas.setWidth(viewport.clientWidth * 2);
     };
 
     // Resize the viewport when the window is resized
