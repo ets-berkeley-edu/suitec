@@ -9,5 +9,8 @@
   },
   "canvasPoller": {
     "enabled": false
+  },
+  "embdr": {
+    "enabled": false
   }
 }
