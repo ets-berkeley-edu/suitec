@@ -453,8 +453,6 @@
       // Deactivate the currently selected item
       canvas.deactivateAll().renderAll();
 
-      // Revert the cursor
-      // canvas.hoverCursor = 'default';
       // Disable drawing mode
       setDrawMode(false);
 
@@ -865,8 +863,6 @@
 
         // Put the editable text field in edit mode straight away
         setTimeout(function() {
-          // Switch the toolbar back to move mode
-          // setMode('move');
           canvas.setActiveObject(text);
           text.enterEditing();
           // The textarea needs to be put in edit mode manually
