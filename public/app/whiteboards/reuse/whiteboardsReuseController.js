@@ -74,7 +74,9 @@
       $scope.isSearch = false;
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         // Indicate whether a search was performed
-        $scope.isSearch = !!($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type);
+        if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+          $scope.isSearch = true;
+        }
 
         // Add the new assets
         $scope.assets = $scope.assets.concat(assets.results);

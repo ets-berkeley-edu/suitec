@@ -18,75 +18,13 @@
   'use strict';
 
   angular.module('collabosphere').directive('search', function() {
-
-    // This controller will be used by the search directive
-    var controller = function($scope, assetLibraryCategoriesFactory, userFactory) {
-
-      // Variable that keeps track of the categories in the current course
-      $scope.categories = null;
-
-      // Variable that keeps track of the users in the current course
-      $scope.users = [];
-
-      /**
-       * Emit an event indicating that we want to search through the assets
-       */
-      var search = $scope.search = function() {
-        if ($scope.isAdvancedSearch) {
-          var searchOptions = {
-            'keywords': $scope.keywords,
-            'category': $scope.category,
-            'user': $scope.user,
-            'type': $scope.type
-          };
-          $scope.$emit('assetLibrarySearchSearch', searchOptions);
-        } else {
-          $scope.$emit('assetLibrarySearchSearch', {'keywords': $scope.keywords});
-        }
-      };
-
-      /**
-       * Show the simple search view
-       */
-      var showSimpleView = $scope.showSimpleView = function() {
-        $scope.isAdvancedSearch = false;
-
-        // Trigger a search so other components can re-initialize the list
-        search();
-      };
-
-      /**
-       * Show the advanced search view
-       */
-      var showAdvancedView = $scope.showAdvancedView = function() {
-        $scope.isAdvancedSearch = true;
-
-        // If we haven't loaded the asset categories or users yet, we'll fetch them now
-        if (!$scope.categories) {
-          getAdvancedViewData();
-        }
-      };
-
-      /**
-       * Get all users and categories in the current course
-       */
-      var getAdvancedViewData = function() {
-        userFactory.getAllUsers().success(function(response) {
-          $scope.users = response;
-        });
-        assetLibraryCategoriesFactory.getCategories().success(function(categories) {
-          $scope.categories = categories;
-        });
-      };
-
-      if ($scope.isAdvancedSearch && !$scope.categories) {
-        getAdvancedViewData();
-      }
-
-    };
-
     return {
-      'controller': controller,
+      // Restrict the directive to only match element names. See https://docs.angularjs.org/guide/directive#template-expanding-directive
+      // for more information
+      'restrict': 'E',
+
+      // Define how the directive's scope is separated from the caller's scope. See https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
+      // for more information
       'scope': {
         'isAdvancedSearch': '=isAdvancedSearch',
         'keywords': '=searchOptionsKeywords',
@@ -94,8 +32,71 @@
         'user': '=searchOptionsUser',
         'type': '=searchOptionsType'
       },
-      'restrict': 'E',
-      'templateUrl': '/app/assetlibrary/search/search.html'
+      'templateUrl': '/app/assetlibrary/search/search.html',
+      'controller': function($scope, assetLibraryCategoriesFactory, userFactory) {
+
+        // Variable that keeps track of the categories in the current course
+        $scope.categories = null;
+
+        // Variable that keeps track of the users in the current course
+        $scope.users = null;
+
+        /**
+         * Emit an event indicating that we want to search through the assets
+         */
+        var search = $scope.search = function() {
+          if ($scope.isAdvancedSearch) {
+            var searchOptions = {
+              'keywords': $scope.keywords,
+              'category': $scope.category,
+              'user': $scope.user,
+              'type': $scope.type
+            };
+            $scope.$emit('assetLibrarySearchSearch', searchOptions);
+          } else {
+            $scope.$emit('assetLibrarySearchSearch', {'keywords': $scope.keywords});
+          }
+        };
+
+        /**
+         * Show the simple search view
+         */
+        var showSimpleView = $scope.showSimpleView = function() {
+          $scope.isAdvancedSearch = false;
+
+          // Trigger a search so other components can re-initialize the list
+          search();
+        };
+
+        /**
+         * Show the advanced search view
+         */
+        var showAdvancedView = $scope.showAdvancedView = function() {
+          $scope.isAdvancedSearch = true;
+          getAdvancedViewData();
+        };
+
+        /**
+         * Get all users and categories in the current course
+         */
+        var getAdvancedViewData = function() {
+          if (!$scope.users) {
+            userFactory.getAllUsers().success(function(users) {
+              $scope.users = users;
+            });
+          }
+
+          if (!$scope.categories) {
+            assetLibraryCategoriesFactory.getCategories().success(function(categories) {
+              $scope.categories = categories;
+            });
+          }
+        };
+
+        if ($scope.isAdvancedSearch) {
+          getAdvancedViewData();
+        }
+      }
     };
   });
 

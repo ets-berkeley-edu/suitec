@@ -23,7 +23,7 @@
     $scope.state = $state;
 
     // Variable that keeps track of the search options. These are initially derived from the state
-    // parameters. These values will be bound to the search directive, who will update them when
+    // parameters. These values will be bound to the search directive, which will update them when
     // a user updates any of the input fields
     $scope.searchOptions = {
       'keywords': $state.params.keywords || '',
@@ -34,14 +34,14 @@
 
     // Variable that keeps track of whether the search component is in the advanced view state. The
     // initial value gets derived from the state parameters that are passed into this controller.
-    // The value will be bound to the search directive who will update it when a user switches
-    // between simple and advanced search modes
+    // The value will be bound to the search directive which will update it when a user switches
+    // between simple and advanced search mode
     $scope.isAdvancedSearch = false;
     if ($scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
       $scope.isAdvancedSearch = true;
     }
 
-    // Variable that keeps track of whether a search will be executed
+    // Variable that keeps track of whether a search is being performed
     $scope.isSearch = false;
     if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
       $scope.isSearch = true;
