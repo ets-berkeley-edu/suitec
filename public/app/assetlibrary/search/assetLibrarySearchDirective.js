@@ -19,12 +19,12 @@
 
   angular.module('collabosphere').directive('search', function() {
     return {
-      // Restrict the directive to only match element names. See https://docs.angularjs.org/guide/directive#template-expanding-directive
-      // for more information
+      // Restrict the directive to only match element names
+      // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
       'restrict': 'E',
 
-      // Define how the directive's scope is separated from the caller's scope. See https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
-      // for more information
+      // Define how the directive's scope is separated from the caller's scope
+      // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
         'isAdvancedSearch': '=isAdvancedSearch',
         'keywords': '=searchOptionsKeywords',
