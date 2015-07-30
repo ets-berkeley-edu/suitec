@@ -1,4 +1,4 @@
-/*!
+/**
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -17,9 +17,19 @@
 
   'use strict';
 
-  angular.module('collabosphere').filter('sanitize', function($sce) {
-    return function(htmlCode) {
-      return $sce.trustAsHtml(htmlCode);
+  angular.module('collabosphere').filter('hashtags', function() {
+
+    /**
+     * Replace each hashtag with a link to the asset library that will search through the asset library
+     * for that keyword
+     *
+     * @param  {String}     input     The input text to replace the hashtags in
+     * @return {String}               The text in which the hashtags have been replaced with links
+     */
+    return function(input) {
+      var pattern = /(^|\s)#(\w*[a-zA-Z_]+\w*)/gim;
+      return input.replace(pattern, '$1<a href="/assetlibrary?keywords=$2">#$2</a>');
     };
   });
-})(window.angular);
+
+}(window.angular));
