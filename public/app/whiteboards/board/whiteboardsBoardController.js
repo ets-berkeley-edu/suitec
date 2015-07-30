@@ -87,6 +87,11 @@
         // Set the title of the window to the title of the whiteboard
         $rootScope.header = whiteboard.title;
 
+        // TODO
+        setMode('move');
+        // TODO
+        setCanvasDimensions();
+
         // Restore the layout of the whiteboard canvas
         for (var i = 0; i < whiteboard.whiteboard_elements.length; i++) {
           var element = whiteboard.whiteboard_elements[i];
@@ -151,8 +156,6 @@
       canvas = new fabric.Canvas('whiteboards-board-board');
       // Set the pencil brush as the drawing brush
       canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-      // Set the width and height of the canvas
-      // setCanvasDimensions();
       // Load the whiteboard information, including the whiteboard's content
       getWhiteboard();
     };
@@ -366,12 +369,7 @@
      * A whiteboard canvas element was updated by the current user
      */
     canvas.on('object:modified', function(ev) {
-      console.log('MODIFIED');
-      console.log(ev.target);
-      // TODO
-      setTimeout(function() {
-        setCanvasDimensions();
-      }, 1);
+      setCanvasDimensions();
 
       var element = ev.target;
 
