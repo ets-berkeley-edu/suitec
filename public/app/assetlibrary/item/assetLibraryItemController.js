@@ -33,10 +33,9 @@
      */
     var getCurrentAsset = function() {
       assetLibraryFactory.getAsset(assetId).success(function(asset) {
-        // Build a tree for the asset's comments
+        // Build the asset comment tree
         buildCommentTree(asset);
 
-        // Keep track of the asset
         $scope.asset = asset;
 
         // Make the latest metadata of the asset available
@@ -45,19 +44,25 @@
     };
 
     /**
-     * Given an asset, build a comment tree that will hold a flat list of comments where each
-     * child comment should come after their parent
+     * Build the comment tree for an asset. The comment tree will hold a flat list of all comment
+     * in the order in which they should be displayed. Replies should therefore come right after
+     * their parent
      *
-     * @param  {Asset}    asset   The asset to build the comment tree for. The comments will be replaced with the comments tree
+     * @param  {Asset}        asset           The asset to build the comment tree for. The comments will be replaced with the comment tree
      */
     var buildCommentTree = function(asset) {
-      // Build . First, the top level comments
-      // are extracted
+      // Order the comments from oldest to newest
+      asset.comments.sort(function(a, b) {
+        return a.id - b.id;
+      });
+
+      // Extract the top-level comments
       var comments = [];
       for (var i = 0; i < asset.comments.length; i++) {
         var comment = asset.comments[i];
         if (!comment.parent_id) {
           comment.level = 0;
+          comment.has_replies = false;
           comments.unshift(comment);
 
           // Find all replies for the current comment
@@ -65,14 +70,12 @@
             var reply = asset.comments[r];
             if (reply.parent_id === comment.id) {
               reply.level = 1;
+              comment.has_replies = true;
               comments.splice(1, 0, reply);
             }
           }
         }
       }
-
-      // Calculate which comments have replies
-      flagCommentsWithReplies(comments);
 
       asset.comments = comments;
     };
@@ -85,23 +88,6 @@
     var canManageAsset = $scope.canManageAsset = function() {
       if ($scope.asset) {
         return $scope.me.is_admin || $scope.asset.user.id === $scope.me.id;
-      }
-    };
-
-    /**
-     * Flag comments that have replies. These comments can not be deleted
-     *
-     * @param  {Comment}      comments        The comments that should be checked for replies
-     */
-    var flagCommentsWithReplies = function(comments) {
-      for (var i = 0; i < comments.length; i++) {
-        var comment = comments[i];
-        var nextComment = comments[i + 1];
-        if (nextComment && nextComment.parent_id === comment.id) {
-          comment.has_replies = true;
-        } else {
-          comment.has_replies = false;
-        }
       }
     };
 
@@ -147,8 +133,8 @@
           }
         }
         $scope.asset.comment_count++;
-        // Re-calculate which comments have replies
-        flagCommentsWithReplies($scope.asset.comments);
+        // Re-build the comment tree
+        buildCommentTree($scope.asset);
         // Hide the reply form
         toggleReplyComment(comment);
         // Indicate that the asset has been updated
@@ -198,8 +184,8 @@
               $scope.asset.comments.splice(i, 1);
             }
           }
-          // Re-calculate which comments have replies
-          flagCommentsWithReplies($scope.asset.comments);
+          // Re-build the comment tree
+          buildCommentTree($scope.asset);
           $scope.asset.comment_count--;
           // Indicate that the asset has been updated
           $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
