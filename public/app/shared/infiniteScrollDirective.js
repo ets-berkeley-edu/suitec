@@ -43,7 +43,6 @@
         'infiniteScrollReady': '='
       },
       'link': function(scope, elem, attrs) {
-
         // Default the distance to the bottom of the page at which further results are loaded
         var infiniteScrollDistance = scope.infiniteScrollDistance || 400;
 
@@ -121,6 +120,14 @@
               checkInfiniteScrollLoad(scrollInformation.scrollToBottom, scrollInformation.scrollPosition);
             });
           } else {
+            // It is possible that the infinite scroll container will not have been present at the time of initialisation,
+            // especially inside modals. Therefore, we try to locate the infnite scroll container again if hasn't yet been
+            // located
+            infiniteScrollContainer = infiniteScrollContainer || document.getElementById(scope.infiniteScrollContainer);
+            if (!infiniteScrollContainer) {
+              return false;
+            }
+
             var scrollToBottom = infiniteScrollContainer.scrollHeight - infiniteScrollContainer.clientHeight - infiniteScrollContainer.scrollTop;
             var scrollPosition = infiniteScrollContainer.scrollTop;
             checkInfiniteScrollLoad(scrollToBottom, scrollPosition);

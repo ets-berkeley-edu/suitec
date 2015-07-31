@@ -31,6 +31,9 @@
     // Variable that will keep track of the whiteboard Fabric.js instance
     var canvas = null;
 
+    // Variable that will keep track of the base width of the canvas
+    var CANVAS_BASE_WIDTH = 1000;
+
     // Open a websocket connection for real-time communication with the server (chat + whiteboard changes).
     // The course ID and API domain are passed in as handshake query parameters
     var launchParams = utilService.getLaunchParams();
@@ -87,9 +90,7 @@
         // Set the title of the window to the title of the whiteboard
         $rootScope.header = whiteboard.title;
 
-        // TODO
-        setMode('move');
-        // TODO
+        // Set the size of the whiteboard canvas
         setCanvasDimensions();
 
         // Restore the layout of the whiteboard canvas
@@ -99,7 +100,7 @@
             canvas.add(element);
             element.moveTo(element.get('index'));
             canvas.renderAll();
-            // TODO
+            // Recalculate the size of the whiteboard canvas
             setCanvasDimensions();
           });
         }
@@ -160,45 +161,48 @@
       getWhiteboard();
     };
 
+    // Variable that will keep track of whether the canvas elements are overflowing the viewport
+    $scope.scrollingCanvas = false;
+
     /**
-     * Set the width and height of the whiteboard canvas to be the same
-     * as the surrounding viewport. This will allow the canvas to be
-     * infinitely scrollable
-     *
-     * TODO
+     * Set the width and height of the whiteboard canvas. The width of the visible
+     * canvas will be the same for all users, and the canvas will be zoomed to accomodate
+     * that width. By default, the size of the zoomed canvas will be the same as the size
+     * of the viewport. When there are any elements on the canvas that are outside of the
+     * viewport boundaries, the canvas will be enlarged to incorporate those
      */
     var setCanvasDimensions = function() {
-      // TODO: Calculate zoomlevel
-      var REFERENCE_WIDTH = 1000;
+      // Zoom the canvas to accomodate the base width within the viewport
       var viewportWidth = viewport.clientWidth;
-      var zoom = viewportWidth / REFERENCE_WIDTH;
-      canvas.setZoom(zoom);
+      var ratio = viewportWidth / CANVAS_BASE_WIDTH;
+      canvas.setZoom(ratio);
 
-      // TODO: Calculate mosr right and most bottom point
-      var maxRight = 0;
-      var maxBottom = 0;
-      // TODO
+      // Calculate the position of the elements that are the most right and the
+      // most bottom. When all elements fit within the viewport, the canvas is
+      // made the same size as the viewport. When any elements overflow the viewport,
+      // the canvas is enlarged to incorporate all assets outside of the viewport
+      var viewportHeight = viewport.clientHeight;
+      var maxRight = viewportWidth;
+      var maxBottom = viewportHeight;
+
       canvas.forEachObject(function(element) {
         var bound = element.getBoundingRect();
-        if (bound.left + bound.width > maxRight) {
-          maxRight = bound.left + bound.width;
-        }
-        if (bound.top + bound.height > maxBottom) {
-          maxBottom = bound.top + bound.height;
-        }
+        maxRight = Math.max(maxRight, bound.left + bound.width);
+        maxBottom = Math.max(maxBottom, bound.top + bound.height);
       });
-      if (maxRight < viewportWidth) {
-        maxRight = viewportWidth;
-      }
-      if (maxBottom < viewport.clientHeight) {
-        maxBottom = viewport.clientHeight;
+
+      // Keep track of whether the canvas can currently be scrolled
+      if (maxRight > viewportWidth || maxBottom > viewportHeight) {
+        $scope.scrollingCanvas = true;
+      } else {
+        $scope.scrollingCanvas = false;
       }
 
       canvas.setHeight(maxBottom);
       canvas.setWidth(maxRight);
     };
 
-    // Resize the viewport when the window is resized
+    // Recalculate the size of the canvas when the window is resized
     window.addEventListener('resize', setCanvasDimensions);
 
     /**
@@ -327,7 +331,7 @@
      * A new element was added to the whiteboard canvas by the current user
      */
     canvas.on('object:added', function(ev) {
-      // TODO
+      // Recalculate the size of the whiteboard canvas
       setCanvasDimensions();
 
       var element = ev.target;
@@ -444,7 +448,7 @@
      * A whiteboard canvas element was deleted by the current user
      */
     canvas.on('object:removed', function(ev) {
-      // TODO
+      // Recalculate the size of the whiteboard canvas
       setCanvasDimensions();
 
       var element = ev.target;
@@ -480,22 +484,8 @@
     /* ZOOMING */
 
     // Variable that will keep track of the current zoom level
+    // TODO
     $scope.zoomLevel = 1;
-
-    /**
-     * Zoom the Fabric.js canvas in or out
-     *
-     * @param  {Number}         zoomDelta         The level by which the current zoom level should be increased
-     */
-    //var zoom = $scope.zoom = function(zoomDelta) {
-    //  var currentZoom = $scope.zoomLevel;
-      // Modify the zoom level
-    //  $scope.zoomLevel = currentZoom + zoomDelta;
-      // TODO: Recalculate the pan point and zoom to center
-      // canvas.zoomToPoint(new fabric.Point(getCanvasCenter().x, getCanvasCenter().y), $scope.zoomLevel);
-    //  canvas.setZoom($scope.zoomLevel);
-    //  canvas.absolutePan(currentCanvasPan);
-    //};
 
     /* TOOLBAR */
 
@@ -520,6 +510,7 @@
 
       if (newMode === 'move') {
         enableCanvasElements(true);
+        closePopovers();
       // Draw mode has been selected
       } else if (newMode === 'draw') {
         setDrawMode(true);
@@ -535,7 +526,6 @@
 
     /**
      * Close all popovers
-     * @see https://angular-ui.github.io/bootstrap/
      */
     var closePopovers = function() {
       // Get all popovers
@@ -579,7 +569,6 @@
 
     /**
      * Undo the action at the current position in the actions queue
-     * TODO: Can undo and redo be consolidated?
      */
     var undo = $scope.undo = function() {
       if ($scope.currentActionPosition !== 0) {
@@ -960,6 +949,7 @@
       };
       // Open the asset selection modal dialog
       $modal({
+        'animation': false,
         'scope': scope,
         'template': '/app/whiteboards/reuse/reuse.html'
       });
@@ -1065,7 +1055,7 @@
     /* SIDEBAR */
 
     // Variable that will keep track of whether the chat/online sidebar is expanded
-    $scope.sidebarExpanded = true;
+    $scope.sidebarExpanded = false;
 
     // Variable that will keep track of the current mode the sidebar is displayed in
     $scope.sidebarMode = 'chat';

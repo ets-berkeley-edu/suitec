@@ -19,16 +19,20 @@
   background-color: #F7F7F7;
   bottom: 0;
   left: 0;
-  overflow: auto;
+  overflow: scroll;
   position: absolute;
   right: 0;
   top: 0;
 }
 
+#whiteboards-board-viewport.whiteboards-sidebar-expanded {
+  right: 260px;
+}
+
 /* TOOLBAR */
 
 #whiteboards-board-toolbar-container {
-  bottom: 50px;
+  bottom: 25px;
   left: 0;
   position: absolute;
   right: 0;
@@ -93,14 +97,11 @@
 
 #whiteboards-board-sidebar {
   background-color: #F7F7F7;
-  border: 1px solid #D3D3D3;
-  border-bottom: none;
-  border-right: none;
-  border-top-left-radius: 4px;
-  bottom: 54px;
+  border-left: 1px solid #D3D3D3;
+  bottom: 0;
   position: absolute;
   right: 0;
-  top: 5px;
+  top: 0;
   width: 260px;
 }
 

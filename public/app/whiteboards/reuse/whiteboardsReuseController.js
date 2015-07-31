@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $modal, $scope) {
 
     $scope.searchOptions = {};
     $scope.assets = [];
