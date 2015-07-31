@@ -209,8 +209,25 @@
         $scope.scrollingCanvas = false;
       }
 
-      canvas.setHeight(maxBottom);
-      canvas.setWidth(maxRight);
+      // When the entire whiteboard content should fit within
+      // the screen, adjust the zoom level to make it fit
+      if ($scope.fitToScreen) {
+        // Calculate the actual unzoomed width of the whiteboard
+        var realWidth = maxRight / canvas.getZoom();
+        var realHeight = maxBottom / canvas.getZoom();
+        // Zoom the canvas based on whether the height or width
+        // needs the largest zoom out
+        var widthRatio = viewportWidth / realWidth;
+        var heightRatio = viewportHeight / realHeight;
+        var ratio = Math.min(widthRatio, heightRatio);
+        canvas.setZoom(ratio);
+
+        canvas.setHeight(viewportHeight);
+        canvas.setWidth(viewportWidth);
+      } else {
+        canvas.setHeight(maxBottom);
+        canvas.setWidth(maxRight);
+      }
     };
 
     // Recalculate the size of the canvas when the window is resized
@@ -497,6 +514,17 @@
     // Variable that will keep track of the current zoom level
     // TODO
     $scope.zoomLevel = 1;
+
+    // TODO
+    $scope.fitToScreen = false;
+
+    /**
+     * TODO
+     */
+    var toggleZoom = $scope.toggleZoom = function() {
+      $scope.fitToScreen = !$scope.fitToScreen;
+      setCanvasDimensions();
+    };
 
     /* TOOLBAR */
 
@@ -1080,7 +1108,7 @@
     /* SIDEBAR */
 
     // Variable that will keep track of whether the chat/online sidebar is expanded
-    $scope.sidebarExpanded = true;
+    $scope.sidebarExpanded = false;
 
     // Variable that will keep track of the current mode the sidebar is displayed in
     $scope.sidebarMode = 'chat';

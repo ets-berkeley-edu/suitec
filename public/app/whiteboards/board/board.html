@@ -35,9 +35,14 @@
       </button>
     </div>
     <div class="btn-group" role="group" data-ng-if="scrollingCanvas">
-      <button type="button" class="btn btn-default" title="Fit to screen">
+      <button type="button" class="btn btn-default" title="Fit to screen" data-ng-if="!fitToScreen" data-ng-click="toggleZoom()">
         <i class="fa fa-search-minus">
           <span class="sr-only">Fit to screen"</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Actual size" data-ng-if="fitToScreen" data-ng-click="toggleZoom()">
+        <i class="fa fa-search-plus">
+          <span class="sr-only">Actual size"</span>
         </i>
       </button>
     </div>
