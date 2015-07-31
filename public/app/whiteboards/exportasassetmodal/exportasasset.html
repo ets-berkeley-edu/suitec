@@ -4,7 +4,7 @@
       <button type="button" class="close" data-ng-click="closeModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
       <div>
-        <h2>Add Whiteboard to Asset Library</h2>
+        <h2>Export Whiteboard to Asset Library</h2>
         <form name="whiteboardsExportAsAssetForm" data-ng-submit="whiteboardsExportAsAssetForm.$valid && exportAsAsset()" novalidate>
 
           <div class="row whiteboards-exportasset-container">
@@ -51,8 +51,8 @@
             <button type="button" class="btn btn-default" data-ng-click="closeModal()" ng-disabled="isExporting">Cancel</button>
             <button type="submit" class="btn btn-primary" ng-disabled="isExporting">
               <i class="fa fa-spinner fa-spin" data-ng-if="isExporting"></i>
-              <span data-ng-if="!isExporting">Add to Asset Library</span>
-              <span data-ng-if="isExporting">Adding to Asset Library</span>
+              <span data-ng-if="!isExporting">Export to Asset Library</span>
+              <span data-ng-if="isExporting">Exporting to Asset Library</span>
             </button>
           </div>
         </form>

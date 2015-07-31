@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryIconBarController', function(assetLibraryFactory, userFactory, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryIconBarController', function(assetLibraryFactory, userFactory, $filter, $scope) {
 
     /**
      * Like an asset. If the asset has been liked by the current user already, the like will be undone
@@ -36,6 +36,19 @@
         // Indicate that the asset has been updated
         $scope.$emit('assetLibraryAssetUpdated', asset);
       });
+    };
+
+    /**
+     * Whether the current user is a collaborator of the asset
+     *
+     * @return {Boolean} `true` if the user is a collaborator, `false` otherwise
+     */
+    $scope.isAssetCollaborator = function() {
+      if ($scope.me && $scope.asset && !$filter('filter')($scope.asset.users, {'id': $scope.me.id})) {
+        return false;
+      } else {
+        return true;
+      }
     };
 
     userFactory.getMe().success(function(me) {

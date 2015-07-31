@@ -20,6 +20,10 @@
   top: 20px;
 }
 
+#whiteboards-board-notifications.whiteboards-board-notifications-full {
+  right: 10px;
+}
+
 /* WHITEBOARD */
 
 #whiteboards-board-viewport {
@@ -34,7 +38,7 @@
 
 /* TOOLBAR */
 
-.btn-toolbar {
+#whiteboards-board-toolbar {
   background-color: #FFF;
   border: 1px solid #D3D3D3;
   border-radius: 4px;
@@ -44,47 +48,47 @@
   right: 0;
 }
 
-.btn-toolbar > .btn-group > .btn {
+#whiteboards-board-toolbar > .btn-group > .btn {
   border: 1px solid #D3D3D3;
   color: #666;
 }
 
-.btn-toolbar > .btn-group > .btn.active {
+#whiteboards-board-toolbar > .btn-group > .btn.active {
   background-color: #6B6B6B;
   color: #F5FCFF;
 }
 
-.btn-toolbar > .btn-group > .btn:not(:first-child) {
+#whiteboards-board-toolbar > .btn-group > .btn:not(:first-child) {
   border-left: none;
 }
 
-.btn-toolbar > .btn-group > .btn:not(:last-child) {
+#whiteboards-board-toolbar > .btn-group > .btn:not(:last-child) {
   border-right: none;
 }
 
-.btn-toolbar > .btn-group > .btn > i {
+#whiteboards-board-toolbar > .btn-group > .btn > i {
   font-weight: bold;
   font-size: 18px;
 }
 
-.btn-toolbar > .btn-group > .btn > i.fa-share-square-o {
+#whiteboards-board-toolbar > .btn-group > .btn > i.fa-share-square-o {
   position: relative;         /* Align the export icon with the text */
   top: 1px;
 }
 
-.btn-toolbar > .btn-group > .btn > span {
+#whiteboards-board-toolbar > .btn-group > .btn > span {
   position: relative;
   top: -2px;
 }
 
-.btn-toolbar .whiteboards-board-toolbar-collaborators .badge {
+#whiteboards-board-toolbar .whiteboards-board-toolbar-collaborators .badge {
   background-color: #999;
   font-size: 10px;
   margin-left: -1px;
   margin-right: -5px;
 }
 
-.btn-toolbar .whiteboards-board-toolbar-chat {
+#whiteboards-board-toolbar .whiteboards-board-toolbar-chat {
   padding-left: 8px;
 }
 

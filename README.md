@@ -52,7 +52,25 @@ In order to install and start the Collabosphere app server, the following steps 
 git clone git://github.com/ets-berkeley-edu/collabosphere.git
 ```
 
-# Install the npm dependencies
+# Dependencies
+
+## Packages
+
+Ensure you have the following packages installed and available in your `$PATH`:
+
+ * Node.JS and NPM
+ * Cairo and all its dependencies. On RHEL systems the following packages have to be installed:
+   - cairo
+   - cairo-devel
+   - cairomm-devel
+   - libjpeg-turbo-devel
+   - pango
+   - pango-devel
+   - pangomm
+   - pangomm-devel
+   - giflib-devel
+
+## Node modules
 
 Depending on your X11 installation you might have to explicitly set the `PKG_CONFIG` environment variable
 

@@ -124,13 +124,6 @@
     /* CANVAS */
 
     /**
-     * Get the number of elements that are in the whiteboard
-     */
-    var getNumberOfElements = $scope.getNumberOfElements = function() {
-      return canvas.getObjects().length;
-    };
-
-    /**
      * Extend the Fabric.js `toObject` deserialization function to include
      * the property that uniquely identifies an object on the canvas, as well as
      * a property containing the index of the object relative to the other items
@@ -202,6 +195,15 @@
         'x': centerX,
         'y': centerY
       };
+    };
+
+    /**
+     * Get the number of elements that are in the whiteboard
+     *
+     * @return {Number}                           The number of elements on the Canvas
+     */
+    var getNumberOfElements = $scope.getNumberOfElements = function() {
+      return canvas.getObjects().length;
     };
 
     /**
@@ -1218,7 +1220,7 @@
     // Variable that will keep track of the URL through which the whiteboard can be exported as a PNG file
     $scope.exportPngUrl = null;
 
-    // Variable that will keep track of whether a whiteboard is being exported to PNG
+    // Variable that will keep track of whether the current whiteboard is being exported to PNG
     $scope.isExportingAsPng = false;
 
     /**
@@ -1237,7 +1239,7 @@
      * Export the whiteboard to a PNG file
      */
     var exportAsPng = $scope.exportAsPng = function() {
-      // Indicate that the server is generated the PNG file
+      // Indicate that the server is generating the PNG file
       $scope.isExportingAsPng = true;
 
       // Once the user has started receiving the PNG file, a cookie will be set. As long
@@ -1247,7 +1249,7 @@
         return $cookies.get(cookieName);
       }, function(newValue) {
         if (newValue) {
-          // The file started downloading, the "Dwnload as image" button can now be enabled
+          // The file started downloading, the "Download as image" button can now be enabled
           $scope.isExportingAsPng = false;
 
           // Remove the cookie as it's no longer required
@@ -1263,7 +1265,7 @@
     };
 
     /**
-     * Launch the model that allows a whiteboard to be exported as an asset
+     * Launch the modal that allows the current user to export the current whiteboard to the asset library
      */
     var exportAsAsset = $scope.exportAsAsset = function() {
       // Create a new scope for the modal dialog
@@ -1275,10 +1277,10 @@
           var myAlert = $alert({
             'container': '#whiteboards-board-notifications',
             'content': 'This board has been successfully added to the <strong>Asset Library</strong>.',
-            // 'duration': 5,
+            'duration': 5,
             'keyboard': true,
             'show': true,
-            'templateUrl': 'alert.html',
+            'templateUrl': 'alert-export',
             'type': 'success'
           });
         }

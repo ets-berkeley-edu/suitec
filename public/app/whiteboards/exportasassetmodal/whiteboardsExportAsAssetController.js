@@ -20,12 +20,14 @@
   angular.module('collabosphere').controller('WhiteboardsExportAsAssetController', function(assetLibraryCategoriesFactory, whiteboardsFactory, $scope) {
 
     // Variable that will keep track of the new asset to be created
-    $scope.asset = {};
+    $scope.asset = {
+      'title': $scope.whiteboard.title
+    };
 
     // Variable that will keep track of the categories in the current course
     $scope.categories = null;
 
-    // Variable that will keep track of whether a whiteboard is being exported to an asset
+    // Variable that will keep track of whether the current whiteboard is being exported to an asset
     $scope.isExporting = false;
 
     /**
