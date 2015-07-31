@@ -58,15 +58,21 @@
        </i>
       </button>
     </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" title="Export" data-ng-click="setMode('export')" data-ng-class="{'active': mode === 'export'}" data-content-template="exportPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
+        <i class="fa fa-download">
+          <span class="sr-only">Export</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Settings" data-ng-click="editWhiteboard()">
+        <i class="fa fa-cog">
+          <span class="sr-only">Settings</span>
+        </i>
+      </button>
+    </div>
   </div>
 
   <div class="hide">
-    <div class="btn-group" role="group">
-      <button type="button" class="btn btn-default" title="Export" data-ng-click="setMode('export')" data-ng-class="{'active': mode === 'export'}" data-content-template="exportPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
-        <i class="fa fa-share-square-o"></i>
-        <span>Export</span>
-      </button>
-    </div>
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-default whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'online'}">
         <i class="fa fa-user">
@@ -77,13 +83,6 @@
       <button type="button" class="btn btn-default whiteboards-board-toolbar-chat" title="Chat" data-ng-click="toggleSidebar('chat')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'chat'}">
         <i class="fa fa-comments">
           <span class="sr-only">Chat</span>
-        </i>
-      </button>
-    </div>
-    <div class="btn-group" role="group">
-      <button type="button" class="btn btn-default" title="Settings" data-ng-click="editWhiteboard()">
-        <i class="fa fa-cog">
-          <span class="sr-only">Settings</span>
         </i>
       </button>
     </div>

@@ -73,8 +73,8 @@
   font-size: 18px;
 }
 
-#whiteboards-board-toolbar > .btn-group > button > i.fa-share-square-o {
-  position: relative;         /* Align the export icon with the text */
+#whiteboards-board-toolbar > .btn-group > button > i.fa-download {
+  position: relative;
   top: 1px;
 }
 
