@@ -19,10 +19,7 @@
 
   angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $scope) {
 
-    $scope.searchOptions = {
-      // Don't include whiteboard assets
-      'type': ['link', 'file']
-    };
+    $scope.searchOptions = {};
     $scope.assets = [];
     $scope.list = {
       'page': 0,
