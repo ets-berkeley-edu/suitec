@@ -31,8 +31,11 @@
     // Variable that will keep track of the whiteboard Fabric.js instance
     var canvas = null;
 
-    // Variable that will keep track of the base width of the canvas
+    // The base width of the canvas
     var CANVAS_BASE_WIDTH = 1000;
+
+    // The padding that will be enforced on the canvas when it can be scrolled
+    var CANVAS_PADDING = 20;
 
     // Open a websocket connection for real-time communication with the server (chat + whiteboard changes).
     // The course ID and API domain are passed in as handshake query parameters
@@ -194,6 +197,14 @@
       // Keep track of whether the canvas can currently be scrolled
       if (maxRight > viewportWidth || maxBottom > viewportHeight) {
         $scope.scrollingCanvas = true;
+
+        // Add padding when the canvas can be scrolled
+        if (maxRight > viewportWidth) {
+          maxRight += CANVAS_PADDING;
+        }
+        if (maxBottom > viewportHeight) {
+          maxBottom += CANVAS_PADDING;
+        }
       } else {
         $scope.scrollingCanvas = false;
       }
@@ -894,17 +905,21 @@
     var textSizes = [12, 14, 18, 24, 30, 36, 48, 60, 72];
 
     // Variable that will keep track of the selected text size and color
-    $scope.text = {};
-    $scope.text.options = textSizes.map(function(textSize) {
-      return {
-        'value': textSize,
-        'label': '<span>' + textSize + '</span>'
-      };
-    });
-
-    $scope.text.selected = {
-      'size': 14,
-      'color': $scope.colors[0]
+    $scope.text = {
+      'options': [
+        {
+          'value': 36,
+          'label': '<span class="whiteboards-text-option">Title</span>'
+        },
+        {
+          'value': 14,
+          'label': '<span class="whiteboards-text-option">Normal</span>'
+        }
+      ],
+      'selected': {
+        'size': 14,
+        'color': $scope.colors[0]
+      }
     };
 
     /**

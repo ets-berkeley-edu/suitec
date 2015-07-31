@@ -272,6 +272,12 @@
   padding: 5px;
 }
 
+.whiteboards-text-option {
+  display: inline-block;
+  min-width: 68px;
+  text-align: left;
+}
+
 /* COLOR PICKER */
 
 .whiteboards-color-container {
