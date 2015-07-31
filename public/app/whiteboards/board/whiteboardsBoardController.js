@@ -539,6 +539,16 @@
       }
     };
 
+    /**
+     * Set the toolbar back to move mode when the asset and export
+     * tooltips are hidden
+     */
+    $scope.$on('tooltip.hide', function() {
+      if ($scope.mode === 'asset' || $scope.mode === 'export') {
+        setMode('move');
+      }
+    });
+
     /* UNDO/REDO */
 
     // Variable that will keep track of the actions the current user has taken
