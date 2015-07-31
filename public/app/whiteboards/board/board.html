@@ -194,7 +194,7 @@
       </button>
     </li>
     <li class="clearfix">
-      <a class="btn btn-default" data-ng-href="{{exportPngUrl}}" data-ng-click="exportAsPng()" data-ng-disabled="isExportingAsPng || getNumberOfElements() === 0">
+      <a class="btn btn-default" data-ng-href="{{exportPngUrl}}" data-ng-click="exportAsPng($event)" data-ng-disabled="isExportingAsPng || getNumberOfElements() === 0">
         <span data-ng-if="isExportingAsPng"><i class="fa fa-spin fa-spinner"></i> Downloading image</span>
         <span data-ng-if="!isExportingAsPng"><i class="fa fa-download"></i> Download as image</span>
       </a>

@@ -1238,7 +1238,12 @@
     /**
      * Export the whiteboard to a PNG file
      */
-    var exportAsPng = $scope.exportAsPng = function() {
+    var exportAsPng = $scope.exportAsPng = function($event) {
+      if ($scope.isExportingAsPng) {
+        $event.preventDefault();
+        return false;
+      }
+
       // Indicate that the server is generating the PNG file
       $scope.isExportingAsPng = true;
 
