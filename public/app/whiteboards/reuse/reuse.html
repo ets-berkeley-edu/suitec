@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-list-item-metadata">
                       <span class="col-threedots">{{asset.title}}</span>
-                      <small class="col-threedots">by {{asset.user.canvas_full_name}}</small>
+                      <small class="col-threedots">by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
                     </div>
                   </div>
                 </a>

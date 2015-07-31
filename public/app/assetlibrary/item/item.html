@@ -23,17 +23,33 @@
     <!-- METADATA -->
     <div class="assetlibrary-item-metadata">
       <div class="row">
-        <div class="col-sm-6 assetlibrary-item-metadata-column">
-          <div class="media">
-            <div class="media-left media-middle">
-              <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + asset.user.canvas_image + ')'}"></div>
-            </div>
-            <div class="media-body media-middle">
-              by <a ui-sref="assetlibrarylist({'user': asset.user.id})" ui-sref-opts="{'inherit': false}">{{asset.user.canvas_full_name}}</a> on {{asset.created_at | date:'longDate' }}
-            </div>
+        <div class="col-sm-9 assetlibrary-item-metadata-column">
+          <div class="media-left media-top">
+            <div class="assetlibrary-item-metadata-text">by</div>
+          </div>
+          <div class="media-body media-middle">
+            <ul class="media-list list-inline assetlibrary-item-metadata" ng-class="{'assetlibrary-item-metadata-multiple-users': asset.users.length > 1}">
+              <li class="media" data-ng-repeat="user in asset.users | orderBy:['canvas_full_name']">
+                <div class="media-left media-middle">
+                  <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + user.canvas_image + ')'}"></div>
+                </div>
+                <div class="media-left media-middle assetlibrary-item-metadata-user-name">
+                  <a ui-sref="assetlibrarylist({'user': user.id})" ui-sref-opts="{'inherit': false}">
+                    <i class="fa fa-graduation-cap" data-ng-if="user.is_admin"></i> {{user.canvas_full_name}}
+                  </a>
+                  <span data-ng-if="me.id === user.id">(me)</span>
+                </div>
+              </li>
+              <li class="media">
+                <div class="media-left media-top">
+                  <div class="assetlibrary-item-metadata-text">on <span class="assetlibrary-item-metadata-on-date">{{asset.created_at | date:'longDate' }}</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="col-sm-6 assetlibrary-item-metadata-column assetlibrary-item-metadata-icons">
+        <div class="col-sm-3 assetlibrary-item-metadata-column assetlibrary-item-metadata-icons">
           <div iconbar asset="asset"></div>
         </div>
       </div>
@@ -51,19 +67,21 @@
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Category</div>
             <div class="col-xs-9">
-              <div data-ng-if="asset.categories.length">
+              <div data-ng-if="asset.categories.length > 0">
                 <div data-ng-repeat="category in asset.categories">
                   <a ui-sref="assetlibrarylist({'category': category.id})" ui-sref-opts="{'inherit': false}">{{category.title}}</a>
                 </div>
               </div>
-              <div data-ng-if="!asset.categories.length">No category</div>
+              <div data-ng-if="asset.categories.length === 0">No category</div>
             </div>
           </div>
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Source</div>
             <div class="col-xs-9">
-              <div data-ng-if="asset.source || asset.url" class="col-threedots"><a data-ng-href="{{asset.source || asset.url}}" target="_blank">{{asset.source || asset.url}}</a></div>
-              <div data-ng-if="!asset.source && !asset.url">No source</div>
+              <div data-ng-if="asset.type !== 'whiteboard' && (asset.source || asset.url)" class="col-threedots">
+                <a data-ng-href="{{asset.source || asset.url}}" target="_blank">{{asset.source || asset.url}}</a>
+              </div>
+              <div data-ng-if="asset.type === 'whiteboard' || (!asset.source && !asset.url)">No source</div>
             </div>
           </div>
         </div>

@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $alert, $cookies, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -284,6 +284,15 @@
         'x': centerX,
         'y': centerY
       };
+    };
+
+    /**
+     * Get the number of elements that are in the whiteboard
+     *
+     * @return {Number}                           The number of elements on the Canvas
+     */
+    var getNumberOfElements = $scope.getNumberOfElements = function() {
+      return canvas.getObjects().length;
     };
 
     /**
@@ -1255,6 +1264,99 @@
       $modal({
         'scope': scope,
         'template': '/app/whiteboards/edit/edit.html'
+      });
+    };
+
+    /* EXPORT */
+
+    // Depending on the size of the whiteboard, exporting it to PNG can sometimes take a while. To
+    // prevent the user from clicking the button twice when waiting to get a response, the button
+    // will be disabled as soon as its clicked. Once the file has been downloaded, it will be
+    // re-enabled. However, there are no cross-browser events that expose whether a file has been
+    // downloaded. The PNG export endpoint works around this by taking in a `downloadId` parameter
+    // and using that to construct a predictable cookie name. When a user clicks the button, the UI
+    // will disable the button and wait until the cookie is set before re-enabling it again
+    var downloadId = null;
+
+    // Variable that will keep track of the URL through which the whiteboard can be exported as a PNG file
+    $scope.exportPngUrl = null;
+
+    // Variable that will keep track of whether the current whiteboard is being exported to PNG
+    $scope.isExportingAsPng = false;
+
+    /**
+     * Generate the export to PNG url
+     */
+    var generateExportPngUrl = function() {
+      downloadId = Math.floor(Math.random() * 10000000);
+
+      $scope.exportPngUrl = utilService.getApiUrl('/whiteboards/' + whiteboardId + '/export/png?downloadId=' + downloadId);
+    };
+
+    // Generate the initial download id and PNG url
+    generateExportPngUrl();
+
+    /**
+     * Export the whiteboard to a PNG file
+     */
+    var exportAsPng = $scope.exportAsPng = function($event) {
+      if ($scope.isExportingAsPng) {
+        $event.preventDefault();
+        return false;
+      }
+
+      // Indicate that the server is generating the PNG file
+      $scope.isExportingAsPng = true;
+
+      // Once the user has started receiving the PNG file, a cookie will be set. As long
+      // as that cookie isn't set, the "Download as image" button should be disabled
+      var cookieName = 'whiteboard.' + downloadId + '.png';
+      var stopWatching = $scope.$watch(function() {
+        return $cookies.get(cookieName);
+      }, function(newValue) {
+        if (newValue) {
+          // The file started downloading, the "Download as image" button can now be enabled
+          $scope.isExportingAsPng = false;
+
+          // Remove the cookie as it's no longer required
+          $cookies.remove(cookieName);
+
+          // Generate a new download id for the next time the user clicks the download image button
+          generateExportPngUrl();
+
+          // Remove the watch as it's no longer required
+          stopWatching();
+        }
+      });
+    };
+
+    /**
+     * Launch the modal that allows the current user to export the current whiteboard to the asset library
+     */
+    var exportAsAsset = $scope.exportAsAsset = function() {
+      // Create a new scope for the modal dialog
+      var scope = $scope.$new(true);
+      scope.whiteboard = $scope.whiteboard;
+      scope.closeModal = function(asset) {
+        if (asset) {
+          // Show a notification indicating the whiteboard was exported
+          var myAlert = $alert({
+            'container': '#whiteboards-board-notifications',
+            'content': 'This board has been successfully added to the <strong>Asset Library</strong>.',
+            'duration': 5,
+            'keyboard': true,
+            'show': true,
+            'templateUrl': 'whiteboards-notification-template',
+            'type': 'success'
+          });
+        }
+        this.$hide();
+      };
+
+      // Open the export as asset modal dialog
+      $modal({
+        'scope': scope,
+        'templateUrl': '/app/whiteboards/exportasassetmodal/exportasasset.html'
       });
     };
 

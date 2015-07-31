@@ -20,7 +20,7 @@
       <div class="col-list-item-container">
         <a target="_blank" data-ng-href="{{generateWhiteboardURL(whiteboard)}}">
           <div class="col-list-item-tile">
-            <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="whiteboard.thumbnail_url">
+            <img class="img-responsive" data-ng-src="{{whiteboard.thumbnail_url}}" data-ng-if="whiteboard.thumbnail_url">
             <div class="text-center col-list-item-thumbnail-default" data-ng-if="!whiteboard.thumbnail_url">
               <i class="fa fa-calendar-o"></i>
             </div>

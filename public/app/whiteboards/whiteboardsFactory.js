@@ -79,12 +79,28 @@
       return $http.get(utilService.getApiUrl(url));
     };
 
+    /**
+     * Export a whiteboard to an asset
+     *
+     * @param  {Number}               id                            The id of the whiteboard to export
+     * @param  {Object}               asset                         The object representing the exported whiteboard asset
+     * @param  {String}               asset.title                   The title of the exported whiteboard
+     * @param  {String}               [asset.description]           The description of the asset
+     * @param  {Number[]}             [asset.categories]            The ids of the categories to which the asset should be associated
+     * @return {Promise<Asset>}                                     Promise returning the exported whiteboard asset
+     */
+    var exportWhiteboardAsAsset = function(id, asset) {
+      var url = utilService.getApiUrl('/whiteboards/' + id + '/export/asset');
+      return $http.post(url, asset);
+    };
+
     return {
       'getWhiteboard': getWhiteboard,
       'getWhiteboards': getWhiteboards,
       'createWhiteboard': createWhiteboard,
       'editWhiteboard': editWhiteboard,
-      'getChatMessages': getChatMessages
+      'getChatMessages': getChatMessages,
+      'exportWhiteboardAsAsset': exportWhiteboardAsAsset
     };
 
   });

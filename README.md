@@ -50,11 +50,40 @@ In order to install and start the Collabosphere app server, the following steps 
 ```
 # Clone the Collabosphere codebase
 git clone git://github.com/ets-berkeley-edu/collabosphere.git
+```
 
-# Install the npm dependencies
+# Dependencies
+
+## Packages
+
+Ensure you have the following packages installed and available in your `$PATH`:
+
+ * Node.JS and NPM
+ * Cairo and all its dependencies. On RHEL systems the following packages have to be installed:
+   - cairo
+   - cairo-devel
+   - cairomm-devel
+   - libjpeg-turbo-devel
+   - pango
+   - pango-devel
+   - pangomm
+   - pangomm-devel
+   - giflib-devel
+
+   Check out [the node-canvas installation wiki](https://github.com/Automattic/node-canvas/wiki/Installation---Fedora) for more information.
+
+## Node modules
+
+Depending on your X11 installation you might have to explicitly set the `PKG_CONFIG` environment variable
+
+```
+export PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
 npm install
+```
 
 # Run Collabosphere
+
+```
 node app
 ```
 
@@ -63,6 +92,11 @@ node app
 By default, Collabosphere will poll the Canvas API for any new activities that are included in the
 engagement index. Whether polling should be enabled and how often it should run can be configured
 in the `canvasPoller` section of the configuration file.
+
+You will need to configure a Canvas API key for a user, preferably a global Canvas administrator, that is able to list the:
+ - users
+ - assignments *and* all their submissions
+ - discussion
 
 ### Production build
 

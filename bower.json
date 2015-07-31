@@ -9,8 +9,9 @@
   "dependencies": {
     "angular": "latest",
     "angular-aria": "latest",
+    "angular-cookies": "latest",
     "angular-elastic": "latest",
-    "angular-fabric": "latest",
+    "angular-fabric": "1.0.0",
     "angular-messages":"latest",
     "angular-momentjs": "latest",
     "angular-sanitize": "latest",

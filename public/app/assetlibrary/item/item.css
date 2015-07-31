@@ -98,6 +98,34 @@
   font-weight: 500;
 }
 
+.assetlibrary-item-metadata-text {
+  display: table-cell;
+  height: 38px;
+  vertical-align: middle;
+}
+
+ul.assetlibrary-item-metadata {
+  margin: 0;
+}
+
+ul.assetlibrary-item-metadata li {
+  margin: 0;
+  padding: 0;
+}
+
+ul.assetlibrary-item-metadata-multiple-users li:last-child {
+  display: block;
+}
+
+ul.assetlibrary-item-metadata-multiple-users li .assetlibrary-item-metadata-user-name {
+  padding-right: 15px;
+}
+
+.assetlibrary-item-metadata-user-name, .assetlibrary-item-metadata-on-date {
+  color: #4172B4;
+  padding: 0;
+}
+
 /* ADD COMMENT */
 
 .assetlibrary-item-addcomment-commenter {
