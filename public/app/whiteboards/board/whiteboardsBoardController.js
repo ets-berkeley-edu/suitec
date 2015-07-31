@@ -158,10 +158,34 @@
       fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
       // Initialize the whiteboard Fabric.js instance
       canvas = new fabric.Canvas('whiteboards-board-board');
+      // Set the selection style for the whiteboard
+      setSelectionStyle();
       // Set the pencil brush as the drawing brush
       canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
       // Load the whiteboard information, including the whiteboard's content
       getWhiteboard();
+    };
+
+    /**
+     * Set the selection style of the Fabric.js canvas whiteboard elements, as well as
+     * the style of the helper shown when selecting multiple elements at once
+     */
+    var setSelectionStyle = function() {
+      // Set the style of the multi-select helper
+      canvas.selectionColor = 'transparent';
+      canvas.selectionBorderColor = '#0295DE';
+      canvas.selectionLineWidth = 2;
+      // Make the border dashed
+      // @see http://fabricjs.com/fabric-intro-part-4/
+      canvas.selectionDashArray = [10, 5];
+
+      // Set the selection style for all elements
+      fabric.Object.prototype.borderColor = '#0295DE';
+      fabric.Object.prototype.borderScaleFactor = 0.3;
+      fabric.Object.prototype.cornerColor = '#0295DE';
+      fabric.Object.prototype.cornerSize = 10;
+      fabric.Object.prototype.transparentCorners = false;
+      fabric.Object.prototype.rotatingPointOffset = 30;
     };
 
     // Variable that will keep track of whether the canvas elements are overflowing the viewport
@@ -253,8 +277,8 @@
 
       // Calculate the center point of the whiteboard canvas
       var zoomLevel = canvas.getZoom();
-      var centerX = (currentCanvasPan.x + (viewportWidth / 2)) / zoomLevel;
-      var centerY = (currentCanvasPan.y + (viewportHeight / 2)) / zoomLevel;
+      var centerX = (viewportWidth / 2) / zoomLevel;
+      var centerY = (viewportHeight / 2) / zoomLevel;
 
       return {
         'x': centerX,
@@ -504,22 +528,14 @@
       }
     });
 
-    /* INFINITE CANVAS SCROLLING */
-
-    // Variable that will keep track of the current whiteboard canvas top left position
-     var currentCanvasPan = new fabric.Point(0, 0);
-
     /* ZOOMING */
 
-    // Variable that will keep track of the current zoom level
-    // TODO
-    $scope.zoomLevel = 1;
-
-    // TODO
+    // Variable that will keep track of whether the whiteboard content needs to be fitted to the screen
     $scope.fitToScreen = false;
 
     /**
-     * TODO
+     * Toggle between fitting the whiteboard content to the screen and showing the
+     * whiteboard content at full size
      */
     var toggleZoom = $scope.toggleZoom = function() {
       $scope.fitToScreen = !$scope.fitToScreen;
@@ -655,7 +671,6 @@
           }
           element.set('isUndoRedo', true);
           canvas.fire('object:modified', {'target': element});
-          canvas.absolutePan(currentCanvasPan);
           canvas.renderAll();
         }
       }
@@ -700,7 +715,6 @@
           }
           element.set('isUndoRedo', true);
           canvas.fire('object:modified', {'target': element});
-          canvas.absolutePan(currentCanvasPan);
           canvas.renderAll();
         }
       }
