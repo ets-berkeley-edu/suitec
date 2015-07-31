@@ -44,7 +44,7 @@
      * @return {Boolean}        `true` if the user is a collaborator, `false` otherwise
      */
     $scope.isAssetCollaborator = function() {
-      if ($scope.me && $scope.asset && !$filter('filter')($scope.asset.users, {'id': $scope.me.id})) {
+      if ($scope.me && $scope.asset && !$filter('filter')($scope.asset.users, {'id': $scope.me.id}).length > 0) {
         return false;
       } else {
         return true;
