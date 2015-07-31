@@ -41,7 +41,7 @@
     /**
      * Whether the current user is a collaborator of the asset
      *
-     * @return {Boolean} `true` if the user is a collaborator, `false` otherwise
+     * @return {Boolean}        `true` if the user is a collaborator, `false` otherwise
      */
     $scope.isAssetCollaborator = function() {
       if ($scope.me && $scope.asset && !$filter('filter')($scope.asset.users, {'id': $scope.me.id})) {

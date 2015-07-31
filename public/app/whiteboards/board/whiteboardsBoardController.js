@@ -1280,7 +1280,7 @@
             'duration': 5,
             'keyboard': true,
             'show': true,
-            'templateUrl': 'alert-export',
+            'templateUrl': 'whiteboards-notification-template',
             'type': 'success'
           });
         }

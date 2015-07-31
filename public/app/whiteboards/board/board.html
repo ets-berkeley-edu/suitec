@@ -203,8 +203,9 @@
 </script>
 
 <!-- NOTIFICATIONS -->
+<!-- TODO: Update positioning when doing whiteboard improvements -->
 <div id="whiteboards-board-notifications" data-ng-class="{'whiteboards-board-notifications-full': !sidebarExpanded}"></div>
-<script type="text/ng-template" id="alert-export">
+<script type="text/ng-template" id="whiteboards-notification-template">
   <div class="alert" ng-class="'alert-' + type">
     <button type="button" class="btn btn-link pull-right close" ng-click="$hide()">
         <i class="fa fa-times-circle"><span class="sr-only">Close</span></i>

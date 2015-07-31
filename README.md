@@ -70,6 +70,8 @@ Ensure you have the following packages installed and available in your `$PATH`:
    - pangomm-devel
    - giflib-devel
 
+   Check out [the node-canvas installation wiki](https://github.com/Automattic/node-canvas/wiki/Installation---Fedora) for more information.
+
 ## Node modules
 
 Depending on your X11 installation you might have to explicitly set the `PKG_CONFIG` environment variable
