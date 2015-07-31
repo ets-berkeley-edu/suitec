@@ -25,7 +25,8 @@
   top: 0;
 }
 
-#whiteboards-board-viewport.whiteboards-sidebar-expanded {
+#whiteboards-board-viewport.whiteboards-sidebar-expanded,
+#whiteboards-board-toolbar-container.whiteboards-sidebar-expanded {
   right: 260px;
 }
 

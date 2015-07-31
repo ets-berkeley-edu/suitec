@@ -1080,7 +1080,7 @@
     /* SIDEBAR */
 
     // Variable that will keep track of whether the chat/online sidebar is expanded
-    $scope.sidebarExpanded = false;
+    $scope.sidebarExpanded = true;
 
     // Variable that will keep track of the current mode the sidebar is displayed in
     $scope.sidebarMode = 'chat';
