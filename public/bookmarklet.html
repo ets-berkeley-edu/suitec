@@ -44,7 +44,7 @@
             <div class="form-group">
               <label for="collabosphere-bookmark-title" class="col-sm-3 control-label">Title</label>
               <div class="col-sm-9">
-                <input id="collabosphere-bookmark-title" class="form-control" placeholder="Enter a title">
+                <input id="collabosphere-bookmark-title" class="form-control" placeholder="Enter a title" maxlength="255">
               </div>
             </div>
             <div class="form-group">
@@ -119,7 +119,7 @@
       <div class="col-sm-8 col-md-9 collabosphere-items-metadata-column">
         <div class="form-group">
           <label for="collabosphere-item-title" class="control-label">Title</label>
-          <input id="collabosphere-item-title" class="form-control" placeholder="Enter a title" value="<%= item.title %>">
+          <input id="collabosphere-item-title" class="form-control" placeholder="Enter a title" value="<%= item.title %>" maxlength="255">
         </div>
         <div class="form-group">
           <label for="collabosphere-item-category" class="control-label">Category</label>
