@@ -29,3 +29,12 @@
   position: relative;
   top: -1px;
 }
+
+.assetlibrary-iconbar a {
+    color: #ADABAA;
+}
+
+.assetlibrary-iconbar a:hover {
+    color: #666;
+    text-decoration: none;
+}

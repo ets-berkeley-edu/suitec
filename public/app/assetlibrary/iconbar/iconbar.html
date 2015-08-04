@@ -8,14 +8,18 @@
   <span data-ng-bind="asset.likes | number"></span>
 
   <!-- VIEWS -->
-  <i class="fa fa-eye">
-    <span class="sr-only">Views</span>
-  </i>
-  <span data-ng-bind="asset.views | number"></span>
+  <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+    <i class="fa fa-eye">
+      <span class="sr-only">Views</span>
+    </i>
+    <span data-ng-bind="asset.views | number"></span>
+  </a>
 
-  <!-- COMMENTS -->
-  <i class="fa fa-comment">
-    <span class="sr-only">Comments</span>
-  </i>
-  <span data-ng-bind="asset.comment_count | number"></span>
+  <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+    <!-- COMMENTS -->
+    <i class="fa fa-comment">
+      <span class="sr-only">Comments</span>
+    </i>
+    <span data-ng-bind="asset.comment_count | number"></span>
+  </a>
 </div>
