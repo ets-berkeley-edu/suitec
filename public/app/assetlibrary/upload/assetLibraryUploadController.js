@@ -147,6 +147,14 @@
         // ensure that the reported progress never goes above the size of the file that is currently
         // being uploaded
         var loaded = ev.loaded > currentFile.file.size ? currentFile.file.size : ev.loaded;
+
+        // The back-end needs to move the file into the course's files tool which can take a little
+        // while. Unfortunately, there are no progress events for this operation. To give the user
+        // a little bit of context, we let the progress bar not move beyond 95% and show a message
+        // that there is still something happening and that they should not move away
+        loaded = loaded * 0.95;
+
+        // Update the progress bar
         calculateProgress(uploadedSize + loaded);
       }).success(function(asset) {
         uploadedFiles.push(asset);

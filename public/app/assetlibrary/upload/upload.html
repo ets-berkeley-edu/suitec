@@ -92,7 +92,8 @@
             </div>
           </div>
           <div>
-            <span data-ng-bind-template="{{progress}}%"></span> complete
+            <span data-ng-bind-template="{{progress}}%"></span> complete.
+            <span data-ng-if="progress >= 95">Almost done...</span>
           </div>
         </div>
       </div>
