@@ -47,12 +47,12 @@
       </button>
     </div>
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-default" title="Undo" data-ng-click="undo()" data-ng-disabled="currentActionPosition === 0">
+      <button type="button" class="btn btn-default" title="Undo" data-ng-click="undo()" data-ng-disabled="currentActivityPosition === 0">
         <i class="fa fa-reply">
           <span class="sr-only">Undo</span>
         </i>
       </button>
-      <button type="button" class="btn btn-default" title="Redo" data-ng-click="redo()" data-ng-disabled="currentActionPosition === actionQueue.length">
+      <button type="button" class="btn btn-default" title="Redo" data-ng-click="redo()" data-ng-disabled="currentActivityPosition === activityQueue.length">
         <i class="fa fa-share">
           <span class="sr-only">Redo</span>
        </i>
