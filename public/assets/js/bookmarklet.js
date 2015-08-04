@@ -347,7 +347,7 @@
         return;
       }
 
-      // Load a captured background imags in a hidden image tag to extract its height and width
+      // Load the extracted background image in a hidden image tag to extract its height and width
       var img = {'url': url};
 
       var $tmpImg = $('<img />').hide();
