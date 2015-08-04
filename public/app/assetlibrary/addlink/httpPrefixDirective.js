@@ -24,7 +24,7 @@
       'link': function(scope, element, attrs, controller) {
         function ensureHttpPrefix(value) {
           // Add a 'http://' prefix if no protocol prefix has been specified
-          if (value && !/^(https?):\/\//i.test(value) && 'http://'.indexOf(value) === -1 && 'https://'.indexOf(value) === -1) {
+          if (value && value.indexOf('://') === -1) {
             controller.$setViewValue('http://' + value);
             controller.$render();
             return 'http://' + value;
