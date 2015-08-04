@@ -195,8 +195,9 @@
 #whiteboards-board-members .col-avatar.whiteboards-board-online i {
   color: #34A63E;
   font-size: 16px;
-  margin-top: 22px;
-  margin-left: 30px;
+  left: 31px;
+  position: relative;
+  top: 19px;
 }
 
 /* POPOVERS */
