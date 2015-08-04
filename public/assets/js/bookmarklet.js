@@ -324,7 +324,7 @@
 
     // Get the first URL out of the background image style, ignoring other values such as gradients
     // or inline images
-    var match = backgroundImageStyle.match(/url\(([^\)]+?)\)/i);
+    var match = backgroundImageStyle.match(/url\("?'?([^\)]+?)"?'?\)/i);
     if (!match || !match[1] || match[1].indexOf('data:') === 0) {
       return null;
     }
