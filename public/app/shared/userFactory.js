@@ -80,13 +80,11 @@
       var update = {
         'share': share
       };
-      return $http.post(utilService.getApiUrl('/users/me/share'), update)
-        .then(function() {
-          // Remove the me object from the cache as its `share_points` value is now updated
-          var $httpDefaultCache = $cacheFactory.get('$http');
-          var key = utilService.getApiUrl('/users/me');
-          $httpDefaultCache.remove(key);
-        });
+      return $http.post(utilService.getApiUrl('/users/me/share'), update).then(function() {
+        // Remove the me object from the cache as its `share_points` value is now updated
+        var $httpDefaultCache = $cacheFactory.get('$http');
+        $httpDefaultCache.remove(utilService.getApiUrl('/users/me'));
+      });
     };
 
     return {
