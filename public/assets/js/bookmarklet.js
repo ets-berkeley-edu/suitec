@@ -306,7 +306,7 @@
   };
 
   /**
-   * Get the background image URL out of an element
+   * Get the background image URL for an element
    *
    * @param  {Element}    element     The element for which to get the background image URL
    * @return {String}                 The background image URL or null if the element has no background image
@@ -341,13 +341,13 @@
    */
   var collectBackgroundImages = function(callback) {
     // Extract all elements that have a background image
-    var $backgroundImages = $('*', window.parent.document).filter(function(i, element) {
-      return getBackgroundImageUrl(element);
-    });
+    var $backgroundImages = $('*', window.parent.document).each(function(i, element) {
+      var url = getBackgroundImageUrl(element);
+      if (!url) {
+        return;
+      }
 
-    // Load all captured background images in a hidden image tag to extract their height and width
-    $backgroundImages.each(function() {
-      var url = getBackgroundImageUrl(this);
+      // Load a captured background imags in a hidden image tag to extract its height and width
       var img = {'url': url};
 
       var $tmpImg = $('<img />').hide();
