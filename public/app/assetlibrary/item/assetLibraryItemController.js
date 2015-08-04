@@ -198,8 +198,7 @@
 
         assetLibraryFactory.deleteComment(assetId, comment.id).then(localDelete, function(err) {
           // When the comment is removed in another session this request will return a 404. In that
-          // case we proceed as if the request succeeded as the comment no longer exists, which is
-          // what was desired in the first place
+          // case we proceed as if the request succeeded as the comment no longer exists
           if (err.status === 404) {
             localDelete();
           }
