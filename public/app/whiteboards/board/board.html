@@ -249,7 +249,9 @@
     <h3 class="whiteboard-board-members-title">Board collaborators ({{whiteboard.members.length}})</h3>
     <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">
       <div class="media-left media-middle">
-        <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}"></div>
+        <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}">
+          <i class="fa fa-check-circle" data-ng-if="member.online"></i>
+        </div>
       </div>
       <div class="media-body media-middle">
         <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}

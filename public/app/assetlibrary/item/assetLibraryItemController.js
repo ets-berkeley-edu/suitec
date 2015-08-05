@@ -177,7 +177,12 @@
      */
     var deleteComment = $scope.deleteComment = function(comment) {
       if (confirm('Are you sure you want to delete this comment?')) {
-        assetLibraryFactory.deleteComment(assetId, comment.id).success(function() {
+
+        /*!
+         * Delete the comment from the comments in the current scope and indicate that the asset
+         * has been updated
+         */
+        var localDelete = function() {
           // Delete the comment from the comment list
           for (var i = 0; i < $scope.asset.comments.length; i++) {
             if ($scope.asset.comments[i].id === comment.id) {
@@ -189,6 +194,14 @@
           $scope.asset.comment_count--;
           // Indicate that the asset has been updated
           $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+        };
+
+        assetLibraryFactory.deleteComment(assetId, comment.id).then(localDelete, function(err) {
+          // When the comment is removed in another session this request will return a 404. In that
+          // case we proceed as if the request succeeded as the comment no longer exists
+          if (err.status === 404) {
+            localDelete();
+          }
         });
       }
     };

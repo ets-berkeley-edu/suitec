@@ -6,7 +6,7 @@
     <div class="form-group" data-ng-class="{'has-error': assetlibraryAddlinkForm.$submitted && assetlibraryAddlinkForm.assetlibraryAddlinkUrl.$invalid}">
       <label for="assetlibrary-addlink-url" class="col-sm-2 control-label">URL</label>
       <div class="col-sm-10">
-        <input type="url" id="assetlibrary-addlink-url" name="assetlibraryAddlinkUrl" class="form-control" placeholder="Paste or type a URL here" data-ng-model="link.url" data-ng-maxlength="255" required http-prefix>
+        <input type="url" id="assetlibrary-addlink-url" name="assetlibraryAddlinkUrl" class="form-control" placeholder="Paste or type a URL here" data-ng-model="link.url" data-ng-model-options="{'updateOn': 'blur'}" data-ng-maxlength="255" required http-prefix>
         <div class="help-block" data-ng-messages="assetlibraryAddlinkForm.assetlibraryAddlinkUrl.$error">
           <div data-ng-message="required">Please enter a URL</div>
           <div data-ng-message="url">Please enter a valid URL</div>

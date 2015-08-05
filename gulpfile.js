@@ -78,8 +78,8 @@ gulp.task('minifyBookmarkletFiles', ['copyBookmarkletFiles'], function() {
     return 'public/' + match.substring(12, match.length - 1);
   });
 
-  var jsFilter = filter('**/*.js');
-  var cssFilter = filter('**/*.css');
+  var jsFilter = filter('**/*.js', {'restore': true});
+  var cssFilter = filter('**/*.css', {'restore': true});
 
   // Hash and version the dependencies
   return gulp.src(matches, {'base': 'public'})
@@ -88,14 +88,14 @@ gulp.task('minifyBookmarkletFiles', ['copyBookmarkletFiles'], function() {
     .pipe(uglify())
     .pipe(rev())
     .pipe(gulp.dest('target/static'))
-    .pipe(jsFilter.restore())
+    .pipe(jsFilter.restore)
 
     // Hash the CSS files
     .pipe(cssFilter)
     .pipe(cssmin({'keepSpecialComments': 0}))
     .pipe(rev())
     .pipe(gulp.dest('target/static/'))
-    .pipe(cssFilter.restore())
+    .pipe(cssFilter.restore)
 
     // Write out a file that maps the original filename to its hashed counterpart
     .pipe(rev.manifest('bookmarklet-rev-manifest.json'))

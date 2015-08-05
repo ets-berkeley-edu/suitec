@@ -264,7 +264,7 @@
      * initial save
      */
     var saveSharePoints = $scope.saveSharePoints = function() {
-      userFactory.updateSharePoints($scope.me.new_share_points).success(function() {
+      userFactory.updateSharePoints($scope.me.new_share_points).then(function() {
         $scope.me.share_points = $scope.me.new_share_points;
         getLeaderboard();
       });

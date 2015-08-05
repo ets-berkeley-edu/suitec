@@ -197,11 +197,18 @@
 }
 
 #whiteboards-board-members .col-avatar {
-  border-color: #AF3837;
+  border: 3px solid #BD5D60;
 }
 
 #whiteboards-board-members .col-avatar.whiteboards-board-online {
-  border-color: #0E8B00;
+  border-color: #34A63E;
+}
+#whiteboards-board-members .col-avatar.whiteboards-board-online i {
+  color: #34A63E;
+  font-size: 16px;
+  left: 28px;
+  position: relative;
+  top: 19px;
 }
 
 /* POPOVERS */
