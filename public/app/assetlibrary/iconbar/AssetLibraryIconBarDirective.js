@@ -22,7 +22,8 @@
       'restrict': 'A',
       'templateUrl': '/app/assetlibrary/iconbar/iconbar.html',
       'scope': {
-        'asset': '=asset'
+        'asset': '=asset',
+        'addLinks': '@addLinks'
       }
     };
   });
