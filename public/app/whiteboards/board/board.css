@@ -13,52 +13,62 @@
  * permissions and limitations under the License.
  */
 
-#whiteboards-board-notifications {
-  left: 10px;
-  position: absolute;
-  right: 270px;
-  top: 20px;
-}
-
-#whiteboards-board-notifications.whiteboards-board-notifications-full {
-  right: 10px;
-}
-
 /* WHITEBOARD */
 
-#whiteboards-board-viewport {
-  background-color: #F7F7F7;
+#whiteboards-board-container {
   bottom: 0;
   left: 0;
-  overflow: scroll;
   position: absolute;
   right: 0;
   top: 0;
 }
 
-#whiteboards-board-viewport.whiteboards-sidebar-expanded,
-#whiteboards-board-toolbar-container.whiteboards-sidebar-expanded {
+#whiteboards-board-container.whiteboards-sidebar-expanded {
   right: 260px;
+}
+
+#whiteboards-board-viewport {
+  background-color: #F7F7F7;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+}
+
+/* NOTIFICATION */
+
+#whiteboards-board-notifications-container {
+  line-height: 0;
+}
+
+#whiteboards-board-notifications {
+  display: inline-block;
+  position: relative;
+  width: 85%;
+  vertical-align: top;
+}
+
+#whiteboards-board-notifications .alert {
+  left: 0;
+  line-height: 20px;
+  position: absolute;
+  right: 0;
+  top: 25px;
+  z-index: 101;
 }
 
 /* TOOLBAR */
 
-#whiteboards-board-toolbar-container {
-  bottom: 25px;
-  left: 0;
-  position: absolute;
-  right: 0;
-}
-
 #whiteboards-board-toolbar {
   background-color: #FFF;
   border: 1px solid #D3D3D3;
+  bottom: 85px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   display: inline-block;
-  margin-left: 20px;
+  margin-left: 5px;
   margin-right: 20px;
   padding: 7px;
+  position: relative;
 }
 
 #whiteboards-board-toolbar > .btn-group > .btn {

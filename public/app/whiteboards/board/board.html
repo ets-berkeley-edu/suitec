@@ -1,10 +1,13 @@
-<!-- WHITEBOARD -->
-<div id="whiteboards-board-viewport" tabindex="0" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}">
-  <canvas id="whiteboards-board-board"></canvas>
-</div>
-
-<!-- TOOLBAR -->
-<div id="whiteboards-board-toolbar-container" class="text-center" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}">
+<div id="whiteboards-board-container" class="text-center" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}">
+  <!-- NOTIFICATIONS -->
+  <div id="whiteboards-board-notifications-container">
+    <div id="whiteboards-board-notifications"></div>
+  </div>
+  <!-- WHITEBOARD -->
+  <div id="whiteboards-board-viewport" tabindex="0">
+    <canvas id="whiteboards-board-board"></canvas>
+  </div>
+  <!-- TOOLBAR -->
   <div id="whiteboards-board-toolbar" class="btn-toolbar" role="toolbar" aria-label="Whiteboard Toolbar">
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-default active" title="Move and transform" data-ng-click="setMode('move')" data-ng-class="{'active': mode === 'move'}">
@@ -37,7 +40,7 @@
     <div class="btn-group" role="group" data-ng-if="scrollingCanvas">
       <button type="button" class="btn btn-default" title="Fit to screen" data-ng-if="!fitToScreen" data-ng-click="toggleZoom()">
         <i class="fa fa-search-minus">
-          <span class="sr-only">Fit to screen"</span>
+          <span class="sr-only">Fit to screen</span>
         </i>
       </button>
       <button type="button" class="btn btn-default" title="Actual size" data-ng-if="fitToScreen" data-ng-click="toggleZoom()">
@@ -71,21 +74,21 @@
       </button>
     </div>
   </div>
+</div>
 
-  <div class="hide">
-    <div class="btn-group" role="group">
-      <button type="button" class="btn btn-default whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'online'}">
-        <i class="fa fa-user">
-          <span class="sr-only">Collaborators</span>
-        </i>
-        <span class="badge" data-ng-bind="getOnlineUsers().length"></span>
-      </button>
-      <button type="button" class="btn btn-default whiteboards-board-toolbar-chat" title="Chat" data-ng-click="toggleSidebar('chat')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'chat'}">
-        <i class="fa fa-comments">
-          <span class="sr-only">Chat</span>
-        </i>
-      </button>
-    </div>
+<div class="hide">
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-default whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'online'}">
+      <i class="fa fa-user">
+        <span class="sr-only">Collaborators</span>
+      </i>
+      <span class="badge" data-ng-bind="getOnlineUsers().length"></span>
+    </button>
+    <button type="button" class="btn btn-default whiteboards-board-toolbar-chat" title="Chat" data-ng-click="toggleSidebar('chat')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'chat'}">
+      <i class="fa fa-comments">
+        <span class="sr-only">Chat</span>
+      </i>
+    </button>
   </div>
 </div>
 
@@ -202,8 +205,6 @@
 </script>
 
 <!-- NOTIFICATIONS -->
-<!-- TODO: Update positioning when doing whiteboard improvements -->
-<div id="whiteboards-board-notifications" data-ng-class="{'whiteboards-board-notifications-full': !sidebarExpanded}"></div>
 <script type="text/ng-template" id="whiteboards-notification-template">
   <div class="alert" ng-class="'alert-' + type">
     <button type="button" class="btn btn-link pull-right close" ng-click="$hide()">

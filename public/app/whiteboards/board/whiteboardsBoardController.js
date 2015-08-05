@@ -28,6 +28,9 @@
     // Element that will keep track of the whiteboard viewport
     var viewport = document.getElementById('whiteboards-board-viewport');
 
+    // Element that will keep track of the whiteboard toolbar
+    var toolbar = document.getElementById('whiteboards-board-toolbar');
+
     // Variable that will keep track of the whiteboard Fabric.js instance
     var canvas = null;
 
@@ -97,16 +100,13 @@
         setCanvasDimensions();
 
         // Restore the layout of the whiteboard canvas
-        for (var i = 0; i < whiteboard.whiteboard_elements.length; i++) {
-          var element = whiteboard.whiteboard_elements[i];
+        _.each(whiteboard.whiteboard_elements, function(element) {
           deserializeElement(element, function(element) {
             canvas.add(element);
             element.moveTo(element.get('index'));
             canvas.renderAll();
-            // Recalculate the size of the whiteboard canvas
-            setCanvasDimensions();
           });
-        }
+        });
       });
     };
 
@@ -282,7 +282,7 @@
      */
     var getCanvasCenter = function() {
       // Calculate the height of the toolbar
-      var toolbarHeight = document.getElementById('whiteboards-board-toolbar').clientHeight;
+      var toolbarHeight = toolbar.clientHeight;
 
       // Calculate the width of the sidebar
       var sidebarWidth = document.getElementById('whiteboards-board-sidebar').clientWidth;
@@ -395,12 +395,13 @@
       // Remove the selected elements when the delete or backspace key is pressed
       if ($event.keyCode === 8 || $event.keyCode === 46) {
         deleteActiveElements();
+        $event.preventDefault();
       // Undo the previous action when Ctrl+Z is pressed
       } else if ($event.keyCode === 90 && $event.metaKey) {
-        undo();
+      //  undo();
       // Redo the previous action when Ctrl+Y is pressed
       } else if ($event.keyCode === 89 && $event.metaKey) {
-        redo();
+      //  redo();
       }
     }, false);
 
@@ -477,64 +478,112 @@
       };
     };
 
+    /**
+     * Deactivate the active group if any of the provided elements are a part of
+     * the active group
+     *
+     * @param  {Object[]}       elements          The elements that should be checked for presence in the active group
+     */
+    var deactiveActiveGroupIfOverlap = function(elements) {
+      var group = canvas.getActiveGroup()
+      if (group) {
+        var intersection = _.intersection(_.pluck(group.objects, 'uid'), _.pluck(elements, 'uid'));
+        if (intersection.length > 0) {
+          canvas.discardActiveGroup().renderAll();
+        }
+      }
+    };
+
+    /**
+     * Get the currently selected whiteboard elements
+     *
+     * @return {Object[]}                         The selected whiteboard elements
+     */
+    var getActiveElements = function() {
+      var activeElements = [];
+      var group = canvas.getActiveGroup();
+      if (group) {
+        _.each(group.objects, function(element) {
+          // When a Fabric.js canvas element is part of a group selection, its properties will be
+          // relative to the group. Therefore, we calculate the actual position of each element in
+          // the group relative to the whiteboard canvas
+          var position = calculateGlobalElementPosition(group, element);
+          activeElements.push(angular.extend({}, element.toObject(), position));
+        });
+      } else {
+        activeElements.push(canvas.getActiveObject().toObject());
+      }
+      return activeElements;
+    };
+
     // Recalculate the size of the canvas when an element or group of elements is deselected
     // TODO
-    canvas.on('selection:cleared', function() {
+    //canvas.on('selection:cleared', function() {
       // canvas.renderAll();
       //setCanvasDimensions();
-    });
+    //});
 
-    canvas.on('selection:created', function() {
-      canvas.renderAll();
-    })
+    //canvas.on('selection:created', function() {
+    //  canvas.renderAll();
+    //})
 
     ///////////////
     // ADD ITEMS //
     ///////////////
 
     /**
+     * Persist a new element to the server
+     *
+     * @param  {Object}         element           The new element to persist to the server
+     */
+    var saveNewElement = function(element) {
+      // Add a unique id to the element
+      setCanvasElementId(element);
+
+      // Save the new element
+      socket.emit('addActivity', [element.toObject()]);
+
+      // Add the action to the undo/redo queue
+      // TODO
+      // addUndoActivity('add', [{'element': element.toObject()}]);
+    };
+
+
+    /**
      * A new element was added to the whiteboard canvas by the current user
-     * TODO
      */
     canvas.on('object:added', function(ev) {
-      console.log('OBJECT:ADDED');
+      var element = ev.target;
 
       // Recalculate the size of the whiteboard canvas
       setCanvasDimensions();
-
-      var element = ev.target;
 
       // Don't add a new text element until text has been entered
       if (element.type === 'i-text' && !element.text.trim()) {
         return false;
       }
 
-      // Only notify the server if the element was added by the current user
-      // and the element is not a drawing helper element
-      // TODO
-      if ((!element.get('uid') && !element.get('isHelper')) || element.get('isUndoRedo')) {
-        // Add a unique id to the element
-        setCanvasElementId(element);
-        socket.emit('addActivity', [element.toObject()]);
-
-        // Add the action to the undo/redo queue
-        if (!element.get('isUndoRedo') && !element.get('isHelper')) {
-          addUndoActivity('add', [{'element': element.toObject()}]);
-        }
+      // If the element already has a unique id, it was added by a different user and
+      // there is no need to persist the addition
+      if (!element.get('uid') && !element.get('isHelper')) {
+        saveNewElement(element);
       }
-      element.set('isUndoRedo', null);
     });
 
     /**
-     * A new element was added to the whitebard canvas by a different user
-     * TODO
+     * A whiteboard canvas element was added by a different user
      */
-    socket.on('addElement', function(element) {
-      deserializeElement(element, function(element) {
-        // Add the element to the whiteboard canvas and move it to its appropriate index
-        canvas.add(element);
-        element.moveTo(element.get('index'));
-        canvas.renderAll();
+    socket.on('addActivity', function(elements) {
+      _.each(elements, function(element) {
+        deserializeElement(element, function(element) {
+          // Add the element to the whiteboard canvas and
+          // move it to its appropriate index
+          canvas.add(element);
+          element.moveTo(element.get('index'));
+          canvas.renderAll();
+          // Recalculate the size of the whiteboard canvas
+          setCanvasDimensions();
+        });
       });
     });
 
@@ -543,80 +592,47 @@
     //////////////////
 
     /**
-     * TODO
+     * Persist element updates to the server
+     *
+     * @param  {Object[]}       elements          The updated elements to persist to the server
      */
-    var saveElementUpdates = function(updates) {
-      socket.emit('updateActivity', updates);
+    var saveElementUpdates = function(elements) {
+      // Notify the server about the updated elements
+      socket.emit('updateActivity', elements);
+
+      // Recalculate the size of the whiteboard canvas
       setCanvasDimensions();
     };
 
     /**
-     * One or multiple whiteboard canvas element have been updated by the current user
-     * TODO
-     * TODO
+     * One or multiple whiteboard canvas elements have been updated by the current user
      */
-    canvas.on('object:modified', function(ev) {
-      console.log('OBJECT:MODIFIED');
-      var updates = null;
-      // When a Fabric.js canvas element is part of a group selection, its properties will be
-      // relative to the group. Therefore, we calculate the actual position of each element in
-      // the group relative to the whiteboard canvas
-      var group = canvas.getActiveGroup();
-      if (group) {
-        updates = ev.target.objects.map(function(element) {
-          // TODO: Original state
-          element.previousState = element.toObject();
-          var position = calculateGlobalElementPosition(group, element);
-          var updatedElement = angular.extend({}, element.toObject(), position);
-          console.log(element);
-          return {
-            'element': updatedElement,
-            'originalState': angular.copy(element.previousState)
-          };
-        });
-      } else {
-        updates = [{
-          'element': ev.target.toObject(),
-          'originalState': angular.copy(ev.target.originalState)
-        }];
-      }
+    canvas.on('object:modified', function() {
+      // Get the selected whiteboard elements
+      var elements = getActiveElements();
 
       // Add the action to the undo/redo queue
-      addUndoActivity('update', updates);
+      // TODO
+      // addUndoActivity('update', updates);
 
       // Notify the server about the updates
-      var updatesToSave = updates.map(function(update) {
-        return update.element;
-      })
-      saveElementUpdates(updatesToSave);
+      saveElementUpdates(elements);
     });
 
     /**
-     * One or multiple whiteboard canvas element were updated by a different user
+     * One or multiple whiteboard canvas elements were updated by a different user
      */
-    socket.on('updateActivity', function(updateActivity) {
-      console.log('UPDATE ACTIVITY');
-      console.log(updateActivity);
-      // Deactivate the current group if any of the updated elements are in the
-      // current group
-      var group = canvas.getActiveGroup()
-      if (group) {
-        for (var g = 0; g < group.objects.length; g++) {
-          for (var u = 0; u < updateActivity.length; u++) {
-            if (group.objects[g].uid === updateActivity[u].uid) {
-              canvas.discardActiveGroup().renderAll();
-              break;
-            }
-          }
-        }
-      }
+    socket.on('updateActivity', function(elements) {
+      // Deactivate the current group if any of the updated elements
+      // are in the current group
+      deactiveActiveGroupIfOverlap(elements);
 
       // Update the elements
-      for (var i = 0; i < updateActivity.length; i++) {
-        var updatedElement = updateActivity[i];
-        updateCanvasElement(updatedElement.uid, updatedElement);
-      }
+      _.each(elements, function(element) {
+        updateCanvasElement(element.uid, element);
+      });
 
+      // Recalculate the size of the whiteboard canvas
       setCanvasDimensions();
     });
 
@@ -629,27 +645,25 @@
       // If the text element is empty, it can be removed from the whiteboard canvas
       var text = element.text.trim();
       if (!text) {
-        // If the text element did not have a unique identifier, there's no need
-        // to persist the deletion to the back-end
-        if (!element.get('uid')) {
-          element.set('isHelper', true);
+        // TODO: Add the action to the undo/redo queue
+        // element.text = element.originalState.text;
+        // Only persist the delete to the server when the element
+        // already existed
+        if (element.get('uid')) {
+          saveDeleteElements([element]);
         }
-        element.text = element.originalState.text;
         canvas.remove(element);
+
       // The text element did not exist before. Notify the server that the element was added
       } else if (!element.get('uid')) {
-        setCanvasElementId(element);
-        socket.emit('addElement', element.toObject());
-        // Add the action to the undo/redo queue
-        addUndoAction('add', element.toObject());
+        saveNewElement(element);
+
       // The text element existed before. Notify the server that the element was updated
       } else {
-        socket.emit('updateElement', element.toObject());
-        // Add the action to the undo/redo queue
-        addUndoAction('update', element.toObject(), element.originalState);
+        saveElementUpdates([element]);
+        // TODO: Add the action to the undo/redo queue
+        // addUndoAction('update', element.toObject(), element.originalState);
       }
-
-      element.set('isUndoRedo', null);
 
       // Switch back to move mode
       setMode('move');
@@ -660,45 +674,58 @@
     //////////////////
 
     /**
-     * One or multiple whiteboard canvas element were deleted by the current user
+     * Persist element deletions to the server
+     *
+     * @param  {Object[]}       elements          The deleted elements to persist to the server
      */
-    var deleteElements = function(elements) {
-      socket.emit('deleteActivity', element.toObject());
+    var saveDeleteElements = function(elements) {
+      // Notify the server about the deleted elements
+      socket.emit('deleteActivity', elements);
+
+      // Recalculate the size of the whiteboard canvas
+      setCanvasDimensions();
     };
 
-    //canvas.on('object:removed', function(ev) {
-    //  console.log(ev);
-    //  return false;
-    //  // Recalculate the size of the whiteboard canvas
-    //  setCanvasDimensions();
+    /**
+     * Delete the selected whiteboard element(s)
+     */
+    var deleteActiveElements = function() {
+      // Get the selected items
+      var elements = getActiveElements();
 
-    //  var element = ev.target;
-    //  // Only notify the server if the element was deleted by the current user
-    //  if (!element.get('isSocketUpdate')) {
-    //    socket.emit('deleteElement', element.toObject());
-    //    // Add the action to the undo/redo queue
-    //    if (!element.get('isUndoRedo') && !element.get('isHelper')) {
-    //      addUndoAction('delete', element.toObject());
-     //   }
-     // }
-    //  element.set('isUndoRedo', null);
-    //  element.set('isSocketUpdate', null);
-    //});
+      // Delete the selected items
+      _.each(elements, function(element) {
+        canvas.remove(getCanvasElement(element.uid));
+      });
+
+      // Discard the active group if a group selection is present
+      if (canvas.getActiveGroup()) {
+        canvas.discardActiveGroup().renderAll();
+      }
+
+      // TODO: Add undo activity
+
+      saveDeleteElements(elements);
+    };
 
     /**
-     * A whiteboard canvas element was deleted by a different user
+     * One or multiple whiteboard canvas elements were deleted by a different user
      */
     socket.on('deleteActivity', function(elements) {
-      var toRemove = _.map(elements, function(element) {
-        return getCanvasElement(element.uid);
+      // Deactivate the current group if any of the deleted elements
+      // are in the current group
+      deactiveActiveGroupIfOverlap(elements);
+
+      // Delete the elements
+      _.each(elements, function(element) {
+        element = getCanvasElement(element.uid);
+        if (element) {
+          canvas.remove(element);
+        }
       });
-      canvas.remove(toRemove);
-      //var element = getCanvasElement(element.uid);
-      //if (element) {
-        // Indicate that this update has come in through a socket
-      //  element.set('isSocketUpdate', true);
-      //  canvas.remove(element);
-      //}
+
+      // Recalculate the size of the whiteboard canvas
+      setCanvasDimensions();
     });
 
     /* ZOOMING */
@@ -753,6 +780,20 @@
     };
 
     /**
+     * Calculate the left position of the toolbar to ensure that it is properly centered
+     * in the viewport. This can not be done through CSS only as this would require the
+     * toolbar to be part of a full-width container that would block access to the whiteboard
+     * canvas
+     *
+     * @return {Number}                           The left position of the toolbar to ensure horizontal centering in the viewport
+     */
+    var calculateToolbarPosition = $scope.calculateToolbarPosition = function() {
+      var toolbarWidth = toolbar.clientWidth;
+      var viewportWidth = viewport.clientWidth;
+      return (viewportWidth / 2) - (toolbarWidth / 2);
+    };
+
+    /**
      * Close all popovers
      */
     var closePopovers = function() {
@@ -780,10 +821,10 @@
     /* UNDO/REDO */
 
     // Variable that will keep track of the activities the current user has taken
-    $scope.activityQueue = [];
+    //$scope.activityQueue = [];
 
     // Variable that will keep track of the current position in the activity queue
-    $scope.currentActivityPosition = 0;
+    //$scope.currentActivityPosition = 0;
 
     /**
      * Add a new activity to the activities queue
@@ -792,41 +833,41 @@
      * @param  {Object[]}       elements          The Fabric.js elements that were involved in the activity
      * // TODO
      */
-    var addUndoActivity = function(type, elements) {
-      console.log(type);
-      console.log(elements);
-      // Remove all activities that happened after the current activity in the activities queue
-      $scope.activityQueue.splice($scope.currentActivityPosition, $scope.activityQueue.length - $scope.currentActivityPosition);
+    //var addUndoActivity = function(type, elements) {
+    //  console.log(type);
+    //  console.log(elements);
+    //  // Remove all activities that happened after the current activity in the activities queue
+    //  $scope.activityQueue.splice($scope.currentActivityPosition, $scope.activityQueue.length - $scope.currentActivityPosition);
 
-      // Add the activity to the activities queue
-      $scope.activityQueue.push({
-        'type': type,
-        'elements': elements
-      });
-      $scope.currentActivityPosition++;
-    };
+    //  // Add the activity to the activities queue
+    //  $scope.activityQueue.push({
+    //    'type': type,
+    //    'elements': elements
+    //  });
+    //  $scope.currentActivityPosition++;
+    //};
 
     /**
      * Undo the action at the current position in the actions queue
      */
-    var undo = $scope.undo = function() {
-      if ($scope.currentActivityPosition !== 0) {
-        // Deactivate the currently selected item
-        canvas.deactivateAll().renderAll();
+    //var undo = $scope.undo = function() {
+    //  if ($scope.currentActivityPosition !== 0) {
+    //    // Deactivate the currently selected item
+    //    canvas.deactivateAll().renderAll();
 
-        $scope.currentActivityPosition--;
-        var previousActivity = $scope.activityQueue[$scope.currentActivityPosition];
+    //    $scope.currentActivityPosition--;
+    //    var previousActivity = $scope.activityQueue[$scope.currentActivityPosition];
 
-        // The previous action was an element that was added.
-        // Undoing this should delete the element again
-        if (previousActivity.type === 'add') {
-        //  var element = getCanvasElement(previousAction.element.uid);
-        //  element.set('isUndoRedo', true);
-        //  canvas.remove(element);
+    //    // The previous action was an element that was added.
+    //    // Undoing this should delete the element again
+    //    if (previousActivity.type === 'add') {
+    //    //  var element = getCanvasElement(previousAction.element.uid);
+    //    //  element.set('isUndoRedo', true);
+    //    //  canvas.remove(element);
 
-        // The previous action was an element that was deleted.
-        // Undoing this should add the element again
-        } else if (previousActivity.type === 'delete') {
+    //    // The previous action was an element that was deleted.
+    //    // Undoing this should add the element again
+    //    } else if (previousActivity.type === 'delete') {
         //  deserializeElement(previousAction.element, function(element) {
         //    element.set('isUndoRedo', true);
         //    canvas.add(element);
@@ -836,57 +877,57 @@
 
         // The previous action was an element that was updated.
         // Undoing this should undo the update
-        } else if (previousActivity.type === 'update') {
-          var updates = previousActivity.elements.map(function(update) {
-            console.log(update.originalState);
-            var element = angular.extend({}, update.element, update.originalState);
-            updateCanvasElement(element.uid, element);
-            return element;
-          });
-          saveElementUpdates(updates);
-        }
-      }
-    };
+    //    } else if (previousActivity.type === 'update') {
+    //      var updates = previousActivity.elements.map(function(update) {
+    //        console.log(update.originalState);
+    //        var element = angular.extend({}, update.element, update.originalState);
+    //        updateCanvasElement(element.uid, element);
+    //        return element;
+    //      });
+    //      saveElementUpdates(updates);
+    //    }
+    //  }
+    //};
 
     /**
      * Redo the action at the next position in the actions queue
      */
-    var redo = $scope.redo = function() {
-      if ($scope.currentActivityPosition !== $scope.activityQueue.length) {
-        // Deactivate the currently selected item
-        canvas.deactivateAll().renderAll();
+    //var redo = $scope.redo = function() {
+    //  if ($scope.currentActivityPosition !== $scope.activityQueue.length) {
+    //    // Deactivate the currently selected item
+    //    canvas.deactivateAll().renderAll();
 
-        var nextActivity = $scope.activityQueue[$scope.currentActivityPosition];
-        $scope.currentActivityPosition++;
+    //    var nextActivity = $scope.activityQueue[$scope.currentActivityPosition];
+    //    $scope.currentActivityPosition++;
 
-        // The next action was an element that was added.
-        // Redoing this should add the element again
-        if (nextActivity.type === 'add') {
-        //  deserializeElement(nextAction.element, function(element) {
-        //    element.set('isUndoRedo', true);
-        //    canvas.add(element);
-        //    element.moveTo(element.get('index'));
-        //    canvas.renderAll();
-        //  });
+    //    // The next action was an element that was added.
+    //    // Redoing this should add the element again
+    //    if (nextActivity.type === 'add') {
+    //    //  deserializeElement(nextAction.element, function(element) {
+    //    //    element.set('isUndoRedo', true);
+    //    //    canvas.add(element);
+    //    //    element.moveTo(element.get('index'));
+    //    //    canvas.renderAll();
+    //    //  });
 
-        // The next action was an element that was deleted.
-        // Undoing this should delete the element again
-        } else if (nextActivity.type === 'delete') {
-        // var element = getCanvasElement(nextAction.element.uid);
-        // element.set('isUndoRedo', true);
-        //  canvas.remove(element);
+    //    // The next action was an element that was deleted.
+    //    // Undoing this should delete the element again
+    //    } else if (nextActivity.type === 'delete') {
+    //    // var element = getCanvasElement(nextAction.element.uid);
+    //    // element.set('isUndoRedo', true);
+    //    //  canvas.remove(element);
 
-        // The next action was an element that was updated.
-        // Undoing this should re-apply the update
-        } else if (nextActivity.type === 'update') {
-          var updates = nextActivity.elements.map(function(update) {
-            updateCanvasElement(update.element.uid, update.element);
-            return update.element;
-          });
-          saveElementUpdates(updates);
-        }
-      }
-    };
+    //    // The next action was an element that was updated.
+    //    // Undoing this should re-apply the update
+    //    } else if (nextActivity.type === 'update') {
+    //      var updates = nextActivity.elements.map(function(update) {
+    //        updateCanvasElement(update.element.uid, update.element);
+    //        return update.element;
+    //      });
+    //      saveElementUpdates(updates);
+    //    }
+    //  }
+    //};
 
     /* DRAWING */
 
@@ -1091,29 +1132,7 @@
       }
     });
 
-    /* ERASE */
-
-    /**
-     * Delete the selected whiteboard element(s)
-     * TODO
-     */
-    var deleteActiveElements = function() {
-      if (canvas.getActiveObject()) {
-        canvas.remove(canvas.getActiveObject());
-      // Remove all selected elements when multiple elements are selected
-      } else if (canvas.getActiveGroup()) {
-        canvas.remove(canvas.getActiveGroup().getObjects());
-        //for (var i = 0; i < elements.length; i++) {
-        //  canvas.remove(elements[i]);
-        // }
-        canvas.discardActiveGroup().renderAll();
-      }
-    };
-
     /* TEXT */
-
-    // Variable that will keep track of the available text sizes
-    var textSizes = [12, 14, 18, 24, 30, 36, 48, 60, 72];
 
     // Variable that will keep track of the selected text size and color
     $scope.text = {
