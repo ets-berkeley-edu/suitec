@@ -16,7 +16,7 @@
       <td class="text-center form-group" data-ng-if="editMode" data-ng-class="{'has-error': activityTypeForm.points.$invalid}">
         <ng-form name="activityTypeForm">
           <label for="points-edit-{{activityType.type}}" class="sr-only" data-ng-bind="activityType.title"></label>
-          <input type="text" data-ng-pattern="/^\-?[1-9][0-9]*$/" id="points-edit-{{activityType.type}}" name="points" data-ng-model="activityType.points" class="form-control text-center points-edit" required />
+          <input type="text" data-ng-pattern="/^\-?(0|[1-9][0-9]*)$/" id="points-edit-{{activityType.type}}" name="points" data-ng-model="activityType.points" class="form-control text-center points-edit" required />
         </ng-form>
       </td>
       <td class="text-center" data-ng-if="editMode"><button class="btn btn-default" data-ng-click="disableActivityType(activityType)">Disable</button></td>
