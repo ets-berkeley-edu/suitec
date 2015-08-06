@@ -102,12 +102,20 @@
         // Set the size of the whiteboard canvas
         setCanvasDimensions();
 
+        // Set the layer index of the whiteboard elements once all elements
+        // have finished loading
+        var restoreLayers = _.after(whiteboard.whiteboard_elements.length, function() {
+          canvas.forEachObject(function(element) {
+            element.moveTo(element.get('index'));
+          });
+          canvas.renderAll();
+        });
+
         // Restore the layout of the whiteboard canvas
         _.each(whiteboard.whiteboard_elements, function(element) {
           deserializeElement(element, function(element) {
             canvas.add(element);
-            element.moveTo(element.get('index'));
-            canvas.renderAll();
+            restoreLayers();
           });
         });
       });
@@ -566,9 +574,6 @@
     canvas.on('object:added', function(ev) {
       var element = ev.target;
 
-      // Recalculate the size of the whiteboard canvas
-      setCanvasDimensions();
-
       // Don't add a new text element until text has been entered
       if (element.type === 'i-text' && !element.text.trim()) {
         return false;
@@ -578,6 +583,9 @@
       // there is no need to persist the addition
       if (!element.get('uid') && !element.get('isHelper')) {
         saveNewElement(element);
+
+        // Recalculate the size of the whiteboard canvas
+        setCanvasDimensions();
       }
     });
 
