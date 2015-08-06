@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $filter, $modal, $rootScope, $scope, $stateParams) {
+  angular.module('collabosphere').controller('WhiteboardsBoardController', function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $alert, $cookies, $filter, $modal, $rootScope, $scope, $stateParams) {
 
     // Variable that will keep track of the current whiteboard id
     var whiteboardId = $stateParams.whiteboardId;
@@ -37,6 +37,42 @@
     var socket = io(window.location.origin, {
       'query': 'api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&whiteboard_id=' + whiteboardId
     });
+
+    // Variable that will keep track of the available colors in the color picker
+    $scope.colors = [
+      {
+        'name': 'Black',
+        'color': 'rgb(0, 0, 0)'
+      },
+      {
+        'name': 'Dark Blue',
+        'color': 'rgb(90, 108, 122)'
+      },
+      {
+        'name': 'Light Blue',
+        'color': 'rgb(2, 149, 222)'
+      },
+      {
+        'name': 'Green',
+        'color': 'rgb(10, 139, 0)'
+      },
+      {
+        'name': 'Grey',
+        'color': 'rgb(230, 230, 230)'
+      },
+      {
+        'name': 'Purple',
+        'color': 'rgb(188, 58, 167)'
+      },
+      {
+        'name': 'Red',
+        'color': 'rgb(175, 56, 55)'
+      },
+      {
+        'name': 'Yellow',
+        'color': 'rgb(189, 129, 0)'
+      }
+    ];
 
     /* WHITEBOARD */
 
@@ -111,6 +147,8 @@
       fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
       // Initialize the whiteboard Fabric.js instance
       canvas = new fabric.Canvas('whiteboards-board-board');
+      // Set the pencil brush as the drawing brush
+      canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
       // Set the width and height of the canvas
       setCanvasDimensions();
       // Load the whiteboard information, including the whiteboard's content
@@ -127,7 +165,8 @@
       canvas.setWidth(viewport.clientWidth);
     };
 
-    // TODO: Resize viewport when canvas is resized
+    // Resize the viewport when the window is resized
+    window.addEventListener('resize', setCanvasDimensions);
 
     /**
      * Get the current center point of the whiteboard canvas. This will
@@ -159,6 +198,15 @@
     };
 
     /**
+     * Get the number of elements that are in the whiteboard
+     *
+     * @return {Number}                           The number of elements on the Canvas
+     */
+    var getNumberOfElements = $scope.getNumberOfElements = function() {
+      return canvas.getObjects().length;
+    };
+
+    /**
      * Get a Fabric.js canvas element based on its unique id
      *
      * @param  {Boolean}        uid               The unique id of the Fabric.js canvas element to retrieve
@@ -174,6 +222,18 @@
       return null;
     };
 
+    /**
+     * Set a unique id on a Fabric.js canvas element if the element doesn't have a
+     * unique id assigned
+     *
+     * @param  {Object}         element           The Fabric.js canvas element for which to set a unique id
+     */
+    var setCanvasElementId = function(element) {
+      if (!element.get('uid')) {
+        element.set('uid', Math.round(Math.random() * 1000000));
+      }
+    };
+
     initializeCanvas();
 
     /* CONCURRENT EDITING */
@@ -186,6 +246,8 @@
      * @param  {Object}         callback.element  The deserialized Fabric.js canvas element
      */
     var deserializeElement = function(element, callback) {
+      element = angular.copy(element);
+
       // Extract the type from the serialized element
       var type = fabric.util.string.camelize(fabric.util.string.capitalize(element.type));
       if (element.type === 'image') {
@@ -219,11 +281,18 @@
 
       // Only notify the server if the element was added by the current user
       // and the element is not a drawing helper element
-      if (!element.get('uid') && !element.get('isHelper')) {
+      // TODO
+      if ((!element.get('uid') && !element.get('isHelper')) || element.get('isUndoRedo')) {
         // Add a unique id to the element
-        element.set('uid', Math.round(Math.random() * 10000));
+        setCanvasElementId(element);
         socket.emit('addElement', element.toObject());
+
+        // Add the action to the undo/redo queue
+        if (!element.get('isUndoRedo') && !element.get('isHelper')) {
+          addUndoAction('add', element.toObject());
+        }
       }
+      element.set('isUndoRedo', null);
     });
 
     /**
@@ -248,7 +317,12 @@
       // and if the element is not a drawing helper element
       if (!element.get('isSocketUpdate') && !element.get('isHelper')) {
         socket.emit('updateElement', element.toObject());
+        // Add the action to the undo/redo queue
+        if (!element.get('isUndoRedo') && !element.get('isHelper')) {
+          addUndoAction('update', element.toObject(), element.originalState);
+        }
       }
+      element.set('isUndoRedo', null);
       element.set('isSocketUpdate', null);
     });
 
@@ -280,19 +354,27 @@
       // If the text element is empty, it can be removed from the whiteboard canvas
       var text = element.text.trim();
       if (!text) {
-        canvas.remove(text);
-        // Notify the server if the element was already stored
-        if (element.get('uid')) {
-          socket.emit('deleteElement', element.toObject());
+        // If the text element did not have a unique identifier, there's no need
+        // to persist the deletion to the back-end
+        if (!element.get('uid')) {
+          element.set('isHelper', true);
         }
+        element.text = element.originalState.text;
+        canvas.remove(element);
       // The text element did not exist before. Notify the server that the element was added
       } else if (!element.get('uid')) {
-        element.set('uid', Math.round(Math.random() * 10000));
+        setCanvasElementId(element);
         socket.emit('addElement', element.toObject());
+        // Add the action to the undo/redo queue
+        addUndoAction('add', element.toObject());
       // The text element existed before. Notify the server that the element was updated
       } else {
         socket.emit('updateElement', element.toObject());
+        // Add the action to the undo/redo queue
+        addUndoAction('update', element.toObject(), element.originalState);
       }
+
+      element.set('isUndoRedo', null);
 
       // Switch back to move mode
       $scope.mode = 'move';
@@ -306,7 +388,12 @@
       // Only notify the server if the element was deleted by the current user
       if (!element.get('isSocketUpdate')) {
         socket.emit('deleteElement', element.toObject());
+        // Add the action to the undo/redo queue
+        if (!element.get('isUndoRedo') && !element.get('isHelper')) {
+          addUndoAction('delete', element.toObject());
+        }
       }
+      element.set('isUndoRedo', null);
       element.set('isSocketUpdate', null);
     });
 
@@ -392,7 +479,9 @@
     $scope.zoomLevel = 1;
 
     /**
-     * TODO
+     * Zoom the Fabric.js canvas in or out
+     *
+     * @param  {Number}         zoomDelta         The level by which the current zoom level should be increased
      */
     var zoom = $scope.zoom = function(zoomDelta) {
       var currentZoom = $scope.zoomLevel;
@@ -412,7 +501,7 @@
     /**
      * Set the mode of the whiteboard toolbar
      *
-     * @param  {Boolean}        newMode           The mode the toolbar should be put in. Accepted values are `move`, `erase`, `draw`, `shape` and `text`
+     * @param  {Boolean}        newMode           The mode the toolbar should be put in. Accepted values are `move`, `erase`, `draw`, `shape`, `text`, `asset` and `whiteboard`
      */
     var setMode = $scope.setMode = function(newMode) {
       // Deactivate the currently selected item
@@ -423,12 +512,6 @@
       canvas.deactivateAll().renderAll();
       lockObjects(false);
 
-      // If the selected mode is the same as the current mode, undo the selection
-      // and switch back to move mode
-      if ($scope.mode === newMode) {
-        newMode = 'move';
-      }
-
       // Revert the cursor
       canvas.hoverCursor = 'default';
       // Disable drawing mode
@@ -438,16 +521,16 @@
       if (newMode === 'erase') {
         // Prevent objects from being moved when deleting
         lockObjects(true);
-        // change the cursor to delete mode when hovering over an object
+        // Change the cursor to delete mode when hovering over an object
         canvas.hoverCursor = 'not-allowed';
       // Draw mode has been selected
       } else if (newMode === 'draw') {
         setDrawMode(true);
-        // TODO: Always close open popovers when using toolbar
-        closePopovers();
       // Text mode has been selected
       } else if (newMode === 'text') {
-        addText();
+        // Change the cursor to text mode
+        // TODO: This doesn't appear to work
+        canvas.cursor = 'text';
       }
 
       $scope.mode = newMode;
@@ -469,7 +552,138 @@
       }
     };
 
+    /* UNDO/REDO */
+
+    // Variable that will keep track of the actions the current user has taken
+    $scope.actionQueue = [];
+
+    // Variable that will keep track of the current position in the actions queue
+    $scope.currentActionPosition = 0;
+
+    /**
+     * Add a new action to the actions queue
+     *
+     * @param  {String}         type              The type of the action to add to the actions queue. One of `add`, `update` or `delete
+     * @param  {Object}         element           The Fabric.js element on which the action took place. The state of the element reflects the state after the action took place
+     * @param  {Object}         [originalState]   The state of the Fabric.js element before the action took place
+     */
+    var addUndoAction = function(type, element, originalState) {
+      // Remove all actions that happened after the current action in the actions queue
+      $scope.actionQueue.splice($scope.currentActionPosition, $scope.actionQueue.length - $scope.currentActionPosition);
+
+      // Add the action to the actions queue
+      $scope.actionQueue.push({
+        'type': type,
+        'element': angular.copy(element),
+        'originalState': angular.copy(originalState)
+      });
+      $scope.currentActionPosition++;
+    };
+
+    /**
+     * Undo the action at the current position in the actions queue
+     * TODO: Can undo and redo be consolidated?
+     */
+    var undo = $scope.undo = function() {
+      $scope.currentActionPosition--;
+      var previousAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
+
+      // The previous action was an element that was added.
+      // Undoing this should delete the element again
+      if (previousAction.type === 'add') {
+        var element = getCanvasElement(previousAction.element.uid);
+        element.set('isUndoRedo', true);
+        canvas.remove(element);
+
+      // The previous action was an element that was deleted.
+      // Undoing this should add the element again
+      } else if (previousAction.type === 'delete') {
+        deserializeElement(previousAction.element, function(element) {
+          element.set('isUndoRedo', true);
+          canvas.add(element);
+          element.moveTo(element.get('index'));
+          canvas.renderAll();
+        });
+
+      // The previous action was an element that was updated.
+      // Undoing this should undo the update
+      } else if (previousAction.type === 'update') {
+        var element = getCanvasElement(previousAction.element.uid);
+        for (var property in previousAction.originalState) {
+          if (element[property] !== previousAction.originalState[property]) {
+            element.set(property, previousAction.originalState[property]);
+          }
+        }
+        element.set('isUndoRedo', true);
+        canvas.fire('object:modified', {'target': element});
+        canvas.absolutePan(currentCanvasPan);
+        canvas.renderAll();
+      }
+    };
+
+    /**
+     * Redo the action at the next position in the actions queue
+     */
+    var redo = $scope.redo = function() {
+      var nextAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
+      $scope.currentActionPosition++;
+
+      // The next action was an element that was added.
+      // Redoing this should add the element again
+      if (nextAction.type === 'add') {
+        deserializeElement(nextAction.element, function(element) {
+          element.set('isUndoRedo', true);
+          canvas.add(element);
+          element.moveTo(element.get('index'));
+          canvas.renderAll();
+        });
+
+      // The next action was an element that was deleted.
+      // Undoing this should delete the element again
+      } else if (nextAction.type === 'delete') {
+        var element = getCanvasElement(nextAction.element.uid);
+        element.set('isUndoRedo', true);
+        canvas.remove(element);
+
+      // The next action was an element that was updated.
+      // Undoing this should re-apply the update
+      } else if (nextAction.type === 'update') {
+        var element = getCanvasElement(nextAction.element.uid);
+        for (var property in nextAction.originalState) {
+          if (element[property] !== nextAction.element[property]) {
+            element.set(property, nextAction.element[property]);
+          }
+        }
+        element.set('isUndoRedo', true);
+        canvas.fire('object:modified', {'target': element});
+        canvas.absolutePan(currentCanvasPan);
+        canvas.renderAll();
+      }
+    };
+
     /* DRAWING */
+
+    // Variable that will keep track of the selected line width and selected draw color
+    $scope.draw = {
+      'options': [
+        {
+          'value': 1,
+          'label': '<img src="/assets/img/whiteboard-draw-small.png" />'
+        },
+        {
+          'value': 5,
+          'label': '<img src="/assets/img/whiteboard-draw-medium.png" />'
+        },
+        {
+          'value': 10,
+          'label': '<img src="/assets/img/whiteboard-draw-large.png" />'
+        }
+      ],
+      'selected': {
+        'lineWidth': 1,
+        'color': $scope.colors[0]
+      }
+    };
 
     /**
      * Enable or disable drawing mode for the whiteboard canvas
@@ -480,10 +694,62 @@
       canvas.isDrawingMode = drawMode;
     };
 
+    /**
+     * Change the drawing color when a new color has been selected in the color picker
+     */
+    $scope.$watch('draw.selected.color', function() {
+      canvas.freeDrawingBrush.color = $scope.draw.selected.color.color;
+    }, true);
+
+    /**
+     * Change the drawing line width when a new line width has been selected in the width picker
+     */
+    $scope.$watch('draw.selected.lineWidth', function() {
+      canvas.freeDrawingBrush.width = parseInt($scope.draw.selected.lineWidth, 10);
+    }, true);
+
     /* SHAPE */
 
-    // Variable that will keep track of the type of shape that will be added to the whiteboard canvas
-    var shapeType = 'Rect';
+    // Variable that will keep track of the selected shape, style and draw color
+    $scope.shape = {
+      'options': [
+        {
+          'shape': 'Rect',
+          'style': 'thin',
+          'label': '<img src="/assets/img/whiteboard-shape-rect-thin.png" />'
+        },
+        {
+          'shape': 'Rect',
+          'style': 'thick',
+          'label': '<img src="/assets/img/whiteboard-shape-rect-thick.png" />'
+        },
+        {
+          'shape': 'Rect',
+          'style': 'fill',
+          'label': '<img src="/assets/img/whiteboard-shape-rect-fill.png" />'
+        },
+        {
+          'shape': 'Circle',
+          'style': 'thin',
+          'label': '<img src="/assets/img/whiteboard-shape-circle-thin.png" />'
+        },
+        {
+          'shape': 'Circle',
+          'style': 'thick',
+          'label': '<img src="/assets/img/whiteboard-shape-circle-thick.png" />'
+        },
+        {
+          'shape': 'Circle',
+          'style': 'fill',
+          'label': '<img src="/assets/img/whiteboard-shape-circle-fill.png" />'
+        }
+      ]
+    };
+
+    $scope.shape.selected = {
+      'type': $scope.shape.options[0],
+      'color': $scope.colors[0]
+    };
 
     // Variable that will keep track of the shape that is being added to the whiteboard canvas
     var shape = null;
@@ -510,7 +776,7 @@
 
         // Create the basic shape of the selected type that will
         // be used as the drawing guide
-        shape = new fabric[shapeType]({
+        shape = new fabric[$scope.shape.selected.type.shape]({
           'left': startShapePointer.x,
           'top': startShapePointer.y,
           'originX': 'left',
@@ -518,8 +784,13 @@
           'radius': 1,
           'width': 1,
           'height': 1,
-          'fill': 'rgba(255, 0, 0, 0.5)'
+          'fill': 'transparent',
+          'stroke': $scope.shape.selected.color.color,
+          'strokeWidth': $scope.shape.selected.type.style === 'thick' ? 10 : 2
         });
+        if ($scope.shape.selected.type.style === 'fill') {
+          shape.fill = $scope.shape.selected.color.color;
+        }
         // Indicate that this element is a helper element that should
         // not be saved back to the server
         shape.set('isHelper', true);
@@ -551,7 +822,7 @@
 
         // Set the radius and width of the circle based on how much the cursor
         // has moved compared to the starting point
-        if (shapeType === 'Circle') {
+        if ($scope.shape.selected.type.shape === 'Circle') {
           shape.set({
             'width': Math.abs(startShapePointer.x - currentShapePointer.x),
             'height': Math.abs(startShapePointer.x - currentShapePointer.x),
@@ -589,8 +860,7 @@
         // Indicate that this is no longer a drawing helper shape and can
         // therefore be saved back to the server
         finalShape.set('isHelper', false);
-        // Remove the opacity from the shape
-        finalShape.setFill('rgba(255, 0, 0, 1)');
+
         canvas.add(finalShape);
         canvas.remove(shape);
         // Select the added shape
@@ -626,28 +896,51 @@
 
     /* TEXT */
 
+    // Variable that will keep track of the available text sizes
+    var textSizes = [12, 14, 18, 24, 30, 36, 48, 60, 72];
+
+    // Variable that will keep track of the selected text size and color
+    $scope.text = {};
+    $scope.text.options = textSizes.map(function(textSize) {
+      return {
+        'value': textSize,
+        'label': '<span>' + textSize + '</span>'
+      };
+    });
+
+    $scope.text.selected = {
+      'size': 14,
+      'color': $scope.colors[0]
+    };
+
     /**
      * Add an editable text field to the whiteboard canvas
      */
-    var addText = $scope.addText = function() {
-      // Add the editable text field to the center of the whiteboard canvas
-      var canvasCenter = getCanvasCenter();
-      // Start off with an empty text field
-      var text = new fabric.IText('', {
-        left: canvasCenter.x,
-        top: canvasCenter.y
-      });
-      canvas.add(text);
+    canvas.on('mouse:down', function(ev) {
+      if ($scope.mode === 'text') {
+        // Add the text field to where the user clicked
+        var textPointer = canvas.getPointer(ev.e);
 
-      // Put the editable text field in edit mode straight away
-      setTimeout(function() {
-        canvas.setActiveObject(text);
-        text.enterEditing();
-        // The textarea needs to be put in edit mode manually
-        // @see https://github.com/kangax/fabric.js/issues/1740
-        text.hiddenTextarea.focus();
-      }, 0);
-    };
+        // Start off with an empty text field
+        var text = new fabric.IText('', {
+          'left': textPointer.x,
+          'top': textPointer.y,
+          'fontFamily': '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif',
+          'fontSize': $scope.text.selected.size,
+          'fill': $scope.text.selected.color.color
+        });
+        canvas.add(text);
+
+        // Put the editable text field in edit mode straight away
+        setTimeout(function() {
+          canvas.setActiveObject(text);
+          text.enterEditing();
+          // The textarea needs to be put in edit mode manually
+          // @see https://github.com/kangax/fabric.js/issues/1740
+          text.hiddenTextarea.focus();
+        }, 0);
+      }
+    });
 
     /* ADD ASSET */
 
@@ -656,30 +949,28 @@
      * whiteboard canvas
      */
     var reuseAsset = $scope.reuseAsset = function() {
+      // Create a new scope for the modal dialog
+      var scope = $scope.$new(true);
+      scope.closeModal = function(selectedAssets) {
+        if (selectedAssets) {
+          for (var i = 0; i < selectedAssets.length; i++) {
+            var asset = selectedAssets[i];
+            // TODO: Deal with assets that don't have a large image URL
+            if (asset.image_url) {
+              addAsset(asset.image_url);
+            }
+          }
+        }
+        this.$hide();
+      };
+      // Open the asset selection modal dialog
+      $modal({
+        'scope': scope,
+        'template': '/app/whiteboards/reuse/reuse.html'
+      });
       // Switch the toolbar back to move mode. This will
       // also close the add asset popover
       setMode('move');
-      // TODO: Remove this once setMode does this
-      closePopovers();
-
-      // Open the asset selection modal dialog
-      var modalInstance = $modal.open({
-        templateUrl: '/app/whiteboards/reuse/reuse.html',
-        controller: 'WhiteboardsReuseController',
-        size: 'lg'
-      });
-
-      // When the modal dialog is closed, the selected assets will
-      // be passed back and will be added to the whiteboard canvas
-      modalInstance.result.then(function(selectedAssets) {
-        for (var i = 0; i < selectedAssets.length; i++) {
-          var asset = selectedAssets[i];
-          // TODO: Deal with assets that don't have thumbnail URL
-          if (asset.thumbnail_url) {
-            addAsset(asset.thumbnail_url);
-          }
-        }
-      });
     };
 
     /**
@@ -693,6 +984,23 @@
       // Add the asset to the center of the whiteboard canvas
       fabric.Image.fromURL(url, function(element) {
         var canvasCenter = getCanvasCenter();
+
+        // Scale the element if it is too large to fit onto the viewport
+        var toolbarHeight = document.getElementById('whiteboards-board-toolbar').clientHeight;
+        var sidebarWidth = document.getElementById('whiteboards-board-sidebar').clientWidth;
+
+        var maxWidth = viewport.clientWidth - (viewport.clientWidth / 5);
+        if ($scope.sidebarExpanded) {
+          maxWidth -= sidebarWidth;
+        }
+        if (element.width > maxWidth) {
+          element.scale(maxWidth / element.width);
+        }
+        var maxHeight = viewport.clientHeight - (viewport.clientHeight / 5) - toolbarHeight;
+        if (element.height > maxHeight) {
+          element.scale(maxHeight / element.height);
+        }
+
         element.left = canvasCenter.x;
         element.top = canvasCenter.y;
         canvas.add(element);
@@ -700,6 +1008,63 @@
         // Select the added asset
         canvas.setActiveObject(element);
       });
+    };
+
+    /* ADD LINK */
+
+    /**
+     * Launch the modal that allows for a new link to be added
+     */
+    var addLink = $scope.addLink = function() {
+      // Create a new scope for the modal dialog
+      var scope = $scope.$new(true);
+      scope.closeModal = function(asset) {
+        if (asset) {
+          // TODO: Deal with assets that don't have thumbnail URL
+          if (asset.thumbnail_url) {
+            addAsset(asset.thumbnail_url);
+          }
+        }
+        this.$hide();
+      };
+      // Open the add link modal dialog
+      $modal({
+        'scope': scope,
+        'template': '/app/whiteboards/addlinkmodal/addlinkmodal.html'
+      });
+      // Switch the toolbar back to move mode. This will
+      // also close the add asset popover
+      setMode('move');
+    };
+
+    /* UPLOAD FILE(S) */
+
+    /**
+     * Launch the modal that allows for a new files to be uploaded
+     */
+    var uploadFiles = $scope.uploadFiles = function() {
+      // Create a new scope for the modal dialog
+      var scope = $scope.$new(true);
+      scope.closeModal = function(assets) {
+        if (assets) {
+          for (var i = 0; i < assets.length; i++) {
+            var asset = assets[i];
+            // TODO: Deal with assets that don't have thumbnail URL
+            if (asset.thumbnail_url) {
+              addAsset(asset.thumbnail_url);
+            }
+          }
+        }
+        this.$hide();
+      };
+      // Open the add link modal dialog
+      $modal({
+        'scope': scope,
+        'template': '/app/whiteboards/uploadmodal/uploadmodal.html'
+      });
+      // Switch the toolbar back to move mode. This will
+      // also close the add asset popover
+      setMode('move');
     };
 
     /* SIDEBAR */
@@ -740,13 +1105,18 @@
     /**
      * Create a new chat message
      *
-     * @param  {Event}          $event            The click event
+     * @param  {Event}          $event            The keypress event
      */
     var createChatMessage = $scope.createChatMessage = function($event) {
-      socket.emit('chat', $scope.newChatMessage.body);
-      // Reset the new chat message
-      $scope.newChatMessage = null;
-      $event.preventDefault();
+      // Only submit the chat message when the enter button is pressed
+      if ($event.which === 13) {
+        if ($scope.newChatMessage.body) {
+          socket.emit('chat', $scope.newChatMessage.body);
+        }
+        // Reset the new chat message
+        $scope.newChatMessage = null;
+        $event.preventDefault();
+      }
     };
 
     /**
@@ -818,23 +1188,114 @@
      * Launch the modal that allows for a whiteboard to be edited
      */
     var editWhiteboard = $scope.editWhiteboard = function() {
-      // Open the edit whiteboard modal dialog
-      var scope = $scope.$new();
+      // Create a new scope for the modal dialog
+      var scope = $scope.$new(true);
       scope.whiteboard = $scope.whiteboard;
-      var modalInstance = $modal.open({
-        'scope': scope,
-        'templateUrl': '/app/whiteboards/edit/edit.html',
-        'controller': 'WhiteboardsEditController'
-      });
-
-      // When the modal dialog is closed, the updated whiteboard will
-      // be passed back
-      modalInstance.result.then(function(updatedWhiteboard) {
+      scope.closeModal = function(updatedWhiteboard) {
         if (updatedWhiteboard) {
           $scope.whiteboard = updatedWhiteboard;
           // Set the title of the window to the new title of the whiteboard
           $rootScope.header = $scope.whiteboard.title;
         }
+        this.$hide();
+      };
+      // Open the edit whiteboard modal dialog
+      $modal({
+        'scope': scope,
+        'template': '/app/whiteboards/edit/edit.html'
+      });
+    };
+
+    /* EXPORT */
+
+    // Depending on the size of the whiteboard, exporting it to PNG can sometimes take a while. To
+    // prevent the user from clicking the button twice when waiting to get a response, the button
+    // will be disabled as soon as its clicked. Once the file has been downloaded, it will be
+    // re-enabled. However, there are no cross-browser events that expose whether a file has been
+    // downloaded. The PNG export endpoint works around this by taking in a `downloadId` parameter
+    // and using that to construct a predictable cookie name. When a user clicks the button, the UI
+    // will disable the button and wait until the cookie is set before re-enabling it again
+    var downloadId = null;
+
+    // Variable that will keep track of the URL through which the whiteboard can be exported as a PNG file
+    $scope.exportPngUrl = null;
+
+    // Variable that will keep track of whether the current whiteboard is being exported to PNG
+    $scope.isExportingAsPng = false;
+
+    /**
+     * Generate the export to PNG url
+     */
+    var generateExportPngUrl = function() {
+      downloadId = Math.floor(Math.random() * 10000000);
+
+      $scope.exportPngUrl = utilService.getApiUrl('/whiteboards/' + whiteboardId + '/export/png?downloadId=' + downloadId);
+    };
+
+    // Generate the initial download id and PNG url
+    generateExportPngUrl();
+
+    /**
+     * Export the whiteboard to a PNG file
+     */
+    var exportAsPng = $scope.exportAsPng = function($event) {
+      if ($scope.isExportingAsPng) {
+        $event.preventDefault();
+        return false;
+      }
+
+      // Indicate that the server is generating the PNG file
+      $scope.isExportingAsPng = true;
+
+      // Once the user has started receiving the PNG file, a cookie will be set. As long
+      // as that cookie isn't set, the "Download as image" button should be disabled
+      var cookieName = 'whiteboard.' + downloadId + '.png';
+      var stopWatching = $scope.$watch(function() {
+        return $cookies.get(cookieName);
+      }, function(newValue) {
+        if (newValue) {
+          // The file started downloading, the "Download as image" button can now be enabled
+          $scope.isExportingAsPng = false;
+
+          // Remove the cookie as it's no longer required
+          $cookies.remove(cookieName);
+
+          // Generate a new download id for the next time the user clicks the download image button
+          generateExportPngUrl();
+
+          // Remove the watch as it's no longer required
+          stopWatching();
+        }
+      });
+    };
+
+    /**
+     * Launch the modal that allows the current user to export the current whiteboard to the asset library
+     */
+    var exportAsAsset = $scope.exportAsAsset = function() {
+      // Create a new scope for the modal dialog
+      var scope = $scope.$new(true);
+      scope.whiteboard = $scope.whiteboard;
+      scope.closeModal = function(asset) {
+        if (asset) {
+          // Show a notification indicating the whiteboard was exported
+          var myAlert = $alert({
+            'container': '#whiteboards-board-notifications',
+            'content': 'This board has been successfully added to the <strong>Asset Library</strong>.',
+            'duration': 5,
+            'keyboard': true,
+            'show': true,
+            'templateUrl': 'whiteboards-notification-template',
+            'type': 'success'
+          });
+        }
+        this.$hide();
+      };
+
+      // Open the export as asset modal dialog
+      $modal({
+        'scope': scope,
+        'templateUrl': '/app/whiteboards/exportasassetmodal/exportasasset.html'
       });
     };
 

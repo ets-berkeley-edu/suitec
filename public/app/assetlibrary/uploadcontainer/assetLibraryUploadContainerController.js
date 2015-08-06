@@ -1,4 +1,4 @@
-/*!
+/**
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -13,6 +13,20 @@
  * permissions and limitations under the License.
  */
 
-.assetlibrary-addlink-form {
-  max-width: 650px;
-}
+(function(angular) {
+
+  'use strict';
+
+  var app = angular.module('collabosphere').controller('AssetLibraryUploadContainerController', function($location, $scope) {
+
+    /**
+     * Listen for events indicating that new files have been uploaded or
+     * uploading new files has been cancelled
+     */
+    $scope.$on('assetLibraryUploadDone', function() {
+      $location.path('/assetlibrary');
+    });
+
+  });
+
+}(window.angular));

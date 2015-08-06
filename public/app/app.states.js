@@ -30,7 +30,7 @@
     $stateProvider
       // Asset Library routes
       .state('assetlibrarylist', {
-        'url': '/assetlibrary',
+        'url': '/assetlibrary?category&user&keywords&type',
         'templateUrl': '/app/assetlibrary/list/list.html',
         'controller': 'AssetLibraryListController'
       })
@@ -54,13 +54,13 @@
       })
       .state('assetlibraryupload', {
         'url': '/assetlibrary/upload',
-        'templateUrl': '/app/assetlibrary/upload/upload.html',
-        'controller': 'AssetLibraryUploadController'
+        'templateUrl': '/app/assetlibrary/uploadcontainer/uploadcontainer.html',
+        'controller': 'AssetLibraryUploadContainerController'
       })
       .state('assetlibraryaddlink', {
         'url': '/assetlibrary/addlink',
-        'templateUrl': '/app/assetlibrary/addlink/addlink.html',
-        'controller': 'AssetLibraryAddLinkController'
+        'templateUrl': '/app/assetlibrary/addlinkcontainer/addlinkcontainer.html',
+        'controller': 'AssetLibraryAddLinkContainerController'
       })
       .state('assetlibrarycategories', {
         'url': '/assetlibrary/categories',

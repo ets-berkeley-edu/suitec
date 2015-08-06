@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <title data-ng-bind="header"></title>
-  <!-- TODO: Inject CSS styles -->
+  <!-- build:css /static/style.css -->
   <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css" />
   <link rel="stylesheet" href="/lib/fontawesome/css/font-awesome.css" />
-  <link rel="stylesheet" href="/lib/oi.multiselect/dist/multiselect.css" />
+  <link rel="stylesheet" href="/lib/oi.multiselect/dist/select.css" />
   <link rel="stylesheet" href="/assets/css/main.css" />
   <link rel="stylesheet" href="/app/assetlibrary/addbookmarklet/addbookmarklet.css" />
-  <link rel="stylesheet" href="/app/assetlibrary/addlink/addlink.css" />
+  <link rel="stylesheet" href="/app/assetlibrary/addlinkcontainer/addlinkcontainer.css" />
   <link rel="stylesheet" href="/app/assetlibrary/categories/categories.css" />
   <link rel="stylesheet" href="/app/assetlibrary/edit/edit.css" />
   <link rel="stylesheet" href="/app/assetlibrary/iconbar/iconbar.css" />
@@ -17,18 +17,26 @@
   <link rel="stylesheet" href="/app/assetlibrary/list/list.css" />
   <link rel="stylesheet" href="/app/assetlibrary/search/search.css" />
   <link rel="stylesheet" href="/app/assetlibrary/upload/upload.css" />
+  <link rel="stylesheet" href="/app/assetlibrary/uploadcontainer/uploadcontainer.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/list.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/share.css" />
+  <link rel="stylesheet" href="/app/engagementindex/leaderboard/splash.css" />
   <link rel="stylesheet" href="/app/engagementindex/leaderboard/userinfo.css" />
+  <link rel="stylesheet" href="/app/engagementindex/points/points.css" />
+  <link rel="stylesheet" href="/app/whiteboards/addlinkmodal/addlinkmodal.css" />
   <link rel="stylesheet" href="/app/whiteboards/list/list.css" />
   <link rel="stylesheet" href="/app/whiteboards/board/board.css" />
   <link rel="stylesheet" href="/app/whiteboards/create/create.css" />
+  <link rel="stylesheet" href="/app/whiteboards/exportasassetmodal/exportasasset.css" />
   <link rel="stylesheet" href="/app/whiteboards/reuse/reuse.css" />
+  <link rel="stylesheet" href="/app/whiteboards/uploadmodal/uploadmodal.css" />
+  <!-- endbuild -->
 </head>
 <body ui-view>
-  <!-- TODO: Inject JS styles -->
+  <!-- build:vendor /static/vendor.js -->
   <script src="/lib/angular/angular.js"></script>
   <script src="/lib/angular-aria/angular-aria.js"></script>
+  <script src="/lib/angular-cookies/angular-cookies.js"></script>
   <script src="/lib/angular-elastic/elastic.js"></script>
   <script src="/lib/angular-fabric/assets/fabric.js"></script>
   <script src="/lib/angular-fabric/assets/fabricCanvas.js"></script>
@@ -42,26 +50,33 @@
   <script src="/lib/angular-sanitize/angular-sanitize.js"></script>
   <script src="/lib/angular-scroll-glue/src/scrollglue.js"></script>
   <script src="/lib/angular-socket-io/socket.js"></script>
-  <script src="/lib/angular-ui-bootstrap-bower/ui-bootstrap.js"></script>
-  <script src="/lib/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
+  <script src="/lib/angular-strap/dist/angular-strap.js"></script>
+  <script src="/lib/angular-strap/dist/angular-strap.tpl.js"></script>
   <script src="/lib/angular-ui-router/release/angular-ui-router.js"></script>
-  <script src="/lib/angular-ui-utils/ui-utils.js"></script>
   <script src="/lib/fabric/dist/fabric.js"></script>
   <script src="/lib/highcharts-release/adapters/standalone-framework.js"></script>
   <script src="/lib/highcharts-release/highcharts.js"></script>
   <script src="/lib/highcharts-release/highcharts-more.js"></script>
   <script src="/lib/moment/moment.js"></script>
-  <script src="/lib/ng-file-upload/ng-file-upload-all.min.js"></script>
-  <script src="/lib/oi.multiselect/dist/multiselect.js"></script>
-  <script src="/lib/oi.multiselect/dist/multiselect-tpls.js"></script>
+  <script src="/lib/ng-file-upload/ng-file-upload.js"></script>
+  <script src="/lib/oi.multiselect/dist/select.js"></script>
+  <script src="/lib/oi.multiselect/dist/select-tpls.js"></script>
   <script src="/lib/socket.io-client/socket.io.js"></script>
+  <!-- endbuild -->
 
+  <!-- build:templateCache /static/templateCache.js -->
+  <script src="/app/templateCachePlaceholder.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:app /static/app.js -->
   <script src="/app/app.module.js"></script>
   <script src="/app/app.config.js"></script>
   <script src="/app/app.states.js"></script>
   <script src="/app/shared/autosuggestFilter.js"></script>
   <script src="/app/shared/formatDateFilter.js"></script>
+  <script src="/app/shared/hashtagsFilter.js"></script>
   <script src="/app/shared/infiniteScrollDirective.js"></script>
+  <script src="/app/shared/sanitizeFilter.js"></script>
   <script src="/app/shared/userFactory.js"></script>
   <script src="/app/shared/utilService.js"></script>
   <script src="/app/assetlibrary/assetLibraryCategoriesFactory.js"></script>
@@ -69,20 +84,27 @@
   <script src="/app/assetlibrary/addbookmarklet/assetLibraryAddBookmarkletController.js"></script>
   <script src="/app/assetlibrary/addlink/assetLibraryAddLinkController.js"></script>
   <script src="/app/assetlibrary/addlink/httpPrefixDirective.js"></script>
+  <script src="/app/assetlibrary/addlinkcontainer/assetLibraryAddLinkContainerController.js"></script>
   <script src="/app/assetlibrary/categories/assetLibraryCategoriesController.js"></script>
   <script src="/app/assetlibrary/edit/assetLibraryEditController.js"></script>
   <script src="/app/assetlibrary/iconbar/assetLibraryIconBarController.js"></script>
   <script src="/app/assetlibrary/iconbar/AssetLibraryIconBarDirective.js"></script>
   <script src="/app/assetlibrary/item/assetLibraryItemController.js"></script>
   <script src="/app/assetlibrary/list/assetLibraryListController.js"></script>
-  <script src="/app/assetlibrary/search/assetLibrarySearchController.js"></script>
+  <script src="/app/assetlibrary/search/assetLibrarySearchDirective.js"></script>
   <script src="/app/assetlibrary/upload/assetLibraryUploadController.js"></script>
+  <script src="/app/assetlibrary/uploadcontainer/assetLibraryUploadContainerController.js"></script>
   <script src="/app/engagementindex/leaderboard/leaderboardController.js"></script>
   <script src="/app/engagementindex/points/pointsController.js"></script>
+  <script src="/app/engagementindex/points/pointsFactory.js"></script>
   <script src="/app/whiteboards/whiteboardsFactory.js"></script>
+  <script src="/app/whiteboards/addlinkmodal/whiteboardsAddLinkController.js"></script>
   <script src="/app/whiteboards/board/whiteboardsBoardController.js"></script>
   <script src="/app/whiteboards/create/whiteboardsCreateController.js"></script>
   <script src="/app/whiteboards/edit/whiteboardsEditController.js"></script>
+  <script src="/app/whiteboards/exportasassetmodal/whiteboardsExportAsAssetController.js"></script>
   <script src="/app/whiteboards/list/whiteboardsListController.js"></script>
   <script src="/app/whiteboards/reuse/whiteboardsReuseController.js"></script>
+  <script src="/app/whiteboards/uploadmodal/whiteboardsUploadController.js"></script>
+  <!-- endbuild -->
 </body>

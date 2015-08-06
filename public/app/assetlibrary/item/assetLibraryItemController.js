@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $stateParams, $sce, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $filter, $stateParams, $scope) {
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
@@ -33,32 +33,9 @@
      */
     var getCurrentAsset = function() {
       assetLibraryFactory.getAsset(assetId).success(function(asset) {
+        // Build the asset comment tree
+        buildCommentTree(asset);
 
-        // Build a comment tree that will hold a flat list of comments where each
-        // child comment should come after their parent. First, the top level comments
-        // are extracted
-        var comments = [];
-        for (var i = 0; i < asset.comments.length; i++) {
-          var comment = asset.comments[i];
-          if (!comment.parent_id) {
-            comment.level = 0;
-            comments.unshift(comment);
-
-            // Find all replies for the current comment
-            for (var r = 0; r < asset.comments.length; r++) {
-              var reply = asset.comments[r];
-              if (reply.parent_id === comment.id) {
-                reply.level = 1;
-                comments.splice(1, 0, reply);
-              }
-            }
-          }
-        }
-
-        // Calculate which comments have replies
-        flagCommentsWithReplies(comments);
-
-        asset.comments = comments;
         $scope.asset = asset;
 
         // Make the latest metadata of the asset available
@@ -67,40 +44,51 @@
     };
 
     /**
+     * Build the comment tree for an asset. The comment tree will hold a flat list of all comment
+     * in the order in which they should be displayed. Replies should therefore come right after
+     * their parent
+     *
+     * @param  {Asset}        asset           The asset to build the comment tree for. The comments will be replaced with the comment tree
+     */
+    var buildCommentTree = function(asset) {
+      // Order the comments from oldest to newest
+      asset.comments.sort(function(a, b) {
+        return a.id - b.id;
+      });
+
+      // Extract the top-level comments
+      var comments = [];
+      for (var i = 0; i < asset.comments.length; i++) {
+        var comment = asset.comments[i];
+        if (!comment.parent_id) {
+          comment.level = 0;
+          comment.has_replies = false;
+          comments.unshift(comment);
+
+          // Find all replies for the current comment
+          for (var r = 0; r < asset.comments.length; r++) {
+            var reply = asset.comments[r];
+            if (reply.parent_id === comment.id) {
+              reply.level = 1;
+              comment.has_replies = true;
+              comments.splice(1, 0, reply);
+            }
+          }
+        }
+      }
+
+      asset.comments = comments;
+    };
+
+    /**
      * Check whether the current user is able to manage the current asset
      *
      * @return {Boolean}                      Whether the current user can manage the current asset
      */
     var canManageAsset = $scope.canManageAsset = function() {
-      if ($scope.asset) {
-        return $scope.me.is_admin || $scope.asset.user.id === $scope.me.id;
+      if ($scope.asset && $scope.me) {
+        return ($scope.me.is_admin || $filter('filter')($scope.asset.users, {'id': $scope.me.id}).length > 0);
       }
-    };
-
-    /**
-     * Flag comments that have replies. These comments can not be deleted
-     *
-     * @param  {Comment}      comments        The comments that should be checked for replies
-     */
-    var flagCommentsWithReplies = function(comments) {
-      for (var i = 0; i < comments.length; i++) {
-        var comment = comments[i];
-        var nextComment = comments[i + 1];
-        if (nextComment && nextComment.parent_id === comment.id) {
-          comment.has_replies = true;
-        } else {
-          comment.has_replies = false;
-        }
-      }
-    };
-
-    /**
-     * Allow every URL as an iFrame source URL
-     *
-     * @param  {String}       url             The URL to trust as an iframe source
-     */
-    var trustIFrameSrc = $scope.trustIFrameSrc = function(url) {
-      return $sce.trustAsResourceUrl(url);
     };
 
     /**
@@ -145,8 +133,8 @@
           }
         }
         $scope.asset.comment_count++;
-        // Re-calculate which comments have replies
-        flagCommentsWithReplies($scope.asset.comments);
+        // Re-build the comment tree
+        buildCommentTree($scope.asset);
         // Hide the reply form
         toggleReplyComment(comment);
         // Indicate that the asset has been updated
@@ -189,18 +177,31 @@
      */
     var deleteComment = $scope.deleteComment = function(comment) {
       if (confirm('Are you sure you want to delete this comment?')) {
-        assetLibraryFactory.deleteComment(assetId, comment.id).success(function() {
+
+        /*!
+         * Delete the comment from the comments in the current scope and indicate that the asset
+         * has been updated
+         */
+        var localDelete = function() {
           // Delete the comment from the comment list
           for (var i = 0; i < $scope.asset.comments.length; i++) {
             if ($scope.asset.comments[i].id === comment.id) {
               $scope.asset.comments.splice(i, 1);
             }
           }
-          // Re-calculate which comments have replies
-          flagCommentsWithReplies($scope.asset.comments);
+          // Re-build the comment tree
+          buildCommentTree($scope.asset);
           $scope.asset.comment_count--;
           // Indicate that the asset has been updated
           $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+        };
+
+        assetLibraryFactory.deleteComment(assetId, comment.id).then(localDelete, function(err) {
+          // When the comment is removed in another session this request will return a 404. In that
+          // case we proceed as if the request succeeded as the comment no longer exists
+          if (err.status === 404) {
+            localDelete();
+          }
         });
       }
     };
@@ -210,6 +211,10 @@
      */
     $scope.$on('assetLibraryAssetUpdated', function(ev, updatedAsset) {
       if ($scope.asset.id === updatedAsset.id) {
+        // Build a tree for the asset's comments
+        buildCommentTree(updatedAsset);
+
+        // Keep track of the updated asset
         $scope.asset = updatedAsset;
       }
     });

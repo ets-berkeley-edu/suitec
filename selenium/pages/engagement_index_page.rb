@@ -41,6 +41,14 @@ class EngagementIndexPage
     wait_until(timeout=WebDriverUtils.page_update_wait) { (users_table_element[1][1].text).include? name }
   end
 
+  # Returns the current engagement score for a user
+  # @param user [Hash]                          - the user from the set of test users
+  def user_score(user)
+    score = String.new('')
+    users_table_element.each { |row| score = row[3].text if row[1].text == user['fullName'] }
+    score
+  end
+
   # Creates and/or cleans out the download dir, downloads the current CSV, and collects score information from its rows
   # @param driver [Selenium::WebDriver]         - the browser
   # @param url [String]                         - the engagement index URL specific to the test course site

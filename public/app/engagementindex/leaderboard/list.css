@@ -31,16 +31,7 @@
   margin-bottom: 15px;
 }
 
-.leaderboard-list-table {
-  border: 1px solid #CCC;
-  width: 100%;
-}
-
-.leaderboard-list-table th,
-.leaderboard-list-table td {
-  padding: 10px;
-}
-
-.leaderboard-list-table.table-striped .leaderboard-list-highlight {
-  background-color: #EDEDED;
+.leaderboard-avatar {
+  height: 40px;
+  width: 40px;
 }

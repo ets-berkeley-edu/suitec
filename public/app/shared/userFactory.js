@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('userFactory', function(utilService, $http) {
+  angular.module('collabosphere').factory('userFactory', function(utilService, $cacheFactory, $http) {
 
     /**
      * Retrieve the profile information for the current user
@@ -80,7 +80,11 @@
       var update = {
         'share': share
       };
-      return $http.post(utilService.getApiUrl('/users/me/share'), update);
+      return $http.post(utilService.getApiUrl('/users/me/share'), update).then(function() {
+        // Remove the me object from the cache as its `share_points` value is now updated
+        var $httpDefaultCache = $cacheFactory.get('$http');
+        $httpDefaultCache.remove(utilService.getApiUrl('/users/me'));
+      });
     };
 
     return {

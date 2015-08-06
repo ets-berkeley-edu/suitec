@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $scope, $modalInstance) {
+  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $scope) {
 
     $scope.searchOptions = {};
     $scope.assets = [];
@@ -26,13 +26,23 @@
       'ready': false
     };
 
-    // TODO
+    // Variable that keeps track of whether a search is being done. Note that we can't make this
+    // into a function that checks `$scope.searchOptions` as the options are passed into the search
+    // directive which will update the options as soon as an input field changes. If we were to do
+    // that, we might start showing certain interactions too soon (e.g., the "No assets could be found" alert)
+    $scope.isSearch = false;
+
+    /**
+     * Add the selected assets to the current whiteboard
+     */
     var addSelectedAssets = $scope.addSelectedAssets = function() {
-      $modalInstance.close(getSelectedAssets());
+      // The `closeModal` is added on the scope by the caller and allows
+      // the caller to deal with the results coming out of the modal
+      $scope.closeModal(getSelectedAssets());
     };
 
     /**
-     * TODO
+     * Get the selected assets from the asset list
      */
     var getSelectedAssets = $scope.getSelectedAssets = function() {
       var selectedAssets = [];
@@ -46,17 +56,12 @@
     };
 
     /**
-     * TODO
+     * Toggle the selection of an asset
+     *
+     * @param  {Asset}          asset           The asset that should be toggled
      */
     var selectAsset = $scope.selectAsset = function(asset) {
       asset.selected = !asset.selected;
-    };
-
-    /**
-     * TODO
-     */
-    var closeModal = $scope.closeModal = function() {
-      $modalInstance.close();
     };
 
     /**
@@ -66,8 +71,16 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
+      $scope.isSearch = false;
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
+        // Indicate whether a search was performed
+        if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+          $scope.isSearch = true;
+        }
+
+        // Add the new assets
         $scope.assets = $scope.assets.concat(assets.results);
+
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
         // retrieved asset library page

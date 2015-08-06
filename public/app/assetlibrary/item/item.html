@@ -3,12 +3,12 @@
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
-    <div class="col-xs-{{ canManageAsset() ? 8 : 12 }}">
-      <h2 class="col-threedots">{{asset.title}}</h2>
+    <div class="col-xs-{{ canManageAsset() ? 8 : 12 }} col-sm-{{ canManageAsset() ? 10 : 12 }}">
+      <h2>{{asset.title}}</h2>
     </div>
 
     <!-- EDIT DETAILS -->
-    <div class="col-xs-4 text-right" data-ng-show="canManageAsset()">
+    <div class="col-xs-4 col-sm-2 text-right" data-ng-show="canManageAsset()">
       <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default">
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
@@ -18,31 +18,38 @@
 
   <div class="col-pane">
     <!-- PREVIEW -->
-    <div class="text-center assetlibrary-item-preview">
-      <!-- IMAGE PREVIEW -->
-      <div class="assetlibrary-item-preview-image" data-ng-if="asset.thumbnail_url">
-        <img data-ng-src="{{asset.thumbnail_url}}" alt="{{asset.title}}">
-      </div>
-      <!-- IFRAME PREVIEW -->
-      <div class="assetlibrary-item-preview-iframe" data-ng-if="asset.url && !asset.thumbnail_url">
-        <iframe data-ng-src="{{trustIFrameSrc(asset.url)}}"></iframe>
-      </div>
-    </div>
+    <div class="text-center assetlibrary-item-preview" data-ng-bind-html="asset.embed_code | sanitize"></div>
 
     <!-- METADATA -->
     <div class="assetlibrary-item-metadata">
       <div class="row">
-        <div class="col-sm-6 assetlibrary-item-metadata-column">
-          <div class="media">
-            <div class="media-left media-middle">
-              <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + asset.user.canvas_image + ')'}"></div>
-            </div>
-            <div class="media-body media-middle">
-              by <a>{{asset.user.canvas_full_name}}</a> on {{asset.created_at | date:'longDate' }}
-            </div>
+        <div class="col-sm-9 assetlibrary-item-metadata-column">
+          <div class="media-left media-top">
+            <div class="assetlibrary-item-metadata-text">by</div>
+          </div>
+          <div class="media-body media-middle">
+            <ul class="media-list list-inline assetlibrary-item-metadata" ng-class="{'assetlibrary-item-metadata-multiple-users': asset.users.length > 1}">
+              <li class="media" data-ng-repeat="user in asset.users | orderBy:['canvas_full_name']">
+                <div class="media-left media-middle">
+                  <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + user.canvas_image + ')'}"></div>
+                </div>
+                <div class="media-left media-middle assetlibrary-item-metadata-user-name">
+                  <a ui-sref="assetlibrarylist({'user': user.id})" ui-sref-opts="{'inherit': false}">
+                    <i class="fa fa-graduation-cap" data-ng-if="user.is_admin"></i> {{user.canvas_full_name}}
+                  </a>
+                  <span data-ng-if="me.id === user.id">(me)</span>
+                </div>
+              </li>
+              <li class="media">
+                <div class="media-left media-top">
+                  <div class="assetlibrary-item-metadata-text">on <span class="assetlibrary-item-metadata-on-date">{{asset.created_at | date:'longDate' }}</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="col-sm-6 assetlibrary-item-metadata-column assetlibrary-item-metadata-icons">
+        <div class="col-sm-3 assetlibrary-item-metadata-column assetlibrary-item-metadata-icons">
           <div iconbar asset="asset"></div>
         </div>
       </div>
@@ -51,7 +58,7 @@
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Description</div>
             <div class="col-xs-9">
-              <div data-ng-if="asset.description">{{asset.description}}</div>
+              <div data-ng-if="asset.description" data-ng-bind-html="asset.description | linky:'_blank' | hashtags"></div>
               <div data-ng-if="!asset.description">No description</div>
             </div>
           </div>
@@ -60,19 +67,21 @@
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Category</div>
             <div class="col-xs-9">
-              <div data-ng-if="asset.categories.length">
+              <div data-ng-if="asset.categories.length > 0">
                 <div data-ng-repeat="category in asset.categories">
-                  <a>{{category.title}}</a>
+                  <a ui-sref="assetlibrarylist({'category': category.id})" ui-sref-opts="{'inherit': false}">{{category.title}}</a>
                 </div>
               </div>
-              <div data-ng-if="!asset.categories.length">No category</div>
+              <div data-ng-if="asset.categories.length === 0">No category</div>
             </div>
           </div>
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Source</div>
             <div class="col-xs-9">
-              <div data-ng-if="asset.source || asset.url" class="col-threedots"><a data-ng-href="{{asset.source || asset.url}}" target="_blank">{{asset.source || asset.url}}</a></div>
-              <div data-ng-if="!asset.source && !asset.url">No source</div>
+              <div data-ng-if="asset.type !== 'whiteboard' && (asset.source || asset.url)" class="col-threedots">
+                <a data-ng-href="{{asset.source || asset.url}}" target="_blank">{{asset.source || asset.url}}</a>
+              </div>
+              <div data-ng-if="asset.type === 'whiteboard' || (!asset.source && !asset.url)">No source</div>
             </div>
           </div>
         </div>
@@ -93,7 +102,9 @@
       <div class="media-body media-middle">
         <form name="assetlibraryNewCommentForm" class="assetlibrary-item-newcomment-form" data-ng-submit="assetlibraryNewCommentForm.$valid && createComment()" novalidate>
           <div class="assetlibrary-item-addcomment-commenter">
-            <a><i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}</a> (me)
+            <a ui-sref="assetlibrarylist({'user': me.id})" ui-sref-opts="{'inherit': false}">
+              <i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}
+            </a> (me)
           </div>
           <div class="form-group assetlibrary-item-newcomment-comment">
             <label for="assetlibrary-item-newcomment-body" class="sr-only">Comment</label>
@@ -118,7 +129,7 @@
       </div>
       <div class="media-body media-top">
         <div class="assetlibrary-item-addcomment-commenter">
-          <a>
+          <a ui-sref="assetlibrarylist({'user': comment.user.id})" ui-sref-opts="{'inherit': false}">
             <i class="fa fa-graduation-cap" data-ng-if="comment.user.is_admin"></i> {{comment.user.canvas_full_name}}
             <span data-ng-if="me.id === comment.user.id">(me)</span>
           </a>
@@ -135,7 +146,7 @@
             </button>
           </div>
         </div>
-        <p data-ng-if="!comment.editing" data-ng-bind-html="comment.body | linky"></p>
+        <p data-ng-if="!comment.editing" data-ng-bind-html="comment.body | linky:'_blank'"></p>
         <!-- EDIT -->
         <form name="assetlibraryEditForm" class="assetlibrary-item-edit-form" data-ng-submit="assetlibraryEditForm.$valid && editComment(comment)" data-ng-if="comment.editing" novalidate>
           <div class="form-group assetlibrary-item-addcomment-comment">
@@ -156,7 +167,9 @@
           <div class="media-body media-middle">
             <form name="assetlibraryReplyForm" class="assetlibrary-item-reply-form" data-ng-submit="assetlibraryReplyForm.$valid && replyComment(comment, reply)" novalidate>
               <div class="assetlibrary-item-addcomment-commenter">
-                <a><i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}</a> (me)
+                <a ui-sref="assetlibrarylist({'user': me.id})" ui-sref-opts="{'inherit': false}">
+                  <i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}
+                </a> (me)
               </div>
               <div class="form-group assetlibrary-item-addcomment-comment">
                 <label for="assetlibrary-item-addcomment-body" class="sr-only">Reply</label>

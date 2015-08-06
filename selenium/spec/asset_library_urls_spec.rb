@@ -54,7 +54,7 @@ describe 'Adding Asset Library URLs' do
     @asset_library.wait_until(timeout) { @asset_library.list_view_asset_title_elements[0].text == 'URL Title 1' }
     expect(@asset_library.list_view_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
     @asset_library.click_asset_link 0
-    @asset_library.wait_for_asset_detail(@driver, 'URL Title 1')
+    @asset_library.wait_for_asset_detail('URL Title 1')
     # TODO: verify asset category, description, and embedded URL once visible in the viewport
   end
 
@@ -64,7 +64,7 @@ describe 'Adding Asset Library URLs' do
     @asset_library.wait_until(timeout) { @asset_library.list_view_asset_title_elements[0].text == 'URL Title 2' }
     expect(@asset_library.list_view_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
     @asset_library.click_asset_link 0
-    @asset_library.wait_for_asset_detail(@driver, 'URL Title 2')
+    @asset_library.wait_for_asset_detail('URL Title 2')
     # TODO: verify asset category and embedded URL once visible in the viewport
   end
 
@@ -74,7 +74,7 @@ describe 'Adding Asset Library URLs' do
     @asset_library.wait_until(timeout) { @asset_library.list_view_asset_title_elements[0].text == 'URL Title 3' }
     expect(@asset_library.list_view_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
     @asset_library.click_asset_link 0
-    @asset_library.wait_for_asset_detail(@driver, 'URL Title 3')
+    @asset_library.wait_for_asset_detail('URL Title 3')
     # TODO: verify asset embedded URL once visible in the viewport
   end
 
@@ -84,7 +84,7 @@ describe 'Adding Asset Library URLs' do
     @asset_library.wait_until(timeout) { @asset_library.list_view_asset_title_elements[0].text == 'URL Title 4' }
     expect(@asset_library.list_view_asset_owner_name_elements[0].text).to eql("by #{test_teacher['fullName']}")
     @asset_library.click_asset_link 0
-    @asset_library.wait_for_asset_detail(@driver, 'URL Title 4')
+    @asset_library.wait_for_asset_detail('URL Title 4')
     # TODO: verify asset description and embedded URL once visible in the viewport
   end
 

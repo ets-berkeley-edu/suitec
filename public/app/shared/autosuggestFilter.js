@@ -27,7 +27,7 @@
 
         // Add the graduation cap if the selected user is an administrator
         if (option.is_admin) {
-          html += '<span class="whiteboards-create-list-item-admin"><i class="fa fa-graduation-cap"></i></span>';
+          html += '<i class="fa fa-graduation-cap"></i>';
         }
 
         // Add the selected user's name
