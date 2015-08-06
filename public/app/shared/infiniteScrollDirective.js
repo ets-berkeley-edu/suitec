@@ -121,7 +121,7 @@
             });
           } else {
             // It is possible that the infinite scroll container will not have been present at the time of initialisation,
-            // especially inside modals. Therefore, we try to locate the infnite scroll container again if hasn't yet been
+            // especially inside modals. Therefore, we try to locate the infinite scroll container again if hasn't yet been
             // located
             infiniteScrollContainer = infiniteScrollContainer || document.getElementById(scope.infiniteScrollContainer);
             if (!infiniteScrollContainer) {

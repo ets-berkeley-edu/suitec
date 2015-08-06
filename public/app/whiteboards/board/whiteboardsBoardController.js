@@ -35,7 +35,7 @@
     var CANVAS_BASE_WIDTH = 1000;
 
     // The padding that will be enforced on the canvas when it can be scrolled
-    var CANVAS_PADDING = 20;
+    var CANVAS_PADDING = 40;
 
     // Open a websocket connection for real-time communication with the server (chat + whiteboard changes).
     // The course ID and API domain are passed in as handshake query parameters
@@ -209,7 +209,7 @@
 
     /**
      * Set the width and height of the whiteboard canvas. The width of the visible
-     * canvas will be the same for all users, and the canvas will be zoomed to accomodate
+     * canvas will be the same for all users, and the canvas will be zoomed to accommodate
      * that width. By default, the size of the zoomed canvas will be the same as the size
      * of the viewport. When there are any elements on the canvas that are outside of the
      * viewport boundaries, the canvas will be enlarged to incorporate those
@@ -1048,7 +1048,10 @@
         startShapePointer = canvas.getPointer(ev.e);
 
         // Create the basic shape of the selected type that will
-        // be used as the drawing guide
+        // be used as the drawing guide. The originX and originY
+        // of the helper element are set to left and top to make it
+        // easier to map the top left corner of the drawing guide with
+        // the original cursor postion
         shape = new fabric[$scope.shape.selected.type.shape]({
           'left': startShapePointer.x,
           'top': startShapePointer.y,
@@ -1126,8 +1129,13 @@
         // Clone the drawn shape and add the clone to the canvas.
         // This is caused by a bug in Fabric where it initially uses
         // the size when drawing started to position the controls. Cloning
-        // ensures that the controls are added in the correct position
+        // ensures that the controls are added in the correct position.
+        // The origin of the element is also set to `center` to make it
+        // inline with the other whiteboard elements
         var finalShape = fabric.util.object.clone(shape);
+        finalShape.left += finalShape.width / 2;
+        finalShape.top += finalShape.height / 2;
+        finalShape.originX = finalShape.originY = 'center';
         // Indicate that this is no longer a drawing helper shape and can
         // therefore be saved back to the server
         finalShape.set('isHelper', false);
@@ -1234,10 +1242,11 @@
       fabric.Image.fromURL(asset.image_url, function(element) {
         var canvasCenter = getCanvasCenter();
 
-        // Scale the element if it is too large to fit onto the viewport
-        var maxWidth = (viewport.clientWidth - (viewport.clientWidth / 5)) / canvas.getZoom();
+        // Scale the element to ensure it takes up a maximum of 80% of the
+        // visible viewport width and height
+        var maxWidth = viewport.clientWidth * 0.8 / canvas.getZoom();
         var widthRatio = maxWidth / element.width;
-        var maxHeight = (viewport.clientHeight - (viewport.clientHeight / 5)) / canvas.getZoom();
+        var maxHeight = viewport.clientHeight * 0.8 / canvas.getZoom();
         var heightRatio = maxHeight / element.height;
         // Determine which side needs the most scaling for the element to fit on the screen
         var ratio = _.min([widthRatio, heightRatio]);
@@ -1537,6 +1546,10 @@
         'scope': scope,
         'templateUrl': '/app/whiteboards/exportasassetmodal/exportasasset.html'
       });
+
+      // Switch the toolbar back to move mode. This will
+      // also close the add asset popover
+      setMode('move');
     };
 
     /* INITIALIZATION */
