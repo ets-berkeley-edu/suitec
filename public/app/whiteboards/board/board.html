@@ -1,92 +1,78 @@
-<!-- WHITEBOARD -->
-<div id="whiteboards-board-viewport">
-  <canvas id="whiteboards-board-board"></canvas>
-</div>
-
-<!-- TOOLBAR -->
-<div id="whiteboards-board-toolbar" class="btn-toolbar" role="toolbar" aria-label="Whiteboard Toolbar">
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default active" title="Move and transform" data-ng-click="setMode('move')" data-ng-class="{'active': mode === 'move'}">
-      <i class="fa fa-arrows">
-        <span class="sr-only">Move and transform</span>
-      </i>
-    </button>
-    <button type="button" class="btn btn-default" title="Text" data-ng-click="setMode('text')" data-ng-class="{'active': mode === 'text'}" data-content-template="textPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
-      <i class="fa fa-font">
-        <span class="sr-only">Text</span>
-      </i>
-    </button>
-    <button type="button" class="btn btn-default" title="Draw" data-ng-click="setMode('draw')" data-ng-class="{'active': mode === 'draw'}" data-content-template="drawPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
-      <i class="fa fa-paint-brush">
-        <span class="sr-only">Draw</span>
-      </i>
-    </button>
-    <button type="button" class="btn btn-default" title="Shape" data-ng-click="setMode('shape')" data-ng-class="{'active': mode === 'shape'}" data-content-template="shapePopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
-      <i class="fa fa-square-o">
-        <span class="sr-only">Shape</span>
-      </i>
-    </button>
-    <button type="button" class="btn btn-default" title="Erase" data-ng-click="setMode('erase')"  data-ng-class="{'active': mode === 'erase'}">
-      <i class="fa fa-eraser">
-        <span class="sr-only">Erase</span>
-      </i>
-    </button>
+<div id="whiteboards-board-container" class="text-center" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}">
+  <!-- NOTIFICATIONS -->
+  <div id="whiteboards-board-notifications-container">
+    <div id="whiteboards-board-notifications"></div>
   </div>
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default" title="Zoom in" data-ng-click="zoom(0.3)" data-ng-disabled="zoomLevel >= 2.5">
-      <i class="fa fa-search-plus">
-        <span class="sr-only">Zoom in</span>
-      </i>
-    </button>
-    <button type="button" class="btn btn-default" title="Zoom out" data-ng-click="zoom(-0.3)" data-ng-disabled="zoomLevel <= 0.5">
-      <i class="fa fa-search-minus">
-        <span class="sr-only">Zoom out</span>
-      </i>
-    </button>
+  <!-- WHITEBOARD -->
+  <div id="whiteboards-board-viewport" tabindex="0">
+    <canvas id="whiteboards-board-board"></canvas>
   </div>
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default" title="Undo" data-ng-click="undo()" data-ng-disabled="currentActionPosition === 0">
-      <i class="fa fa-reply">
-        <span class="sr-only">Undo</span>
-      </i>
-    </button>
-    <button type="button" class="btn btn-default" title="Redo" data-ng-click="redo()" data-ng-disabled="currentActionPosition === actionQueue.length">
-      <i class="fa fa-share">
-        <span class="sr-only">Redo</span>
-     </i>
-    </button>
-  </div>
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default" title="Add asset" data-ng-click="setMode('asset')" data-ng-class="{'active': mode === 'asset'}" data-content-template="addAssetPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
-      <i class="fa fa-plus-circle"></i>
-      <span>Asset</span>
-    </button>
-  </div>
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default" title="Export" data-ng-click="setMode('export')" data-ng-class="{'active': mode === 'export'}" data-content-template="exportPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
-      <i class="fa fa-share-square-o"></i>
-      <span>Export</span>
-    </button>
-  </div>
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'online'}">
-      <i class="fa fa-user">
-        <span class="sr-only">Collaborators</span>
-      </i>
-      <span class="badge" data-ng-bind="getOnlineUsers().length"></span>
-    </button>
-    <button type="button" class="btn btn-default whiteboards-board-toolbar-chat" title="Chat" data-ng-click="toggleSidebar('chat')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'chat'}">
-      <i class="fa fa-comments">
-        <span class="sr-only">Chat</span>
-      </i>
-    </button>
-  </div>
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default" title="Settings" data-ng-click="editWhiteboard()">
-      <i class="fa fa-cog">
-        <span class="sr-only">Settings</span>
-      </i>
-    </button>
+  <!-- TOOLBAR -->
+  <div id="whiteboards-board-toolbar" class="btn-toolbar" role="toolbar" aria-label="Whiteboard Toolbar">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default active" title="Move and transform" data-ng-click="setMode('move')" data-ng-class="{'active': mode === 'move'}">
+        <i class="fa fa-arrows">
+          <span class="sr-only">Move and transform</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Text" data-ng-click="setMode('text')" data-ng-class="{'active': mode === 'text'}" data-content-template="textPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
+        <i class="fa fa-font">
+          <span class="sr-only">Text</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Draw" data-ng-click="setMode('draw')" data-ng-class="{'active': mode === 'draw'}" data-content-template="drawPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
+        <i class="fa fa-paint-brush">
+          <span class="sr-only">Draw</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Shape" data-ng-click="setMode('shape')" data-ng-class="{'active': mode === 'shape'}" data-content-template="shapePopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
+        <i class="fa fa-square-o">
+          <span class="sr-only">Shape</span>
+        </i>
+      </button>
+    </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" title="Add asset" data-ng-click="setMode('asset')" data-ng-class="{'active': mode === 'asset'}" data-content-template="addAssetPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
+        <i class="fa fa-plus-circle"></i>
+        <span>Asset</span>
+      </button>
+    </div>
+    <div class="btn-group" role="group" data-ng-if="scrollingCanvas">
+      <button type="button" class="btn btn-default" title="Fit to screen" data-ng-if="!fitToScreen" data-ng-click="toggleZoom()">
+        <i class="fa fa-search-minus">
+          <span class="sr-only">Fit to screen</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Actual size" data-ng-if="fitToScreen" data-ng-click="toggleZoom()">
+        <i class="fa fa-search-plus">
+          <span class="sr-only">Actual size"</span>
+        </i>
+      </button>
+    </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" title="Undo" data-ng-click="undo()" data-ng-disabled="currentActivityPosition === 0">
+        <i class="fa fa-reply">
+          <span class="sr-only">Undo</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Redo" data-ng-click="redo()" data-ng-disabled="currentActivityPosition === activityQueue.length">
+        <i class="fa fa-share">
+          <span class="sr-only">Redo</span>
+       </i>
+      </button>
+    </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" title="Export" data-ng-click="setMode('export')" data-ng-class="{'active': mode === 'export'}" data-content-template="exportPopoverTemplate" data-placement="top" data-auto-close="1" bs-popover>
+        <i class="fa fa-download">
+          <span class="sr-only">Export</span>
+        </i>
+      </button>
+      <button type="button" class="btn btn-default" title="Settings" data-ng-click="editWhiteboard()">
+        <i class="fa fa-cog">
+          <span class="sr-only">Settings</span>
+        </i>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -203,8 +189,6 @@
 </script>
 
 <!-- NOTIFICATIONS -->
-<!-- TODO: Update positioning when doing whiteboard improvements -->
-<div id="whiteboards-board-notifications" data-ng-class="{'whiteboards-board-notifications-full': !sidebarExpanded}"></div>
 <script type="text/ng-template" id="whiteboards-notification-template">
   <div class="alert" ng-class="'alert-' + type">
     <button type="button" class="btn btn-link pull-right close" ng-click="$hide()">
@@ -215,51 +199,66 @@
 </script>
 
 <!-- SIDEBAR -->
-<div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
-  <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
-    <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="200" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
-      <div id="whiteboards-board-chat-messages-table">
-        <div id="whiteboards-board-chat-messages">
-          <div class="media" data-ng-repeat="chatMessage in chatMessages">
-            <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at)">
-              <span class="whiteboards-board-chat-date-header">{{chatMessage.created_at | formatDate}}</span>
-            </div>
+<div id="whiteboards-board-sidebar-container" data-ng-show="sidebarExpanded">
+  <div id="whiteboards-board-sidebar">
+    <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
+      <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="200" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
+        <div id="whiteboards-board-chat-messages-table">
+          <div id="whiteboards-board-chat-messages">
+            <div class="media" data-ng-repeat="chatMessage in chatMessages">
+              <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at)">
+                <span class="whiteboards-board-chat-date-header">{{chatMessage.created_at | formatDate}}</span>
+              </div>
 
-            <div class="media-left media-top">
-              <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
-            </div>
-            <div class="media-body media-top">
-              <div class="whiteboards-board-chat-actor">
-                <a>
+              <div class="media-left media-top">
+                <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
+              </div>
+              <div class="media-body media-top">
+                <div class="whiteboards-board-chat-actor">
                   <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
                   <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
-                </a>
-                <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+                  <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+                </div>
+                <p data-ng-bind-html="chatMessage.body | linky:'_blank'"></p>
               </div>
-              <p data-ng-bind-html="chatMessage.body | linky:'_blank'"></p>
             </div>
           </div>
         </div>
       </div>
+      <div id="whiteboards-board-chat-new">
+        <form data-ng-keypress="createChatMessage($event)">
+          <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
+        </form>
+      </div>
     </div>
-    <div id="whiteboards-board-chat-new">
-      <form data-ng-keypress="createChatMessage($event)">
-        <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
-      </form>
-    </div>
-  </div>
-  <div id="whiteboards-board-members" data-ng-if="sidebarMode === 'online'">
-    <h3 class="whiteboard-board-members-title">Board collaborators ({{whiteboard.members.length}})</h3>
-    <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">
-      <div class="media-left media-middle">
-        <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}">
-          <i class="fa fa-check-circle" data-ng-if="member.online"></i>
+    <div id="whiteboards-board-members" data-ng-if="sidebarMode === 'online'">
+      <h3 class="whiteboard-board-members-title">Board collaborators ({{whiteboard.members.length}})</h3>
+      <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">
+        <div class="media-left media-middle">
+          <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}">
+            <i class="fa fa-check-circle" data-ng-if="member.online"></i>
+          </div>
+        </div>
+        <div class="media-body media-middle">
+          <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}
+          <span data-ng-if="me.id === member.id">(me)</span>
         </div>
       </div>
-      <div class="media-body media-middle">
-        <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}
-        <span data-ng-if="me.id === member.id">(me)</span>
-      </div>
     </div>
   </div>
+</div>
+
+<!-- SIDEBAR BUTTONS -->
+<div id="whiteboards-board-sidebar-buttons" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}">
+  <button type="button" class="btn btn-link whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'online'}">
+    <i class="fa fa-user">
+      <span class="sr-only">Collaborators</span>
+    </i>
+    <span class="badge" data-ng-bind="getOnlineUsers().length"></span>
+  </button>
+  <button type="button" class="btn btn-link whiteboards-board-toolbar-chat" title="Chat" data-ng-click="toggleSidebar('chat')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'chat'}">
+    <i class="fa fa-comments">
+      <span class="sr-only">Chat</span>
+    </i>
+  </button>
 </div>

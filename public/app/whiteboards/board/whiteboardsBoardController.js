@@ -31,6 +31,12 @@
     // Variable that will keep track of the whiteboard Fabric.js instance
     var canvas = null;
 
+    // The base width of the canvas
+    var CANVAS_BASE_WIDTH = 1000;
+
+    // The padding that will be enforced on the canvas when it can be scrolled
+    var CANVAS_PADDING = 40;
+
     // Open a websocket connection for real-time communication with the server (chat + whiteboard changes).
     // The course ID and API domain are passed in as handshake query parameters
     var launchParams = utilService.getLaunchParams();
@@ -74,6 +80,12 @@
       }
     ];
 
+    // Variable that will keep track of the placeholder images to use for assets without a preview image
+    var ASSET_PLACEHOLDERS = {
+      'file': '/assets/img/whiteboard_asset_placeholder_file.png',
+      'link': '/assets/img/whiteboard_asset_placeholder_link.png'
+    };
+
     /* WHITEBOARD */
 
     /**
@@ -87,15 +99,27 @@
         // Set the title of the window to the title of the whiteboard
         $rootScope.header = whiteboard.title;
 
+        // Set the size of the whiteboard canvas
+        setCanvasDimensions();
+
+        // Set the layer index of the whiteboard elements once all elements
+        // have finished loading
+        var restoreLayers = _.after(whiteboard.whiteboard_elements.length, function() {
+          canvas.forEachObject(function(element) {
+            element.moveTo(element.get('index'));
+          });
+          canvas.renderAll();
+          // Set the size of the whiteboard canvas
+          setCanvasDimensions();
+        });
+
         // Restore the layout of the whiteboard canvas
-        for (var i = 0; i < whiteboard.whiteboard_elements.length; i++) {
-          var element = whiteboard.whiteboard_elements[i];
+        _.each(whiteboard.whiteboard_elements, function(element) {
           deserializeElement(element, function(element) {
             canvas.add(element);
-            element.moveTo(element.get('index'));
-            canvas.renderAll();
+            restoreLayers();
           });
-        }
+        });
       });
     };
 
@@ -133,7 +157,10 @@
       return function() {
         return fabric.util.object.extend(toObject.call(this), {
           'uid': this.uid,
-          'index': canvas.getObjects().indexOf(this)
+          'index': canvas.getObjects().indexOf(this),
+          'assetId': this.assetId,
+          'width': this.width,
+          'height': this.height
         });
       };
     })(fabric.Object.prototype.toObject);
@@ -147,25 +174,144 @@
       fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
       // Initialize the whiteboard Fabric.js instance
       canvas = new fabric.Canvas('whiteboards-board-board');
+      // Set the selection style for the whiteboard
+      setSelectionStyle();
       // Set the pencil brush as the drawing brush
       canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-      // Set the width and height of the canvas
-      setCanvasDimensions();
       // Load the whiteboard information, including the whiteboard's content
       getWhiteboard();
     };
 
     /**
-     * Set the width and height of the whiteboard canvas to be the same
-     * as the surrounding viewport. This will allow the canvas to be
-     * infinitely scrollable
+     * Set the selection style of the Fabric.js canvas whiteboard elements, as well as
+     * the style of the helper shown when selecting multiple elements at once
      */
-    var setCanvasDimensions = function() {
-      canvas.setHeight(viewport.clientHeight);
-      canvas.setWidth(viewport.clientWidth);
+    var setSelectionStyle = function() {
+      // Set the style of the multi-select helper
+      canvas.selectionColor = 'transparent';
+      canvas.selectionBorderColor = '#0295DE';
+      canvas.selectionLineWidth = 2;
+      // Make the border dashed
+      // @see http://fabricjs.com/fabric-intro-part-4/
+      canvas.selectionDashArray = [10, 5];
+
+      // Set the selection style for all elements
+      fabric.Object.prototype.borderColor = '#0295DE';
+      fabric.Object.prototype.borderScaleFactor = 0.3;
+      fabric.Object.prototype.cornerColor = '#0295DE';
+      fabric.Object.prototype.cornerSize = 10;
+      fabric.Object.prototype.transparentCorners = false;
+      fabric.Object.prototype.rotatingPointOffset = 30;
     };
 
-    // Resize the viewport when the window is resized
+    // Variable that will keep track of whether the canvas elements are overflowing the viewport
+    $scope.scrollingCanvas = false;
+
+    /**
+     * Set the width and height of the whiteboard canvas. The width of the visible
+     * canvas will be the same for all users, and the canvas will be zoomed to accommodate
+     * that width. By default, the size of the zoomed canvas will be the same as the size
+     * of the viewport. When there are any elements on the canvas that are outside of the
+     * viewport boundaries, the canvas will be enlarged to incorporate those
+     */
+    var setCanvasDimensions = function() {
+      // Zoom the canvas to accomodate the base width within the viewport
+      var viewportWidth = viewport.clientWidth;
+      var ratio = viewportWidth / CANVAS_BASE_WIDTH;
+      canvas.setZoom(ratio);
+
+      // Calculate the position of the elements that are the most right and the
+      // most bottom. When all elements fit within the viewport, the canvas is
+      // made the same size as the viewport. When any elements overflow the viewport,
+      // the canvas is enlarged to incorporate all assets outside of the viewport
+      var viewportHeight = viewport.clientHeight;
+      var maxRight = viewportWidth;
+      var maxBottom = viewportHeight;
+
+      canvas.forEachObject(function(element) {
+        var bound = null;
+        if (!element.group) {
+          bound = element.getBoundingRect();
+        } else {
+          // Elements in a group are positioned relative to the group. In order to calculate the most
+          // right and most bottom point of the element, we need to calculate its position relative to
+          // the canvas and then calculate the bounding rectangle for that element
+          var position = calculateGlobalElementPosition(element.group, element);
+          var width = element.width * position.scaleX;
+          var height = element.height * position.scaleY;
+          var rotation = fabric.util.degreesToRadians(position.angle);
+
+          // The left and top position correspond to the center of the element
+          var center = new fabric.Point(position.left, position.top);
+
+          // Calculate the corners of the object, keeping its rotation into account
+          var tl = fabric.util.rotatePoint(new fabric.Point(center.x - (width / 2), center.y - (height / 2)), center, rotation);
+          var tr = fabric.util.rotatePoint(new fabric.Point(center.x + (width / 2), center.y - (height / 2)), center, rotation);
+          var br = fabric.util.rotatePoint(new fabric.Point(center.x + (width / 2), center.y + (height / 2)), center, rotation);
+          var bl = fabric.util.rotatePoint(new fabric.Point(center.x - (width / 2), center.y + (height / 2)), center, rotation);
+
+          // Calculate the position of the bounding rectangle
+          var xCoords = [tl.x, tr.x, br.x, bl.x];
+          var minX = _.min(xCoords) * canvas.getZoom();
+          var maxX = _.max(xCoords) * canvas.getZoom();
+          var boundingRectWidth = Math.abs(minX - maxX);
+
+          var yCoords = [tl.y, tr.y, br.y, bl.y];
+          var minY = _.min(yCoords) * canvas.getZoom();
+          var maxY = _.max(yCoords) * canvas.getZoom();
+          var boundingRectHeight = Math.abs(minY - maxY);
+
+          bound = {
+            'left': minX,
+            'top': minY,
+            'width': boundingRectWidth,
+            'height': boundingRectHeight
+          };
+        }
+
+        maxRight = Math.max(maxRight, bound.left + bound.width);
+        maxBottom = Math.max(maxBottom, bound.top + bound.height);
+      });
+
+      // Keep track of whether the canvas can currently be scrolled
+      if (maxRight > viewportWidth || maxBottom > viewportHeight) {
+        $scope.scrollingCanvas = true;
+
+        // Add padding when the canvas can be scrolled
+        if (maxRight > viewportWidth) {
+          maxRight += CANVAS_PADDING;
+        }
+        if (maxBottom > viewportHeight) {
+          maxBottom += CANVAS_PADDING;
+        }
+      } else {
+        $scope.scrollingCanvas = false;
+      }
+
+      // When the entire whiteboard content should fit within
+      // the screen, adjust the zoom level to make it fit
+      if ($scope.fitToScreen) {
+        // Calculate the actual unzoomed width of the whiteboard
+        var realWidth = maxRight / canvas.getZoom();
+        var realHeight = maxBottom / canvas.getZoom();
+        // Zoom the canvas based on whether the height or width
+        // needs the largest zoom out
+        var widthRatio = viewportWidth / realWidth;
+        var heightRatio = viewportHeight / realHeight;
+        var ratio = Math.min(widthRatio, heightRatio);
+        canvas.setZoom(ratio);
+
+        canvas.setHeight(viewportHeight);
+        canvas.setWidth(viewportWidth);
+      } else {
+        // Adjust the value for rounding issues to prevent scrollbars
+        // from incorrectly showing up
+        canvas.setHeight(maxBottom - 1);
+        canvas.setWidth(maxRight - 1);
+      }
+    };
+
+    // Recalculate the size of the canvas when the window is resized
     window.addEventListener('resize', setCanvasDimensions);
 
     /**
@@ -173,23 +319,10 @@
      * exclude the toolbar and the chat/online sidebar (if expanded)
      */
     var getCanvasCenter = function() {
-      // Calculate the height of the toolbar
-      var toolbarHeight = document.getElementById('whiteboards-board-toolbar').clientHeight;
-
-      // Calculate the width of the sidebar
-      var sidebarWidth = document.getElementById('whiteboards-board-sidebar').clientWidth;
-
-      // Calculate the width and height of the viewport excluding the toolbar and chat/online bar (if expanded)
-      var viewportWidth = viewport.clientWidth;
-      if ($scope.sidebarExpanded) {
-        viewportWidth = viewportWidth - sidebarWidth;
-      }
-      var viewportHeight = viewport.clientHeight - toolbarHeight;
-
       // Calculate the center point of the whiteboard canvas
       var zoomLevel = canvas.getZoom();
-      var centerX = (currentCanvasPan.x + (viewportWidth / 2)) / zoomLevel;
-      var centerY = (currentCanvasPan.y + (viewportHeight / 2)) / zoomLevel;
+      var centerX = ((viewport.clientWidth / 2) + viewport.scrollLeft) / zoomLevel;
+      var centerY = ((viewport.clientHeight / 2) + viewport.scrollTop) / zoomLevel;
 
       return {
         'x': centerX,
@@ -234,6 +367,77 @@
       }
     };
 
+    /**
+     * Enable or disable all elements on the whiteboard canvas. When an element is disabled, it will not be possible
+     * to select, move or modify it
+     *
+     * @param  {Boolean}        enabled           Whether the elements on the whiteboard canvas should be enabled or disabled
+     */
+    var enableCanvasElements = function(enabled) {
+      canvas.selection = enabled;
+      var elements = canvas.getObjects();
+      for (var i = 0; i < elements.length; i++) {
+        elements[i].selectable = enabled;
+      }
+    };
+
+    /**
+     * Update the appearance of a Fabric.js canvas element
+     *
+     * @param  {Number}         uid               The id of the element to update
+     * @param  {Object}         update            The updated values to apply to the canvas element
+     */
+    var updateCanvasElement = function(uid, update) {
+      var element = getCanvasElement(uid);
+
+      var updateElementProperties = function() {
+        // Update all element properties, except for the image source. The image
+        // source is handled separately as this is an asynchronous action
+        _.each(update, function(value, property) {
+          if (property !== 'src' && value !== element.get(property)) {
+            element.set(property, value);
+          }
+        });
+
+        // When the source element for an asset has changed, update this last and
+        // re-render the element after it has been loaded
+        if (element.type === 'image' && element.getSrc() !== update.src) {
+          element.setSrc(update.src, function() {
+            canvas.renderAll();
+            // Recalculate the size of the whiteboard canvas
+            setCanvasDimensions();
+          });
+        } else {
+          canvas.renderAll();
+        }
+      }
+
+      // If the element is an asset for which the source has changed, we preload
+      // the image to prevent flickering when the image is inserted into the element
+      if (element.type === 'image' && element.getSrc() !== update.src) {
+        fabric.util.loadImage(update.src, updateElementProperties);
+      } else {
+        updateElementProperties();
+      }
+    };
+
+    /**
+     * Detect keydown events in the whiteboard to respond to keyboard shortcuts
+     */
+    viewport.addEventListener('keydown', function($event) {
+      // Remove the selected elements when the delete or backspace key is pressed
+      if ($event.keyCode === 8 || $event.keyCode === 46) {
+        deleteActiveElements();
+        $event.preventDefault();
+      // Undo the previous action when Ctrl+Z is pressed
+      } else if ($event.keyCode === 90 && $event.metaKey) {
+      //  undo();
+      // Redo the previous action when Ctrl+Y is pressed
+      } else if ($event.keyCode === 89 && $event.metaKey) {
+      //  redo();
+      }
+    }, false);
+
     initializeCanvas();
 
     /* CONCURRENT EDITING */
@@ -269,6 +473,104 @@
     };
 
     /**
+     * Calculate the position of an element in a group relative to the whiteboard canvas
+     *
+     * @param  {Object}         group             The group of which the element is a part
+     * @param  {Object}         element           The Fabric.js element for which the position relative to its group should be calculated
+     * @return {Object}                           The position of the element relative to the whiteboard canvas. Will return the `angle`, `left` and `top` postion and the `scaleX` and `scaleY` scaling factors
+     */
+    var calculateGlobalElementPosition = function(group, object) {
+      var center = group.getCenterPoint();
+      var rotated = calculateRotatedLeftTop(group, object);
+
+      return {
+        'angle': object.getAngle() + group.getAngle(),
+        'left': center.x + rotated.left,
+        'top': center.y + rotated.top,
+        'scaleX': object.get('scaleX') * group.get('scaleX'),
+        'scaleY': object.get('scaleY') * group.get('scaleY')
+      };
+    };
+
+    /**
+     * Calculate the top left position of an element in a group
+     *
+     * @param  {Object}         group             The group of which the element is a part
+     * @param  {Object}         element           The Fabric.js element for which the top left position in its group should be calculated
+     * @return {Object}                           The top left position of the element in its group. Will return the `top` and `left` postion
+     */
+    var calculateRotatedLeftTop = function(group, object) {
+      var groupAngle = group.getAngle() * (Math.PI / 180);
+      var left = (-Math.sin(groupAngle) * object.getTop() * group.get('scaleY') +
+                  Math.cos(groupAngle) * object.getLeft() * group.get('scaleX'));
+      var top = (Math.cos(groupAngle) * object.getTop() * group.get('scaleY') +
+                   Math.sin(groupAngle) * object.getLeft() * group.get('scaleX'))
+      return {
+        'left': left,
+        'top': top
+      };
+    };
+
+    /**
+     * Deactivate the active group if any of the provided elements are a part of
+     * the active group
+     *
+     * @param  {Object[]}       elements          The elements that should be checked for presence in the active group
+     */
+    var deactiveActiveGroupIfOverlap = function(elements) {
+      var group = canvas.getActiveGroup()
+      if (group) {
+        var intersection = _.intersection(_.pluck(group.objects, 'uid'), _.pluck(elements, 'uid'));
+        if (intersection.length > 0) {
+          canvas.discardActiveGroup().renderAll();
+        }
+      }
+    };
+
+    /**
+     * Get the currently selected whiteboard elements
+     *
+     * @return {Object[]}                         The selected whiteboard elements
+     */
+    var getActiveElements = function() {
+      var activeElements = [];
+      var group = canvas.getActiveGroup();
+      if (group) {
+        _.each(group.objects, function(element) {
+          // When a Fabric.js canvas element is part of a group selection, its properties will be
+          // relative to the group. Therefore, we calculate the actual position of each element in
+          // the group relative to the whiteboard canvas
+          var position = calculateGlobalElementPosition(group, element);
+          activeElements.push(angular.extend({}, element.toObject(), position));
+        });
+      } else {
+        activeElements.push(canvas.getActiveObject().toObject());
+      }
+      return activeElements;
+    };
+
+    ///////////////
+    // ADD ITEMS //
+    ///////////////
+
+    /**
+     * Persist a new element to the server
+     *
+     * @param  {Object}         element           The new element to persist to the server
+     */
+    var saveNewElement = function(element) {
+      // Add a unique id to the element
+      setCanvasElementId(element);
+
+      // Save the new element
+      socket.emit('addActivity', [element.toObject()]);
+
+      // Add the action to the undo/redo queue
+      // TODO
+      // addUndoActivity('add', [{'element': element.toObject()}]);
+    };
+
+    /**
      * A new element was added to the whiteboard canvas by the current user
      */
     canvas.on('object:added', function(ev) {
@@ -279,70 +581,80 @@
         return false;
       }
 
-      // Only notify the server if the element was added by the current user
-      // and the element is not a drawing helper element
-      // TODO
-      if ((!element.get('uid') && !element.get('isHelper')) || element.get('isUndoRedo')) {
-        // Add a unique id to the element
-        setCanvasElementId(element);
-        socket.emit('addElement', element.toObject());
+      // If the element already has a unique id, it was added by a different user and
+      // there is no need to persist the addition
+      if (!element.get('uid') && !element.get('isHelper')) {
+        saveNewElement(element);
 
-        // Add the action to the undo/redo queue
-        if (!element.get('isUndoRedo') && !element.get('isHelper')) {
-          addUndoAction('add', element.toObject());
-        }
+        // Recalculate the size of the whiteboard canvas
+        setCanvasDimensions();
       }
-      element.set('isUndoRedo', null);
     });
 
     /**
-     * A new element was added to the whitebard canvas by a different user
+     * A whiteboard canvas element was added by a different user
      */
-    socket.on('addElement', function(element) {
-      deserializeElement(element, function(element) {
-        // Add the element to the whiteboard canvas and move it to its appropriate index
-        canvas.add(element);
-        element.moveTo(element.get('index'));
-        canvas.renderAll();
+    socket.on('addActivity', function(elements) {
+      _.each(elements, function(element) {
+        deserializeElement(element, function(element) {
+          // Add the element to the whiteboard canvas and
+          // move it to its appropriate index
+          canvas.add(element);
+          element.moveTo(element.get('index'));
+          canvas.renderAll();
+          // Recalculate the size of the whiteboard canvas
+          setCanvasDimensions();
+        });
       });
     });
 
-    /**
-     * A whiteboard canvas element was updated by the current user
-     */
-    canvas.on('object:modified', function(ev) {
-      var element = ev.target;
+    //////////////////
+    // UPDATE ITEMS //
+    //////////////////
 
-      // Only notify the server if the element was updated by the current user
-      // and if the element is not a drawing helper element
-      if (!element.get('isSocketUpdate') && !element.get('isHelper')) {
-        socket.emit('updateElement', element.toObject());
-        // Add the action to the undo/redo queue
-        if (!element.get('isUndoRedo') && !element.get('isHelper')) {
-          addUndoAction('update', element.toObject(), element.originalState);
-        }
-      }
-      element.set('isUndoRedo', null);
-      element.set('isSocketUpdate', null);
+    /**
+     * Persist element updates to the server
+     *
+     * @param  {Object[]}       elements          The updated elements to persist to the server
+     */
+    var saveElementUpdates = function(elements) {
+      // Notify the server about the updated elements
+      socket.emit('updateActivity', elements);
+
+      // Recalculate the size of the whiteboard canvas
+      setCanvasDimensions();
+    };
+
+    /**
+     * One or multiple whiteboard canvas elements have been updated by the current user
+     */
+    canvas.on('object:modified', function() {
+      // Get the selected whiteboard elements
+      var elements = getActiveElements();
+
+      // Add the action to the undo/redo queue
+      // TODO
+      // addUndoActivity('update', updates);
+
+      // Notify the server about the updates
+      saveElementUpdates(elements);
     });
 
     /**
-     * A whiteboard canvas element was updated by a different user
+     * One or multiple whiteboard canvas elements were updated by a different user
      */
-    socket.on('updateElement', function(updatedElement) {
-      var originalElement = getCanvasElement(updatedElement.uid);
-      if (originalElement) {
-        deserializeElement(updatedElement, function(updatedElement) {
-          // Indicate that this update has come in through a socket
-          originalElement.set('isSocketUpdate', true);
+    socket.on('updateActivity', function(elements) {
+      // Deactivate the current group if any of the updated elements
+      // are in the current group
+      deactiveActiveGroupIfOverlap(elements);
 
-          // Remove the existing element from the whiteboard canvas and add the updated element
-          canvas.remove(originalElement);
-          canvas.add(updatedElement);
-          updatedElement.moveTo(updatedElement.get('index'));
-          canvas.renderAll();
-        });
-      }
+      // Update the elements
+      _.each(elements, function(element) {
+        updateCanvasElement(element.uid, element);
+      });
+
+      // Recalculate the size of the whiteboard canvas
+      setCanvasDimensions();
     });
 
     /**
@@ -354,143 +666,101 @@
       // If the text element is empty, it can be removed from the whiteboard canvas
       var text = element.text.trim();
       if (!text) {
-        // If the text element did not have a unique identifier, there's no need
-        // to persist the deletion to the back-end
-        if (!element.get('uid')) {
-          element.set('isHelper', true);
+        // TODO: Add the action to the undo/redo queue
+        // element.text = element.originalState.text;
+        // Only persist the delete to the server when the element
+        // already existed
+        if (element.get('uid')) {
+          saveDeleteElements([element]);
         }
-        element.text = element.originalState.text;
         canvas.remove(element);
+
       // The text element did not exist before. Notify the server that the element was added
       } else if (!element.get('uid')) {
-        setCanvasElementId(element);
-        socket.emit('addElement', element.toObject());
-        // Add the action to the undo/redo queue
-        addUndoAction('add', element.toObject());
+        saveNewElement(element);
+
       // The text element existed before. Notify the server that the element was updated
       } else {
-        socket.emit('updateElement', element.toObject());
-        // Add the action to the undo/redo queue
-        addUndoAction('update', element.toObject(), element.originalState);
+        saveElementUpdates([element]);
+        // TODO: Add the action to the undo/redo queue
+        // addUndoAction('update', element.toObject(), element.originalState);
       }
-
-      element.set('isUndoRedo', null);
 
       // Switch back to move mode
-      $scope.mode = 'move';
+      setMode('move');
     });
 
+    //////////////////
+    // DELETE ITEMS //
+    //////////////////
+
     /**
-     * A whiteboard canvas element was deleted by the current user
+     * Persist element deletions to the server
+     *
+     * @param  {Object[]}       elements          The deleted elements to persist to the server
      */
-    canvas.on('object:removed', function(ev) {
-      var element = ev.target;
-      // Only notify the server if the element was deleted by the current user
-      if (!element.get('isSocketUpdate')) {
-        socket.emit('deleteElement', element.toObject());
-        // Add the action to the undo/redo queue
-        if (!element.get('isUndoRedo') && !element.get('isHelper')) {
-          addUndoAction('delete', element.toObject());
+    var saveDeleteElements = function(elements) {
+      // Notify the server about the deleted elements
+      socket.emit('deleteActivity', elements);
+
+      // Recalculate the size of the whiteboard canvas
+      setCanvasDimensions();
+    };
+
+    /**
+     * Delete the selected whiteboard element(s)
+     */
+    var deleteActiveElements = function() {
+      // Get the selected items
+      var elements = getActiveElements();
+
+      // Delete the selected items
+      _.each(elements, function(element) {
+        canvas.remove(getCanvasElement(element.uid));
+      });
+
+      // Discard the active group if a group selection is present
+      if (canvas.getActiveGroup()) {
+        canvas.discardActiveGroup().renderAll();
+      }
+
+      // TODO: Add undo activity
+
+      saveDeleteElements(elements);
+    };
+
+    /**
+     * One or multiple whiteboard canvas elements were deleted by a different user
+     */
+    socket.on('deleteActivity', function(elements) {
+      // Deactivate the current group if any of the deleted elements
+      // are in the current group
+      deactiveActiveGroupIfOverlap(elements);
+
+      // Delete the elements
+      _.each(elements, function(element) {
+        element = getCanvasElement(element.uid);
+        if (element) {
+          canvas.remove(element);
         }
-      }
-      element.set('isUndoRedo', null);
-      element.set('isSocketUpdate', null);
-    });
+      });
 
-    /**
-     * A whiteboard canvas element was deleted by a different user
-     */
-    socket.on('deleteElement', function(element) {
-      var element = getCanvasElement(element.uid);
-      if (element) {
-        // Indicate that this update has come in through a socket
-        element.set('isSocketUpdate', true);
-        canvas.remove(element);
-      }
-    });
-
-    /* INFINITE CANVAS SCROLLING */
-
-    // Variable that will keep track of whether the whiteboard canvas is currently being infinitely dragged
-    var isDraggingCanvas = false;
-
-    // Variable that will keep track of the current whiteboard canvas top left position
-    var currentCanvasPan = new fabric.Point(0, 0);
-
-    // Variable that will keep track of the previous mouse position when the whiteboard canvas is being dragged
-    var previousMousePosition = new fabric.Point(0, 0);
-
-    /**
-     * The mouse is pressed down on the whiteboard canvas
-     */
-    canvas.on('mouse:down', function(ev) {
-      // Only start the whiteboard canvas infinite scrolling when no whiteboard
-      // element has been clicked and the canvas is not in draw or shape mode
-      if (!canvas.getActiveObject() && !canvas.isDrawingMode && $scope.mode !== 'shape') {
-        // Indicate that infinite scrolling has started
-        isDraggingCanvas = true;
-        // Indicate that no element selections can currently be made
-        canvas.selection = false;
-
-        // Keep track of the point where the infinite scrolling started
-        previousMousePosition.setXY(ev.e.clientX, ev.e.clientY);
-        // Change the cursors to a grabbing icon
-        canvas.setCursor('grabbing');
-      }
-    });
-
-    /**
-     * The mouse is moved on the whiteboard canvas
-     */
-    canvas.on('mouse:move', function(ev) {
-      // Only move the whiteboard canvas when the whiteboard canvas is in infinite scrolling mode
-      if (isDraggingCanvas) {
-        // Get the current position of the mouse
-        var currentMousePosition = new fabric.Point(ev.e.clientX, ev.e.clientY);
-
-        // Calculate the new top left of the whiteboard canvas based on the difference
-        // between the current mouse position and the previous mouse position
-        currentCanvasPan.x = currentCanvasPan.x - (currentMousePosition.x - previousMousePosition.x);
-        currentCanvasPan.y = currentCanvasPan.y - (currentMousePosition.y - previousMousePosition.y);
-        canvas.absolutePan(currentCanvasPan);
-
-        // Keep track of the point where the mouse is currently at
-        previousMousePosition = currentMousePosition;
-      }
-    });
-
-    /**
-     * The mouse is released on the whiteboard canvas
-     */
-    canvas.on('mouse:up', function() {
-      if (isDraggingCanvas) {
-        // Indicate that infinite scrolling has stopped
-        isDraggingCanvas = false;
-        // Indicate that element selections can be made again
-        canvas.selection = true;
-        // Change the cursors back to the default cursor
-        canvas.setCursor('default');
-      }
+      // Recalculate the size of the whiteboard canvas
+      setCanvasDimensions();
     });
 
     /* ZOOMING */
 
-    // Variable that will keep track of the current zoom level
-    $scope.zoomLevel = 1;
+    // Variable that will keep track of whether the whiteboard content needs to be fitted to the screen
+    $scope.fitToScreen = false;
 
     /**
-     * Zoom the Fabric.js canvas in or out
-     *
-     * @param  {Number}         zoomDelta         The level by which the current zoom level should be increased
+     * Toggle between fitting the whiteboard content to the screen and showing the
+     * whiteboard content at full size
      */
-    var zoom = $scope.zoom = function(zoomDelta) {
-      var currentZoom = $scope.zoomLevel;
-      // Modify the zoom level
-      $scope.zoomLevel = currentZoom + zoomDelta;
-      // TODO: Recalculate the pan point and zoom to center
-      // canvas.zoomToPoint(new fabric.Point(getCanvasCenter().x, getCanvasCenter().y), $scope.zoomLevel);
-      canvas.setZoom($scope.zoomLevel);
-      canvas.absolutePan(currentCanvasPan);
+    var toggleZoom = $scope.toggleZoom = function() {
+      $scope.fitToScreen = !$scope.fitToScreen;
+      setCanvasDimensions();
     };
 
     /* TOOLBAR */
@@ -501,28 +771,22 @@
     /**
      * Set the mode of the whiteboard toolbar
      *
-     * @param  {Boolean}        newMode           The mode the toolbar should be put in. Accepted values are `move`, `erase`, `draw`, `shape`, `text`, `asset` and `whiteboard`
+     * @param  {Boolean}        newMode           The mode the toolbar should be put in. Accepted values are `move`, `draw`, `shape`, `text` and `asset`
      */
     var setMode = $scope.setMode = function(newMode) {
       // Deactivate the currently selected item
-      var activeElement = canvas.getActiveObject();
-      if (activeElement && activeElement.type === 'i-text') {
-        activeElement.exitEditing();
-      }
       canvas.deactivateAll().renderAll();
-      lockObjects(false);
 
-      // Revert the cursor
-      canvas.hoverCursor = 'default';
       // Disable drawing mode
       setDrawMode(false);
 
-      // Erase mode has been selected
-      if (newMode === 'erase') {
-        // Prevent objects from being moved when deleting
-        lockObjects(true);
-        // Change the cursor to delete mode when hovering over an object
-        canvas.hoverCursor = 'not-allowed';
+      // Prevent the canvas items from being modified unless
+      // the whiteboard is in 'move' mode
+      enableCanvasElements(false);
+
+      if (newMode === 'move') {
+        enableCanvasElements(true);
+        closePopovers();
       // Draw mode has been selected
       } else if (newMode === 'draw') {
         setDrawMode(true);
@@ -538,7 +802,6 @@
 
     /**
      * Close all popovers
-     * @see https://angular-ui.github.io/bootstrap/
      */
     var closePopovers = function() {
       // Get all popovers
@@ -552,114 +815,126 @@
       }
     };
 
+    /**
+     * Set the toolbar back to move mode when the asset and export
+     * tooltips are hidden
+     */
+    $scope.$on('tooltip.hide', function() {
+      if ($scope.mode === 'asset' || $scope.mode === 'export') {
+        setMode('move');
+      }
+    });
+
     /* UNDO/REDO */
 
-    // Variable that will keep track of the actions the current user has taken
-    $scope.actionQueue = [];
+    // Variable that will keep track of the activities the current user has taken
+    //$scope.activityQueue = [];
 
-    // Variable that will keep track of the current position in the actions queue
-    $scope.currentActionPosition = 0;
+    // Variable that will keep track of the current position in the activity queue
+    //$scope.currentActivityPosition = 0;
 
     /**
-     * Add a new action to the actions queue
+     * Add a new activity to the activities queue
      *
-     * @param  {String}         type              The type of the action to add to the actions queue. One of `add`, `update` or `delete
-     * @param  {Object}         element           The Fabric.js element on which the action took place. The state of the element reflects the state after the action took place
-     * @param  {Object}         [originalState]   The state of the Fabric.js element before the action took place
+     * @param  {String}         type              The type of the activity to add to the activities queue. One of `add`, `update` or `delete
+     * @param  {Object[]}       elements          The Fabric.js elements that were involved in the activity
+     * // TODO
      */
-    var addUndoAction = function(type, element, originalState) {
-      // Remove all actions that happened after the current action in the actions queue
-      $scope.actionQueue.splice($scope.currentActionPosition, $scope.actionQueue.length - $scope.currentActionPosition);
+    //var addUndoActivity = function(type, elements) {
+    //  console.log(type);
+    //  console.log(elements);
+    //  // Remove all activities that happened after the current activity in the activities queue
+    //  $scope.activityQueue.splice($scope.currentActivityPosition, $scope.activityQueue.length - $scope.currentActivityPosition);
 
-      // Add the action to the actions queue
-      $scope.actionQueue.push({
-        'type': type,
-        'element': angular.copy(element),
-        'originalState': angular.copy(originalState)
-      });
-      $scope.currentActionPosition++;
-    };
+    //  // Add the activity to the activities queue
+    //  $scope.activityQueue.push({
+    //    'type': type,
+    //    'elements': elements
+    //  });
+    //  $scope.currentActivityPosition++;
+    //};
 
     /**
      * Undo the action at the current position in the actions queue
-     * TODO: Can undo and redo be consolidated?
      */
-    var undo = $scope.undo = function() {
-      $scope.currentActionPosition--;
-      var previousAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
+    //var undo = $scope.undo = function() {
+    //  if ($scope.currentActivityPosition !== 0) {
+    //    // Deactivate the currently selected item
+    //    canvas.deactivateAll().renderAll();
 
-      // The previous action was an element that was added.
-      // Undoing this should delete the element again
-      if (previousAction.type === 'add') {
-        var element = getCanvasElement(previousAction.element.uid);
-        element.set('isUndoRedo', true);
-        canvas.remove(element);
+    //    $scope.currentActivityPosition--;
+    //    var previousActivity = $scope.activityQueue[$scope.currentActivityPosition];
 
-      // The previous action was an element that was deleted.
-      // Undoing this should add the element again
-      } else if (previousAction.type === 'delete') {
-        deserializeElement(previousAction.element, function(element) {
-          element.set('isUndoRedo', true);
-          canvas.add(element);
-          element.moveTo(element.get('index'));
-          canvas.renderAll();
-        });
+    //    // The previous action was an element that was added.
+    //    // Undoing this should delete the element again
+    //    if (previousActivity.type === 'add') {
+    //    //  var element = getCanvasElement(previousAction.element.uid);
+    //    //  element.set('isUndoRedo', true);
+    //    //  canvas.remove(element);
 
-      // The previous action was an element that was updated.
-      // Undoing this should undo the update
-      } else if (previousAction.type === 'update') {
-        var element = getCanvasElement(previousAction.element.uid);
-        for (var property in previousAction.originalState) {
-          if (element[property] !== previousAction.originalState[property]) {
-            element.set(property, previousAction.originalState[property]);
-          }
-        }
-        element.set('isUndoRedo', true);
-        canvas.fire('object:modified', {'target': element});
-        canvas.absolutePan(currentCanvasPan);
-        canvas.renderAll();
-      }
-    };
+    //    // The previous action was an element that was deleted.
+    //    // Undoing this should add the element again
+    //    } else if (previousActivity.type === 'delete') {
+        //  deserializeElement(previousAction.element, function(element) {
+        //    element.set('isUndoRedo', true);
+        //    canvas.add(element);
+        //    element.moveTo(element.get('index'));
+        //    canvas.renderAll();
+        //  });
+
+        // The previous action was an element that was updated.
+        // Undoing this should undo the update
+    //    } else if (previousActivity.type === 'update') {
+    //      var updates = previousActivity.elements.map(function(update) {
+    //        console.log(update.originalState);
+    //        var element = angular.extend({}, update.element, update.originalState);
+    //        updateCanvasElement(element.uid, element);
+    //        return element;
+    //      });
+    //      saveElementUpdates(updates);
+    //    }
+    //  }
+    //};
 
     /**
      * Redo the action at the next position in the actions queue
      */
-    var redo = $scope.redo = function() {
-      var nextAction = angular.copy($scope.actionQueue[$scope.currentActionPosition]);
-      $scope.currentActionPosition++;
+    //var redo = $scope.redo = function() {
+    //  if ($scope.currentActivityPosition !== $scope.activityQueue.length) {
+    //    // Deactivate the currently selected item
+    //    canvas.deactivateAll().renderAll();
 
-      // The next action was an element that was added.
-      // Redoing this should add the element again
-      if (nextAction.type === 'add') {
-        deserializeElement(nextAction.element, function(element) {
-          element.set('isUndoRedo', true);
-          canvas.add(element);
-          element.moveTo(element.get('index'));
-          canvas.renderAll();
-        });
+    //    var nextActivity = $scope.activityQueue[$scope.currentActivityPosition];
+    //    $scope.currentActivityPosition++;
 
-      // The next action was an element that was deleted.
-      // Undoing this should delete the element again
-      } else if (nextAction.type === 'delete') {
-        var element = getCanvasElement(nextAction.element.uid);
-        element.set('isUndoRedo', true);
-        canvas.remove(element);
+    //    // The next action was an element that was added.
+    //    // Redoing this should add the element again
+    //    if (nextActivity.type === 'add') {
+    //    //  deserializeElement(nextAction.element, function(element) {
+    //    //    element.set('isUndoRedo', true);
+    //    //    canvas.add(element);
+    //    //    element.moveTo(element.get('index'));
+    //    //    canvas.renderAll();
+    //    //  });
 
-      // The next action was an element that was updated.
-      // Undoing this should re-apply the update
-      } else if (nextAction.type === 'update') {
-        var element = getCanvasElement(nextAction.element.uid);
-        for (var property in nextAction.originalState) {
-          if (element[property] !== nextAction.element[property]) {
-            element.set(property, nextAction.element[property]);
-          }
-        }
-        element.set('isUndoRedo', true);
-        canvas.fire('object:modified', {'target': element});
-        canvas.absolutePan(currentCanvasPan);
-        canvas.renderAll();
-      }
-    };
+    //    // The next action was an element that was deleted.
+    //    // Undoing this should delete the element again
+    //    } else if (nextActivity.type === 'delete') {
+    //    // var element = getCanvasElement(nextAction.element.uid);
+    //    // element.set('isUndoRedo', true);
+    //    //  canvas.remove(element);
+
+    //    // The next action was an element that was updated.
+    //    // Undoing this should re-apply the update
+    //    } else if (nextActivity.type === 'update') {
+    //      var updates = nextActivity.elements.map(function(update) {
+    //        updateCanvasElement(update.element.uid, update.element);
+    //        return update.element;
+    //      });
+    //      saveElementUpdates(updates);
+    //    }
+    //  }
+    //};
 
     /* DRAWING */
 
@@ -768,14 +1043,15 @@
       if ($scope.mode === 'shape') {
         // Indicate that drawing a shape has started
         isDrawingShape = true;
-        // Indicate that no element selections can currently be made
-        canvas.selection = false;
 
         // Keep track of the point where drawing the shape started
         startShapePointer = canvas.getPointer(ev.e);
 
         // Create the basic shape of the selected type that will
-        // be used as the drawing guide
+        // be used as the drawing guide. The originX and originY
+        // of the helper element are set to left and top to make it
+        // easier to map the top left corner of the drawing guide with
+        // the original cursor postion
         shape = new fabric[$scope.shape.selected.type.shape]({
           'left': startShapePointer.x,
           'top': startShapePointer.y,
@@ -848,15 +1124,18 @@
       if (isDrawingShape) {
         // Indicate that shape drawing has stopped
         isDrawingShape = false;
-        // Indicate that element selections can be made again
-        canvas.selection = true;
         // Switch the toolbar back to move mode
         setMode('move');
         // Clone the drawn shape and add the clone to the canvas.
         // This is caused by a bug in Fabric where it initially uses
         // the size when drawing started to position the controls. Cloning
-        // ensures that the controls are added in the correct position
+        // ensures that the controls are added in the correct position.
+        // The origin of the element is also set to `center` to make it
+        // inline with the other whiteboard elements
         var finalShape = fabric.util.object.clone(shape);
+        finalShape.left += finalShape.width / 2;
+        finalShape.top += finalShape.height / 2;
+        finalShape.originX = finalShape.originY = 'center';
         // Indicate that this is no longer a drawing helper shape and can
         // therefore be saved back to the server
         finalShape.set('isHelper', false);
@@ -868,49 +1147,24 @@
       }
     });
 
-    /* ERASE */
-
-    /**
-     * Lock or unlock all elements on the whiteboard canvas
-     *
-     * @param  {Boolean}        lock              Whether the elements on the whiteboard canvas should be locked or unlocked
-     */
-    var lockObjects = function(lock) {
-      var elements = canvas.getObjects();
-      for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        element.lockMovementX = lock;
-        element.lockMovementY = lock;
-      }
-    };
-
-    /**
-     * Delete the selected whiteboard item when the whiteboard
-     * is in erase mode
-     */
-    canvas.on('object:selected', function() {
-      if ($scope.mode === 'erase') {
-        canvas.remove(canvas.getActiveObject());
-      }
-    });
-
     /* TEXT */
 
-    // Variable that will keep track of the available text sizes
-    var textSizes = [12, 14, 18, 24, 30, 36, 48, 60, 72];
-
     // Variable that will keep track of the selected text size and color
-    $scope.text = {};
-    $scope.text.options = textSizes.map(function(textSize) {
-      return {
-        'value': textSize,
-        'label': '<span>' + textSize + '</span>'
-      };
-    });
-
-    $scope.text.selected = {
-      'size': 14,
-      'color': $scope.colors[0]
+    $scope.text = {
+      'options': [
+        {
+          'value': 36,
+          'label': '<span class="whiteboards-text-option">Title</span>'
+        },
+        {
+          'value': 14,
+          'label': '<span class="whiteboards-text-option">Normal</span>'
+        }
+      ],
+      'selected': {
+        'size': 14,
+        'color': $scope.colors[0]
+      }
     };
 
     /**
@@ -952,19 +1206,12 @@
       // Create a new scope for the modal dialog
       var scope = $scope.$new(true);
       scope.closeModal = function(selectedAssets) {
-        if (selectedAssets) {
-          for (var i = 0; i < selectedAssets.length; i++) {
-            var asset = selectedAssets[i];
-            // TODO: Deal with assets that don't have a large image URL
-            if (asset.image_url) {
-              addAsset(asset.image_url);
-            }
-          }
-        }
+        _.each(selectedAssets, addAsset);
         this.$hide();
       };
       // Open the asset selection modal dialog
       $modal({
+        'animation': false,
         'scope': scope,
         'template': '/app/whiteboards/reuse/reuse.html'
       });
@@ -976,36 +1223,45 @@
     /**
      * Add an asset to the whiteboard canvas
      *
-     * @param  {String}         url               The image URL of the asset that should be added to the whiteboard canvas
+     * @param  {Asset}         asset                The asset that should be added to the whiteboard canvas
      */
-    var addAsset = $scope.addAsset = function(url) {
+    var addAsset = $scope.addAsset = function(asset) {
       // Switch the toolbar back to move mode
       setMode('move');
+
+      // Default to a placeholder when the asset does not have a preview image
+      if (!asset.image_url) {
+        if (asset.type === 'file' && asset.mime.indexOf('image/') !== -1) {
+          asset.image_url = asset.download_url;
+        } else {
+          asset.image_url = ASSET_PLACEHOLDERS[asset.type];
+        }
+      }
+
       // Add the asset to the center of the whiteboard canvas
-      fabric.Image.fromURL(url, function(element) {
+      fabric.Image.fromURL(asset.image_url, function(element) {
         var canvasCenter = getCanvasCenter();
 
-        // Scale the element if it is too large to fit onto the viewport
-        var toolbarHeight = document.getElementById('whiteboards-board-toolbar').clientHeight;
-        var sidebarWidth = document.getElementById('whiteboards-board-sidebar').clientWidth;
-
-        var maxWidth = viewport.clientWidth - (viewport.clientWidth / 5);
-        if ($scope.sidebarExpanded) {
-          maxWidth -= sidebarWidth;
-        }
-        if (element.width > maxWidth) {
-          element.scale(maxWidth / element.width);
-        }
-        var maxHeight = viewport.clientHeight - (viewport.clientHeight / 5) - toolbarHeight;
-        if (element.height > maxHeight) {
-          element.scale(maxHeight / element.height);
+        // Scale the element to ensure it takes up a maximum of 80% of the
+        // visible viewport width and height
+        var maxWidth = viewport.clientWidth * 0.8 / canvas.getZoom();
+        var widthRatio = maxWidth / element.width;
+        var maxHeight = viewport.clientHeight * 0.8 / canvas.getZoom();
+        var heightRatio = maxHeight / element.height;
+        // Determine which side needs the most scaling for the element to fit on the screen
+        var ratio = _.min([widthRatio, heightRatio]);
+        if (ratio < 1) {
+          element.scale(ratio);
         }
 
         element.left = canvasCenter.x;
         element.top = canvasCenter.y;
-        canvas.add(element);
 
-        // Select the added asset
+        // Add the asset id to the element
+        element.assetId = asset.id;
+
+        // Add the new element to the canvas
+        canvas.add(element);
         canvas.setActiveObject(element);
       });
     };
@@ -1020,10 +1276,7 @@
       var scope = $scope.$new(true);
       scope.closeModal = function(asset) {
         if (asset) {
-          // TODO: Deal with assets that don't have thumbnail URL
-          if (asset.thumbnail_url) {
-            addAsset(asset.thumbnail_url);
-          }
+          addAsset(asset);
         }
         this.$hide();
       };
@@ -1046,15 +1299,7 @@
       // Create a new scope for the modal dialog
       var scope = $scope.$new(true);
       scope.closeModal = function(assets) {
-        if (assets) {
-          for (var i = 0; i < assets.length; i++) {
-            var asset = assets[i];
-            // TODO: Deal with assets that don't have thumbnail URL
-            if (asset.thumbnail_url) {
-              addAsset(asset.thumbnail_url);
-            }
-          }
-        }
+        _.each(assets, addAsset);
         this.$hide();
       };
       // Open the add link modal dialog
@@ -1100,6 +1345,10 @@
         $scope.sidebarExpanded = true;
       }
       $scope.sidebarMode = newMode;
+
+      // Recalculate the size of the whiteboard canvas. `setTimeout`
+      // is required to ensure that the sidebar has collapsed/expanded
+      setTimeout(setCanvasDimensions, 0);
     };
 
     /**
@@ -1297,6 +1546,10 @@
         'scope': scope,
         'templateUrl': '/app/whiteboards/exportasassetmodal/exportasasset.html'
       });
+
+      // Switch the toolbar back to move mode. This will
+      // also close the add asset popover
+      setMode('move');
     };
 
     /* INITIALIZATION */

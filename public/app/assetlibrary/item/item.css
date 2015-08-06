@@ -35,7 +35,7 @@
   }
 
   .assetlibrary-item-preview .embdr-image {
-    line-height: 400px;
+    padding: 5px;
   }
 
   .assetlibrary-item-preview .embdr-iframe {
