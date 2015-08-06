@@ -1256,7 +1256,9 @@
       // Create a new scope for the modal dialog
       var scope = $scope.$new(true);
       scope.closeModal = function(asset) {
-        addAsset(asset);
+        if (asset) {
+          addAsset(asset);
+        }
         this.$hide();
       };
       // Open the add link modal dialog
