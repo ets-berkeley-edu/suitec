@@ -28,9 +28,6 @@
     // Element that will keep track of the whiteboard viewport
     var viewport = document.getElementById('whiteboards-board-viewport');
 
-    // Element that will keep track of the whiteboard toolbar
-    var toolbar = document.getElementById('whiteboards-board-toolbar');
-
     // Variable that will keep track of the whiteboard Fabric.js instance
     var canvas = null;
 
@@ -82,6 +79,12 @@
         'color': 'rgb(189, 129, 0)'
       }
     ];
+
+    // Variable that will keep track of the placeholder images to use for assets without a preview image
+    var ASSET_PLACEHOLDERS = {
+      'file': '/assets/img/whiteboard_asset_placeholder_file.png',
+      'link': '/assets/img/whiteboard_asset_placeholder_link.png'
+    };
 
     /* WHITEBOARD */
 
@@ -159,10 +162,6 @@
     var initializeCanvas = function() {
       // Ensure that the horizontal and vertical origins of objects are set to center
       fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
-      //fabric.Object.prototype.originX = 'left';
-      //fabric.Object.prototype.originY = 'top';
-      fabric.Group.prototype.originX = 'left';
-      fabric.Group.prototype.originY = 'top';
       // Initialize the whiteboard Fabric.js instance
       canvas = new fabric.Canvas('whiteboards-board-board');
       // Set the selection style for the whiteboard
@@ -219,22 +218,49 @@
       var maxRight = viewportWidth;
       var maxBottom = viewportHeight;
 
-      // TODO
-      var group = canvas.getActiveGroup();
-      if (group) {
-        var bound = group.getBoundingRect();
+      canvas.forEachObject(function(element) {
+        var bound = null;
+        if (!element.group) {
+          bound = element.getBoundingRect();
+        } else {
+          // Elements in a group are positioned relative to the group. In order to calculate the most
+          // right and most bottom point of the element, we need to calculate its position relative to
+          // the canvas and then calculate the bounding rectangle for that element
+          var position = calculateGlobalElementPosition(element.group, element);
+          var width = element.width * position.scaleX;
+          var height = element.height * position.scaleY;
+          var rotation = fabric.util.degreesToRadians(position.angle);
+
+          // The left and top position correspond to the center of the element
+          var center = new fabric.Point(position.left, position.top);
+
+          // Calculate the corners of the object, keeping its rotation into account
+          var tl = fabric.util.rotatePoint(new fabric.Point(center.x - (width / 2), center.y - (height / 2)), center, rotation);
+          var tr = fabric.util.rotatePoint(new fabric.Point(center.x + (width / 2), center.y - (height / 2)), center, rotation);
+          var br = fabric.util.rotatePoint(new fabric.Point(center.x + (width / 2), center.y + (height / 2)), center, rotation);
+          var bl = fabric.util.rotatePoint(new fabric.Point(center.x - (width / 2), center.y + (height / 2)), center, rotation);
+
+          // Calculate the position of the bounding rectangle
+          var xCoords = [tl.x, tr.x, br.x, bl.x];
+          var minX = _.min(xCoords) * canvas.getZoom();
+          var maxX = _.max(xCoords) * canvas.getZoom();
+          var boundingRectWidth = Math.abs(minX - maxX);
+
+          var yCoords = [tl.y, tr.y, br.y, bl.y];
+          var minY = _.min(yCoords) * canvas.getZoom();
+          var maxY = _.max(yCoords) * canvas.getZoom();
+          var boundingRectHeight = Math.abs(minY - maxY);
+
+          bound = {
+            'left': minX,
+            'top': minY,
+            'width': boundingRectWidth,
+            'height': boundingRectHeight
+          };
+        }
+
         maxRight = Math.max(maxRight, bound.left + bound.width);
         maxBottom = Math.max(maxBottom, bound.top + bound.height);
-      }
-
-      // TODO
-      canvas.forEachObject(function(element) {
-        if (!element.group) {
-          var bound = element.getBoundingRect();
-          maxRight = Math.max(maxRight, bound.left + bound.width);
-          maxBottom = Math.max(maxBottom, bound.top + bound.height);
-        }
-        // TODO
       });
 
       // Keep track of whether the canvas can currently be scrolled
@@ -268,8 +294,10 @@
         canvas.setHeight(viewportHeight);
         canvas.setWidth(viewportWidth);
       } else {
-        canvas.setHeight(maxBottom);
-        canvas.setWidth(maxRight);
+        // Adjust the value for rounding issues to prevent scrollbars
+        // from incorrectly showing up
+        canvas.setHeight(maxBottom - 1);
+        canvas.setWidth(maxRight - 1);
       }
     };
 
@@ -281,23 +309,10 @@
      * exclude the toolbar and the chat/online sidebar (if expanded)
      */
     var getCanvasCenter = function() {
-      // Calculate the height of the toolbar
-      var toolbarHeight = toolbar.clientHeight;
-
-      // Calculate the width of the sidebar
-      var sidebarWidth = document.getElementById('whiteboards-board-sidebar').clientWidth;
-
-      // Calculate the width and height of the viewport excluding the toolbar and chat/online bar (if expanded)
-      var viewportWidth = viewport.clientWidth;
-      if ($scope.sidebarExpanded) {
-        viewportWidth = viewportWidth - sidebarWidth;
-      }
-      var viewportHeight = viewport.clientHeight - toolbarHeight;
-
       // Calculate the center point of the whiteboard canvas
       var zoomLevel = canvas.getZoom();
-      var centerX = (viewportWidth / 2) / zoomLevel;
-      var centerY = (viewportHeight / 2) / zoomLevel;
+      var centerX = ((viewport.clientWidth / 2) + viewport.scrollLeft) / zoomLevel;
+      var centerY = ((viewport.clientHeight / 2) + viewport.scrollTop) / zoomLevel;
 
       return {
         'x': centerX,
@@ -357,7 +372,7 @@
     };
 
     /**
-     * Update a Fabric.js canvas element
+     * Update the appearance of a Fabric.js canvas element
      *
      * @param  {Number}         uid               The id of the element to update
      * @param  {Object}         update            The updated values to apply to the canvas element
@@ -365,26 +380,34 @@
     var updateCanvasElement = function(uid, update) {
       var element = getCanvasElement(uid);
 
-      // TODO
-      if (element['src'] !== update['src'] && _.contains(['/assets/img/whiteboard_asset_placeholder_file.png', '/assets/img/whiteboard_asset_placeholder_link.png'], element['src'])) {
-        element.setOpacity(0);
-        element.setSrc('');
-      }
+      var updateElementProperties = function() {
+        // Update all element properties, except for the image source. The image
+        // source is handled separately as this is an asynchronous action
+        _.each(update, function(value, property) {
+          if (property !== 'src' && value !== element.get(property)) {
+            element.set(property, value);
+          }
+        });
 
-      // TODO
-      for (var property in update) {
-        if (property !== 'src' && element[property] !== update[property]) {
-          element.set(property, update[property]);
+        // When the source element for an asset has changed, update this last and
+        // re-render the element after it has been loaded
+        if (element.type === 'image' && element.getSrc() !== update.src) {
+          element.setSrc(update.src, function() {
+            canvas.renderAll();
+            // Recalculate the size of the whiteboard canvas
+            setCanvasDimensions();
+          });
+        } else {
+          canvas.renderAll();
         }
       }
-      canvas.renderAll();
 
-      // TODO
-      if (element['src'] !== update['src']) {
-        element.setSrc(update['src'], function() {
-          element.setOpacity(1);
-          canvas.renderAll();
-        });
+      // If the element is an asset for which the source has changed, we preload
+      // the image to prevent flickering when the image is inserted into the element
+      if (element.type === 'image' && element.getSrc() !== update.src) {
+        fabric.util.loadImage(update.src, updateElementProperties);
+      } else {
+        updateElementProperties();
       }
     };
 
@@ -516,17 +539,6 @@
       return activeElements;
     };
 
-    // Recalculate the size of the canvas when an element or group of elements is deselected
-    // TODO
-    //canvas.on('selection:cleared', function() {
-      // canvas.renderAll();
-      //setCanvasDimensions();
-    //});
-
-    //canvas.on('selection:created', function() {
-    //  canvas.renderAll();
-    //})
-
     ///////////////
     // ADD ITEMS //
     ///////////////
@@ -547,7 +559,6 @@
       // TODO
       // addUndoActivity('add', [{'element': element.toObject()}]);
     };
-
 
     /**
      * A new element was added to the whiteboard canvas by the current user
@@ -777,20 +788,6 @@
       }
 
       $scope.mode = newMode;
-    };
-
-    /**
-     * Calculate the left position of the toolbar to ensure that it is properly centered
-     * in the viewport. This can not be done through CSS only as this would require the
-     * toolbar to be part of a full-width container that would block access to the whiteboard
-     * canvas
-     *
-     * @return {Number}                           The left position of the toolbar to ensure horizontal centering in the viewport
-     */
-    var calculateToolbarPosition = $scope.calculateToolbarPosition = function() {
-      var toolbarWidth = toolbar.clientWidth;
-      var viewportWidth = viewport.clientWidth;
-      return (viewportWidth / 2) - (toolbarWidth / 2);
     };
 
     /**
@@ -1214,48 +1211,38 @@
       // Switch the toolbar back to move mode
       setMode('move');
 
-      // Default to a placeholder when no asset image is present yet
-      // TODO
+      // Default to a placeholder when the asset does not have a preview image
       if (!asset.image_url) {
-        if (asset.type === 'file') {
-          if (asset.mime.indexOf('image/') !== -1) {
-            asset.image_url = asset.download_url;
-          } else {
-            asset.image_url = '/assets/img/whiteboard_asset_placeholder_file.png';
-          }
-        } else if (asset.type === 'link') {
-          asset.image_url = '/assets/img/whiteboard_asset_placeholder_link.png';
+        if (asset.type === 'file' && asset.mime.indexOf('image/') !== -1) {
+          asset.image_url = asset.download_url;
+        } else {
+          asset.image_url = ASSET_PLACEHOLDERS[asset.type];
         }
       }
 
       // Add the asset to the center of the whiteboard canvas
       fabric.Image.fromURL(asset.image_url, function(element) {
-        // TODO
         var canvasCenter = getCanvasCenter();
 
         // Scale the element if it is too large to fit onto the viewport
-        var toolbarHeight = document.getElementById('whiteboards-board-toolbar').clientHeight;
-        var sidebarWidth = document.getElementById('whiteboards-board-sidebar').clientWidth;
-
-        var maxWidth = viewport.clientWidth - (viewport.clientWidth / 5);
-        if ($scope.sidebarExpanded) {
-          maxWidth -= sidebarWidth;
-        }
-        if (element.width > maxWidth) {
-          element.scale(maxWidth / element.width);
-        }
-        var maxHeight = viewport.clientHeight - (viewport.clientHeight / 5) - toolbarHeight;
-        if (element.height > maxHeight) {
-          element.scale(maxHeight / element.height);
+        var maxWidth = (viewport.clientWidth - (viewport.clientWidth / 5)) / canvas.getZoom();
+        var widthRatio = maxWidth / element.width;
+        var maxHeight = (viewport.clientHeight - (viewport.clientHeight / 5)) / canvas.getZoom();
+        var heightRatio = maxHeight / element.height;
+        // Determine which side needs the most scaling for the element to fit on the screen
+        var ratio = _.min([widthRatio, heightRatio]);
+        if (ratio < 1) {
+          element.scale(ratio);
         }
 
         element.left = canvasCenter.x;
         element.top = canvasCenter.y;
 
+        // Add the asset id to the element
         element.assetId = asset.id;
-        canvas.add(element);
 
-        // Select the added asset
+        // Add the new element to the canvas
+        canvas.add(element);
         canvas.setActiveObject(element);
       });
     };
@@ -1307,7 +1294,7 @@
     /* SIDEBAR */
 
     // Variable that will keep track of whether the chat/online sidebar is expanded
-    $scope.sidebarExpanded = false;
+    $scope.sidebarExpanded = true;
 
     // Variable that will keep track of the current mode the sidebar is displayed in
     $scope.sidebarMode = 'chat';
@@ -1337,6 +1324,10 @@
         $scope.sidebarExpanded = true;
       }
       $scope.sidebarMode = newMode;
+
+      // Recalculate the size of the whiteboard canvas. `setTimeout`
+      // is required to ensure that the sidebar has collapsed/expanded
+      setTimeout(setCanvasDimensions, 0);
     };
 
     /**

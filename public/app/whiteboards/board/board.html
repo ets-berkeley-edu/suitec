@@ -76,22 +76,6 @@
   </div>
 </div>
 
-<div class="hide">
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-default whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'online'}">
-      <i class="fa fa-user">
-        <span class="sr-only">Collaborators</span>
-      </i>
-      <span class="badge" data-ng-bind="getOnlineUsers().length"></span>
-    </button>
-    <button type="button" class="btn btn-default whiteboards-board-toolbar-chat" title="Chat" data-ng-click="toggleSidebar('chat')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'chat'}">
-      <i class="fa fa-comments">
-        <span class="sr-only">Chat</span>
-      </i>
-    </button>
-  </div>
-</div>
-
 <!-- DRAW POPOVER -->
 <script type="text/ng-template" id="drawPopoverTemplate">
   <form class="form-horizontal whiteboards-popover-toolbar">
@@ -215,49 +199,66 @@
 </script>
 
 <!-- SIDEBAR -->
-<div id="whiteboards-board-sidebar" data-ng-show="sidebarExpanded">
-  <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
-    <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="200" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
-      <div id="whiteboards-board-chat-messages-table">
-        <div id="whiteboards-board-chat-messages">
-          <div class="media" data-ng-repeat="chatMessage in chatMessages">
-            <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at)">
-              <span class="whiteboards-board-chat-date-header">{{chatMessage.created_at | formatDate}}</span>
-            </div>
-
-            <div class="media-left media-top">
-              <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
-            </div>
-            <div class="media-body media-top">
-              <div class="whiteboards-board-chat-actor">
-                <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
-                <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
-                <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+<div id="whiteboards-board-sidebar-container" data-ng-show="sidebarExpanded">
+  <div id="whiteboards-board-sidebar">
+    <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
+      <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="200" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
+        <div id="whiteboards-board-chat-messages-table">
+          <div id="whiteboards-board-chat-messages">
+            <div class="media" data-ng-repeat="chatMessage in chatMessages">
+              <div data-ng-if="isDifferentDay(chatMessage.created_at, chatMessages[$index - 1].created_at)">
+                <span class="whiteboards-board-chat-date-header">{{chatMessage.created_at | formatDate}}</span>
               </div>
-              <p data-ng-bind-html="chatMessage.body | linky:'_blank'"></p>
+
+              <div class="media-left media-top">
+                <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + chatMessage.user.canvas_image + ')'}"></div>
+              </div>
+              <div class="media-body media-top">
+                <div class="whiteboards-board-chat-actor">
+                  <i class="fa fa-graduation-cap" data-ng-if="chatMessage.user.is_admin"></i> {{chatMessage.user.canvas_full_name}}
+                  <span data-ng-if="me.id === chatMessage.user.id">(me)</span>
+                  <small class="pull-right">{{chatMessage.created_at | date:"h:mm a" }}</small>
+                </div>
+                <p data-ng-bind-html="chatMessage.body | linky:'_blank'"></p>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <div id="whiteboards-board-chat-new">
+        <form data-ng-keypress="createChatMessage($event)">
+          <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
+        </form>
+      </div>
     </div>
-    <div id="whiteboards-board-chat-new">
-      <form data-ng-keypress="createChatMessage($event)">
-        <textarea placeholder="Hit Return to send a message" data-ng-model="newChatMessage.body"></textarea>
-      </form>
-    </div>
-  </div>
-  <div id="whiteboards-board-members" data-ng-if="sidebarMode === 'online'">
-    <h3 class="whiteboard-board-members-title">Board collaborators ({{whiteboard.members.length}})</h3>
-    <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">
-      <div class="media-left media-middle">
-        <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}">
-          <i class="fa fa-check-circle" data-ng-if="member.online"></i>
+    <div id="whiteboards-board-members" data-ng-if="sidebarMode === 'online'">
+      <h3 class="whiteboard-board-members-title">Board collaborators ({{whiteboard.members.length}})</h3>
+      <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">
+        <div class="media-left media-middle">
+          <div class="media-object col-avatar" data-ng-class="{'whiteboards-board-online': member.online}" data-ng-style="{'background-image': 'url(' + member.canvas_image + ')'}">
+            <i class="fa fa-check-circle" data-ng-if="member.online"></i>
+          </div>
+        </div>
+        <div class="media-body media-middle">
+          <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}
+          <span data-ng-if="me.id === member.id">(me)</span>
         </div>
       </div>
-      <div class="media-body media-middle">
-        <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}
-        <span data-ng-if="me.id === member.id">(me)</span>
-      </div>
     </div>
   </div>
+</div>
+
+<!-- SIDEBAR BUTTONS -->
+<div id="whiteboards-board-sidebar-buttons" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}">
+  <button type="button" class="btn btn-link whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'online'}">
+    <i class="fa fa-user">
+      <span class="sr-only">Collaborators</span>
+    </i>
+    <span class="badge" data-ng-bind="getOnlineUsers().length"></span>
+  </button>
+  <button type="button" class="btn btn-link whiteboards-board-toolbar-chat" title="Chat" data-ng-click="toggleSidebar('chat')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'chat'}">
+    <i class="fa fa-comments">
+      <span class="sr-only">Chat</span>
+    </i>
+  </button>
 </div>
