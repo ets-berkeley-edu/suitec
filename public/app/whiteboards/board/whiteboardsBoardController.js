@@ -109,6 +109,8 @@
             element.moveTo(element.get('index'));
           });
           canvas.renderAll();
+          // Set the size of the whiteboard canvas
+          setCanvasDimensions();
         });
 
         // Restore the layout of the whiteboard canvas
