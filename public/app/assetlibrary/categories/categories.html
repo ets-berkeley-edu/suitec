@@ -7,12 +7,18 @@
   <p class="assetlibrary-categories-info">Categories can be used to tag items. Assignments are automatically pulled in as categories, but you can also create new categories that aren't necessarily related to assignments.</p>
 
   <form class="assetlibrary-categories-create-form" name="assetlibraryCreateCategoryForm" data-ng-submit="assetlibraryCreateCategoryForm.$valid && createCategory(newCategory)" novalidate>
-    <label for="assetlibrary-categories-create" class="sr-only">Enter a new category</label>
-    <div class="input-group">
-      <input type="text" id="assetlibrary-categories-create" class="form-control" placeholder="Enter a new category" data-ng-model="newCategory" required>
-      <span class="input-group-btn">
-        <button type="submit" class="btn btn-default" data-ng-disabled="assetlibraryCreateCategoryForm.$invalid">Add</button>
-      </span>
+    <div class="form-group" data-ng-class="{'has-error': !assetlibraryCreateCategoryForm.$submitted && assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$touched && assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$invalid}">
+      <label for="assetlibrary-categories-create" class="sr-only">Enter a new category</label>
+      <div class="input-group">
+        <input type="text" id="assetlibrary-categories-create" name="assetlibraryCategoriesName" class="form-control" placeholder="Enter a new category" data-ng-model="newCategory" required data-ng-maxlength="255">
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-default" data-ng-disabled="assetlibraryCreateCategoryForm.$invalid">Add</button>
+        </span>
+      </div>
+      <div class="help-block" data-ng-messages="assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$error" data-ng-show="!assetlibraryCreateCategoryForm.$submitted">
+          <div data-ng-message="required">Please enter a category</div>
+          <div data-ng-message="maxlength">A category can only be 255 characters long</div>
+      </div>
     </div>
   </form>
 
@@ -37,9 +43,13 @@
 
       <!-- EDIT CATEGORY -->
       <form name="assetlibraryEditCategoryForm" class="assetlibrary-categories-edit-form " data-ng-submit="assetlibraryEditCategoryForm.$valid && editCategory(category)" data-ng-if="category.editing" novalidate>
-        <div class="form-group">
+        <div class="form-group" data-ng-class="{'has-error': assetlibraryEditCategoryForm.assetLibraryEditCategoryName.$invalid}">
           <label for="assetlibrary-categories-edit" class="sr-only">Edit a category</label>
-          <input type="text" id="assetlibrary-categories-edit" class="form-control" placeholder="Edit a category" data-ng-model="category.newTitle" required>
+          <input type="text" id="assetlibrary-categories-edit" class="form-control" name="assetLibraryEditCategoryName" placeholder="Edit a category" data-ng-model="category.newTitle" required data-ng-maxlength="255">
+          <div class="help-block" data-ng-messages="assetlibraryEditCategoryForm.assetLibraryEditCategoryName.$error">
+            <div data-ng-message="required">Please enter a category</div>
+            <div data-ng-message="maxlength">A category can only be 255 characters long</div>
+        </div>
         </div>
         <div class="text-right">
           <button class="btn btn-sm btn-default" data-ng-click="toggleEditCategory(category)">Cancel</button>
