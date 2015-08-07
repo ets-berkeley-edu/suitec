@@ -23,10 +23,14 @@
   overflow-y: hidden;
 }
 
+.assetlibrary-item-preview .embdr-document,
+.assetlibrary-item-whiteboard-preview {
+  border-bottom: 1px solid #D3D3D3;
+}
+
 .assetlibrary-item-preview .embdr-document {
-    border-bottom: 1px solid #D3D3D3;
-    height: 400px;
-    width: 100%;
+  height: 400px;
+  width: 100%;
 }
 
 @media only screen and (min-width : 768px) {

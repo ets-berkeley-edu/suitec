@@ -98,8 +98,8 @@
       })
       .state('whiteboard', {
         'url': '/whiteboards/:whiteboardId',
-        'templateUrl': '/app/whiteboards/board/board.html',
-        'controller': 'WhiteboardsBoardController'
+        'templateUrl': '/app/whiteboards/boardcontainer/boardcontainer.html',
+        'controller': 'WhiteboardsBoardContainerController'
       });
 
   });
