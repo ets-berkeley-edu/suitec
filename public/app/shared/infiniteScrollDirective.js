@@ -29,12 +29,12 @@
    */
   angular.module('collabosphere').directive('infiniteScroll', function(utilService, $interval) {
     return {
-      // Restrict the directive to only match attribute names. See https://docs.angularjs.org/guide/directive#template-expanding-directive
-      // for more information
+      // Restrict the directive to only match attribute names.
+      // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
       'restrict': 'A',
 
-      // Define how the directive's scope is separated from the caller's scope. See https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
-      // for more information
+      // Define how the directive's scope is separated from the caller's scope.
+      // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
         'infiniteScroll': '&',
         'infiniteScrollContainer': '@',

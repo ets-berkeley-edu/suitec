@@ -17,8 +17,15 @@
 
   'use strict';
 
+  /*!
+   * The whiteboard directive can be used to render a whiteboard The following attributes should be
+   * applied to the whoteboard container:
+   *
+   * @param  {Whiteboard|Asset}     whiteboard                          The whiteboard that should be rendered
+   * @param  {Element[]}            whiteboard.whiteboard_elements      The whiteboard elements in the whiteboard
+   * @param  {Boolean}              [readonly]                          Whether the whiteboard should be rendered in read only or edit mode. By default, the whiteboard will be rendered in edit mode
+   */
   angular.module('collabosphere').directive('whiteboard', function() {
-
     return {
       // Restrict the directive to only match element names
       // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
@@ -46,12 +53,10 @@
         var CANVAS_PADDING = 40;
 
         // Variable that will keep track of whether the chat/online sidebar is expanded
-        // TODO
         $scope.sidebarExpanded = $scope.readonly ? false : true;
 
-        // Open a websocket connection for real-time communication with the server (chat + whiteboard changes).
-        // The course ID and API domain are passed in as handshake query parameters
-        // TODO
+        // Open a websocket connection for real-time communication with the server (chat + whiteboard changes) when
+        // the whiteboard is rendered in edit mode. The course ID and API domain are passed in as handshake query parameters
         if (!$scope.readonly) {
           var launchParams = utilService.getLaunchParams();
           var socket = io(window.location.origin, {
@@ -107,8 +112,8 @@
          * Render the whiteboard and its elements
          */
         var renderWhiteboard = function() {
-          // Set the size of the whiteboard canvas
-          // TODO
+          // Set the size of the whiteboard canvas once all layout changes
+          // regarding the sidebar have been applied
           setTimeout(setCanvasDimensions, 0);
 
           // Set the layer index of the whiteboard elements once all elements
@@ -121,7 +126,8 @@
             // Set the size of the whiteboard canvas
             setCanvasDimensions();
 
-            // TODO
+            // Deactivate all elements and element selection when the whiteboard
+            // is being rendered in read only mode
             if ($scope.readonly) {
               canvas.deactivateAll();
               canvas.selection = false;
@@ -365,7 +371,8 @@
         var deserializeElement = function(element, callback) {
           element = angular.copy(element);
 
-          // TODO
+          // Make the element unseletable when the whiteboard is rendered
+          // in read only mode
           if ($scope.readonly) {
             element.selectable = false;
           }
