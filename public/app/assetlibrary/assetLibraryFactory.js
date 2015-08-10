@@ -52,7 +52,7 @@
       var url = '/assets';
       url += '?offset=' + (page * 10);
       if (searchOptions.keywords) {
-        url += '&keywords=' + searchOptions.keywords;
+        url += '&keywords=' + encodeURIComponent(searchOptions.keywords);
       }
       if (searchOptions.category) {
         url += '&category=' + searchOptions.category;
