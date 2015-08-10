@@ -19,7 +19,7 @@
   <div class="col-pane">
     <!-- PREVIEW -->
     <div class="text-center assetlibrary-item-preview" data-ng-if="asset.type !== 'whiteboard'" data-ng-bind-html="asset.embed_code | sanitize"></div>
-    <div class="assetlibrary-item-whiteboard-preview" data-ng-if="asset.type === 'whiteboard'" style="position: relative; height: 700px; width: 100%; background-color: #FFF; border-top-left-radius: 4px; border-top-right-radius: 4px;">
+    <div class="assetlibrary-item-whiteboard-preview" data-ng-if="asset.type === 'whiteboard'">
       <whiteboard whiteboard="asset" readonly="true"></whiteboard>
     </div>
 
