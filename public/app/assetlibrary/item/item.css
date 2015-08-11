@@ -68,6 +68,38 @@
   word-wrap: break-word;
 }
 
+.assetlibrary-item-metadata-column .assetlibrary-item-metadata-label {
+  word-wrap: normal;
+}
+
+ul.assetlibrary-item-authors {
+  margin: 0;
+}
+
+ul.assetlibrary-item-authors-multiple li {
+  margin: 0;
+  padding: 0;
+}
+
+ul.assetlibrary-item-authors-multiple li:last-child {
+  display: block;
+}
+
+ul.assetlibrary-item-authors-multiple li .assetlibrary-item-metadata-authors-name {
+  padding-right: 15px;
+}
+
+.assetlibrary-item-metadata-authors-name, .assetlibrary-item-metadata-authors-on {
+  color: #4172B4;
+  padding: 0;
+}
+
+.assetlibrary-item-metadata-authors-text {
+  display: table-cell;
+  height: 38px;
+  vertical-align: middle;
+}
+
 .assetlibrary-item-metadata .col-avatar {
   height: 38px;
   width: 38px;
@@ -96,34 +128,6 @@
 
 .assetlibrary-item-metadata-label {
   font-weight: 500;
-}
-
-.assetlibrary-item-metadata-text {
-  display: table-cell;
-  height: 38px;
-  vertical-align: middle;
-}
-
-ul.assetlibrary-item-metadata {
-  margin: 0;
-}
-
-ul.assetlibrary-item-metadata li {
-  margin: 0;
-  padding: 0;
-}
-
-ul.assetlibrary-item-metadata-multiple-users li:last-child {
-  display: block;
-}
-
-ul.assetlibrary-item-metadata-multiple-users li .assetlibrary-item-metadata-user-name {
-  padding-right: 15px;
-}
-
-.assetlibrary-item-metadata-user-name, .assetlibrary-item-metadata-on-date {
-  color: #4172B4;
-  padding: 0;
 }
 
 /* ADD COMMENT */
