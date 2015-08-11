@@ -95,9 +95,7 @@ ul.assetlibrary-item-authors-multiple li .assetlibrary-item-metadata-authors-nam
 }
 
 .assetlibrary-item-metadata-authors-text {
-  display: table-cell;
-  height: 38px;
-  vertical-align: middle;
+  line-height: 38px;
 }
 
 .assetlibrary-item-metadata .col-avatar {
