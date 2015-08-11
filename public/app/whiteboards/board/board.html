@@ -8,7 +8,7 @@
     <canvas id="whiteboards-board-board"></canvas>
   </div>
   <!-- TOOLBAR -->
-  <div id="whiteboards-board-toolbar" class="btn-toolbar" role="toolbar" aria-label="Whiteboard Toolbar">
+  <div id="whiteboards-board-toolbar" class="btn-toolbar" role="toolbar" aria-label="Whiteboard Toolbar" data-ng-if="!readonly">
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-default active" title="Move and transform" data-ng-click="setMode('move')" data-ng-class="{'active': mode === 'move'}">
         <i class="fa fa-arrows">
@@ -73,6 +73,19 @@
         </i>
       </button>
     </div>
+  </div>
+  <!-- READONLY -->
+  <div id="whiteboards-board-readonly" class="text-left" data-ng-if="readonly && scrollingCanvas">
+    <button type="button" class="btn btn-default" title="Fit to screen" data-ng-if="!fitToScreen" data-ng-click="toggleZoom()">
+      <i class="fa fa-search-minus">
+        <span class="sr-only">Fit to screen</span>
+      </i>
+    </button>
+    <button type="button" class="btn btn-default" title="Actual size" data-ng-if="fitToScreen" data-ng-click="toggleZoom()">
+      <i class="fa fa-search-plus">
+        <span class="sr-only">Actual size"</span>
+      </i>
+    </button>
   </div>
 </div>
 
@@ -199,7 +212,7 @@
 </script>
 
 <!-- SIDEBAR -->
-<div id="whiteboards-board-sidebar-container" data-ng-show="sidebarExpanded">
+<div id="whiteboards-board-sidebar-container" data-ng-if="!readonly" data-ng-show="sidebarExpanded">
   <div id="whiteboards-board-sidebar">
     <div id="whiteboards-board-chat" data-ng-show="sidebarMode === 'chat'">
       <div id="whiteboards-board-chat-messages-container" scroll-glue data-infinite-scroll="getChatMessages()" data-infinite-scroll-ready="chatList.ready" data-infinite-scroll-distance="200" data-infinite-scroll-container="whiteboards-board-chat-messages-container" data-infinite-scroll-direction="top">
@@ -249,7 +262,7 @@
 </div>
 
 <!-- SIDEBAR BUTTONS -->
-<div id="whiteboards-board-sidebar-buttons" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}">
+<div id="whiteboards-board-sidebar-buttons" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}"  data-ng-if="!readonly">
   <button type="button" class="btn btn-link whiteboards-board-toolbar-collaborators" title="Collaborators" data-ng-click="toggleSidebar('online')" data-ng-class="{'active': sidebarExpanded && sidebarMode === 'online'}">
     <i class="fa fa-user">
       <span class="sr-only">Collaborators</span>
