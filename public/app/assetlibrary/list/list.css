@@ -63,3 +63,13 @@
 .assetlibrary-list-item-add-action {
   height: 40px;
 }
+
+.assetlibrary-list-bookmarklet {
+  margin-left: 3px;
+}
+
+.assetlibrary-list-bookmarklet i {
+  font-size: 14px;
+  position: relative;
+  top: 2px;
+}
