@@ -577,6 +577,28 @@
           return activeElements;
         };
 
+        /**
+         * Ensure that the currently active object or group can not be positioned
+         * off screen
+         *
+         * @param  {Object}       ev                The event representing the active object or group
+         */
+        var ensureWithinCanvas = function(ev) {
+          var element = ev.target;
+          // Don't allow the element's or group's bounding rectangle
+          // to go off screen
+          element.setCoords();
+          var bound = element.getBoundingRect();
+          if (bound.left < 0) {
+            element.left -= bound.left / canvas.getZoom();
+          }
+          if (bound.top < 0) {
+            element.top -= bound.top / canvas.getZoom();
+          }
+        };
+
+        canvas.on('object:moving', ensureWithinCanvas);
+
         ///////////////
         // ADD ITEMS //
         ///////////////
@@ -658,7 +680,10 @@
         /**
          * One or multiple whiteboard canvas elements have been updated by the current user
          */
-        canvas.on('object:modified', function() {
+        canvas.on('object:modified', function(ev) {
+          // Ensure that none of the modified objects are positioned off screen
+          ensureWithinCanvas(ev);
+
           // Get the selected whiteboard elements
           var elements = getActiveElements();
 

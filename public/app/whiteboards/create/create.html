@@ -17,7 +17,7 @@
 
   <!-- MEMBERS -->
   <div class="form-group">
-    <label for="whiteboards-create-members" class="col-sm-2 control-label">Members</label>
+    <label for="whiteboards-create-collaborators" class="col-sm-2 control-label">Collaborators</label>
     <div class="col-sm-10">
       <oi-select
         oi-options="user.id as user.canvas_full_name for user in users track by user.id | orderBy: 'canvas_full_name.toLowerCase()'"
