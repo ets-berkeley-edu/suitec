@@ -77,7 +77,8 @@
           $scope.alertFilesError = true;
         // Folders or files that are technically a folder on the
         // filesystem (e.g. keynote) will have a file size of 0
-        } else if (fileSize === 0) {
+        // or no file size at all
+        } else if (!fileSize || !file.type || file.type === 'directory') {
           $scope.filesInvalid.push(file);
           $scope.alertFilesError = true;
         } else {
