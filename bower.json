@@ -26,7 +26,7 @@
     "moment": "latest",
     "ng-file-upload": "latest",
     "ng-file-upload-shim": "latest",
-    "oi.multiselect": "latest",
+    "oi.multiselect": "0.2.2",
     "remarkable-bootstrap-notify": "latest",
     "socket.io-client": "latest"
   }
