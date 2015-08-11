@@ -335,6 +335,11 @@
   padding: 4px;
 }
 
+.whiteboards-popover-select.whiteboards-popover-select-shape img {
+  position: relative;
+  top: -1px;
+}
+
 .whiteboards-popover-select + .dropdown-menu {
   overflow: auto;
   max-height: 100px;
