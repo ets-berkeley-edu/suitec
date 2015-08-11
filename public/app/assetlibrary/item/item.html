@@ -28,7 +28,7 @@
             <div class="assetlibrary-item-metadata-authors-text">by</div>
           </div>
           <div class="media-body media-middle">
-            <ul class="media-list list-inline assetlibrary-item-metadata assetlibrary-item-authors" ng-class="{'assetlibrary-item-authors-multiple': asset.users.length > 1}">
+            <ul class="media-list list-inline assetlibrary-item-metadata assetlibrary-item-metadata-authors" ng-class="{'assetlibrary-item-metadata-authors-multiple': asset.users.length > 1}">
               <li class="media" data-ng-repeat="user in asset.users | orderBy:['canvas_full_name']">
                 <div class="media-left media-middle">
                   <div class="media-object col-avatar" data-ng-style="{'background-image': 'url(' + user.canvas_image + ')'}"></div>
@@ -42,7 +42,7 @@
               </li>
               <li class="media">
                 <div class="media-left media-top">
-                  <div class="assetlibrary-item-metadata-authors-text">on <span class="assetlibrary-item-metadata-authors-on">{{asset.created_at | date:'longDate' }}</span></div>
+                  <div class="assetlibrary-item-metadata-authors-text">on <span class="assetlibrary-item-metadata-authors-on">{{asset.created_at | date:'longDate'}}</span></div>
                 </div>
               </li>
             </ul>

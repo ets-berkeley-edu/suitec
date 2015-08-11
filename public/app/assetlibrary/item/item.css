@@ -72,20 +72,20 @@
   word-wrap: normal;
 }
 
-ul.assetlibrary-item-authors {
+ul.assetlibrary-item-metadata-authors {
   margin: 0;
 }
 
-ul.assetlibrary-item-authors li {
+ul.assetlibrary-item-metadata-authors li {
   margin: 0;
   padding: 0;
 }
 
-ul.assetlibrary-item-authors-multiple li:last-child {
+ul.assetlibrary-item-metadata-authors-multiple li:last-child {
   display: block;
 }
 
-ul.assetlibrary-item-authors-multiple li .assetlibrary-item-metadata-authors-name {
+ul.assetlibrary-item-metadata-authors-multiple li .assetlibrary-item-metadata-authors-name {
   padding-right: 15px;
 }
 
