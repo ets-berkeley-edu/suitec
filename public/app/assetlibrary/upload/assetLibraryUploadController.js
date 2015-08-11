@@ -28,9 +28,12 @@
     // Variable that will keep track of the files that exceed the file size limit
     $scope.filesExceedSize = [];
 
-    // Variable that will keep track of whether the alert message that indicates that files that
-    // exceed the file size limit have been selected should be shown
-    $scope.alertFilesExceedSize = false;
+    // Variable that will keep track of the invalid files
+    $scope.filesInvalid = [];
+
+    // Variable that will keep track of whether the alert message that indicates problems with the
+    // selected files should be shown
+    $scope.alertFilesError = false;
 
     // Variable that will keep track of whether uploading is currently in progress
     $scope.isUploading = false;
@@ -60,7 +63,8 @@
       // Clear the previously selected files
       $scope.files = [];
       $scope.filesExceedSize = [];
-      $scope.alertFilesExceedSize = false;
+      $scope.filesInvalid = [];
+      $scope.alertFilesError = false;
       totalSize = 0;
 
       // Render the selected files
@@ -70,7 +74,12 @@
         // Exclude files that exceed the file size limit
         if (fileSize > MAX_FILE_SIZE) {
           $scope.filesExceedSize.push(file);
-          $scope.alertFilesExceedSize = true;
+          $scope.alertFilesError = true;
+        // Folders or files that are technically a folder on the
+        // filesystem (e.g. keynote) will have a file size of 0
+        } else if (fileSize === 0) {
+          $scope.filesInvalid.push(file);
+          $scope.alertFilesError = true;
         } else {
           totalSize += file.size;
           $scope.files.push({
@@ -83,11 +92,10 @@
     };
 
     /**
-     * Hide the alert message that indicates that files that exceed the file size limit
-     * have been selected
+     * Hide the alert message that indicates a problem with the selected files
      */
-    var hideFilesExceedSizeError = $scope.hideFilesExceedSizeError = function() {
-      $scope.alertFilesExceedSize = false;
+    var hideFilesError = $scope.hideFilesError = function() {
+      $scope.alertFilesError = false;
     };
 
     /**

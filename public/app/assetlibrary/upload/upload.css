@@ -50,6 +50,16 @@
   margin: 10px;
 }
 
+/* ERROR */
+
+.assetlibrary-upload-error + .assetlibrary-upload-error {
+  margin-top: 5px;
+}
+
+.assetlibrary-upload-error i {
+  margin-right: 7px;
+}
+
 /* METADATA */
 
 .assetlibrary-upload-file-remove,
