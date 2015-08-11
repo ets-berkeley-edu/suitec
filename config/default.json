@@ -17,7 +17,7 @@
     "host": "localhost",
     "port": 5432,
     "dropOnStartup": false,
-    "skipSync": false
+    "sync": false
   },
   "log": {
     "level": "info",
