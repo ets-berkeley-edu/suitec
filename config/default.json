@@ -16,7 +16,8 @@
     "password": "collabosphere",
     "host": "localhost",
     "port": 5432,
-    "dropOnStartup": false
+    "dropOnStartup": false,
+    "sync": false
   },
   "log": {
     "level": "info",
