@@ -33,10 +33,10 @@
 
     // When no bookmarklet installation instructions are available for the current browser, revert to Firefox
     $scope.browser = deviceDetector.browser;
-    $scope.toolbar = browsers[$scope.browser]
-    if (_.indexOf(_.keys(browsers), $scope.browser) === -1) {
+    if (!browsers[$scope.browser]) {
       $scope.browser = 'firefox';
     }
+    $scope.toolbar = browsers[$scope.browser]
 
     /**
      * Go to the next step in the bookmarklet installation process
