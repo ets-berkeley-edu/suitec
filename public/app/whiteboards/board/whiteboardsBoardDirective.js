@@ -484,7 +484,6 @@
          */
         viewport.addEventListener('keydown', function($event) {
           // Remove the selected elements when the delete or backspace key is pressed
-          console.log($event.keyCode);
           if ($event.keyCode === 8 || $event.keyCode === 46) {
             deleteActiveElements();
             $event.preventDefault();
@@ -497,7 +496,7 @@
           // Copy the selected elements
           } else if ($event.keyCode === 67 && $event.metaKey) {
             copy();
-          // Duplicate the copied elements
+          // Paste the copied elements
           } else if ($event.keyCode === 86 && $event.metaKey) {
             paste();
           }
@@ -909,13 +908,13 @@
         var paste = function() {
           var elements = [];
 
-          // Active the pasted element(s)
+          // Activate the pasted element(s)
           var selectPasted = _.after(clipboard.length, function() {
             // When only a single element was pasted, simply select it
             if (elements.length === 1) {
               canvas.setActiveObject(elements[0]);
             // When multiple elements were pasted, create a new group
-            // for those element and select it
+            // for those elements and select them
             } else {
               var group = new fabric.Group();
               canvas.add(group);
@@ -930,11 +929,12 @@
           });
 
           if (clipboard.length > 0) {
-            // Clear the previously selection
+            // Clear the current selection
             canvas.deactivateAll().renderAll();
 
             // Duplicate each copied element. In order to do this, remove
-            // the index and unique id from element and alert the position
+            // the index and unique id from the element and alter the position
+            // to ensure its visibility
             _.each(clipboard, function(element) {
               delete element.index;
               delete element.uid;
