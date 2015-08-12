@@ -1385,7 +1385,7 @@
         };
 
         // Variable that will keep track of the current chat message
-        $scope.newChatMessage = null;
+        $scope.newChatMessage = {};
 
         /**
          * Toggle the view mode in the sidebar. If the sidebar was hidden, it will be shown
@@ -1419,7 +1419,7 @@
               socket.emit('chat', $scope.newChatMessage.body);
             }
             // Reset the new chat message
-            $scope.newChatMessage = null;
+            $scope.newChatMessage = {};
             $event.preventDefault();
           }
         };
