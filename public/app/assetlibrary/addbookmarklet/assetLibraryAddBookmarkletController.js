@@ -36,7 +36,7 @@
     if (!browsers[$scope.browser]) {
       $scope.browser = 'firefox';
     }
-    $scope.toolbar = browsers[$scope.browser]
+    $scope.toolbar = browsers[$scope.browser];
 
     /**
      * Go to the next step in the bookmarklet installation process
