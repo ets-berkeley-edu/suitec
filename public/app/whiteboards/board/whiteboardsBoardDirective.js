@@ -103,7 +103,8 @@
         // Variable that will keep track of the placeholder images to use for assets without a preview image
         var ASSET_PLACEHOLDERS = {
           'file': '/assets/img/whiteboard_asset_placeholder_file.png',
-          'link': '/assets/img/whiteboard_asset_placeholder_link.png'
+          'link': '/assets/img/whiteboard_asset_placeholder_link.png',
+          'whiteboard': '/assets/img/whiteboard_asset_placeholder_whiteboard.png'
         };
 
         /* WHITEBOARD */
@@ -1267,6 +1268,7 @@
           scope.closeModal = function(selectedAssets) {
             _.each(selectedAssets, addAsset);
             this.$hide();
+            this.$destroy();
           };
           // Open the asset selection modal dialog
           $modal({
