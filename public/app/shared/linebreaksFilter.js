@@ -17,17 +17,18 @@
 
   'use strict';
 
-  angular.module('collabosphere').filter('hashtags', function() {
+  angular.module('collabosphere').filter('linebreaks', function() {
 
     /**
-     * Replace each hashtag with a link to the asset library that will search through the asset library
-     * for that keyword
+     * Replace each line break with a proper html line break element
      *
-     * @param  {String}     input     The input text to replace the hashtags in
-     * @return {String}               The text in which the hashtags have been replaced with links
+     * @param  {String}     input     The input text to replace the line breaks in
+     * @return {String}               The text in which the line breaks have been replaced with line break element
      */
     return function(input) {
-      return input.replace(/#(\w*[a-zA-Z_]+\w*)/gim, '<a href="/assetlibrary?keywords=$1">#$1</a>');
+      // Angular's linky filter will replace `\r\n` with `&#10;&#13;`. Unfortunately this filter can't
+      // run before the linky filter as the
+      return input.replace(/(\r\n|\n\r|\r|\n|&#10;&#13;|&#13;&#10;|&#10;|&#13;)/gm, '<br>');
     };
   });
 
