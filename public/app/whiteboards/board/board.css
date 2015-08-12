@@ -21,6 +21,7 @@
   position: absolute;
   right: 0;
   top: 0;
+  z-index: 1000;
 }
 
 #whiteboards-board-container.whiteboards-sidebar-expanded {
@@ -28,7 +29,6 @@
 }
 
 #whiteboards-board-viewport {
-  background-color: #F7F7F7;
   height: 100%;
   width: 100%;
   overflow: scroll;
@@ -54,6 +54,18 @@
   right: 0;
   top: 25px;
   z-index: 101;
+}
+
+/* READ-ONLY */
+
+#whiteboards-board-readonly {
+  bottom: 70px;
+  margin-left: 20px;
+  position: relative;
+}
+
+#whiteboards-board-readonly .btn {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 
 /* TOOLBAR */
@@ -153,7 +165,6 @@
 #whiteboards-board-sidebar-container {
   bottom: 0;
   border-left: 1px solid #D3D3D3;
-  background-color: #F7F7F7;
   padding-top: 41px;
   position: absolute;
   right: 0;
@@ -323,6 +334,11 @@
 
 .whiteboards-popover-select {
   padding: 4px;
+}
+
+.whiteboards-popover-select.whiteboards-popover-select-shape img {
+  position: relative;
+  top: -1px;
 }
 
 .whiteboards-popover-select + .dropdown-menu {

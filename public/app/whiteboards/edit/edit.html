@@ -9,8 +9,8 @@
         <div id="whiteboards-edit-container" class="modal-body whiteboards-edit-container">
           <!-- TITLE -->
           <div class="form-group" data-ng-class="{'has-error': whiteboardsEditForm.whiteboardsEditTitle.$invalid}">
-            <label for="whiteboards-edit-title" class="col-sm-2 control-label">Title</label>
-            <div class="col-sm-10">
+            <label for="whiteboards-edit-title" class="col-sm-3 control-label">Title</label>
+            <div class="col-sm-9">
               <input type="text" id="whiteboards-edit-title" name="whiteboardsEditTitle" class="form-control" placeholder="Enter a title" data-ng-model="updatedWhiteboard.title" data-ng-maxlength="255" required>
               <div class="help-block" data-ng-messages="whiteboardsEditForm.whiteboardsEditTitle.$error">
                 <div data-ng-message="required">Please enter a title</div>
@@ -21,15 +21,15 @@
 
           <!-- MEMBERS -->
           <div class="form-group" data-ng-class="{'has-error': whiteboardsEditForm.whiteboardsEditMembers.$invalid}">
-            <label for="whiteboards-edit-members" class="col-sm-2 control-label">Members</label>
-            <div class="col-sm-10">
+            <label for="whiteboards-edit-collaborators" class="col-sm-3 control-label">Collaborators</label>
+            <div class="col-sm-9">
               <oi-select name="whiteboardsEditMembers"
                 oi-options="user.id as user.canvas_full_name for user in users track by user.id | orderBy: 'canvas_full_name.toLowerCase()'"
                 oi-select-options="{'searchFilter': 'usersSearch', 'dropdownFilter': 'usersDropdown'}"
                 ng-model="updatedWhiteboard.members" multiple placeholder="Enter the names of the people you want to add to this whiteboard" tabindex="-1" required>
               </oi-select>
               <div class="help-block" data-ng-messages="whiteboardsEditForm.whiteboardsEditMembers.$error">
-                <div data-ng-message="required">A whiteboard requires at least 1 member</div>
+                <div data-ng-message="required">A whiteboard requires at least 1 collaborator</div>
               </div>
             </div>
           </div>
