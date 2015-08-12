@@ -17,7 +17,44 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryAddBookmarkletController', function(userFactory, utilService, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryAddBookmarkletController', function(deviceDetector, userFactory, utilService, $location, $scope) {
+
+    // Variable that will keep track of the step the user is currently at
+    $scope.step = 1;
+
+    // List of the browsers for which browser-specific bookmarklet installation instructions are provided
+    // and the associated name of the bookmarks toolbar
+    var browsers = {
+      'firefox': 'bookmarks toolbar',
+      'chrome': 'Bookmarks Bar',
+      'safari': 'Favorites Bar',
+      'ie': 'Favorites bar'
+    };
+
+    // When no bookmarklet installation instructions are available for the current browser, revert to Firefox
+    $scope.browser = deviceDetector.browser;
+    if (!browsers[$scope.browser]) {
+      $scope.browser = 'firefox';
+    }
+    $scope.toolbar = browsers[$scope.browser]
+
+    /**
+     * Go to the next step in the bookmarklet installation process
+     */
+    var nextStep = $scope.nextStep = function() {
+      $scope.step++;
+    };
+
+    /**
+     * Prevent that clicking the bookmarklet in the installation instructions triggers the bookmarklet
+     * functionality
+     *
+     * @param  {Event}          $event            The click event
+     */
+    var preventBookmarklet = $scope.preventBookmarklet = function($event) {
+      $event.preventDefault();
+      return false;
+    };
 
     userFactory.getMe().success(function(me) {
       $scope.me = me;

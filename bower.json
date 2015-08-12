@@ -24,6 +24,7 @@
     "highcharts-release": "latest",
     "lodash": "latest",
     "moment": "latest",
+    "ng-device-detector": "latest",
     "ng-file-upload": "latest",
     "ng-file-upload-shim": "latest",
     "oi.multiselect": "0.2.2",
