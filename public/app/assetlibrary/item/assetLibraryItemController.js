@@ -28,6 +28,9 @@
     // Variable that will keep track of the new top-level comment
     $scope.newComment = null;
 
+    // Variable that will keep track whether the asset doesn't have a supported preview
+    $scope.unsupportedPreview = false;
+
     /**
      * Get the current asset
      */
@@ -40,6 +43,15 @@
 
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+
+        // Embed it
+        var embdrOptions = {
+          'loadingIcon': '//' + window.location.host + '/assets/img/cal.png',
+          'unsupported': function() {
+            $scope.unsupportedPreview = true;
+          }
+        };
+        window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
       });
     };
 

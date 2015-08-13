@@ -44,6 +44,8 @@
 
 @media only screen and (min-width : 768px) {
   .assetlibrary-item-preview {
+    line-height: 400px;
+    max-height: 700px;
     min-height: 400px;
   }
 
@@ -52,7 +54,7 @@
   }
 
   .assetlibrary-item-preview .embdr-iframe {
-    height: 600px;
+    height: 700px;
   }
 
   .assetlibrary-item-preview .embdr-document {
@@ -62,6 +64,21 @@
   .assetlibrary-item-whiteboard-preview {
     height: 700px;
   }
+}
+
+.assetlibrary-item-preview-default {
+  background-color: #fff;
+  padding: 80px 0px;
+}
+
+.assetlibrary-item-preview-default div {
+  color: #747474;
+  font-size: 50px;
+}
+
+.assetlibrary-item-preview-default p {
+  font-size: 18px;
+  margin: 30px;
 }
 
 /* METADATA */

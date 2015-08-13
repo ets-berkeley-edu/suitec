@@ -18,10 +18,15 @@
 
   <div class="col-pane">
     <!-- PREVIEW -->
-    <div class="text-center assetlibrary-item-preview" data-ng-if="asset.type !== 'whiteboard'" data-ng-bind-html="asset.embed_code | sanitize"></div>
-    <div class="assetlibrary-item-whiteboard-preview" data-ng-if="asset.type === 'whiteboard'">
-      <whiteboard whiteboard="asset" readonly="true"></whiteboard>
-    </div>
+      <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-if="!unsupportedPreview && asset.type !== 'whiteboard'"></div>
+      <div class="text-center assetlibrary-item-preview-default" data-ng-if="unsupportedPreview">
+        <div class="fa fa-file-zip-o"></div>
+        <p>No preview available.</p>
+        <a data-ng-href="{{asset.download_url}}" target="_blank" class="btn btn-default"><i class="fa fa-cloud-download"></i><span>Download</span></a>
+      </div>
+      <div class="assetlibrary-item-whiteboard-preview" data-ng-if="!unsupportedPreview && asset.type === 'whiteboard'">
+        <whiteboard whiteboard="asset" readonly="true"></whiteboard>
+      </div>
 
     <!-- METADATA -->
     <div class="assetlibrary-item-metadata">
