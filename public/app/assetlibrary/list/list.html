@@ -46,7 +46,7 @@
         </div>
       </li>
       <!-- LIST ITEM -->
-      <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
+      <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | unique:'id'">
         <div class="col-list-item-container">
           <a ui-sref="assetlibrarylist.item({assetId: asset.id})" ui-sref-opts="{'inherit': false}">
             <div class="col-list-item-tile">
