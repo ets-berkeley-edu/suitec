@@ -493,6 +493,12 @@
           // Redo the previous action when Ctrl+Y is pressed
           } else if ($event.keyCode === 89 && $event.metaKey) {
           //  redo();
+          // Copy the selected elements
+          } else if ($event.keyCode === 67 && $event.metaKey) {
+            copy();
+          // Paste the copied elements
+          } else if ($event.keyCode === 86 && $event.metaKey) {
+            paste();
           }
         }, false);
 
@@ -883,6 +889,79 @@
             setMode('move');
           }
         });
+
+        /* COPY / PASTE */
+
+        // Variable that will keep track of the copied element(s)
+        var clipboard = [];
+
+        /**
+         * Copy the selected element(s)
+         */
+        var copy = function() {
+          clipboard = getActiveElements();
+        };
+
+        /**
+         * Paste the copied element(s)
+         */
+        var paste = function() {
+          var elements = [];
+
+          // Activate the pasted element(s)
+          var selectPasted = _.after(clipboard.length, function() {
+            // When only a single element was pasted, simply select it
+            if (elements.length === 1) {
+              canvas.setActiveObject(elements[0]);
+            // When multiple elements were pasted, create a new group
+            // for those elements and select them
+            } else {
+              var group = new fabric.Group();
+              canvas.add(group);
+              _.each(elements, function(element) {
+                group.addWithUpdate(element);
+              });
+              canvas.setActiveGroup(group);
+            }
+            canvas.renderAll();
+            // Set the size of the whiteboard canvas
+            setCanvasDimensions();
+          });
+
+          if (clipboard.length > 0) {
+            // Clear the current selection
+            canvas.deactivateAll().renderAll();
+
+            // Duplicate each copied element. In order to do this, remove
+            // the index and unique id from the element and alter the position
+            // to ensure its visibility
+            _.each(clipboard, function(element) {
+              delete element.index;
+              delete element.uid;
+              element.left += 25;
+              element.top += 25;
+              // Add the element to the whiteboard canvas
+              deserializeElement(element, function(element) {
+                canvas.add(element);
+                canvas.renderAll();
+                // Keep track of the added elements to allow them to be selected
+                elements.push(element);
+                selectPasted();
+              });
+            });
+          }
+        };
+
+        /**
+         * When multiple objects have been pasted, a new group is programmatically added to
+         * allow the pasted elements to be selected. When this group is deselected, it needs
+         * to be programmatically removed from the canvas again
+         */
+        canvas.on('before:selection:cleared', function() {
+          if (canvas.getActiveGroup()) {
+            canvas.remove(canvas.getActiveGroup());
+          }
+        })
 
         /* UNDO/REDO */
 
