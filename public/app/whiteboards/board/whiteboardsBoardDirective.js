@@ -117,27 +117,13 @@
           setTimeout(setCanvasDimensions, 0);
 
           // Restore the order of the layers once all elements have finished loading
-          var restoreLayers = _.after($scope.whiteboard.whiteboard_elements.length, function() {
-            canvas.getObjects().sort(function(a, b) {
-              return a.index - b.index;
-            })
-            canvas.renderAll();
-            // Set the size of the whiteboard canvas
-            setCanvasDimensions();
-
-            // Deactivate all elements and element selection when the whiteboard
-            // is being rendered in read only mode
-            if ($scope.readonly) {
-              canvas.deactivateAll();
-              canvas.selection = false;
-            }
-          });
+          var restore = _.after($scope.whiteboard.whiteboard_elements.length, restoreLayers);
 
           // Restore the layout of the whiteboard canvas
           _.each($scope.whiteboard.whiteboard_elements, function(element) {
             deserializeElement(element, function(element) {
               canvas.add(element);
-              restoreLayers();
+              restore();
             });
           });
         };
@@ -461,11 +447,11 @@
             if (element.type === 'image' && element.getSrc() !== update.src) {
               element.setSrc(update.src, function() {
                 canvas.renderAll();
-                // Recalculate the size of the whiteboard canvas
-                setCanvasDimensions();
+                // TODO
+                restoreLayers();
               });
             } else {
-              canvas.renderAll();
+              restoreLayers();
             }
           }
 
@@ -495,9 +481,26 @@
           }
         }, false);
 
-        initializeCanvas();
-
         /* LAYERS */
+
+        /**
+         * TODO
+         */
+        var restoreLayers = function() {
+          canvas.getObjects().sort(function(a, b) {
+            return a.index - b.index;
+          })
+          canvas.renderAll();
+          // Set the size of the whiteboard canvas
+          setCanvasDimensions();
+
+          // Deactivate all elements and element selection when the whiteboard
+          // is being rendered in read only mode
+          if ($scope.readonly) {
+            canvas.deactivateAll();
+            canvas.selection = false;
+          }
+        };
 
         /**
          * Update the index of all elements to reflect their order in the
@@ -518,12 +521,62 @@
               }
             }
           });
+          console.log('Calculated changes => ' + (new Date().getTime() - start));
 
           // Notify the server about the updated layers
           if (updates.length > 1) {
             saveElementUpdates(updates);
           }
         };
+
+        /**
+         * TODO
+         */
+        var sendToBack = $scope.sendToBack = function() {
+          changeLayer('back');
+        };
+
+        /**
+         * TODO
+         */
+        var bringToFront = $scope.bringToFront = function() {
+          changeLayer('front');
+        };
+
+        var start = null;
+
+        /**
+         * TODO
+         */
+        var changeLayer = function(direction) {
+          start = new Date().getTime();
+          var elements = getActiveElements();
+          console.log('getActiveElements => ' + (new Date().getTime() - start));
+          canvas.deactivateAll().renderAll();
+          // TODO
+          elements.sort(function(a, b) {
+            return a.index - b.index;
+          });
+          if (direction === 'back') {
+            elements.reverse();
+          }
+          console.log('sort => ' + (new Date().getTime() - start));
+          console.log(elements);
+          _.each(elements, function(element) {
+            element = getCanvasElement(element.uid);
+            if (direction === 'back') {
+              element.sendToBack();
+            } else if (direction === 'front') {
+              element.bringToFront();
+            }
+          });
+          console.log('changeLayer => ' + (new Date().getTime() - start));
+          // TODO: Reselect selected items
+          canvas.renderAll();
+          updateLayers();
+        };
+
+        initializeCanvas();
 
         /* CONCURRENT EDITING */
 
@@ -598,7 +651,7 @@
               var position = calculateGlobalElementPosition(group, element);
               activeElements.push(angular.extend({}, element.toObject(), position));
             });
-          } else {
+          } else if (canvas.getActiveObject()){
             activeElements.push(canvas.getActiveObject().toObject());
           }
           return activeElements;
