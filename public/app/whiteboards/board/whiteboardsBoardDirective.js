@@ -116,12 +116,11 @@
           // regarding the sidebar have been applied
           setTimeout(setCanvasDimensions, 0);
 
-          // Set the layer index of the whiteboard elements once all elements
-          // have finished loading
+          // Restore the order of the layers once all elements have finished loading
           var restoreLayers = _.after($scope.whiteboard.whiteboard_elements.length, function() {
-            canvas.forEachObject(function(element) {
-              element.moveTo(element.get('index'));
-            });
+            canvas.getObjects().sort(function(a, b) {
+              return a.index - b.index;
+            })
             canvas.renderAll();
             // Set the size of the whiteboard canvas
             setCanvasDimensions();
@@ -498,6 +497,34 @@
 
         initializeCanvas();
 
+        /* LAYERS */
+
+        /**
+         * Update the index of all elements to reflect their order in the
+         * current whiteboard
+         */
+        var updateLayers = function() {
+          var updates = [];
+          canvas.forEachObject(function(element) {
+            // Only update the elements for which the stored index no longer
+            // matches the current index
+            if (element.index !== canvas.getObjects().indexOf()) {
+              // If the element is part of a group, calculate its global coordinates
+              if (element.group) {
+                var position = calculateGlobalElementPosition(element.group, element);
+                updates.push(angular.extend({}, element.toObject(), position));
+              } else {
+                updates.push(element.toObject());
+              }
+            }
+          });
+
+          // Notify the server about the updated layers
+          if (updates.length > 1) {
+            saveElementUpdates(updates);
+          }
+        };
+
         /* CONCURRENT EDITING */
 
         /**
@@ -759,6 +786,9 @@
         var saveDeleteElements = function(elements) {
           // Notify the server about the deleted elements
           socket.emit('deleteActivity', elements);
+
+          // Update the layer ordering of the remaining elements
+          updateLayers();
 
           // Recalculate the size of the whiteboard canvas
           setCanvasDimensions();
