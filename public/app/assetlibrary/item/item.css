@@ -66,17 +66,17 @@
   }
 }
 
-.assetlibrary-item-preview-default {
-  background-color: #fff;
-  padding: 80px 0px;
+.assetlibrary-item-preview-default, .assetlibrary-item-preview-pending {
+  background-color: #FFF;
+  padding: 80px 0;
 }
 
-.assetlibrary-item-preview-default div {
+.assetlibrary-item-preview-default > i, .assetlibrary-item-preview-pending > i {
   color: #747474;
   font-size: 50px;
 }
 
-.assetlibrary-item-preview-default p {
+.assetlibrary-item-preview-default p, .assetlibrary-item-preview-pending p {
   font-size: 18px;
   margin: 30px;
 }
