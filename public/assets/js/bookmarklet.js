@@ -246,6 +246,8 @@
 
     // Get all images from `img` tags
     collectImages(imageCallback);
+    // Get all images from `picture` tags
+    collectPictures(imageCallback);
     // Get all background images
     collectBackgroundImages(imageCallback);
 
@@ -296,6 +298,40 @@
       if (this.naturalHeight > MIN_DIMENSIONS && this.naturalWidth > MIN_DIMENSIONS) {
         var img = {
           'url': $img[0].src,
+          // Try to extract a meaningful title
+          'title': $img.attr('alt')
+        };
+
+        callback(img);
+      }
+    });
+  };
+
+  /**
+   * Get all images from `picture` tags from the current page. Only images that are larger
+   * than the minimum dimensions will be listed.
+   *
+   * @param  {Function}   callback        Standard callback function called every time an image has been found
+   * @param  {String}     callback.img    URL of the image that has been found
+   */
+  var collectPictures = function(callback) {
+    var $pictures = $('picture', window.parent.document);
+    $pictures.each(function() {
+      var $picture = $(this);
+
+      // A `picture` tag can have multiple sources but is required to have one `img` tag
+      var $img = $('img', $picture);
+      var src = $img.attr('src') || $img.attr('data-default-src');
+
+      // Ignore inline images
+      if (!src || src.indexOf('data:') === 0) {
+        return;
+      }
+
+      // Ensure that the image is larger than the minimum dimensions
+      if ($img[0].naturalHeight > MIN_DIMENSIONS && $img[0].naturalWidth > MIN_DIMENSIONS) {
+        var img = {
+          'url': src,
           // Try to extract a meaningful title
           'title': $img.attr('alt')
         };
