@@ -50,7 +50,7 @@
         var CANVAS_BASE_WIDTH = 1000;
 
         // The padding that will be enforced on the canvas when it can be scrolled
-        var CANVAS_PADDING = 40;
+        var CANVAS_PADDING = 50;
 
         // Variable that will keep track of whether the chat/online sidebar is expanded
         $scope.sidebarExpanded = $scope.readonly ? false : true;
@@ -153,6 +153,48 @@
           }
         };
 
+        /**
+         * TODO
+         * Generate the full URL for a whiteboard. This includes the launch parameters that were passed in
+         * when the LTI tool was launched
+         *
+         * @return {String}                               The full whiteboard URL
+         */
+        //var generateAssetURL = $scope.generateAssetURL = function() {
+        //  var selected = canvas.getActiveObject();
+        //  if (selected && selected.assetId) {
+        //    var launchParams = utilService.getLaunchParams();
+        //    var url = '/assetlibrary/' + selected.assetId;
+        //    url += '?api_domain=' + launchParams.apiDomain;
+        //    url += '&course_id=' + launchParams.courseId;
+        //    url += '&tool_url=' + launchParams.toolUrl;
+        //    return url;
+        //  }
+        //};
+        var hasSelectedAsset = $scope.hasSelectedAsset = function() {
+          var selected = canvas.getActiveObject();
+          if (selected && selected.assetId) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+
+        var getSelectedAssetParams = $scope.getSelectedAssetParams = function() {
+          var selected = canvas.getActiveObject();
+          if (selected && selected.assetId) {
+            var launchParams = utilService.getLaunchParams();
+            return {
+              'api_domain': launchParams.apiDomain,
+              'course_id': launchParams.courseId,
+              'tool_url': launchParams.toolUrl,
+              'assetId': selected.assetId
+            };
+          } else {
+            return false;
+          }
+        };
+
         /* CANVAS */
 
         /**
@@ -241,7 +283,8 @@
             if (!element.group) {
               bound = element.getBoundingRect();
             } else {
-              // Elements in a group are positioned relative to the group. In order to calculate the most
+              bound = element.group.getBoundingRect();
+              /*// Elements in a group are positioned relative to the group. In order to calculate the most
               // right and most bottom point of the element, we need to calculate its position relative to
               // the canvas and then calculate the bounding rectangle for that element
               var position = calculateGlobalElementPosition(element.group, element);
@@ -274,7 +317,7 @@
                 'top': minY,
                 'width': boundingRectWidth,
                 'height': boundingRectHeight
-              };
+              };*/
             }
 
             maxRight = Math.max(maxRight, bound.left + bound.width);
@@ -518,7 +561,8 @@
           canvas.forEachObject(function(element) {
             // Only update the elements for which the stored index no longer
             // matches the current index
-            if (element.index !== canvas.getObjects().indexOf()) {
+            if (element.index !== canvas.getObjects().indexOf(element)) {
+              element.index = canvas.getObjects().indexOf(element);
               // If the element is part of a group, calculate its global coordinates
               if (element.group) {
                 var position = calculateGlobalElementPosition(element.group, element);
@@ -528,7 +572,6 @@
               }
             }
           });
-          console.log('Calculated changes => ' + (new Date().getTime() - start));
 
           // Notify the server about the updated layers
           if (updates.length > 1) {
@@ -537,38 +580,45 @@
         };
 
         /**
-         * TODO
+         *
          */
         var sendToBack = $scope.sendToBack = function() {
           changeLayer('back');
         };
 
         /**
-         * TODO
+         * B
          */
         var bringToFront = $scope.bringToFront = function() {
           changeLayer('front');
         };
 
-        var start = null;
 
         /**
-         * TODO
+         * Send the currently selected element(s) to the back or  bring the
+         * currently selected element(s) to the front
+         *
+         * @param  {Number}         uid               The id of the element to update
+         * @param  {String}         direction         `front` if the currently selected element(s) should be brought to the front, `back` if the currently selected element(s) should be sent to the back
          */
-        var changeLayer = function(direction) {
-          start = new Date().getTime();
+        var moveLayer = $scope.moveLayer = function(direction) {
+          // Get the selected element(s)
           var elements = getActiveElements();
-          console.log('getActiveElements => ' + (new Date().getTime() - start));
-          canvas.deactivateAll().renderAll();
-          // TODO
-          elements.sort(function(a, b) {
-            return a.index - b.index;
+
+          // Sort the selected elements by their position to ensure that
+          // they are in the same order when moved to the back or front
+          elements.sort(function(elementA, elementB) {
+            if (direction === 'back') {
+              return elementB.index - elementA.index;
+            } else {
+              return elementA.index - elementB.index;
+            }
           });
-          if (direction === 'back') {
-            elements.reverse();
-          }
-          console.log('sort => ' + (new Date().getTime() - start));
-          console.log(elements);
+
+          // Move the elements to the back or front one by one
+          var activeGroup = canvas.getActiveGroup();
+          canvas.remove(canvas.getActiveGroup());
+          canvas.deactivateAll().renderAll();
           _.each(elements, function(element) {
             element = getCanvasElement(element.uid);
             if (direction === 'back') {
@@ -577,10 +627,27 @@
               element.bringToFront();
             }
           });
-          console.log('changeLayer => ' + (new Date().getTime() - start));
-          // TODO: Reselect selected items
+
+          // Notify the server about the updated layers
           canvas.renderAll();
           updateLayers();
+
+          // Re-select the selected item(s)
+          setTimeout(function() {
+            if (elements.length === 1) {
+              canvas.setActiveObject(getCanvasElement(elements[0].uid));
+            } else {
+              var newElements = [];
+              _.each(elements, function(element) {
+                newElements.push(getCanvasElement(element.uid));
+              });
+              var group = new fabric.Group(newElements);
+              group.set('isHelper', true);
+              canvas.setActiveGroup(group);
+              canvas.add(group);
+              canvas.renderAll();
+            }
+          }, 1);
         };
 
         initializeCanvas();
@@ -711,6 +778,7 @@
          * A new element was added to the whiteboard canvas by the current user
          */
         canvas.on('object:added', function(ev) {
+          console.log(ev.target);
           var element = ev.target;
 
           // Don't add a new text element until text has been entered
@@ -857,7 +925,7 @@
         /**
          * Delete the selected whiteboard element(s)
          */
-        var deleteActiveElements = function() {
+        var deleteActiveElements = $scope.deleteActiveElements = function() {
           // Get the selected items
           var elements = getActiveElements();
 
@@ -1001,6 +1069,7 @@
             // for those elements and select them
             } else {
               var group = new fabric.Group();
+              group.set('isHelper', true);
               canvas.add(group);
               _.each(elements, function(element) {
                 group.addWithUpdate(element);
@@ -1042,10 +1111,15 @@
          * to be programmatically removed from the canvas again
          */
         canvas.on('before:selection:cleared', function() {
+          console.log('HEYHEY');
           if (canvas.getActiveGroup()) {
             canvas.remove(canvas.getActiveGroup());
           }
+          setCanvasDimensions();
         })
+
+        // TODO
+        canvas.on('selection:cleared', setCanvasDimensions);
 
         /* UNDO/REDO */
 
@@ -1773,6 +1847,51 @@
           // also close the add asset popover
           setMode('move');
         };
+
+
+
+        /* TODO */
+
+        var itemSelected = $scope.itemSelected = function() {
+          return canvas.getActiveObject() || canvas.getActiveGroup();
+        };
+
+        $scope.modificationInProgress = false;
+
+        canvas.on('object:moving', function() {
+          $scope.modificationInProgress = true;
+        })
+        canvas.on('object:scaling', function() {
+          $scope.modificationInProgress = true;
+        })
+        canvas.on('object:rotating', function() {
+          $scope.modificationInProgress = true;
+        })
+        canvas.on('object:modified', function() {
+          $scope.modificationInProgress = false;
+        });
+
+        canvas.on('after:render', function() {
+          if (!$scope.modificationInProgress && itemSelected()) {
+            var bound = null;
+            if (canvas.getActiveObject()) {
+              bound = canvas.getActiveObject().getBoundingRect();
+            } else if (canvas.getActiveGroup()) {
+              bound = canvas.getActiveGroup().getBoundingRect();
+            }
+            canvas.contextContainer.strokeStyle = '#0295DE';
+            canvas.contextContainer.strokeRect(
+              bound.left - 10,
+              bound.top - 10,
+              bound.width + 20,
+              bound.height + 20
+            );
+            var editButtons = document.getElementById('whiteboards-board-editelement');
+            editButtons.style.left = (bound.left - 10) + 'px';
+            editButtons.style.top = (bound.top + bound.height + 15) + 'px';
+          }
+        });
+
 
         /* INITIALIZATION */
 

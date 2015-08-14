@@ -6,6 +6,15 @@
   <!-- WHITEBOARD -->
   <div id="whiteboards-board-viewport" tabindex="0">
     <canvas id="whiteboards-board-board"></canvas>
+
+    <!-- ELEMENT BUTTONS -->
+    <div id="whiteboards-board-editelement" data-ng-show="itemSelected() && !modificationInProgress">
+      <button type="button" class="btn btn-default" title="Move to back" data-ng-click="moveLayer('back')"><i class="fa fa-arrow-down"><span class="sr-only">Move to back</span></i></button>
+      <button type="button" class="btn btn-default" title="Bring to front" data-ng-click="moveLayer('front')"><i class="fa fa-arrow-up"><span class="sr-only">Bring to front</span></i></button>
+      <button type="button" class="btn btn-default" title="Delete" data-ng-click="deleteActiveElements()"><i class="fa fa-trash"><span class="sr-only">Delete</span></i></button>
+      <a class="btn btn-default" title="Open original asset" target="_blank" data-ng-if="hasSelectedAsset()" ui-sref="assetlibrarylist.item(getSelectedAssetParams())"><i class="fa fa-external-link"><span class="sr-only">Open original asset</span></i></a>
+    </div>
+
   </div>
   <!-- TOOLBAR -->
   <div id="whiteboards-board-toolbar" class="btn-toolbar" role="toolbar" aria-label="Whiteboard Toolbar" data-ng-if="!readonly">
@@ -86,11 +95,6 @@
         <span class="sr-only">Actual size"</span>
       </i>
     </button>
-  </div>
-  <!-- ELEMENT BUTTONS -->
-  <div style="z-index: 1100; position: absolute; top: 100px; left: 100px;">
-    <button type="button" data-ng-click="sendToBack()">Move to back</button>
-    <button type="button" data-ng-click="bringToFront()">Move to front</button>
   </div>
 </div>
 

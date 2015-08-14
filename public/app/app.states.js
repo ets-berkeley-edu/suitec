@@ -26,6 +26,8 @@
       'requireBase': false
     }).hashPrefix('!');
 
+    console.log('HERE');
+
     // Configure the Collabosphere routes
     $stateProvider
       // Asset Library routes
@@ -41,7 +43,7 @@
             'templateUrl': '/app/assetlibrary/item/item.html'
           }
         },
-        'url': '/assetlibrary/:assetId'
+        'url': '/:assetId?course_id&api_domain&tool_url'
       })
       .state('assetlibrarylist.item.edit', {
         'views': {
@@ -50,7 +52,7 @@
             'templateUrl': '/app/assetlibrary/edit/edit.html'
           }
         },
-        'url': '/assetlibrary/:assetId/edit'
+        'url': '/edit'
       })
       .state('assetlibraryupload', {
         'url': '/assetlibrary/upload',

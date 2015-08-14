@@ -18,6 +18,11 @@
   'use strict';
 
   angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $filter, $stateParams, $scope) {
+console.log('HERE');
+//
+$scope.closeWindow = function() {
+  window.close();
+}
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;

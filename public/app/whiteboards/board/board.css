@@ -30,6 +30,7 @@
 
 #whiteboards-board-viewport {
   height: 100%;
+  position: relative;
   width: 100%;
   overflow: scroll;
 }
@@ -68,6 +69,30 @@
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 
+/* EDIT EXISTING */
+
+#whiteboards-board-editelement {
+  display: inline-block;
+  position: absolute;
+  z-index: 1100;
+}
+
+#whiteboards-board-editelement .btn-default {
+  background-color: #FFF;
+  padding: 5px 8px;
+}
+
+#whiteboards-board-editelement .btn-default i {
+  color: #666;
+  font-size: 17px;
+}
+
+#whiteboards-board-editelement .btn-default i.fa-external-link {
+  left: 1px;
+  position: relative;
+  top: 2px;
+}
+
 /* TOOLBAR */
 
 #whiteboards-board-toolbar {
@@ -81,6 +106,7 @@
   margin-right: 20px;
   padding: 7px;
   position: relative;
+  z-index: 1100;
 }
 
 #whiteboards-board-toolbar > .btn-group:first-child {

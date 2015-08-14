@@ -19,6 +19,12 @@
 
   angular.module('collabosphere').service('utilService', function($location, $q, $timeout) {
 
+    // TODO
+    console.log($location.path());
+    if (top != self || $location.path().indexOf('/whiteboards/') !== -1) {
+      document.body.classList.add('embedded');
+    }
+
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
     // the base URL for all REST API requests
