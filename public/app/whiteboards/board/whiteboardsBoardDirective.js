@@ -50,7 +50,7 @@
         var CANVAS_BASE_WIDTH = 1000;
 
         // The padding that will be enforced on the canvas when it can be scrolled
-        var CANVAS_PADDING = 50;
+        var CANVAS_PADDING = 60;
 
         // Variable that will keep track of whether the chat/online sidebar is expanded
         $scope.sidebarExpanded = $scope.readonly ? false : true;
