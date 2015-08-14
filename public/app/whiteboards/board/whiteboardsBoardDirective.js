@@ -118,7 +118,16 @@
           setTimeout(setCanvasDimensions, 0);
 
           // Restore the order of the layers once all elements have finished loading
-          var restore = _.after($scope.whiteboard.whiteboard_elements.length, restoreLayers);
+          var restore = _.after($scope.whiteboard.whiteboard_elements.length, function() {
+            restoreLayers();
+
+            // Deactivate all elements and element selection when the whiteboard
+            // is being rendered in read only mode
+            if ($scope.readonly) {
+              canvas.deactivateAll();
+              canvas.selection = false;
+            }
+          });
 
           // Restore the layout of the whiteboard canvas
           _.each($scope.whiteboard.whiteboard_elements, function(element) {
@@ -150,48 +159,6 @@
         var getOnlineUsers = $scope.getOnlineUsers = function() {
           if ($scope.whiteboard) {
             return $filter('filter')($scope.whiteboard.members, {'online': true});
-          }
-        };
-
-        /**
-         * TODO
-         * Generate the full URL for a whiteboard. This includes the launch parameters that were passed in
-         * when the LTI tool was launched
-         *
-         * @return {String}                               The full whiteboard URL
-         */
-        //var generateAssetURL = $scope.generateAssetURL = function() {
-        //  var selected = canvas.getActiveObject();
-        //  if (selected && selected.assetId) {
-        //    var launchParams = utilService.getLaunchParams();
-        //    var url = '/assetlibrary/' + selected.assetId;
-        //    url += '?api_domain=' + launchParams.apiDomain;
-        //    url += '&course_id=' + launchParams.courseId;
-        //    url += '&tool_url=' + launchParams.toolUrl;
-        //    return url;
-        //  }
-        //};
-        var hasSelectedAsset = $scope.hasSelectedAsset = function() {
-          var selected = canvas.getActiveObject();
-          if (selected && selected.assetId) {
-            return true;
-          } else {
-            return false;
-          }
-        };
-
-        var getSelectedAssetParams = $scope.getSelectedAssetParams = function() {
-          var selected = canvas.getActiveObject();
-          if (selected && selected.assetId) {
-            var launchParams = utilService.getLaunchParams();
-            return {
-              'api_domain': launchParams.apiDomain,
-              'course_id': launchParams.courseId,
-              'tool_url': launchParams.toolUrl,
-              'assetId': selected.assetId
-            };
-          } else {
-            return false;
           }
         };
 
@@ -284,40 +251,6 @@
               bound = element.getBoundingRect();
             } else {
               bound = element.group.getBoundingRect();
-              /*// Elements in a group are positioned relative to the group. In order to calculate the most
-              // right and most bottom point of the element, we need to calculate its position relative to
-              // the canvas and then calculate the bounding rectangle for that element
-              var position = calculateGlobalElementPosition(element.group, element);
-              var width = element.width * position.scaleX;
-              var height = element.height * position.scaleY;
-              var rotation = fabric.util.degreesToRadians(position.angle);
-
-              // The left and top position correspond to the center of the element
-              var center = new fabric.Point(position.left, position.top);
-
-              // Calculate the corners of the object, keeping its rotation into account
-              var tl = fabric.util.rotatePoint(new fabric.Point(center.x - (width / 2), center.y - (height / 2)), center, rotation);
-              var tr = fabric.util.rotatePoint(new fabric.Point(center.x + (width / 2), center.y - (height / 2)), center, rotation);
-              var br = fabric.util.rotatePoint(new fabric.Point(center.x + (width / 2), center.y + (height / 2)), center, rotation);
-              var bl = fabric.util.rotatePoint(new fabric.Point(center.x - (width / 2), center.y + (height / 2)), center, rotation);
-
-              // Calculate the position of the bounding rectangle
-              var xCoords = [tl.x, tr.x, br.x, bl.x];
-              var minX = _.min(xCoords) * canvas.getZoom();
-              var maxX = _.max(xCoords) * canvas.getZoom();
-              var boundingRectWidth = Math.abs(minX - maxX);
-
-              var yCoords = [tl.y, tr.y, br.y, bl.y];
-              var minY = _.min(yCoords) * canvas.getZoom();
-              var maxY = _.max(yCoords) * canvas.getZoom();
-              var boundingRectHeight = Math.abs(minY - maxY);
-
-              bound = {
-                'left': minX,
-                'top': minY,
-                'width': boundingRectWidth,
-                'height': boundingRectHeight
-              };*/
             }
 
             maxRight = Math.max(maxRight, bound.left + bound.width);
@@ -443,6 +376,13 @@
         };
 
         /**
+         * Check whether any elements on the whiteboard canvas are currently selected
+         */
+        var isElementSelected = $scope.isElementSelected = function() {
+          return canvas.getActiveObject() || canvas.getActiveGroup();
+        };
+
+        /**
          * Set a unique id on a Fabric.js canvas element if the element doesn't have a
          * unique id assigned
          *
@@ -491,7 +431,7 @@
             if (element.type === 'image' && element.getSrc() !== update.src) {
               element.setSrc(update.src, function() {
                 canvas.renderAll();
-                // TODO
+                // Ensure that the correct position is applied
                 restoreLayers();
               });
             } else {
@@ -534,22 +474,16 @@
         /* LAYERS */
 
         /**
-         * TODO
+         * Ensure that all elements are ordered as specified by the
+         * element's index attribute
          */
         var restoreLayers = function() {
-          canvas.getObjects().sort(function(a, b) {
-            return a.index - b.index;
+          canvas.getObjects().sort(function(elementA, elementB) {
+            return elementA.index - elementB.index;
           })
           canvas.renderAll();
           // Set the size of the whiteboard canvas
           setCanvasDimensions();
-
-          // Deactivate all elements and element selection when the whiteboard
-          // is being rendered in read only mode
-          if ($scope.readonly) {
-            canvas.deactivateAll();
-            canvas.selection = false;
-          }
         };
 
         /**
@@ -578,21 +512,6 @@
             saveElementUpdates(updates);
           }
         };
-
-        /**
-         *
-         */
-        var sendToBack = $scope.sendToBack = function() {
-          changeLayer('back');
-        };
-
-        /**
-         * B
-         */
-        var bringToFront = $scope.bringToFront = function() {
-          changeLayer('front');
-        };
-
 
         /**
          * Send the currently selected element(s) to the back or  bring the
@@ -753,6 +672,19 @@
 
         canvas.on('object:moving', ensureWithinCanvas);
 
+        /**
+         * When a new group has been added programmatically added, it needs to be programmatically
+         * removed from the canvas when the group is deselected
+         */
+        canvas.on('before:selection:cleared', function() {
+          if (canvas.getActiveGroup()) {
+            canvas.remove(canvas.getActiveGroup());
+          }
+        })
+
+        // Recalculate the size of the whiteboard canvas when a selection has been deselected
+        canvas.on('selection:cleared', setCanvasDimensions);
+
         ///////////////
         // ADD ITEMS //
         ///////////////
@@ -778,7 +710,6 @@
          * A new element was added to the whiteboard canvas by the current user
          */
         canvas.on('object:added', function(ev) {
-          console.log(ev.target);
           var element = ev.target;
 
           // Don't add a new text element until text has been entered
@@ -900,6 +831,56 @@
 
           // Switch back to move mode
           setMode('move');
+        });
+
+        // Variable that will keep track of whether the currently selected elements are
+        // in the process of being moved, scaled or rotated
+        $scope.isModifyingElement = false;
+
+        /**
+         * Indicate that the currently selected elements are in the process of being
+         * moved, scaled or rotated
+         */
+        var setModifyingElement = function() {
+          $scope.isModifyingElement = true;
+        };
+
+        canvas.on('object:moving', setModifyingElement);
+        canvas.on('object:scaling', setModifyingElement);
+        canvas.on('object:rotating', setModifyingElement);
+
+        /**
+         * Indicate that the currently selected elements are no longer being modified
+         * once moving, scaling or rotating has finished
+         */
+        canvas.on('object:modified', function() {
+          $scope.isModifyingElement = false;
+        });
+
+        /**
+         * Draw a box around the currently selected element(s) and use this box
+         * to position the buttons that allow the selected element(s) to be
+         * modified
+         */
+        canvas.on('after:render', function() {
+          if (!$scope.isModifyingElement && isElementSelected()) {
+            // Get the bounding rectangle around the currently selected element(s)
+            var bound = null;
+            if (canvas.getActiveObject()) {
+              bound = canvas.getActiveObject().getBoundingRect();
+            } else if (canvas.getActiveGroup()) {
+              bound = canvas.getActiveGroup().getBoundingRect();
+            }
+
+            // Explicitly draw the bounding rectangle
+            canvas.contextContainer.strokeStyle = '#0295DE';
+            canvas.contextContainer.strokeRect(bound.left - 10, bound.top - 10, bound.width + 20, bound.height + 20);
+
+            // Position the buttons to modify the selected element(s)
+            var editButtons = document.getElementById('whiteboards-board-editelement');
+            editButtons.style.left = (bound.left - 10) + 'px';
+            editButtons.style.top = (bound.top + bound.height + 15) + 'px';
+          }
         });
 
         //////////////////
@@ -1104,22 +1085,6 @@
             });
           }
         };
-
-        /**
-         * When multiple objects have been pasted, a new group is programmatically added to
-         * allow the pasted elements to be selected. When this group is deselected, it needs
-         * to be programmatically removed from the canvas again
-         */
-        canvas.on('before:selection:cleared', function() {
-          console.log('HEYHEY');
-          if (canvas.getActiveGroup()) {
-            canvas.remove(canvas.getActiveGroup());
-          }
-          setCanvasDimensions();
-        })
-
-        // TODO
-        canvas.on('selection:cleared', setCanvasDimensions);
 
         /* UNDO/REDO */
 
@@ -1563,6 +1528,38 @@
           });
         };
 
+        /**
+         * Get the id of the currently selected asset element
+         *
+         * @return {Number}                               The id of the currently selected asset element. `null` if no asset element is selected
+         */
+        var getSelectedAsset = $scope.getSelectedAsset = function() {
+          var selectedElement = canvas.getActiveObject();
+          if (selectedElement) {
+            return selectedElement.assetId;
+          }
+        };
+
+        /**
+         * Get the parameters required to construct the URL to the asset detail page
+         * of the currently selected asset element
+         *
+         * @return {Object}                               The parameters required to the construct the URL to the asset detail page of the selected asset
+         */
+        var getSelectedAssetParams = $scope.getSelectedAssetParams = function() {
+          var assetId = getSelectedAsset();
+          if (assetId) {
+            var launchParams = utilService.getLaunchParams();
+            return {
+              'api_domain': launchParams.apiDomain,
+              'course_id': launchParams.courseId,
+              'tool_url': launchParams.toolUrl,
+              'assetId': assetId,
+              'whiteboard_referral': true
+            };
+          }
+        };
+
         /* ADD LINK */
 
         /**
@@ -1847,51 +1844,6 @@
           // also close the add asset popover
           setMode('move');
         };
-
-
-
-        /* TODO */
-
-        var itemSelected = $scope.itemSelected = function() {
-          return canvas.getActiveObject() || canvas.getActiveGroup();
-        };
-
-        $scope.modificationInProgress = false;
-
-        canvas.on('object:moving', function() {
-          $scope.modificationInProgress = true;
-        })
-        canvas.on('object:scaling', function() {
-          $scope.modificationInProgress = true;
-        })
-        canvas.on('object:rotating', function() {
-          $scope.modificationInProgress = true;
-        })
-        canvas.on('object:modified', function() {
-          $scope.modificationInProgress = false;
-        });
-
-        canvas.on('after:render', function() {
-          if (!$scope.modificationInProgress && itemSelected()) {
-            var bound = null;
-            if (canvas.getActiveObject()) {
-              bound = canvas.getActiveObject().getBoundingRect();
-            } else if (canvas.getActiveGroup()) {
-              bound = canvas.getActiveGroup().getBoundingRect();
-            }
-            canvas.contextContainer.strokeStyle = '#0295DE';
-            canvas.contextContainer.strokeRect(
-              bound.left - 10,
-              bound.top - 10,
-              bound.width + 20,
-              bound.height + 20
-            );
-            var editButtons = document.getElementById('whiteboards-board-editelement');
-            editButtons.style.left = (bound.left - 10) + 'px';
-            editButtons.style.top = (bound.top + bound.height + 15) + 'px';
-          }
-        });
-
 
         /* INITIALIZATION */
 

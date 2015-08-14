@@ -26,13 +26,11 @@
       'requireBase': false
     }).hashPrefix('!');
 
-    console.log('HERE');
-
     // Configure the Collabosphere routes
     $stateProvider
       // Asset Library routes
       .state('assetlibrarylist', {
-        'url': '/assetlibrary?category&user&keywords&type',
+        'url': '/assetlibrary?category&user&keywords&type&course_id&api_domain&tool_url',
         'templateUrl': '/app/assetlibrary/list/list.html',
         'controller': 'AssetLibraryListController'
       })
@@ -43,7 +41,7 @@
             'templateUrl': '/app/assetlibrary/item/item.html'
           }
         },
-        'url': '/:assetId?course_id&api_domain&tool_url'
+        'url': '/:assetId?whiteboard_referral'
       })
       .state('assetlibrarylist.item.edit', {
         'views': {

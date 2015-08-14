@@ -18,14 +18,12 @@
   'use strict';
 
   angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $filter, $stateParams, $scope) {
-console.log('HERE');
-//
-$scope.closeWindow = function() {
-  window.close();
-}
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
+
+    // Variable that will keep track of whether the user has come in via a whiteboard
+    $scope.whiteboardReferral = $stateParams.whiteboard_referral;
 
     // Variable that will keep track of the current asset
     $scope.asset = null;
@@ -223,6 +221,15 @@ $scope.closeWindow = function() {
         $scope.asset = updatedAsset;
       }
     });
+
+    /**
+     * Close the current browser window. This is used when an asset has been opened
+     * in a separate tab and the user wants to be taken back to where the asset was
+     * launched from
+     */
+    var closeWindow = $scope.closeWindow = function() {
+      window.close();
+    }
 
     userFactory.getMe().success(function(me) {
       $scope.me = me;

@@ -298,6 +298,11 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
 
 .col-back {
   color: #333;
+  font-weight: 300;
+}
+
+.col-back.btn-link {
+  padding: 0;
 }
 
 .col-back i {
