@@ -47,32 +47,35 @@
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
 
-        // There can be a short delay between creating an asset and getting the embed id and key back.
-        // Simply show the pending preview modal and try again later
-        if (!asset.embed_id || !asset.embed_key) {
-          $scope.pendingPreview = true;
-          setTimeout(getCurrentAsset, 2000);
+        // Let embdr show a preview for files or links
+        if (asset.type === 'file' || asset.type === 'link') {
+          // There can be a short delay between creating an asset and getting the embed id and key back.
+          // Simply show the pending preview modal and try again later if we haven't heard back from Embdr yet
+          if (!asset.embed_id || !asset.embed_key) {
+            $scope.pendingPreview = true;
+            setTimeout(getCurrentAsset, 2000);
 
-        } else {
-          var embdrOptions = {
-            'loadingIcon': '//' + window.location.host + '/assets/img/canvas-logo.png',
-            'callback': function(err, resource) {
-              if (err) {
+          } else {
+            var embdrOptions = {
+              'loadingIcon': '//' + window.location.host + '/assets/img/canvas-logo.png',
+              'callback': function(err, resource) {
+                if (err) {
+                  $scope.supportedPreview = false;
+                  return;
+                }
+
+                $scope.pendingPreview = false;
+              },
+              'pending': function() {
+                $scope.pendingPreview = true;
+              },
+              'unsupported': function() {
+                $scope.pendingPreview = false;
                 $scope.supportedPreview = false;
-                return;
               }
-
-              $scope.pendingPreview = false;
-            },
-            'pending': function() {
-              $scope.pendingPreview = true;
-            },
-            'unsupported': function() {
-              $scope.pendingPreview = false;
-              $scope.supportedPreview = false;
-            }
-          };
-          window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
+            };
+            window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
+          }
         }
       });
     };
