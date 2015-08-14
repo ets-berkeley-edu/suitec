@@ -47,25 +47,33 @@
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
 
-        // Embed it
-        var embdrOptions = {
-          'loadingIcon': '//' + window.location.host + '/assets/img/canvas-logo.png',
-          'callback': function(err, resource) {
-            if (err) {
+        // There can be a short delay between creating an asset and getting the embed id and key back.
+        // Simply show the pending preview modal and try again later
+        if (!asset.embed_id || !asset.embed_key) {
+          $scope.pendingPreview = true;
+          setTimeout(getCurrentAsset, 2000);
+
+        } else {
+          var embdrOptions = {
+            'loadingIcon': '//' + window.location.host + '/assets/img/canvas-logo.png',
+            'callback': function(err, resource) {
+              if (err) {
+                $scope.supportedPreview = false;
+                return;
+              }
+
+              $scope.pendingPreview = false;
+            },
+            'pending': function() {
+              $scope.pendingPreview = true;
+            },
+            'unsupported': function() {
+              $scope.pendingPreview = false;
               $scope.supportedPreview = false;
             }
-
-            $scope.pendingPreview = false;
-          },
-          'pending': function() {
-            $scope.pendingPreview = true;
-          },
-          'unsupported': function() {
-            $scope.pendingPreview = false;
-            $scope.supportedPreview = false;
-          }
-        };
-        window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
+          };
+          window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
+        }
       });
     };
 

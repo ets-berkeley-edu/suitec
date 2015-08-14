@@ -18,7 +18,7 @@
 
   <div class="col-pane">
     <!-- PREVIEW -->
-    <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-if="supportedPreview && !pendingPreview && asset.type !== 'whiteboard'"></div>
+    <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-show="supportedPreview && !pendingPreview && asset.type !== 'whiteboard'"></div>
     <div class="text-center assetlibrary-item-preview-pending" data-ng-if="pendingPreview">
       <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
       <p><i class="fa fa-spinner fa-spin"></i> preparing a preview...</p>
