@@ -130,6 +130,7 @@
   position: absolute;
   right: 30px;
   top: 0;
+  z-index: 1001;
 }
 
 #whiteboards-board-sidebar-buttons.whiteboards-sidebar-expanded {
