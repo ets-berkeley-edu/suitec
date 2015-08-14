@@ -57,8 +57,8 @@
 
         // Open a websocket connection for real-time communication with the server (chat + whiteboard changes) when
         // the whiteboard is rendered in edit mode. The course ID and API domain are passed in as handshake query parameters
+        var launchParams = utilService.getLaunchParams();
         if (!$scope.readonly) {
-          var launchParams = utilService.getLaunchParams();
           var socket = io(window.location.origin, {
             'query': 'api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&whiteboard_id=' + $scope.whiteboard.id
           });
@@ -1549,7 +1549,6 @@
         var getSelectedAssetParams = $scope.getSelectedAssetParams = function() {
           var assetId = getSelectedAsset();
           if (assetId) {
-            var launchParams = utilService.getLaunchParams();
             return {
               'api_domain': launchParams.apiDomain,
               'course_id': launchParams.courseId,
@@ -1820,10 +1819,13 @@
           scope.whiteboard = $scope.whiteboard;
           scope.closeModal = function(asset) {
             if (asset) {
+              // Construct the link back to the asset library
+              var assetLibraryLink = '/assetlibrary?api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&tool_url=' + launchParams.toolUrl;
+
               // Show a notification indicating the whiteboard was exported
               var myAlert = $alert({
                 'container': '#whiteboards-board-notifications',
-                'content': 'This board has been successfully added to the <strong>Asset Library</strong>.',
+                'content': 'This board has been successfully added to the <a target="_blank" href="' + assetLibraryLink + '"><strong>Asset Library</strong></a>.',
                 'duration': 5,
                 'keyboard': true,
                 'show': true,
