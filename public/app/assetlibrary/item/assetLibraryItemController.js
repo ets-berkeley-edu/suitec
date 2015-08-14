@@ -61,8 +61,9 @@
             $scope.pendingPreview = true;
           },
           'unsupported': function() {
+            $scope.pendingPreview = false;
             $scope.supportedPreview = false;
-          },
+          }
         };
         window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
       });

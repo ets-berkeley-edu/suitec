@@ -20,11 +20,11 @@
     <!-- PREVIEW -->
     <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-if="supportedPreview && !pendingPreview && asset.type !== 'whiteboard'"></div>
     <div class="text-center assetlibrary-item-preview-pending" data-ng-if="pendingPreview">
-      <i class="fa fa-file-o"></i>
+      <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
       <p><i class="fa fa-spinner fa-spin"></i> preparing a preview...</p>
     </div>
     <div class="text-center assetlibrary-item-preview-default" data-ng-if="!supportedPreview">
-      <i class="fa fa-file-zip-o"></i>
+      <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
       <p>No preview available.</p>
       <a data-ng-href="{{asset.download_url}}" data-ng-if="asset.type === 'file'" target="_blank" class="btn btn-default">
         <i class="fa fa-download"></i>
