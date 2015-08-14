@@ -551,22 +551,10 @@
           canvas.renderAll();
           updateLayers();
 
-          // Re-select the selected item(s)
-          setTimeout(function() {
-            if (elements.length === 1) {
-              canvas.setActiveObject(getCanvasElement(elements[0].uid));
-            } else {
-              var newElements = [];
-              _.each(elements, function(element) {
-                newElements.push(getCanvasElement(element.uid));
-              });
-              var group = new fabric.Group(newElements);
-              group.set('isHelper', true);
-              canvas.setActiveGroup(group);
-              canvas.add(group);
-              canvas.renderAll();
-            }
-          }, 1);
+          // When only a single item was selected, re-select it
+          if (elements.length === 1) {
+            canvas.setActiveObject(getCanvasElement(elements[0].uid));
+          }
         };
 
         initializeCanvas();
