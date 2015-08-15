@@ -28,6 +28,12 @@
     // Variable that will keep track of the new top-level comment
     $scope.newComment = null;
 
+    // If the tool is embedded in an iframe, stick the asset id in the hash of the parent container
+    // allowing the asset to be linked directly
+    if (window.parent) {
+      utilService.setParentHash('col_asset=' + assetId);
+    }
+
     /**
      * Get the current asset
      */

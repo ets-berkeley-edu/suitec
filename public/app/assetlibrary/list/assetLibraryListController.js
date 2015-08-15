@@ -61,6 +61,25 @@
      * Get the assets for the current course through an infinite scroll
      */
     var getAssets = $scope.getAssets = function() {
+      // Keep track of the search options in the parent container's hash as well, so searches can be
+      // linked from other pages outside of Collabosphere
+      if (window.parent) {
+        var hash = '';
+        if ($scope.searchOptions.keywords) {
+          hash += 'col_keywords=' + $scope.searchOptions.keywords + '&';
+        }
+        if ($scope.searchOptions.category) {
+          hash += 'col_category=' + $scope.searchOptions.category + '&';
+        }
+        if ($scope.searchOptions.user) {
+          hash += 'col_user=' + $scope.searchOptions.user + '&';
+        }
+        if ($scope.searchOptions.type) {
+          hash += 'col_type=' + $scope.searchOptions.type + '&';
+        }
+        utilService.setParentHash(hash);
+      }
+
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;

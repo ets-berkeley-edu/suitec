@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function($location, $q, $timeout) {
+  angular.module('collabosphere').service('utilService', function($location, $q, $rootScope, $state, $timeout) {
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
@@ -148,6 +148,37 @@
     };
 
     /**
+     * Get the full URL of the parent container
+     *
+     * @param  {Function}   callback          Standard callback function
+     * @param  {String}     callback.url      The URL of the parent container
+     */
+    var getParentUrl = function(callback) {
+      postIFrameMessage(function() {
+        return {
+          'subject': 'getParent'
+        };
+      }, function(data) {
+        data = data || {};
+        return callback(data.location);
+      });
+    };
+
+    /**
+     * Set the parent's container hash
+     *
+     * @param {String}  hash    The value to set the parent's container hash value to
+     */
+    var setParentHash = function(hash) {
+      postIFrameMessage(function() {
+        return {
+          'subject': 'setParentHash',
+          'hash': hash
+        };
+      });
+    };
+
+    /**
      * Utility function used to send a window event to the parent container. When running
      * Collabosphere as a BasicLTI tool, this is our main way of communicating with the container
      * application
@@ -165,6 +196,9 @@
       if (window.parent) {
         // Wait until Angular has finished rendering items on the screen
         $timeout(function() {
+          // Give each message a unique id so we can send multiple messages concurrently
+          var messageId = Math.floor(Math.random() * 10000);
+
           // The parent container will respond with a message into the current window containing
           // the scroll information of the parent window
           if (messageCallback) {
@@ -177,10 +211,10 @@
                   // The message is not for us; ignore it
                   return;
                 }
-                if (message) {
+                if (message && message.messageId === messageId) {
                   messageCallback(message);
+                  window.removeEventListener('message', callback);
                 }
-                window.removeEventListener('message', callback);
               }
             };
             window.addEventListener('message', callback);
@@ -190,20 +224,53 @@
           // message directly into this function, as we sometimes need to wait until Angular has
           // finished rendering before we can determine what message to send
           var message = messageGenerator();
+          message.messageId = messageId;
           // Send the message to the parent container as a stringified object
           window.parent.postMessage(JSON.stringify(message), '*');
         });
       }
     };
 
+    // If the LTI tools are running in an iFrame we get the parent container's URL. This allows for
+    // linking to states such as an asset profile directly
+    if (window.parent) {
+      getParentUrl(function(url) {
+        url = url || '';
+
+        // Check if an asset was linked directly
+        var assetMatch = url.match(/col_asset=([0-9]+)/);
+        if (assetMatch && assetMatch[1]) {
+          var assetId = parseInt(assetMatch[1], 10);
+          $state.go('assetlibrarylist.item', {'assetId': assetId});
+        }
+
+        // Check if a search was linked directly
+        var searchKeywordsMatch = url.match(/col_keywords=(.+?)&/);
+        var searchCategoryMatch = url.match(/col_category=([0-9]+)&/);
+        var searchUserMatch = url.match(/col_user=([0-9]+)&/);
+        var searchTypeMatch = url.match(/col_type=(.+?)&/);
+        if (searchKeywordsMatch || searchCategoryMatch || searchUserMatch || searchTypeMatch) {
+          var searchOptions = {
+            'keywords': (searchKeywordsMatch ? searchKeywordsMatch[1] : ''),
+            'category': (searchCategoryMatch ? searchCategoryMatch[1] : ''),
+            'user': (searchUserMatch ? searchUserMatch[1] : ''),
+            'type': (searchTypeMatch ? searchTypeMatch[1] : '')
+          };
+          $state.go('assetlibrarylist', searchOptions);
+        }
+      });
+    }
+
     return {
-      'getLaunchParams': getLaunchParams,
       'getApiUrl': getApiUrl,
-      'getToolUrl': getToolUrl,
+      'getLaunchParams': getLaunchParams,
+      'getParentUrl': getParentUrl,
       'getScrollInformation': getScrollInformation,
+      'getToolUrl': getToolUrl,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
-      'scrollToTop': scrollToTop
+      'scrollToTop': scrollToTop,
+      'setParentHash': setParentHash
     };
 
   });
