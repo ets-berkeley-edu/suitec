@@ -54,7 +54,7 @@
 @media only screen and (min-width : 768px) {
   .assetlibrary-item-preview {
     line-height: 400px;
-    max-height: 700px;
+    max-height: 720px;
     min-height: 400px;
   }
 
@@ -62,16 +62,16 @@
     padding: 5px;
   }
 
-  .assetlibrary-item-preview .embdr-iframe {
-    height: 700px;
+  .assetlibrary-item-preview iframe {
+    height: 720px;
   }
 
   .assetlibrary-item-preview .embdr-document {
-    height: 700px;
+    height: 720px;
   }
 
   .assetlibrary-item-whiteboard-preview {
-    height: 700px;
+    height: 720px;
   }
 }
 
