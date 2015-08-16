@@ -33,6 +33,14 @@
   width: 100%;
 }
 
+
+.assetlibrary-item-preview iframe {
+  background-color: #FFF;
+  overflow: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
 .assetlibrary-item-whiteboard-preview {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
@@ -42,9 +50,6 @@
   width: 100%;
 }
 
-.assetlibrary-item-preview .embdr-iframe {
-  background-color: #FFF;
-}
 
 @media only screen and (min-width : 768px) {
   .assetlibrary-item-preview {
