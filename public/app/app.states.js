@@ -29,6 +29,26 @@
     // Configure the Collabosphere routes
     $stateProvider
       // Asset Library routes
+      .state('assetlibraryupload', {
+        'url': '/assetlibrary/upload',
+        'templateUrl': '/app/assetlibrary/uploadcontainer/uploadcontainer.html',
+        'controller': 'AssetLibraryUploadContainerController'
+      })
+      .state('assetlibraryaddlink', {
+        'url': '/assetlibrary/addlink',
+        'templateUrl': '/app/assetlibrary/addlinkcontainer/addlinkcontainer.html',
+        'controller': 'AssetLibraryAddLinkContainerController'
+      })
+      .state('assetlibrarycategories', {
+        'url': '/assetlibrary/categories',
+        'templateUrl': '/app/assetlibrary/categories/categories.html',
+        'controller': 'AssetLibraryCategoriesController'
+      })
+      .state('assetlibraryaddbookmarklet', {
+        'url': '/assetlibrary/addbookmarklet',
+        'templateUrl': '/app/assetlibrary/addbookmarklet/addbookmarklet.html',
+        'controller': 'AssetLibraryAddBookmarkletController'
+      })
       .state('assetlibrarylist', {
         'url': '/assetlibrary?category&user&keywords&type&course_id&api_domain&tool_url',
         'templateUrl': '/app/assetlibrary/list/list.html',
@@ -51,26 +71,6 @@
           }
         },
         'url': '/edit'
-      })
-      .state('assetlibraryupload', {
-        'url': '/assetlibrary/upload',
-        'templateUrl': '/app/assetlibrary/uploadcontainer/uploadcontainer.html',
-        'controller': 'AssetLibraryUploadContainerController'
-      })
-      .state('assetlibraryaddlink', {
-        'url': '/assetlibrary/addlink',
-        'templateUrl': '/app/assetlibrary/addlinkcontainer/addlinkcontainer.html',
-        'controller': 'AssetLibraryAddLinkContainerController'
-      })
-      .state('assetlibrarycategories', {
-        'url': '/assetlibrary/categories',
-        'templateUrl': '/app/assetlibrary/categories/categories.html',
-        'controller': 'AssetLibraryCategoriesController'
-      })
-      .state('assetlibraryaddbookmarklet', {
-        'url': '/assetlibrary/addbookmarklet',
-        'templateUrl': '/app/assetlibrary/addbookmarklet/addbookmarklet.html',
-        'controller': 'AssetLibraryAddBookmarkletController'
       })
 
       // Engagement Index routes
