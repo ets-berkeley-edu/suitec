@@ -135,6 +135,15 @@
       }
     });
 
+    /**
+     * Listen for events indicating that an asset has been deleted
+     */
+    $scope.$on('assetLibraryAssetDeleted', function(ev, assetId) {
+      $scope.assets = _.reject($scope.assets, function(asset) {
+        return asset.id === assetId;
+      })
+    });
+
     userFactory.getMe().success(function(me) {
       $scope.me = me;
     });
