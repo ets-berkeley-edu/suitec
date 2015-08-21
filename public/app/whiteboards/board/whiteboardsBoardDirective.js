@@ -436,7 +436,7 @@
             } else {
               restoreLayers();
             }
-          }
+          };
 
           // If the element is an asset for which the source has changed, we preload
           // the image to prevent flickering when the image is inserted into the element
@@ -456,10 +456,10 @@
             deleteActiveElements();
             $event.preventDefault();
           // Undo the previous action when Ctrl+Z is pressed
-          } else if ($event.keyCode === 90 && $event.metaKey) {
+          // } else if ($event.keyCode === 90 && $event.metaKey) {
           //  undo();
           // Redo the previous action when Ctrl+Y is pressed
-          } else if ($event.keyCode === 89 && $event.metaKey) {
+          // } else if ($event.keyCode === 89 && $event.metaKey) {
           //  redo();
           // Copy the selected elements
           } else if ($event.keyCode === 67 && $event.metaKey) {
@@ -479,7 +479,7 @@
         var restoreLayers = function() {
           canvas.getObjects().sort(function(elementA, elementB) {
             return elementA.index - elementB.index;
-          })
+          });
           canvas.renderAll();
           // Set the size of the whiteboard canvas
           setCanvasDimensions();
@@ -516,7 +516,6 @@
          * Send the currently selected element(s) to the back or  bring the
          * currently selected element(s) to the front
          *
-         * @param  {Number}         uid               The id of the element to update
          * @param  {String}         direction         `front` if the currently selected element(s) should be brought to the front, `back` if the currently selected element(s) should be sent to the back
          */
         var moveLayer = $scope.moveLayer = function(direction) {
@@ -567,16 +566,16 @@
          * @param  {Object}         element           The Fabric.js element for which the position relative to its group should be calculated
          * @return {Object}                           The position of the element relative to the whiteboard canvas. Will return the `angle`, `left` and `top` postion and the `scaleX` and `scaleY` scaling factors
          */
-        var calculateGlobalElementPosition = function(group, object) {
+        var calculateGlobalElementPosition = function(group, element) {
           var center = group.getCenterPoint();
-          var rotated = calculateRotatedLeftTop(group, object);
+          var rotated = calculateRotatedLeftTop(group, element);
 
           return {
-            'angle': object.getAngle() + group.getAngle(),
+            'angle': element.getAngle() + group.getAngle(),
             'left': center.x + rotated.left,
             'top': center.y + rotated.top,
-            'scaleX': object.get('scaleX') * group.get('scaleX'),
-            'scaleY': object.get('scaleY') * group.get('scaleY')
+            'scaleX': element.get('scaleX') * group.get('scaleX'),
+            'scaleY': element.get('scaleY') * group.get('scaleY')
           };
         };
 
@@ -587,12 +586,12 @@
          * @param  {Object}         element           The Fabric.js element for which the top left position in its group should be calculated
          * @return {Object}                           The top left position of the element in its group. Will return the `top` and `left` postion
          */
-        var calculateRotatedLeftTop = function(group, object) {
+        var calculateRotatedLeftTop = function(group, element) {
           var groupAngle = group.getAngle() * (Math.PI / 180);
-          var left = (-Math.sin(groupAngle) * object.getTop() * group.get('scaleY') +
-                      Math.cos(groupAngle) * object.getLeft() * group.get('scaleX'));
-          var top = (Math.cos(groupAngle) * object.getTop() * group.get('scaleY') +
-                       Math.sin(groupAngle) * object.getLeft() * group.get('scaleX'))
+          var left = (-Math.sin(groupAngle) * element.getTop() * group.get('scaleY') +
+                      Math.cos(groupAngle) * element.getLeft() * group.get('scaleX'));
+          var top = (Math.cos(groupAngle) * element.getTop() * group.get('scaleY') +
+                       Math.sin(groupAngle) * element.getLeft() * group.get('scaleX'));
           return {
             'left': left,
             'top': top
@@ -606,7 +605,7 @@
          * @param  {Object[]}       elements          The elements that should be checked for presence in the active group
          */
         var deactiveActiveGroupIfOverlap = function(elements) {
-          var group = canvas.getActiveGroup()
+          var group = canvas.getActiveGroup();
           if (group) {
             var intersection = _.intersection(_.pluck(group.objects, 'uid'), _.pluck(elements, 'uid'));
             if (intersection.length > 0) {
@@ -631,7 +630,7 @@
               var position = calculateGlobalElementPosition(group, element);
               activeElements.push(angular.extend({}, element.toObject(), position));
             });
-          } else if (canvas.getActiveObject()){
+          } else if (canvas.getActiveObject()) {
             activeElements.push(canvas.getActiveObject().toObject());
           }
           return activeElements;
@@ -667,14 +666,12 @@
           if (canvas.getActiveGroup()) {
             canvas.remove(canvas.getActiveGroup());
           }
-        })
+        });
 
         // Recalculate the size of the whiteboard canvas when a selection has been deselected
         canvas.on('selection:cleared', setCanvasDimensions);
 
-        ///////////////
-        // ADD ITEMS //
-        ///////////////
+        /* ADD ITEMS */
 
         /**
          * Persist a new element to the server
@@ -733,9 +730,7 @@
           });
         }
 
-        //////////////////
-        // UPDATE ITEMS //
-        //////////////////
+        /* UPDATE ITEMS */
 
         /**
          * Persist element updates to the server
@@ -870,9 +865,7 @@
           }
         });
 
-        //////////////////
-        // DELETE ITEMS //
-        //////////////////
+        /* DELETE ITEMS */
 
         /**
          * Persist element deletions to the server
@@ -1081,10 +1074,10 @@
         /* UNDO/REDO */
 
         // Variable that will keep track of the activities the current user has taken
-        //$scope.activityQueue = [];
+        // $scope.activityQueue = [];
 
         // Variable that will keep track of the current position in the activity queue
-        //$scope.currentActivityPosition = 0;
+        // $scope.currentActivityPosition = 0;
 
         /**
          * Add a new activity to the activities queue
@@ -1093,7 +1086,7 @@
          * @param  {Object[]}       elements          The Fabric.js elements that were involved in the activity
          * // TODO
          */
-        //var addUndoActivity = function(type, elements) {
+        // var addUndoActivity = function(type, elements) {
         //  console.log(type);
         //  console.log(elements);
         //  // Remove all activities that happened after the current activity in the activities queue
@@ -1105,12 +1098,12 @@
         //    'elements': elements
         //  });
         //  $scope.currentActivityPosition++;
-        //};
+        // };
 
         /**
          * Undo the action at the current position in the actions queue
          */
-        //var undo = $scope.undo = function() {
+        // var undo = $scope.undo = function() {
         //  if ($scope.currentActivityPosition !== 0) {
         //    // Deactivate the currently selected item
         //    canvas.deactivateAll().renderAll();
@@ -1128,15 +1121,15 @@
         //    // The previous action was an element that was deleted.
         //    // Undoing this should add the element again
         //    } else if (previousActivity.type === 'delete') {
-            //  deserializeElement(previousAction.element, function(element) {
-            //    element.set('isUndoRedo', true);
-            //    canvas.add(element);
-            //    element.moveTo(element.get('index'));
-            //    canvas.renderAll();
-            //  });
+        //  deserializeElement(previousAction.element, function(element) {
+        //    element.set('isUndoRedo', true);
+        //    canvas.add(element);
+        //    element.moveTo(element.get('index'));
+        //    canvas.renderAll();
+        //  });
 
-            // The previous action was an element that was updated.
-            // Undoing this should undo the update
+        // The previous action was an element that was updated.
+        // Undoing this should undo the update
         //    } else if (previousActivity.type === 'update') {
         //      var updates = previousActivity.elements.map(function(update) {
         //        console.log(update.originalState);
@@ -1147,12 +1140,12 @@
         //      saveElementUpdates(updates);
         //    }
         //  }
-        //};
+        // };
 
         /**
          * Redo the action at the next position in the actions queue
          */
-        //var redo = $scope.redo = function() {
+        // var redo = $scope.redo = function() {
         //  if ($scope.currentActivityPosition !== $scope.activityQueue.length) {
         //    // Deactivate the currently selected item
         //    canvas.deactivateAll().renderAll();
@@ -1187,7 +1180,7 @@
         //      saveElementUpdates(updates);
         //    }
         //  }
-        //};
+        // };
 
         /* DRAWING */
 
@@ -1817,7 +1810,7 @@
               // Show a notification indicating the whiteboard was exported
               var myAlert = $alert({
                 'container': '#whiteboards-board-notifications',
-                'content': 'This board has been successfully added to the <a target="_blank" href="' + assetLibraryLink + '"><strong>Asset Library</strong></a>.',
+                'content': 'This board has been successfully added to the <strong>Asset Library</strong>.',
                 'duration': 5,
                 'keyboard': true,
                 'show': true,
