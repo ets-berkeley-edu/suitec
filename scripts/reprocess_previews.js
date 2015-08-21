@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
@@ -36,6 +37,10 @@ var init = function() {
   // Apply global utilities
   require('col-core/lib/globals');
 
+  if (!config.get('embdr.enabled')) {
+    return log.warn('As the embdr integration has not been enabled, no reprocessing will take place');
+  }
+
   // Connect to the database
   DB.init(function(err) {
     if (err) {
@@ -46,7 +51,7 @@ var init = function() {
 
     // Get the assets to reprocess
     return getAssets();
-  })
+  });
 };
 
 /**
@@ -59,7 +64,7 @@ var getAssets = function() {
       'where': {
         'thumbnail_url': null
       }
-    }
+    };
   }
 
   DB.Asset.findAll(options).complete(function(err, assets) {
@@ -81,7 +86,7 @@ var getAssets = function() {
       reprocessAssetPreview(asset, function(err) {
         if (err) {
           errored++;
-          log.error({'id': asset.id}, 'Failed to process asset preview')
+          log.error({'id': asset.id}, 'Failed to process asset preview');
         } else {
           completed++;
         }
@@ -109,7 +114,7 @@ var reprocessAssetPreview = function(asset, callback) {
     assetUrl = asset.url;
   }
 
-  if (!config.get('embdr.enabled') || !assetUrl) {
+  if (!assetUrl) {
     return callback();
   }
 
