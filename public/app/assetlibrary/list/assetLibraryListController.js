@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, userFactory, utilService, $filter, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, userFactory, utilService, $rootScope, $scope, $state) {
 
     // Variable that keeps track of the URL state
     $scope.state = $state;
@@ -133,6 +133,13 @@
           $scope.assets[i] = updatedAsset;
         }
       }
+    });
+
+    /**
+     * Listen for events indicating that an asset has been deleted
+     */
+    $scope.$on('assetLibraryAssetDeleted', function(ev, assetId) {
+      $scope.assets = _.reject($scope.assets, {'id': assetId});
     });
 
     userFactory.getMe().success(function(me) {

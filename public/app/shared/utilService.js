@@ -19,6 +19,14 @@
 
   angular.module('collabosphere').service('utilService', function($location, $q, $timeout) {
 
+    // Hide the vertical toolbar when the tool is embedded in an iFrame. At that point, the scrolling
+    // script injected in the parent window will ensure that the iFrame is always as high as its content
+    // TODO: Whiteboards are currently excluded from this rule as there is an element below the whiteboard
+    // that takes up space. This should be fixed and whiteboards should follow this rule
+    if (top != self || $location.path().indexOf('/whiteboards/') !== -1) {
+      document.documentElement.classList.add('embedded');
+    }
+
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
     // the base URL for all REST API requests
