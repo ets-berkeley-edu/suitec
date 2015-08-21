@@ -16,8 +16,11 @@
 body {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
-  overflow-y: hidden;
   padding: 25px 25px 50px;
+}
+
+html.embedded body {
+  overflow-y: hidden;
 }
 
 /* BOOTSTRAP OVERRIDES */
@@ -121,6 +124,14 @@ textarea {
 
 .btn i + span {
   margin-left: 3px;
+}
+
+.btn-group > .btn:not(:first-child) {
+  border-left: none;
+}
+
+.btn-group > .btn:not(:last-child) {
+  border-right: none;
 }
 
 .popover-content {
@@ -295,6 +306,11 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
 
 .col-back {
   color: #333;
+  font-weight: 300;
+}
+
+.col-back.btn-link {
+  padding: 0;
 }
 
 .col-back i {

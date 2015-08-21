@@ -30,6 +30,7 @@
 
 #whiteboards-board-viewport {
   height: 100%;
+  position: relative;
   width: 100%;
   overflow: scroll;
 }
@@ -68,6 +69,35 @@
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 
+/* EDIT EXISTING */
+
+#whiteboards-board-editelement {
+  display: inline-block;
+  position: absolute;
+  text-align: left;
+  width: 140px;
+  z-index: 1100;
+}
+
+#whiteboards-board-editelement .btn-default {
+  padding: 5px 8px;
+}
+
+#whiteboards-board-editelement .btn-default:not(:hover) {
+  background-color: #FFF;
+}
+
+#whiteboards-board-editelement .btn-default i {
+  color: #666;
+  font-size: 17px;
+}
+
+#whiteboards-board-editelement .btn-default i.fa-external-link {
+  left: 1px;
+  position: relative;
+  top: 2px;
+}
+
 /* TOOLBAR */
 
 #whiteboards-board-toolbar {
@@ -81,6 +111,7 @@
   margin-right: 20px;
   padding: 7px;
   position: relative;
+  z-index: 1100;
 }
 
 #whiteboards-board-toolbar > .btn-group:first-child {
@@ -88,21 +119,12 @@
 }
 
 #whiteboards-board-toolbar > .btn-group > .btn {
-  border: 1px solid #D3D3D3;
   color: #666;
 }
 
 #whiteboards-board-toolbar > .btn-group > .btn.active {
   background-color: #6B6B6B;
   color: #F5FCFF;
-}
-
-#whiteboards-board-toolbar > .btn-group > .btn:not(:first-child) {
-  border-left: none;
-}
-
-#whiteboards-board-toolbar > .btn-group > .btn:not(:last-child) {
-  border-right: none;
 }
 
 #whiteboards-board-toolbar > .btn-group > .btn > i {
@@ -344,7 +366,7 @@
 
 .whiteboards-popover-select + .dropdown-menu {
   overflow: auto;
-  max-height: 100px;
+  max-height: 115px;
   min-width: 68px;
   padding: 0
 }
