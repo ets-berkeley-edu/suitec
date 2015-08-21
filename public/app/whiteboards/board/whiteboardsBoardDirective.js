@@ -938,7 +938,7 @@
         /* ZOOMING */
 
         // Variable that will keep track of whether the whiteboard content needs to be fitted to the screen
-        $scope.fitToScreen = $scope.readonly ? true : false;
+        $scope.fitToScreen = true;
 
         /**
          * Toggle between fitting the whiteboard content to the screen and showing the
