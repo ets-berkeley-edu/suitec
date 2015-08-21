@@ -5,43 +5,45 @@
         <button type="button" class="close" data-ng-click="closeModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h2 class="modal-title">Add asset(s)</h2>
       </div>
-      <div id="whiteboards-reuse-list-container" class="modal-body whiteboards-reuse-list-container">
-        <search
-          data-search-options-keywords="searchOptions.keywords"
-          data-search-options-category="searchOptions.category"
-          data-search-options-user="searchOptions.user"
-          data-search-options-type="searchOptions.type"></search>
-        <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="whiteboards-reuse-list-container">
-          <ul>
-            <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
-              <div class="col-list-item-container">
-                <a data-ng-click="selectAsset(asset)">
-                  <div class="col-list-item-tile">
-                    <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
-                    <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
-                      <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
+      <form name="whiteboardsReuseForm" class="form-horizontal" data-ng-submit="whiteboardsReuseForm.$valid && addSelectedAssets()" novalidate>
+        <div id="whiteboards-reuse-list-container" class="modal-body whiteboards-reuse-list-container">
+          <search
+            data-search-options-keywords="searchOptions.keywords"
+            data-search-options-category="searchOptions.category"
+            data-search-options-user="searchOptions.user"
+            data-search-options-type="searchOptions.type"></search>
+          <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="whiteboards-reuse-list-container">
+            <ul>
+              <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
+                <div class="col-list-item-container">
+                  <a data-ng-click="selectAsset(asset)">
+                    <div class="col-list-item-tile">
+                      <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
+                      <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+                        <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
+                      </div>
+                      <div class="col-list-item-metadata">
+                        <span class="col-threedots">{{asset.title}}</span>
+                        <small class="col-threedots">by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+                      </div>
                     </div>
-                    <div class="col-list-item-metadata">
-                      <span class="col-threedots">{{asset.title}}</span>
-                      <small class="col-threedots">by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
-                    </div>
+                  </a>
+                  <div class="col-list-item-actions">
+                    <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected" data-ng-required="getSelectedAssets().length === 0" />
                   </div>
-                </a>
-                <div class="col-list-item-actions">
-                  <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected" />
                 </div>
-              </div>
-            </li>
-          </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="isSearch && assets.length === 0">
+            No assets could be found
+          </div>
         </div>
-        <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="isSearch && assets.length === 0">
-          No assets could be found
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-ng-click="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-ng-disabled="getSelectedAssets().length === 0">Add selected</button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-default" data-ng-click="closeModal()">Cancel</button>
-        <button class="btn btn-primary" data-ng-click="addSelectedAssets()" data-ng-disabled="getSelectedAssets().length === 0">Add selected</button>
-      </div>
+      </form>
     </div>
   </div>
 </div>
