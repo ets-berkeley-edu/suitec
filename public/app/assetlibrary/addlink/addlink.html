@@ -1,5 +1,5 @@
 <div data-ng-controller="AssetLibraryAddLinkController">
-  <h2>Add a URL</h2>
+  <h2>Add a link</h2>
 
   <form name="assetlibraryAddlinkForm" class="form-horizontal assetlibrary-addlink-form" data-ng-submit="assetlibraryAddlinkForm.$valid && createLink()" novalidate>
     <!-- URL -->
@@ -42,7 +42,7 @@
     <div class="form-group">
       <label for="assetlibrary-addlink-description" class="col-sm-2 control-label">Description</label>
       <div class="col-sm-10">
-        <textarea id="assetlibrary-addlink-description" class="form-control" placeholder="Add some more context to your URL. You can use plain text or #keywords" rows="3" data-ng-model="link.description"></textarea>
+        <textarea id="assetlibrary-addlink-description" class="form-control" placeholder="Add some more context to your link. You can use plain text or #keywords" rows="3" data-ng-model="link.description"></textarea>
       </div>
     </div>
 
@@ -50,7 +50,7 @@
     <div class="form-group text-right">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="button" class="btn btn-default" data-ng-click="cancelAddLink()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Add URL</button>
+        <button type="submit" class="btn btn-primary">Add link</button>
       </div>
     </div>
   </form>
