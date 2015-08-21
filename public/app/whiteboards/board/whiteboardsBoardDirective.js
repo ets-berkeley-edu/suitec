@@ -903,9 +903,11 @@
             canvas.remove(getCanvasElement(element.uid));
           });
 
-          // Discard the active group if a group selection is present
+          // If a group selection was made, remove the group as well
+          // in case Fabric doesn't clean up after itself
           if (canvas.getActiveGroup()) {
-            canvas.discardActiveGroup().renderAll();
+            canvas.remove(canvas.getActiveGroup());
+            canvas.deactivateAll().renderAll();
           }
 
           // TODO: Add undo activity
@@ -1052,6 +1054,9 @@
 
           if (clipboard.length > 0) {
             // Clear the current selection
+            if (canvas.getActiveGroup()) {
+              canvas.remove(canvas.getActiveGroup());
+            }
             canvas.deactivateAll().renderAll();
 
             // Duplicate each copied element. In order to do this, remove
@@ -1768,7 +1773,7 @@
          * Export the whiteboard to a PNG file
          */
         var exportAsPng = $scope.exportAsPng = function($event) {
-          if ($scope.isExportingAsPng) {
+          if ($scope.isExportingAsPng || getNumberOfElements() === 0) {
             $event.preventDefault();
             return false;
           }
