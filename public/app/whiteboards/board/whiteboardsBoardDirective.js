@@ -1810,7 +1810,7 @@
               // Show a notification indicating the whiteboard was exported
               var myAlert = $alert({
                 'container': '#whiteboards-board-notifications',
-                'content': 'This board has been successfully added to the <a target="_blank" href="' + assetLibraryLink + '"><strong>Asset Library</strong></a>.',
+                'content': 'This board has been successfully added to the <strong>Asset Library</strong>.',
                 'duration': 5,
                 'keyboard': true,
                 'show': true,
