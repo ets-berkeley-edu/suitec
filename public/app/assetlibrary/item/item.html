@@ -1,5 +1,6 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist.item'">
-  <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
+  <a data-ng-href="/assetlibrary" class="col-back" data-ng-if="!whiteboardReferral"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
+  <button type="button" class="btn btn-link col-back" data-ng-if="whiteboardReferral" data-ng-click="closeWindow()"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">

@@ -14,8 +14,27 @@
     </div>
     <div id="assetlibrary-addbookmarklet-content">
       <div>
-        <img src="/assets/img/bookmarklet-1.png" data-ng-if="step === 1" />
-        <img data-ng-src="/assets/img/bookmarklet-{{step}}-{{browser}}.png" data-ng-if="step !== 1" />
+        <div data-ng-if="step === 1">
+          <img src="/assets/img/bookmarklet-1.png" />
+        </div>
+        <div data-ng-if="step === 2">
+          <img data-ng-src="/assets/img/bookmarklet-2-firefox.png" data-ng-if="browser === 'firefox'" />
+          <img data-ng-src="/assets/img/bookmarklet-2-chrome.png" data-ng-if="browser === 'chrome'" />
+          <img data-ng-src="/assets/img/bookmarklet-2-safari.png" data-ng-if="browser === 'safari'" />
+          <img data-ng-src="/assets/img/bookmarklet-2-ie.png" data-ng-if="browser === 'ie'" />
+        </div>
+        <div data-ng-if="step === 3">
+          <img data-ng-src="/assets/img/bookmarklet-3-firefox.png" data-ng-if="browser === 'firefox'" />
+          <img data-ng-src="/assets/img/bookmarklet-3-chrome.png" data-ng-if="browser === 'chrome'" />
+          <img data-ng-src="/assets/img/bookmarklet-3-safari.png" data-ng-if="browser === 'safari'" />
+          <img data-ng-src="/assets/img/bookmarklet-3-ie.png" data-ng-if="browser === 'ie'" />
+        </div>
+        <div data-ng-if="step === 4">
+          <img data-ng-src="/assets/img/bookmarklet-4-firefox.png" data-ng-if="browser === 'firefox'" />
+          <img data-ng-src="/assets/img/bookmarklet-4-chrome.png" data-ng-if="browser === 'chrome'" />
+          <img data-ng-src="/assets/img/bookmarklet-4-safari.png" data-ng-if="browser === 'safari'" />
+          <img data-ng-src="/assets/img/bookmarklet-4-ie.png" data-ng-if="browser === 'ie'" />
+        </div>
       </div>
       <div id="assetlibrary-addbookmarklet-text" class="text-center">
         <div data-ng-if="step === 1">
