@@ -19,7 +19,7 @@ body {
   padding: 25px 25px 50px;
 }
 
-body.embedded {
+html.embedded body {
   overflow-y: hidden;
 }
 

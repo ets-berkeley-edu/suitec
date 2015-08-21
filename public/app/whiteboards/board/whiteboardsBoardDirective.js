@@ -38,7 +38,7 @@
         'readonly': '=readonly'
       },
       'templateUrl': '/app/whiteboards/board/board.html',
-      'controller': function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $alert, $cookies, $filter, $modal, $rootScope, $scope) {
+      'controller': function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $alert, $cookies, $modal, $rootScope, $scope) {
 
         // Element that will keep track of the whiteboard viewport
         var viewport = document.getElementById('whiteboards-board-viewport');
@@ -146,8 +146,7 @@
             if ($scope.whiteboard) {
               for (var i = 0; i < $scope.whiteboard.members.length; i++) {
                 var member = $scope.whiteboard.members[i];
-                var online = $filter('filter')(onlineUsers, {'user_id': member.id});
-                member.online = (online.length > 0);
+                member.online = _.findWhere(onlineUsers, {'user_id': member.id}) ? true : false;
               }
             }
           });
@@ -158,7 +157,7 @@
          */
         var getOnlineUsers = $scope.getOnlineUsers = function() {
           if ($scope.whiteboard) {
-            return $filter('filter')($scope.whiteboard.members, {'online': true});
+            return _.where($scope.whiteboard.members, {'online': true});
           }
         };
 

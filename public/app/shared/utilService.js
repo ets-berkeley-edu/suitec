@@ -24,7 +24,7 @@
     // TODO: Whiteboards are currently excluded from this rule as there is an element below the whiteboard
     // that takes up space. This should be fixed and whiteboards should follow this rule
     if (top != self || $location.path().indexOf('/whiteboards/') !== -1) {
-      document.body.classList.add('embedded');
+      document.documentElement.classList.add('embedded');
     }
 
     // Cache the API domain and Course ID that were passed in through
