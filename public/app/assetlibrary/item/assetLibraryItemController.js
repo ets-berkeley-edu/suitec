@@ -42,7 +42,7 @@
 
     // Clear the preview timers if the user goes away
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-      if (fromState.name === 'assetlibrarylist.item') {
+      if (fromState.name === 'assetlibrarylist.item' && toState.name !== 'assetlibrarylist.item.edit') {
         if (previewTimeout) {
           clearTimeout(previewTimeout);
           previewTimeout = null;

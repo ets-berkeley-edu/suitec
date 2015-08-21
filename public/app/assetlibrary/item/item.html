@@ -26,7 +26,7 @@
     <div data-ng-if="asset.type !== 'whiteboard'">
       <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-show="previewStatus === 'complete'"></div>
       <div class="text-center assetlibrary-item-preview-message" data-ng-if="previewStatus === 'pending'">
-        <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
+        <i class="fa" data-ng-class="{'fa-file-o': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
         <p><i class="fa fa-spinner fa-spin"></i> preparing a preview...</p>
         <a data-ng-href="{{asset.download_url}}" data-ng-if="asset.type === 'file'" target="_blank" class="btn btn-default">
           <i class="fa fa-download"></i>
@@ -34,7 +34,7 @@
         </a>
       </div>
       <div class="text-center assetlibrary-item-preview-message" data-ng-if="previewStatus === 'unsupported'">
-        <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
+        <i class="fa" data-ng-class="{'fa-file-o': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
         <p>No preview available.</p>
         <a data-ng-href="{{asset.download_url}}" data-ng-if="asset.type === 'file'" target="_blank" class="btn btn-default">
           <i class="fa fa-download"></i>
