@@ -370,7 +370,7 @@
 
 .whiteboards-popover-select + .dropdown-menu {
   overflow: auto;
-  max-height: 100px;
+  max-height: 115px;
   min-width: 68px;
   padding: 0
 }
