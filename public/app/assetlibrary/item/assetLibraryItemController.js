@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $filter, $stateParams, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $filter, $stateParams, $rootScope, $scope) {
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
@@ -28,11 +28,29 @@
     // Variable that will keep track of the new top-level comment
     $scope.newComment = null;
 
-    // Variable that will keep track of whether the asset still has to be processed
-    $scope.pendingPreview = false;
+    // Variable that will keep track of the previews status of an asset
+    $scope.previewStatus = null;
 
-    // Variable that will keep track of whether the asset has a supported preview
-    $scope.supportedPreview = true;
+    // Variable that will keep track of the timeout id when a preview is pending and its status is being retrieved
+    var previewTimeout = null;
+
+    // Variable that will keep track of the Embdr coordinator that can be used to stop polling the Embdr API for updates
+    var embdrCoordinator = null;
+
+    // Clear the preview timers if the user goes away
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+      if (fromState.name === 'assetlibrarylist.item') {
+        if (previewTimeout) {
+          clearTimeout(previewTimeout);
+          previewTimeout = null;
+        }
+
+        // Tell Embdr it should stop polling
+        if (embdrCoordinator) {
+          embdrCoordinator.cancel();
+        }
+      }
+    });
 
     /**
      * Get the current asset
@@ -50,31 +68,25 @@
         // Let embdr show a preview for files or links
         if (asset.type === 'file' || asset.type === 'link') {
           // There can be a short delay between creating an asset and getting the embed id and key back.
-          // Simply show the pending preview modal and try again later if we haven't heard back from Embdr yet
+          // Simply show the pending preview and try again later if we haven't heard back from Embdr yet
           if (!asset.embed_id || !asset.embed_key) {
-            $scope.pendingPreview = true;
-            setTimeout(getCurrentAsset, 2000);
+            $scope.previewStatus = 'pending';
+            previewTimeout = setTimeout(getCurrentAsset, 2000);
 
           } else {
             var embdrOptions = {
               'loadingIcon': '//' + window.location.host + '/assets/img/canvas-logo.png',
-              'callback': function(err, resource) {
-                if (err) {
-                  $scope.supportedPreview = false;
-                  return;
-                }
-
-                $scope.pendingPreview = false;
+              'complete': function(resource) {
+                $scope.previewStatus = 'complete';
               },
               'pending': function() {
-                $scope.pendingPreview = true;
+                $scope.previewStatus = 'pending';
               },
               'unsupported': function() {
-                $scope.pendingPreview = false;
-                $scope.supportedPreview = false;
+                $scope.previewStatus = 'unsupported';
               }
             };
-            window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
+            embdrCoordinator = window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
           }
         }
       });

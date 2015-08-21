@@ -75,22 +75,22 @@
   }
 }
 
-.assetlibrary-item-preview-default, .assetlibrary-item-preview-pending {
+.assetlibrary-item-preview-message {
   background-color: #FFF;
-  padding: 100px 0;
+  padding: 150px 0;
 }
 
-.assetlibrary-item-preview-default > i, .assetlibrary-item-preview-pending > i {
+.assetlibrary-item-preview-message > i {
   color: #747474;
   font-size: 50px;
 }
 
-.assetlibrary-item-preview-default p, .assetlibrary-item-preview-pending p {
+.assetlibrary-item-preview-message p {
   font-size: 18px;
   margin: 20px;
 }
 
-.assetlibrary-item-preview-pending i.fa-spinner {
+.assetlibrary-item-preview-message i.fa-spinner {
   margin-right: 5px;
 }
 
