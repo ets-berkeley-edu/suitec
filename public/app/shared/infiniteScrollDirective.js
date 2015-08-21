@@ -29,12 +29,12 @@
    */
   angular.module('collabosphere').directive('infiniteScroll', function(utilService, $interval) {
     return {
-      // Restrict the directive to only match attribute names. See https://docs.angularjs.org/guide/directive#template-expanding-directive
-      // for more information
+      // Restrict the directive to only match attribute names.
+      // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
       'restrict': 'A',
 
-      // Define how the directive's scope is separated from the caller's scope. See https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
-      // for more information
+      // Define how the directive's scope is separated from the caller's scope.
+      // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
         'infiniteScroll': '&',
         'infiniteScrollContainer': '@',
@@ -43,7 +43,6 @@
         'infiniteScrollReady': '='
       },
       'link': function(scope, elem, attrs) {
-
         // Default the distance to the bottom of the page at which further results are loaded
         var infiniteScrollDistance = scope.infiniteScrollDistance || 400;
 
@@ -121,6 +120,14 @@
               checkInfiniteScrollLoad(scrollInformation.scrollToBottom, scrollInformation.scrollPosition);
             });
           } else {
+            // It is possible that the infinite scroll container will not have been present at the time of initialisation,
+            // especially inside modals. Therefore, we try to locate the infinite scroll container again if hasn't yet been
+            // located
+            infiniteScrollContainer = infiniteScrollContainer || document.getElementById(scope.infiniteScrollContainer);
+            if (!infiniteScrollContainer) {
+              return false;
+            }
+
             var scrollToBottom = infiniteScrollContainer.scrollHeight - infiniteScrollContainer.clientHeight - infiniteScrollContainer.scrollTop;
             var scrollPosition = infiniteScrollContainer.scrollTop;
             checkInfiniteScrollLoad(scrollToBottom, scrollPosition);

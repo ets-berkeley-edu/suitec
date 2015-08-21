@@ -32,7 +32,7 @@
      * Get the current asset
      */
     var getCurrentAsset = function() {
-      assetLibraryFactory.getAsset(assetId).success(function(asset) {
+      assetLibraryFactory.getAsset(assetId, false).success(function(asset) {
         // As the UI currently only allows for a single category to be selected,
         // set the categories value to make it easier to work with
         if (asset.categories.length > 0) {

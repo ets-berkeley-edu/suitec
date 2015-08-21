@@ -29,29 +29,6 @@
     // Configure the Collabosphere routes
     $stateProvider
       // Asset Library routes
-      .state('assetlibrarylist', {
-        'url': '/assetlibrary?category&user&keywords&type',
-        'templateUrl': '/app/assetlibrary/list/list.html',
-        'controller': 'AssetLibraryListController'
-      })
-      .state('assetlibrarylist.item', {
-        'views': {
-          'item': {
-            'controller': 'AssetLibraryItemController',
-            'templateUrl': '/app/assetlibrary/item/item.html'
-          }
-        },
-        'url': '/assetlibrary/:assetId'
-      })
-      .state('assetlibrarylist.item.edit', {
-        'views': {
-          'edit': {
-            'controller': 'AssetLibraryEditController',
-            'templateUrl': '/app/assetlibrary/edit/edit.html'
-          }
-        },
-        'url': '/assetlibrary/:assetId/edit'
-      })
       .state('assetlibraryupload', {
         'url': '/assetlibrary/upload',
         'templateUrl': '/app/assetlibrary/uploadcontainer/uploadcontainer.html',
@@ -71,6 +48,29 @@
         'url': '/assetlibrary/addbookmarklet',
         'templateUrl': '/app/assetlibrary/addbookmarklet/addbookmarklet.html',
         'controller': 'AssetLibraryAddBookmarkletController'
+      })
+      .state('assetlibrarylist', {
+        'url': '/assetlibrary?category&user&keywords&type&course_id&api_domain&tool_url',
+        'templateUrl': '/app/assetlibrary/list/list.html',
+        'controller': 'AssetLibraryListController'
+      })
+      .state('assetlibrarylist.item', {
+        'views': {
+          'item': {
+            'controller': 'AssetLibraryItemController',
+            'templateUrl': '/app/assetlibrary/item/item.html'
+          }
+        },
+        'url': '/:assetId?whiteboard_referral'
+      })
+      .state('assetlibrarylist.item.edit', {
+        'views': {
+          'edit': {
+            'controller': 'AssetLibraryEditController',
+            'templateUrl': '/app/assetlibrary/edit/edit.html'
+          }
+        },
+        'url': '/edit'
       })
 
       // Engagement Index routes
@@ -98,8 +98,8 @@
       })
       .state('whiteboard', {
         'url': '/whiteboards/:whiteboardId',
-        'templateUrl': '/app/whiteboards/board/board.html',
-        'controller': 'WhiteboardsBoardController'
+        'templateUrl': '/app/whiteboards/boardcontainer/boardcontainer.html',
+        'controller': 'WhiteboardsBoardContainerController'
       });
 
   });

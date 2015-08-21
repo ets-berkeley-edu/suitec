@@ -18,9 +18,13 @@
   padding: 0;
 }
 
-.assetlibrary-iconbar .btn.active,
-.assetlibrary-iconbar .btn:hover {
+.assetlibrary-iconbar .btn.active:not(:disabled),
+.assetlibrary-iconbar .btn:hover:not(:disabled) {
   color: #4172B4;
+}
+
+.assetlibrary-iconbar .btn:disabled {
+  opacity: 0.5;
 }
 
 .assetlibrary-iconbar i {

@@ -1,28 +1,50 @@
 <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
 
-<h2>Add assets to the Asset Library from other websites</h2>
-
-<div class="assetlibrary-addbookmarklet-container">
-  <div class="row">
-    <div class="col-xs-6 text-center">
-      <img src="/assets/img/bookmarklet-step1.jpg" />
-    </div>
-    <div class="col-xs-6">
-      <h3>1. Turn on your browser's bookmarks bar</h3>
-      <div>
-        Make sure your Bookmarks bar is turned on. If it isn't, go to the browser menu &gt; view &gt; Toolbars &gt; Bookmarks Toolbar and turn it on there.
+<div class="text-center">
+  <div id="assetlibrary-addbookmarklet-container" class="text-left">
+    <div class="row">
+      <div id="assetlibrary-addbookmarklet-title" class="col-xs-12">
+        <i class="fa fa-bookmark"></i>
+        <h2>
+          <span data-ng-if="step === 1">Easily add assets from any webpage</span>
+          <span data-ng-if="step === 2 || step === 3">How to enable the bookmark</span>
+          <span data-ng-if="step === 4">How to use the bookmark</span>
+        </h2>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-6">
-      <h3>2. Drag the bookmarklet to the bookmarks bar</h3>
+    <div id="assetlibrary-addbookmarklet-content">
       <div>
-        Add the Asset Library bookmarklet displayed on the right to your browser's bookmarks bar by simply dragging and dropping it there.
+        <div data-ng-if="step === 1">
+          <img src="/assets/img/bookmarklet-1.png" />
+        </div>
+        <div data-ng-if="step === 2">
+          <img data-ng-src="/assets/img/bookmarklet-2-firefox.png" data-ng-if="browser === 'firefox'" />
+          <img data-ng-src="/assets/img/bookmarklet-2-chrome.png" data-ng-if="browser === 'chrome'" />
+          <img data-ng-src="/assets/img/bookmarklet-2-safari.png" data-ng-if="browser === 'safari'" />
+          <img data-ng-src="/assets/img/bookmarklet-2-ie.png" data-ng-if="browser === 'ie'" />
+        </div>
+        <div data-ng-if="step === 3">
+          <img data-ng-src="/assets/img/bookmarklet-3-firefox.png" data-ng-if="browser === 'firefox'" />
+          <img data-ng-src="/assets/img/bookmarklet-3-chrome.png" data-ng-if="browser === 'chrome'" />
+          <img data-ng-src="/assets/img/bookmarklet-3-safari.png" data-ng-if="browser === 'safari'" />
+          <img data-ng-src="/assets/img/bookmarklet-3-ie.png" data-ng-if="browser === 'ie'" />
+        </div>
+        <div data-ng-if="step === 4">
+          <img data-ng-src="/assets/img/bookmarklet-4-firefox.png" data-ng-if="browser === 'firefox'" />
+          <img data-ng-src="/assets/img/bookmarklet-4-chrome.png" data-ng-if="browser === 'chrome'" />
+          <img data-ng-src="/assets/img/bookmarklet-4-safari.png" data-ng-if="browser === 'safari'" />
+          <img data-ng-src="/assets/img/bookmarklet-4-ie.png" data-ng-if="browser === 'ie'" />
+        </div>
       </div>
-    </div>
-    <div class="col-xs-6">
-      <a class="assetlibrary-addbookmarklet-bookmarklet" data-ng-href="javascript:
+      <div id="assetlibrary-addbookmarklet-text" class="text-center">
+        <div data-ng-if="step === 1">
+          Add assets directly to the Asset Library from any webpage without logging in.
+        </div>
+        <div data-ng-if="step === 2">
+          First, enable your browser's <span data-ng-bind="toolbar"></span>.
+        </div>
+        <div data-ng-if="step === 3">
+          Drag <a class="btn btn-default assetlibrary-addbookmarklet-bookmarklet" data-ng-click="preventBookmarklet($event)" data-ng-href="javascript:
               (function() {
                 var api_domain = '{{me.course.canvas_api_domain}}';
                 var base_url = '{{baseUrl}}';
@@ -50,18 +72,16 @@
                   bookmarklet.src = base_url + '/assets/js/bookmarklet-init.js';
                   document.body.appendChild(bookmarklet);
                 }
-              })();">Add inspiration</a>
-      <i class="fa fa-reply assetlibrary-addbookmarklet-arrow"></i>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-6 text-center">
-      <img src="/assets/img/bookmarklet-step3.jpg" />
-    </div>
-    <div class="col-xs-6">
-      <h3>3. Save assets with one click</h3>
-      <div>
-        Save an interesting website, image or video by clicking the bookmarklet in your browser bookmarks bar.
+              })();"><i class="fa fa-bookmark"></i> Asset Library</a> to the browser's <span data-ng-bind="toolbar"></span>.
+        </div>
+        <div data-ng-if="step === 4">
+          When browsing the web, click the Asset Library bookmark when you find something interesting about this course.
+        </div>
+        <button class="btn btn-primary" data-ng-click="nextStep()" data-ng-if="step !== 4">
+          <span data-ng-if="step === 1">Get started</span>
+          <span data-ng-if="step !== 1">Next</span>
+          <i class="fa fa-arrow-circle-o-right"></i>
+        </button>
       </div>
     </div>
   </div>

@@ -1,17 +1,36 @@
-<div class="alert alert-danger" role="alert" data-ng-if="alertFilesExceedSize === true">
-  <button class="close" aria-label="Close" data-ng-click="hideFilesExceedSizeError()"><span aria-hidden="true">&times;</span></button>
-  <span data-ng-if="filesExceedSize.length === 1">
-    The file <strong data-ng-bind="filesExceedSize[0].name"></strong> is too large.
-  </span>
-  <span data-ng-if="filesExceedSize.length > 1">
-    The files
-    <span data-ng-repeat="file in filesExceedSize">
-      <strong data-ng-bind="file.name"></strong><span data-ng-if="$index < filesExceedSize.length - 2">,</span>
-      <span data-ng-if="$index === filesExceedSize.length - 2">
-        and
-      </span>
+<div class="alert alert-danger" role="alert" data-ng-if="alertFilesError === true">
+  <button class="close" aria-label="Close" data-ng-click="hideFilesError()"><span aria-hidden="true">&times;</span></button>
+  <div class="assetlibrary-upload-error" data-ng-if="filesInvalid.length > 0">
+    <i class="fa fa-exclamation-circle"></i>
+    <span data-ng-if="filesInvalid.length === 1">
+      The file <strong data-ng-bind="filesInvalid[0].name"></strong> can not be uploaded. Try zipping it instead.
     </span>
-    are too large.
-  </span>
-  Files can be maximum 10MB in size.
+    <span data-ng-if="filesInvalid.length > 1">
+      The files
+      <span data-ng-repeat="file in filesInvalid">
+        <strong data-ng-bind="file.name"></strong><span data-ng-if="$index < filesInvalid.length - 2">,</span>
+        <span data-ng-if="$index === filesInvalid.length - 2">
+          and
+        </span>
+      </span>
+      can not be uploaded. Try zipping them instead.
+    </span>
+  </div>
+  <div class="assetlibrary-upload-error" data-ng-if="filesExceedSize.length > 0">
+    <i class="fa fa-exclamation-circle"></i>
+    <span data-ng-if="filesExceedSize.length === 1">
+      The file <strong data-ng-bind="filesExceedSize[0].name"></strong> is too large.
+    </span>
+    <span data-ng-if="filesExceedSize.length > 1">
+      The files
+      <span data-ng-repeat="file in filesExceedSize">
+        <strong data-ng-bind="file.name"></strong><span data-ng-if="$index < filesExceedSize.length - 2">,</span>
+        <span data-ng-if="$index === filesExceedSize.length - 2">
+          and
+        </span>
+      </span>
+      are too large.
+    </span>
+    Files can be maximum 10MB in size.
+  </div>
 </div>

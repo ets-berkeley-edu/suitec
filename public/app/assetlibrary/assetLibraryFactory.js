@@ -23,10 +23,15 @@
      * Get an asset
      *
      * @param  {Number}               id                              The id of the asset
+     * @param  {Boolean}              [incrementViews]                Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
      * @return {Promise<Asset>}                                       $http promise returning the requested asset
      */
-    var getAsset = function(id) {
-      return $http.get(utilService.getApiUrl('/assets/' + id));
+    var getAsset = function(id, incrementViews) {
+      var url = '/assets/' + id;
+      if (incrementViews === false) {
+        url += '?incrementViews=false';
+      }
+      return $http.get(utilService.getApiUrl(url));
     };
 
     /**
@@ -47,7 +52,7 @@
       var url = '/assets';
       url += '?offset=' + (page * 10);
       if (searchOptions.keywords) {
-        url += '&keywords=' + searchOptions.keywords;
+        url += '&keywords=' + encodeURIComponent(searchOptions.keywords);
       }
       if (searchOptions.category) {
         url += '&category=' + searchOptions.category;
@@ -120,6 +125,16 @@
     };
 
     /**
+     * Delete an asset
+     *
+     * @param  {Number}               id                              The id of the asset that is being deleted
+     * @return {Promise}                                              $http promise
+     */
+    var deleteAsset = function(id) {
+      return $http.delete(utilService.getApiUrl('/assets/' + id));
+    };
+
+    /**
      * Create a new comment on an asset
      *
      * @param  {Number}               id                              The id of the asset
@@ -178,6 +193,7 @@
       'createFile': createFile,
       'createLink': createLink,
       'editAsset': editAsset,
+      'deleteAsset': deleteAsset,
       'createComment': createComment,
       'editComment': editComment,
       'deleteComment': deleteComment,

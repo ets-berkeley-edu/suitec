@@ -21,6 +21,8 @@
   display: table;
   height: 280px;
   margin-bottom: 10px;
+  padding-left: 10%;
+  padding-right: 10%;
   width: 100%;
 }
 
@@ -46,6 +48,16 @@
   font-size: 20px;
   line-height: 24px;
   margin: 10px;
+}
+
+/* ERROR */
+
+.assetlibrary-upload-error + .assetlibrary-upload-error {
+  margin-top: 5px;
+}
+
+.assetlibrary-upload-error i {
+  margin-right: 7px;
 }
 
 /* METADATA */

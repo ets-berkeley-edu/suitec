@@ -21,6 +21,7 @@
   angular.module('collabosphere', [
     'ngAria',
     'ngCookies',
+    'ng.deviceDetector',
     'ngFileUpload',
     'ngMessages',
     'ngMoment',

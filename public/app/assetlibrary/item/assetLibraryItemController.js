@@ -17,10 +17,13 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $filter, $stateParams, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $state, $stateParams, $scope) {
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
+
+    // Variable that will keep track of whether the user has come in via a whiteboard
+    $scope.whiteboardReferral = $stateParams.whiteboard_referral;
 
     // Variable that will keep track of the current asset
     $scope.asset = null;
@@ -87,7 +90,19 @@
      */
     var canManageAsset = $scope.canManageAsset = function() {
       if ($scope.asset && $scope.me) {
-        return ($scope.me.is_admin || $filter('filter')($scope.asset.users, {'id': $scope.me.id}).length > 0);
+        return ($scope.me.is_admin || _.findWhere($scope.asset.users, {'id': $scope.me.id}));
+      }
+    };
+
+    /**
+     * Delete the current asset
+     */
+    var deleteAsset = $scope.deleteAsset = function() {
+      if (confirm('Are you sure you want to delete this asset?')) {
+        assetLibraryFactory.deleteAsset($scope.asset.id).success(function() {
+          $scope.$emit('assetLibraryAssetDeleted', $scope.asset.id);
+          $state.go('assetlibrarylist');
+        });
       }
     };
 
@@ -218,6 +233,15 @@
         $scope.asset = updatedAsset;
       }
     });
+
+    /**
+     * Close the current browser window. This is used when an asset has been opened
+     * in a separate tab and the user wants to be taken back to where the asset was
+     * launched from
+     */
+    var closeWindow = $scope.closeWindow = function() {
+      window.close();
+    };
 
     userFactory.getMe().success(function(me) {
       $scope.me = me;

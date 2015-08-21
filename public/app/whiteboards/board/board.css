@@ -13,27 +13,89 @@
  * permissions and limitations under the License.
  */
 
-#whiteboards-board-notifications {
-  left: 10px;
-  position: absolute;
-  right: 270px;
-  top: 20px;
-}
-
-#whiteboards-board-notifications.whiteboards-board-notifications-full {
-  right: 10px;
-}
-
 /* WHITEBOARD */
 
-#whiteboards-board-viewport {
-  background-color: #F7F7F7;
+#whiteboards-board-container {
   bottom: 0;
   left: 0;
-  overflow: hidden;
   position: absolute;
   right: 0;
   top: 0;
+  z-index: 1000;
+}
+
+#whiteboards-board-container.whiteboards-sidebar-expanded {
+  right: 260px;
+}
+
+#whiteboards-board-viewport {
+  height: 100%;
+  position: relative;
+  width: 100%;
+  overflow: scroll;
+}
+
+/* NOTIFICATION */
+
+#whiteboards-board-notifications-container {
+  line-height: 0;
+}
+
+#whiteboards-board-notifications {
+  display: inline-block;
+  position: relative;
+  width: 85%;
+  vertical-align: top;
+}
+
+#whiteboards-board-notifications .alert {
+  left: 0;
+  line-height: 20px;
+  position: absolute;
+  right: 0;
+  top: 25px;
+  z-index: 101;
+}
+
+/* READ-ONLY */
+
+#whiteboards-board-readonly {
+  bottom: 70px;
+  margin-left: 20px;
+  position: relative;
+}
+
+#whiteboards-board-readonly .btn {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* EDIT EXISTING */
+
+#whiteboards-board-editelement {
+  display: inline-block;
+  position: absolute;
+  text-align: left;
+  width: 140px;
+  z-index: 1100;
+}
+
+#whiteboards-board-editelement .btn-default {
+  padding: 5px 8px;
+}
+
+#whiteboards-board-editelement .btn-default:not(:hover) {
+  background-color: #FFF;
+}
+
+#whiteboards-board-editelement .btn-default i {
+  color: #666;
+  font-size: 17px;
+}
+
+#whiteboards-board-editelement .btn-default i.fa-external-link {
+  left: 1px;
+  position: relative;
+  top: 2px;
 }
 
 /* TOOLBAR */
@@ -41,15 +103,22 @@
 #whiteboards-board-toolbar {
   background-color: #FFF;
   border: 1px solid #D3D3D3;
+  bottom: 85px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  bottom: 0;
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 20px;
   padding: 7px;
-  position: absolute;
-  right: 0;
+  position: relative;
+  z-index: 1100;
+}
+
+#whiteboards-board-toolbar > .btn-group:first-child {
+  margin-left: 0;
 }
 
 #whiteboards-board-toolbar > .btn-group > .btn {
-  border: 1px solid #D3D3D3;
   color: #666;
 }
 
@@ -58,20 +127,12 @@
   color: #F5FCFF;
 }
 
-#whiteboards-board-toolbar > .btn-group > .btn:not(:first-child) {
-  border-left: none;
-}
-
-#whiteboards-board-toolbar > .btn-group > .btn:not(:last-child) {
-  border-right: none;
-}
-
 #whiteboards-board-toolbar > .btn-group > .btn > i {
   font-weight: bold;
   font-size: 18px;
 }
 
-#whiteboards-board-toolbar > .btn-group > .btn > i.fa-share-square-o {
+#whiteboards-board-toolbar > .btn-group > .btn > i.fa-download {
   position: relative;         /* Align the export icon with the text */
   top: 1px;
 }
@@ -81,30 +142,62 @@
   top: -2px;
 }
 
-#whiteboards-board-toolbar .whiteboards-board-toolbar-collaborators .badge {
-  background-color: #999;
-  font-size: 10px;
-  margin-left: -1px;
-  margin-right: -5px;
-}
-
-#whiteboards-board-toolbar .whiteboards-board-toolbar-chat {
-  padding-left: 8px;
-}
-
 /* SIDEBAR */
 
-#whiteboards-board-sidebar {
+#whiteboards-board-sidebar-buttons {
   background-color: #F7F7F7;
-  border: 1px solid #D3D3D3;
-  border-bottom: none;
-  border-right: none;
-  border-top-left-radius: 4px;
-  bottom: 54px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  padding-left: 10px;
+  padding-right: 10px;
+  position: absolute;
+  right: 30px;
+  top: 0;
+  z-index: 1001;
+}
+
+#whiteboards-board-sidebar-buttons.whiteboards-sidebar-expanded {
+  background-color: transparent;
+  box-shadow: none;
+  right: 10px;
+}
+
+#whiteboards-board-sidebar-buttons .btn {
+  color: #666;
+  padding: 10px 5px;
+  text-decoration: none;
+}
+
+#whiteboards-board-sidebar-buttons .btn.active {
+  color: #0286C4;
+}
+
+#whiteboards-board-sidebar-buttons .btn i {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#whiteboards-board-sidebar-buttons .btn .badge {
+  background-color: #999;
+  border: 1px solid #F7F7F7;
+  font-size: 10px;
+  margin-left: -8px;
+  margin-top: -3px;
+  padding: 2px 7px;
+}
+
+#whiteboards-board-sidebar-container {
+  bottom: 0;
+  border-left: 1px solid #D3D3D3;
+  padding-top: 41px;
   position: absolute;
   right: 0;
-  top: 5px;
+  top: 0;
   width: 260px;
+}
+
+#whiteboards-board-sidebar {
+  border-top: 1px solid #D3D3D3;
+  height: 100%;
 }
 
 #whiteboards-board-sidebar .col-avatar {
@@ -145,6 +238,7 @@
 }
 
 #whiteboards-board-chat-messages .whiteboards-board-chat-actor {
+  color: #4172B4;
   margin-bottom: 5px;
 }
 
@@ -265,9 +359,14 @@
   padding: 4px;
 }
 
+.whiteboards-popover-select.whiteboards-popover-select-shape img {
+  position: relative;
+  top: -1px;
+}
+
 .whiteboards-popover-select + .dropdown-menu {
   overflow: auto;
-  max-height: 100px;
+  max-height: 115px;
   min-width: 68px;
   padding: 0
 }
@@ -278,6 +377,12 @@
 
 .whiteboards-popover-select + .dropdown-menu > li > a {
   padding: 5px;
+}
+
+.whiteboards-text-option {
+  display: inline-block;
+  min-width: 68px;
+  text-align: left;
 }
 
 /* COLOR PICKER */
