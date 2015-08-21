@@ -26,8 +26,8 @@ var argv = require('yargs')
 
 var AssetsAPI = require('col-assets');
 var CollabosphereConstants = require('col-core/lib/constants');
-var log = require('col-core/lib/logger')('scripts/reprocess_previews');
 var DB = require('col-core/lib/db');
+var log = require('col-core/lib/logger')('scripts/reprocess_previews');
 
 /**
  * Connect to the Collabosphere database
