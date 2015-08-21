@@ -74,12 +74,17 @@
 #whiteboards-board-editelement {
   display: inline-block;
   position: absolute;
+  text-align: left;
+  width: 140px;
   z-index: 1100;
 }
 
 #whiteboards-board-editelement .btn-default {
-  background-color: #FFF;
   padding: 5px 8px;
+}
+
+#whiteboards-board-editelement .btn-default:not(:hover) {
+  background-color: #FFF;
 }
 
 #whiteboards-board-editelement .btn-default i {
@@ -121,14 +126,6 @@
 #whiteboards-board-toolbar > .btn-group > .btn.active {
   background-color: #6B6B6B;
   color: #F5FCFF;
-}
-
-#whiteboards-board-toolbar > .btn-group > .btn:not(:first-child) {
-  border-left: none;
-}
-
-#whiteboards-board-toolbar > .btn-group > .btn:not(:last-child) {
-  border-right: none;
 }
 
 #whiteboards-board-toolbar > .btn-group > .btn > i {
