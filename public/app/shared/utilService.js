@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function($location, $q, $rootScope, $state, $timeout) {
+  angular.module('collabosphere').service('utilService', function($location, $q, $state, $timeout) {
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
@@ -165,17 +165,26 @@
     };
 
     /**
-     * Set the parent's container hash
+     * Set the parent's container hash value
      *
-     * @param {String}  hash    The value to set the parent's container hash value to
+     * @param {Object}  data    The data for the parent's hash container. Each key will be prefixed with `col_`. For example, `{'user': 1, 'category': 42}` would be serialized to `col_user=1&col_category=42`
      */
-    var setParentHash = function(hash) {
-      postIFrameMessage(function() {
-        return {
-          'subject': 'setParentHash',
-          'hash': hash
-        };
-      });
+    var setParentHash = function(data) {
+      if (window.parent) {
+        var hash = [];
+        _.each(data, function(val, key) {
+          if (val) {
+            hash.push('col_' + key + '=' + encodeURIComponent(val));
+          }
+        });
+        hash = hash.join('&');
+        postIFrameMessage(function() {
+          return {
+            'subject': 'setParentHash',
+            'hash': hash
+          };
+        });
+      }
     };
 
     /**
@@ -196,9 +205,6 @@
       if (window.parent) {
         // Wait until Angular has finished rendering items on the screen
         $timeout(function() {
-          // Give each message a unique id so we can send multiple messages concurrently
-          var messageId = Math.floor(Math.random() * 10000);
-
           // The parent container will respond with a message into the current window containing
           // the scroll information of the parent window
           if (messageCallback) {
@@ -211,10 +217,9 @@
                   // The message is not for us; ignore it
                   return;
                 }
-                if (message && message.messageId === messageId) {
-                  messageCallback(message);
-                  window.removeEventListener('message', callback);
-                }
+
+                messageCallback(message);
+                window.removeEventListener('message', callback);
               }
             };
             window.addEventListener('message', callback);
@@ -224,42 +229,12 @@
           // message directly into this function, as we sometimes need to wait until Angular has
           // finished rendering before we can determine what message to send
           var message = messageGenerator();
-          message.messageId = messageId;
+
           // Send the message to the parent container as a stringified object
           window.parent.postMessage(JSON.stringify(message), '*');
         });
       }
     };
-
-    // If the LTI tools are running in an iFrame we get the parent container's URL. This allows for
-    // linking to states such as an asset profile directly
-    if (window.parent) {
-      getParentUrl(function(url) {
-        url = url || '';
-
-        // Check if an asset was linked directly
-        var assetMatch = url.match(/col_asset=([0-9]+)/);
-        if (assetMatch && assetMatch[1]) {
-          var assetId = parseInt(assetMatch[1], 10);
-          $state.go('assetlibrarylist.item', {'assetId': assetId});
-        }
-
-        // Check if a search was linked directly
-        var searchKeywordsMatch = url.match(/col_keywords=(.+?)&/);
-        var searchCategoryMatch = url.match(/col_category=([0-9]+)&/);
-        var searchUserMatch = url.match(/col_user=([0-9]+)&/);
-        var searchTypeMatch = url.match(/col_type=(.+?)&/);
-        if (searchKeywordsMatch || searchCategoryMatch || searchUserMatch || searchTypeMatch) {
-          var searchOptions = {
-            'keywords': (searchKeywordsMatch ? searchKeywordsMatch[1] : ''),
-            'category': (searchCategoryMatch ? searchCategoryMatch[1] : ''),
-            'user': (searchUserMatch ? searchUserMatch[1] : ''),
-            'type': (searchTypeMatch ? searchTypeMatch[1] : '')
-          };
-          $state.go('assetlibrarylist', searchOptions);
-        }
-      });
-    }
 
     return {
       'getApiUrl': getApiUrl,

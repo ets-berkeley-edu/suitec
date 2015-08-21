@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, userFactory, utilService, $filter, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, userFactory, utilService, $filter, $rootScope, $scope, $state, $timeout) {
 
     // Variable that keeps track of the URL state
     $scope.state = $state;
@@ -61,25 +61,6 @@
      * Get the assets for the current course through an infinite scroll
      */
     var getAssets = $scope.getAssets = function() {
-      // Keep track of the search options in the parent container's hash as well, so searches can be
-      // linked from other pages outside of Collabosphere
-      if (window.parent) {
-        var hash = '';
-        if ($scope.searchOptions.keywords) {
-          hash += 'col_keywords=' + $scope.searchOptions.keywords + '&';
-        }
-        if ($scope.searchOptions.category) {
-          hash += 'col_category=' + $scope.searchOptions.category + '&';
-        }
-        if ($scope.searchOptions.user) {
-          hash += 'col_user=' + $scope.searchOptions.user + '&';
-        }
-        if ($scope.searchOptions.type) {
-          hash += 'col_type=' + $scope.searchOptions.type + '&';
-        }
-        utilService.setParentHash(hash);
-      }
-
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
@@ -116,12 +97,22 @@
      */
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
       if (toState.name === 'assetlibrarylist') {
-        // Resize the iFrame the Asset Library is being run in
-        utilService.resizeIFrame();
-        // Restore the scroll position to the position the list was in previously
-        utilService.scrollTo(scrollPosition);
-        // Indicate that more results can be loaded
-        $scope.list.ready = true;
+        // Give angular a bit of time to show the entire state before restoring the scroll position
+        $timeout(function() {
+          // Resize the iFrame the Asset Library is being run in
+          utilService.resizeIFrame();
+          // Restore the scroll position to the position the list was in previously
+          utilService.scrollTo(scrollPosition);
+          // Indicate that more results can be loaded
+          $scope.list.ready = true;
+        });
+
+        // When a user performed a search in the asset library, views an asset profile and goes back
+        // to the asset library, we should ensure that the search query is still linked through the
+        // parent container's hash value
+        if (fromState.name === 'assetlibrarylist.item') {
+          utilService.setParentHash($scope.searchOptions);
+        }
       }
     });
 
@@ -138,6 +129,10 @@
       if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
         $scope.isSearch = true;
       }
+
+      // Keep track of the search options in the parent container's hash, so searches can be
+      // linked from other pages outside of Collabosphere
+      utilService.setParentHash($scope.searchOptions);
 
       // Load the list of assets with the specified search options
       getAssets();
