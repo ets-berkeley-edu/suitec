@@ -75,19 +75,20 @@
         if (fileSize > MAX_FILE_SIZE) {
           $scope.filesExceedSize.push(file);
           $scope.alertFilesError = true;
-        // Folders or files that are technically a folder on the
-        // filesystem (e.g. keynote) will have a file size of 0
-        // or no file size at all
-        } else if (!fileSize || !file.type || file.type === 'directory') {
-          $scope.filesInvalid.push(file);
-          $scope.alertFilesError = true;
-        } else {
+        // Files with a size should be included
+        } else if (fileSize) {
           totalSize += file.size;
           $scope.files.push({
             // Default the file title to the file name
             'title': file.name,
             'file': file
           });
+        // Folders or files that are technically a folder on the
+        // filesystem (e.g. keynote) will have a file size of 0
+        // or no file size at all
+        } else {
+          $scope.filesInvalid.push(file);
+          $scope.alertFilesError = true;
         }
       }
     };
