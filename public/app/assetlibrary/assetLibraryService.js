@@ -26,7 +26,7 @@
         url = decodeURIComponent(url || '');
 
         // If no hash fragment is part of the URL, we can return early
-        if (url.indexOf('#') === -1) {
+        if (url.indexOf('#') === -1 || url.indexOf('col_') === -1) {
           return;
         }
 
@@ -47,20 +47,14 @@
           $state.go('assetlibrarylist.item', {'assetId': assetId});
 
         // Check if a search was linked directly
-        } else {
-          var searchKeywordsMatch = url.match(/col_keywords=([A-Za-z0-9 ]+)/);
-          var searchCategoryMatch = url.match(/col_category=([0-9]+)/);
-          var searchUserMatch = url.match(/col_user=([0-9]+)/);
-          var searchTypeMatch = url.match(/col_type=(\w+)/);
-          if (data.keywords || data.category || data.user || data.type) {
-            var searchOptions = {
-              'keywords': (data.keywords ? data.keywords : ''),
-              'category': (data.category ? data.category : ''),
-              'user': (data.user ? data.user : ''),
-              'type': (data.type ? data.type : '')
-            };
-            $state.go('assetlibrarylist', searchOptions);
-          }
+        } else if (data.keywords || data.category || data.user || data.type) {
+          var searchOptions = {
+            'keywords': (data.keywords ? data.keywords : ''),
+            'category': (data.category ? data.category : ''),
+            'user': (data.user ? data.user : ''),
+            'type': (data.type ? data.type : '')
+          };
+          $state.go('assetlibrarylist', searchOptions);
         }
       });
     }

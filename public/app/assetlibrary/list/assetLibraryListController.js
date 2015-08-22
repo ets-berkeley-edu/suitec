@@ -109,9 +109,13 @@
 
         // When a user performed a search in the asset library, views an asset profile and goes back
         // to the asset library, we should ensure that the search query is still linked through the
-        // parent container's hash value
+        // parent container's hash value. We only do this if the user did not performed a new search
         if (fromState.name === 'assetlibrarylist.item') {
-          utilService.setParentHash($scope.searchOptions);
+          if (!toParams.keywords && !toParams.category && !toParams.user && !toParams.type) {
+            utilService.setParentHash($scope.searchOptions);
+          } else {
+            utilService.setParentHash(toParams);
+          }
         }
       }
     });
