@@ -121,7 +121,11 @@ var reprocessAssetPreview = function(asset, callback) {
   var embdr = new Embdr(config.get('embdr.apiKey'));
   embdr.process(assetUrl, {
     'start': function(preview) {
-      AssetsAPI.updateAssetPreview(asset, {'embedCode': preview.embedCode});
+      AssetsAPI.updateAssetPreview(asset, {
+        'embedId': preview.id,
+        'embedKey': preview.embedKey,
+        'embedCode': preview.embedCode
+      });
     },
     'thumbnails': {
       'sizes': [CollabosphereConstants.THUMBNAIL_SIZE],
