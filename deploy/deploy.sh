@@ -20,7 +20,7 @@ git fetch $TARGET_REMOTE
 git fetch -t $TARGET_REMOTE
 git checkout -b tmp
 git branch -D $TARGET_BRANCH
-git checkout -b $TARGET_BRANCH $TARGET_REMOTE/$TARGET_BRANCH || git checkout -qf TARGET_BRANCH
+git checkout -b $TARGET_BRANCH $TARGET_REMOTE/$TARGET_BRANCH || git checkout -qf $TARGET_BRANCH
 git branch -D tmp
 
 # Remove the existing node_modules and re-install
