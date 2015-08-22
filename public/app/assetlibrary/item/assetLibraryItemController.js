@@ -57,9 +57,11 @@
 
     /**
      * Get the current asset
+     *
+     * @param  {Boolean}    [incrementViews]   Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
      */
-    var getCurrentAsset = function() {
-      assetLibraryFactory.getAsset(assetId).success(function(asset) {
+    var getCurrentAsset = function(incrementViews) {
+      assetLibraryFactory.getAsset(assetId, incrementViews).success(function(asset) {
         // Build the asset comment tree
         buildCommentTree(asset);
 
@@ -74,7 +76,7 @@
           // Simply show the pending preview and try again later if we haven't heard back from Embdr yet
           if (!asset.embed_id || !asset.embed_key) {
             $scope.previewStatus = 'pending';
-            previewTimeout = setTimeout(getCurrentAsset, 2000);
+            previewTimeout = setTimeout(getCurrentAsset, 2000, false);
 
           } else {
             var embdrOptions = {
