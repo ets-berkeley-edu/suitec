@@ -1,5 +1,5 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist.item'">
-  <a ui-sref="assetlibrarylist" class="col-back" data-ng-if="!whiteboardReferral"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
+  <a data-ng-click="backToAssetLibrary()" class="col-back" data-ng-if="!whiteboardReferral"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
   <button type="button" class="btn btn-link col-back" data-ng-if="whiteboardReferral" data-ng-click="closeWindow()"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
 
   <!-- TITLE -->
@@ -94,7 +94,7 @@
             <div class="col-xs-9">
               <div data-ng-if="asset.categories.length > 0">
                 <div data-ng-repeat="category in asset.categories">
-                  <a ui-sref="assetlibrarylist({'category': category.id})" ui-sref-opts="{'inherit': false}">{{category.title}}</a>
+                  <a ui-sref="assetlibrarylist({'category': category.id, 'user': '', 'keywords': '', 'type': ''})">{{category.title}}</a>
                 </div>
               </div>
               <div data-ng-if="asset.categories.length === 0">No category</div>

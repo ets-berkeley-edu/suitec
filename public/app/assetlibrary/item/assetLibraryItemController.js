@@ -287,6 +287,20 @@
     });
 
     /**
+     * Navigate back to the asset library
+     */
+    var backToAssetLibrary = $scope.backToAssetLibrary = function() {
+      // The user might have found this asset through a search. We restore the search options in the
+      // parent frame's hash value that it can be linked to. Because of the way the ListController
+      // gets invoked for each new search, it's a lot simpler to restore the parent's hash value
+      // here rather than figure out how to do it in the list controller
+      utilService.setParentHash($scope.$parent.searchOptions);
+
+      // Go to the asset library
+      $state.go('assetlibrarylist', $scope.$parent.searchOptions);
+    };
+
+    /**
      * Close the current browser window. This is used when an asset has been opened
      * in a separate tab and the user wants to be taken back to where the asset was
      * launched from

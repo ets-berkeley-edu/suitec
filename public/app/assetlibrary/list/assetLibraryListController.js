@@ -32,6 +32,10 @@
       'type': $state.params.type || ''
     };
 
+    // Keep track of the search options in the parent container's hash, so searches can be
+    // linked from other pages outside of Collabosphere
+    utilService.setParentHash($scope.searchOptions);
+
     // Variable that keeps track of whether the search component is in the advanced view state. The
     // initial value gets derived from the state parameters that are passed into this controller.
     // The value will be bound to the search directive which will update it when a user switches
@@ -106,17 +110,6 @@
           // Indicate that more results can be loaded
           $scope.list.ready = true;
         });
-
-        // When a user performed a search in the asset library, views an asset profile and goes back
-        // to the asset library, we should ensure that the search query is still linked through the
-        // parent container's hash value. We only do this if the user did not performed a new search
-        if (fromState.name === 'assetlibrarylist.item') {
-          if (!toParams.keywords && !toParams.category && !toParams.user && !toParams.type) {
-            utilService.setParentHash($scope.searchOptions);
-          } else {
-            utilService.setParentHash(toParams);
-          }
-        }
       }
     });
 

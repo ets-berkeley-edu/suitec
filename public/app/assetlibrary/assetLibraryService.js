@@ -23,8 +23,6 @@
     // linking to states such as an asset profile directly
     if (window.parent) {
       utilService.getParentUrl(function(url) {
-        url = decodeURIComponent(url || '');
-
         // If no hash fragment is part of the URL, we can return early
         if (url.indexOf('#') === -1 || url.indexOf('col_') === -1) {
           return;
@@ -35,7 +33,7 @@
         var data = {};
         _.each(fragments, function(fragment) {
           var key = fragment.split('=')[0];
-          var val = fragment.split('=')[1];
+          var val = decodeURIComponent(fragment.split('=')[1]);
           if (key && key.indexOf('col_') === 0 && val) {
             data[key.substring(4)] = val;
           }
