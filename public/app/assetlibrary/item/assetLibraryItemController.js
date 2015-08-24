@@ -58,7 +58,7 @@
     /**
      * Get the current asset
      *
-     * @param  {Boolean}    [incrementViews]   Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
+     * @param  {Boolean}      [incrementViews]      Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
      */
     var getCurrentAsset = function(incrementViews) {
       assetLibraryFactory.getAsset(assetId, incrementViews).success(function(asset) {
