@@ -21,6 +21,7 @@
     "bunyan": "latest",
     "bunyan-prettystream": "latest",
     "col-activities": "latest",
+    "col-analytics": "latest",
     "col-assets": "latest",
     "col-canvas": "latest",
     "col-categories": "latest",
@@ -45,6 +46,7 @@
     "joi": "latest",
     "lodash": "latest",
     "mime": "latest",
+    "mixpanel": "latest",
     "moment-timezone": "latest",
     "oauth": "latest",
     "pg": "latest",
@@ -83,6 +85,7 @@
   },
   "bundleDependencies": [
     "col-activities",
+    "col-analytics",
     "col-assets",
     "col-canvas",
     "col-categories",
