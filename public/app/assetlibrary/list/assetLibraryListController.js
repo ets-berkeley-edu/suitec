@@ -32,10 +32,6 @@
       'type': $state.params.type || ''
     };
 
-    // Keep track of the search options in the parent container's hash, so searches can be
-    // linked from other pages outside of Collabosphere
-    utilService.setParentHash($scope.searchOptions);
-
     // Variable that keeps track of whether the search component is in the advanced view state. The
     // initial value gets derived from the state parameters that are passed into this controller.
     // The value will be bound to the search directive which will update it when a user switches
@@ -65,7 +61,11 @@
      * Get the assets for the current course through an infinite scroll
      */
     var getAssets = $scope.getAssets = function() {
-      // Indicate the no further REST API requests should be made
+      // Keep track of the search options in the parent container's hash to allow
+      // for deep linkng to a search
+      utilService.setParentHash($scope.searchOptions);
+
+      // Indicate that no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
@@ -103,6 +103,9 @@
       if (toState.name === 'assetlibrarylist') {
         // Give angular a bit of time to show the entire state before restoring the scroll position
         $timeout(function() {
+          // Keep track of the search options in the parent container's hash to allow
+          // for deep linkng to a search
+          utilService.setParentHash($scope.searchOptions);
           // Resize the iFrame the Asset Library is being run in
           utilService.resizeIFrame();
           // Restore the scroll position to the position the list was in previously
@@ -126,10 +129,6 @@
       if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
         $scope.isSearch = true;
       }
-
-      // Keep track of the search options in the parent container's hash, so searches can be
-      // linked from other pages outside of Collabosphere
-      utilService.setParentHash($scope.searchOptions);
 
       // Load the list of assets with the specified search options
       getAssets();

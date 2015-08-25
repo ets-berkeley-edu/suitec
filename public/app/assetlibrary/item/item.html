@@ -1,5 +1,5 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist.item'">
-  <a data-ng-click="backToAssetLibrary()" class="col-back" data-ng-if="!whiteboardReferral"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
+  <a ui-sref="assetlibrarylist($parent.searchOptions)" class="col-back" data-ng-if="!whiteboardReferral"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
   <button type="button" class="btn btn-link col-back" data-ng-if="whiteboardReferral" data-ng-click="closeWindow()"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
 
   <!-- TITLE -->
@@ -215,4 +215,4 @@
   </div>
 </div>
 
-<ui-view></ui-view>
+<div ui-view></div>
