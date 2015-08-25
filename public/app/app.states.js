@@ -50,27 +50,19 @@
         'controller': 'AssetLibraryAddBookmarkletController'
       })
       .state('assetlibrarylist', {
-        'url': '/assetlibrary?category&user&keywords&type&course_id&api_domain&tool_url',
+        'url': '/assetlibrary?category&user&keywords&type',
         'templateUrl': '/app/assetlibrary/list/list.html',
         'controller': 'AssetLibraryListController'
       })
       .state('assetlibrarylist.item', {
-        'views': {
-          'item': {
-            'controller': 'AssetLibraryItemController',
-            'templateUrl': '/app/assetlibrary/item/item.html'
-          }
-        },
-        'url': '/:assetId?whiteboard_referral'
+        'url': '/:assetId?whiteboard_referral&course_id&api_domain&tool_url',
+        'controller': 'AssetLibraryItemController',
+        'templateUrl': '/app/assetlibrary/item/item.html'
       })
       .state('assetlibrarylist.item.edit', {
-        'views': {
-          'edit': {
-            'controller': 'AssetLibraryEditController',
-            'templateUrl': '/app/assetlibrary/edit/edit.html'
-          }
-        },
-        'url': '/edit'
+        'url': '/edit',
+        'controller': 'AssetLibraryEditController',
+        'templateUrl': '/app/assetlibrary/edit/edit.html'
       })
 
       // Engagement Index routes

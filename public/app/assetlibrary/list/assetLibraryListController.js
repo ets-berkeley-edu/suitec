@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, userFactory, utilService, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, userFactory, utilService, $rootScope, $scope, $state, $timeout) {
 
     // Variable that keeps track of the URL state
     $scope.state = $state;
@@ -31,6 +31,10 @@
       'user': parseInt($state.params.user, 10) || '',
       'type': $state.params.type || ''
     };
+
+    // Keep track of the search options in the parent container's hash, so searches can be
+    // linked from other pages outside of Collabosphere
+    utilService.setParentHash($scope.searchOptions);
 
     // Variable that keeps track of whether the search component is in the advanced view state. The
     // initial value gets derived from the state parameters that are passed into this controller.
@@ -97,12 +101,15 @@
      */
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
       if (toState.name === 'assetlibrarylist') {
-        // Resize the iFrame the Asset Library is being run in
-        utilService.resizeIFrame();
-        // Restore the scroll position to the position the list was in previously
-        utilService.scrollTo(scrollPosition);
-        // Indicate that more results can be loaded
-        $scope.list.ready = true;
+        // Give angular a bit of time to show the entire state before restoring the scroll position
+        $timeout(function() {
+          // Resize the iFrame the Asset Library is being run in
+          utilService.resizeIFrame();
+          // Restore the scroll position to the position the list was in previously
+          utilService.scrollTo(scrollPosition);
+          // Indicate that more results can be loaded
+          $scope.list.ready = true;
+        });
       }
     });
 
@@ -119,6 +126,10 @@
       if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
         $scope.isSearch = true;
       }
+
+      // Keep track of the search options in the parent container's hash, so searches can be
+      // linked from other pages outside of Collabosphere
+      utilService.setParentHash($scope.searchOptions);
 
       // Load the list of assets with the specified search options
       getAssets();
