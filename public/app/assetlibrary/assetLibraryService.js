@@ -19,11 +19,11 @@
 
   angular.module('collabosphere').service('assetLibraryService', function($state, utilService) {
 
-    // If the LTI tools are running in an iFrame we get the parent container's URL. This allows for
-    // linking to states such as an asset profile directly
+    // Get the parent container's hash. In case a hash a present, restore the state to allow
+    // for deep linking to an asset or asset library search
     if (window.parent) {
       utilService.getParentUrl(function(url) {
-        // If no hash fragment is part of the URL, we can return early
+        // If no hash fragment is part of the URL, return early
         if (url.indexOf('#') === -1 || url.indexOf('col_') === -1) {
           return;
         }
@@ -39,12 +39,12 @@
           }
         });
 
-        // Check if an asset was linked directly
+        // Check if an asset was deep linked
         if (data.asset) {
           var assetId = parseInt(data.asset, 10);
           $state.go('assetlibrarylist.item', {'assetId': assetId});
 
-        // Check if a search was linked directly
+        // Check if an asset library search was deep linked
         } else if (data.keywords || data.category || data.user || data.type) {
           var searchOptions = {
             'keywords': (data.keywords ? data.keywords : ''),

@@ -55,7 +55,7 @@
       }
     });
 
-    // Stick the asset id in the hash of the parent container allowing the asset to be linked directly
+    // Add the asset id to the parent container's to allow for deep linking to the asset
     utilService.setParentHash({'asset': assetId});
 
     /**
@@ -289,18 +289,13 @@
     });
 
     /**
-     * Navigate back to the asset library
+     * Restore the asset library search options when navigating back to the asset library list. As navigating
+     * back to the asset library list doesn't trigger a new search, the easiest solution is to restore the hash
+     * value here
      */
-    //var backToAssetLibrary = $scope.backToAssetLibrary = function() {
-    //  // The user might have found this asset through a search. We restore the search options in the
-    //  // parent frame's hash value that it can be linked to. Because of the way the ListController
-    //  // gets invoked for each new search, it's a lot simpler to restore the parent's hash value
-    //  // here rather than figure out how to do it in the list controller
-    //  utilService.setParentHash($scope.$parent.searchOptions);
-
-    //  // Go to the asset library
-    //  $state.go('assetlibrarylist', $scope.$parent.searchOptions);
-    //};
+    var backToAssetLibrary = $scope.backToAssetLibrary = function() {
+      utilService.setParentHash($scope.$parent.searchOptions);
+    };
 
     /**
      * Close the current browser window. This is used when an asset has been opened

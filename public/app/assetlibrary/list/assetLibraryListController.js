@@ -62,7 +62,7 @@
      */
     var getAssets = $scope.getAssets = function() {
       // Keep track of the search options in the parent container's hash to allow
-      // for deep linkng to a search
+      // for deep linking to a search
       utilService.setParentHash($scope.searchOptions);
 
       // Indicate that no further REST API requests should be made
@@ -101,18 +101,12 @@
      */
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
       if (toState.name === 'assetlibrarylist') {
-        // Give angular a bit of time to show the entire state before restoring the scroll position
-        $timeout(function() {
-          // Keep track of the search options in the parent container's hash to allow
-          // for deep linkng to a search
-          utilService.setParentHash($scope.searchOptions);
-          // Resize the iFrame the Asset Library is being run in
-          utilService.resizeIFrame();
-          // Restore the scroll position to the position the list was in previously
-          utilService.scrollTo(scrollPosition);
-          // Indicate that more results can be loaded
-          $scope.list.ready = true;
-        });
+        // Resize the iFrame the Asset Library is being run in
+        utilService.resizeIFrame();
+        // Restore the scroll position to the position the list was in previously
+        utilService.scrollTo(scrollPosition);
+        // Indicate that more results can be loaded
+        $scope.list.ready = true;
       }
     });
 
