@@ -17,10 +17,18 @@
 
   'use strict';
 
-  angular.module('collabosphere').config(function($compileProvider) {
+  angular.module('collabosphere').config(function($compileProvider, $mixpanelProvider) {
 
     // Add `javascript:` to the list of accepted href protocols. This will be used for the Bookmarklet
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
+
+    // TODO
+    //userFactory.getMe().success(function(me) {
+    //  var mixpanel = me.course.canvas.mixpanel;
+    //  if (mixpanel.enabled) {
+    //    $mixpanelProvider.apiKey(mixpanel.apiKey);
+    //  }
+    //});
 
   });
 

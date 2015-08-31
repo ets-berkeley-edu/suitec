@@ -26,6 +26,7 @@
     'ngMessages',
     'ngMoment',
     'ngSanitize',
+    'analytics.mixpanel',
     'common.fabric',
     'common.fabric.utilities',
     'common.fabric.constants',
