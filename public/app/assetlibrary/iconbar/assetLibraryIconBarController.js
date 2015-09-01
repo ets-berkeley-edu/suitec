@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryIconBarController', function(assetLibraryFactory, userFactory, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryIconBarController', function(assetLibraryFactory, me, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     /**
      * Like an asset. If the asset has been liked by the current user already, the like will be undone
@@ -50,10 +53,6 @@
         return true;
       }
     };
-
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-    });
 
   });
 

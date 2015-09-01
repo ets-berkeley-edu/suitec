@@ -17,7 +17,16 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryAddBookmarkletController', function(deviceDetector, userFactory, utilService, $location, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryAddBookmarkletController', function(analyticsService, deviceDetector, me, utilService, $location, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
+
+    // Set the domain that should be used by the Bookmarklet for requests
+    $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();
+
+    // Set the URL that should be used to send the user back to the Asset Library
+    $scope.toolUrl = utilService.getToolUrl();
 
     // Variable that will keep track of the step the user is currently at
     $scope.step = 1;
@@ -43,6 +52,24 @@
      */
     var nextStep = $scope.nextStep = function() {
       $scope.step++;
+      trackBookmarklet();
+    };
+
+    /**
+     * Track an activity for each step in the bookmarklet installation
+     * process
+     */
+    var trackBookmarklet = function() {
+      analyticsService.track('Install bookmarklet instructions', {
+        'step': $scope.step
+      });
+    };
+
+    /**
+     * Track an activity when the bookmarklet is being dragged
+     */
+    var trackBookmarkInstallation = $scope.trackBookmarkInstallation = function() {
+      analyticsService.track('Install bookmarklet');
     };
 
     /**
@@ -56,13 +83,8 @@
       return false;
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-      // Set the domain that should be used by the Bookmarklet for requests
-      $scope.baseUrl = (me.course.canvas.use_https ? 'https://' : 'http://') + $location.host() + ':' + $location.port();
-      // Set the URL that should be used to send the user back to the Asset Library
-      $scope.toolUrl = utilService.getToolUrl();
-    });
+    // Track the bookmarklet installation
+    trackBookmarklet();
 
   });
 

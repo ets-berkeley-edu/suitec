@@ -1,4 +1,4 @@
-/*!
+/**
  * Copyright 2015 UC Berkeley (UCB) Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -17,17 +17,24 @@
 
   'use strict';
 
-  var collabosphere = angular.module('collabosphere');
-  collabosphere.config(function(config, me, $compileProvider, $mixpanelProvider) {
+  angular.module('collabosphere').service('analyticsService', function(me, $mixpanel) {
 
-    // Add `javascript:` to the list of accepted href protocols. This will be used for the Bookmarklet
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
+    $mixpanel.identify(me.id);
 
-    // TODO
-    if (config.analytics.enabled) {
-      $mixpanelProvider.apiKey(config.analytics.apiKey);
-    }
+    /**
+     * Track a new event
+     *
+     * @param  {String}         event           The unique identifier of the event to track
+     * @param  {Object}         [options]       Additional options to store against the specified event
+     */
+    var track = function(event, options) {
+      $mixpanel.track(event, options);
+    };
+
+    return {
+      'track': track
+    };
 
   });
 
-})(window.angular);
+}(window.angular));

@@ -38,7 +38,10 @@
         'readonly': '=readonly'
       },
       'templateUrl': '/app/whiteboards/board/board.html',
-      'controller': function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $alert, $cookies, $modal, $rootScope, $scope) {
+      'controller': function(Fabric, FabricConstants, me, utilService, whiteboardsFactory, $alert, $cookies, $modal, $rootScope, $scope) {
+
+        // Make the me object available to the scope
+        $scope.me = me;
 
         // Element that will keep track of the whiteboard viewport
         var viewport = document.getElementById('whiteboards-board-viewport');
@@ -1657,7 +1660,7 @@
           }
           whiteboardsFactory.getChatMessages($scope.whiteboard.id, lastId).success(function(chatMessages) {
             // The oldest messages go on top
-            chatMessages.reverse();
+            chatMessages = chatMessages.results.reverse();
 
             // Prepend the older messages
             $scope.chatMessages = chatMessages.concat($scope.chatMessages);
@@ -1831,12 +1834,6 @@
           // also close the add asset popover
           setMode('move');
         };
-
-        /* INITIALIZATION */
-
-        userFactory.getMe().success(function(me) {
-          $scope.me = me;
-        });
 
       }
     };

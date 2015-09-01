@@ -17,7 +17,17 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('LeaderboardController', function(userFactory, utilService, $scope) {
+  angular.module('collabosphere').controller('LeaderboardController', function(analyticsService, me, userFactory, utilService, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
+
+    // If the user hasn't indicated if their score should be
+    // shared with the course, check the checkbox by default
+    $scope.me.new_share_points = $scope.me.share_points;
+    if ($scope.me.share_points === null && !$scope.me.is_admin) {
+      $scope.me.new_share_points = true;
+    }
 
     // Default sort
     $scope.sortBy = 'rank';
@@ -256,6 +266,24 @@
     var sort = $scope.sort = function(sortBy) {
       $scope.sortBy = sortBy;
       $scope.reverse = !$scope.reverse;
+      // Track the leaderboard sort
+      analyticsService.track('Sort engagement index', {
+        'total': $scope.users.length,
+        'ei_sort': $scope.sortBy,
+        'ei_reverse': $scope.reverse
+      });
+    };
+
+    /**
+     * Track leaderboard searches
+     *
+     * @param  {String}     query           The leaderboard search query
+     */
+    var search = $scope.search = function(query) {
+      analyticsService.track('Search engagement index', {
+        'total': $scope.users.length,
+        'ei_query': query
+      });
     };
 
     /**
@@ -284,18 +312,7 @@
       }
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-
-      // If the user hasn't indicated if their score should be
-      // shared with the course, check the checkbox by default
-      $scope.me.new_share_points = $scope.me.share_points;
-      if ($scope.me.share_points === null && !$scope.me.is_admin) {
-        $scope.me.new_share_points = true;
-      }
-
-      getLeaderboard();
-    });
+    getLeaderboard();
 
   });
 

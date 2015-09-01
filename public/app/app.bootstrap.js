@@ -13,13 +13,9 @@
  * permissions and limitations under the License.
  */
 
-/*(function(angular) {
+(function() {
 
-  'use strict';
-
-  // Initialize the Collabosphere module
-  angular.module('collabosphere', [
-    'CollabosphereConstants',
+  var collabosphere = angular.module('collabosphere', [
     'ngAria',
     'ngCookies',
     'ng.deviceDetector',
@@ -42,5 +38,43 @@
     'collabosphere.templates'
   ]);
 
-})(window.angular);
-*/
+  /**
+   * TODO
+   * @see https://css-tricks.com/snippets/jquery/get-query-params-object/
+   */
+  var getQueryParameters = function() {
+    return decodeURIComponent(document.location.search).replace(/(^\?)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
+  }
+
+  /**
+   * TODO
+   */
+  var fetchData = function() {
+    var initInjector = angular.injector(['ng']);
+    var $http = initInjector.get('$http');
+    var $q = initInjector.get('$q');
+
+    var parameters = getQueryParameters();
+    var baseUrl = '/api/' + parameters.api_domain + '/' + parameters.course_id;
+
+    return $q.all({
+      'me': $http.get(baseUrl + '/users/me'),
+      'config': $http.get(baseUrl + '/config'),
+    }).then(function(results) {
+      collabosphere.constant('me', results.me.data);
+      collabosphere.constant('config', results.config.data);
+    });
+  };
+
+  /**
+   * TODO
+   */
+  var bootstrapCollabosphere = function() {
+    angular.element(document).ready(function() {
+      angular.bootstrap(document, ['collabosphere']);
+    });
+  };
+
+  fetchData().then(bootstrapCollabosphere);
+
+}());

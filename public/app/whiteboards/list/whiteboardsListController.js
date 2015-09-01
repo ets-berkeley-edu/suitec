@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsListController', function(userFactory, utilService, whiteboardsFactory, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsListController', function(me, utilService, whiteboardsFactory, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     $scope.whiteboards = [];
     $scope.list = {
@@ -60,10 +63,6 @@
       url += '&tool_url=' + launchParams.toolUrl;
       return url;
     };
-
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-    });
 
   });
 
