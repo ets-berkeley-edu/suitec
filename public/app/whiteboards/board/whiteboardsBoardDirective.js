@@ -38,7 +38,7 @@
         'readonly': '=readonly'
       },
       'templateUrl': '/app/whiteboards/board/board.html',
-      'controller': function(Fabric, FabricConstants, me, utilService, whiteboardsFactory, $alert, $cookies, $modal, $rootScope, $scope) {
+      'controller': function(analyticsService, Fabric, FabricConstants, me, utilService, whiteboardsFactory, $alert, $cookies, $modal, $rootScope, $scope) {
 
         // Make the me object available to the scope
         $scope.me = me;
@@ -556,9 +556,38 @@
           if (elements.length === 1) {
             canvas.setActiveObject(getCanvasElement(elements[0].uid));
           }
+
+          // Track the whiteboard layer order change
+          analyticsService.track('Change whiteboard layer order', {
+            'whiteboard_id': $scope.whiteboard.id,
+            'whiteboard_direction': direction,
+            'whiteboard_elements': _.pluck(elements, 'uid'),
+            'whiteboard_elements_length': elements.length,
+            'whiteboard_elements_types': _.pluck(elements, 'type')
+          });
         };
 
         initializeCanvas();
+
+        /* ELEMENT SELECTION */
+
+        /**
+         * Track an activity when one or multiple whiteboard elements
+         * have been selected
+         */
+        var elementsSelected = function() {
+          setTimeout(function() {
+            var elements = getActiveElements();
+            analyticsService.track('Select whiteboard elements', {
+              'whiteboard_id': $scope.whiteboard.id,
+              'whiteboard_elements': _.pluck(elements, 'uid'),
+              'whiteboard_elements_length': elements.length,
+              'whiteboard_elements_types': _.pluck(elements, 'type')
+            });
+          });
+        };
+
+        canvas.on('object:selected', elementsSelected);
 
         /* CONCURRENT EDITING */
 
@@ -944,6 +973,12 @@
         var toggleZoom = $scope.toggleZoom = function() {
           $scope.fitToScreen = !$scope.fitToScreen;
           setCanvasDimensions();
+
+          // Track the whiteboard zoom
+          analyticsService.track('Zoom whiteboard', {
+            'whiteboard_id': $scope.whiteboard.id,
+            'whiteboard_fit_to_screen': $scope.fitToScreen
+          });
         };
 
         /* TOOLBAR */
@@ -1018,6 +1053,14 @@
          */
         var copy = function() {
           clipboard = getActiveElements();
+
+          // Track the whiteboard copy
+          analyticsService.track('Whiteboard copy', {
+            'whiteboard_id': $scope.whiteboard.id,
+            'whiteboard_elements': _.pluck(clipboard, 'uid'),
+            'whiteboard_elements_length': clipboard.length,
+            'whiteboard_elements_types': _.pluck(clipboard, 'type')
+          });
         };
 
         /**
@@ -1045,6 +1088,13 @@
             canvas.renderAll();
             // Set the size of the whiteboard canvas
             setCanvasDimensions();
+
+            // Track the whiteboard paste
+            analyticsService.track('Whiteboard paste', {
+              'whiteboard_id': $scope.whiteboard.id,
+              'whiteboard_elements': clipboard.length,
+              'whiteboard_elements_types': _.pluck(clipboard, 'type')
+            });
           });
 
           if (clipboard.length > 0) {
@@ -1545,6 +1595,17 @@
               'whiteboard_referral': true
             };
           }
+        };
+
+        /**
+         * Track an activity when an asset is opened from a whiteboard
+         */
+        var trackOpenAsset = $scope.trackOpenAsset = function() {
+          var assetId = getSelectedAsset();
+          analyticsService.track('Open asset from whiteboard', {
+            'whiteboard_id': $scope.whiteboard.id,
+            'whiteboard_element_asset_id': assetId
+          });
         };
 
         /* ADD LINK */

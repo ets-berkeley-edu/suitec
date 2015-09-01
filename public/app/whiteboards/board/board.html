@@ -9,7 +9,7 @@
 
     <!-- ELEMENT BUTTONS -->
     <div id="whiteboards-board-editelement" data-ng-show="isElementSelected() && !isModifyingElement">
-      <a class="btn btn-default" title="Open original asset" target="_blank" data-ng-if="getSelectedAsset()" ui-sref="assetlibrarylist.item(getSelectedAssetParams())"><i class="fa fa-external-link"><span class="sr-only">Open original asset</span></i></a>
+      <a class="btn btn-default" title="Open original asset" target="_blank" data-ng-if="getSelectedAsset()" ui-sref="assetlibrarylist.item(getSelectedAssetParams())" data-ng-click="trackOpenAsset()"><i class="fa fa-external-link"><span class="sr-only">Open original asset</span></i></a>
       <div class="btn-group" role="group">
         <button type="button" class="btn btn-default" title="Move to back" data-ng-click="moveLayer('back')"><i class="fa fa-arrow-down"><span class="sr-only">Move to back</span></i></button>
         <button type="button" class="btn btn-default" title="Bring to front" data-ng-click="moveLayer('front')"><i class="fa fa-arrow-up"><span class="sr-only">Bring to front</span></i></button>

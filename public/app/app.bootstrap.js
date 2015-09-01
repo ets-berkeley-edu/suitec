@@ -45,8 +45,10 @@
    * @see https://css-tricks.com/snippets/jquery/get-query-params-object/
    */
   var getQueryParameters = function() {
-    return decodeURIComponent(document.location.search).replace(/(^\?)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
-  }
+    return decodeURIComponent(document.location.search).replace(/(^\?)/,'').split('&').map(function(n) {
+      return n = n.split('='), this[n[0]] = n[1], this;
+    }.bind({}))[0];
+  };
 
   /**
    * Get and cache the config feed and me data before bootstrapping
@@ -64,7 +66,7 @@
 
     return $q.all({
       'me': $http.get(baseUrl + '/users/me'),
-      'config': $http.get(baseUrl + '/config'),
+      'config': $http.get(baseUrl + '/config')
     }).then(function(results) {
       collabosphere.constant('me', results.me.data);
       collabosphere.constant('config', results.config.data);
