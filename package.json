@@ -78,7 +78,7 @@
     "gulp-rev": "latest",
     "gulp-rev-replace": "latest",
     "gulp-uglify": "latest",
-    "gulp-usemin": "latest",
+    "gulp-usemin": "0.3.11",
     "jscs": "latest",
     "request": "latest",
     "run-sequence": "latest",
