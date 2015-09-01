@@ -48,7 +48,7 @@
       <!-- LIST ITEM -->
       <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
         <div class="col-list-item-container">
-          <a ui-sref="assetlibrarylist.item({assetId: asset.id})" ui-sref-opts="{'inherit': false}">
+          <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
             <div class="col-list-item-tile">
               <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
               <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
@@ -70,4 +70,4 @@
   </div>
 </div>
 
-<div ui-view="item"></div>
+<div ui-view></div>

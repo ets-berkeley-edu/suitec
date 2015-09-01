@@ -156,6 +156,46 @@
     };
 
     /**
+     * Get the full URL of the parent container
+     *
+     * @param  {Function}   callback          Standard callback function
+     * @param  {String}     callback.url      The URL of the parent container
+     */
+    var getParentUrl = function(callback) {
+      postIFrameMessage(function() {
+        return {
+          'subject': 'getParent'
+        };
+      }, function(data) {
+        data = data || {};
+        return callback(data.location);
+      });
+    };
+
+    /**
+     * Set the parent's container hash value
+     *
+     * @param {Object}  data    The data for the parent's hash container. Each key will be prefixed with `col_`. For example, `{'user': 1, 'category': 42}` would be serialized to `col_user=1&col_category=42`
+     */
+    var setParentHash = function(data) {
+      if (window.parent) {
+        var hash = [];
+        _.each(data, function(val, key) {
+          if (val) {
+            hash.push('col_' + key + '=' + encodeURIComponent(val));
+          }
+        });
+        hash = hash.join('&');
+        postIFrameMessage(function() {
+          return {
+            'subject': 'setParentHash',
+            'hash': hash
+          };
+        });
+      }
+    };
+
+    /**
      * Utility function used to send a window event to the parent container. When running
      * Collabosphere as a BasicLTI tool, this is our main way of communicating with the container
      * application
@@ -185,9 +225,8 @@
                   // The message is not for us; ignore it
                   return;
                 }
-                if (message) {
-                  messageCallback(message);
-                }
+
+                messageCallback(message);
                 window.removeEventListener('message', callback);
               }
             };
@@ -198,6 +237,7 @@
           // message directly into this function, as we sometimes need to wait until Angular has
           // finished rendering before we can determine what message to send
           var message = messageGenerator();
+
           // Send the message to the parent container as a stringified object
           window.parent.postMessage(JSON.stringify(message), '*');
         });
@@ -205,13 +245,15 @@
     };
 
     return {
-      'getLaunchParams': getLaunchParams,
       'getApiUrl': getApiUrl,
-      'getToolUrl': getToolUrl,
+      'getLaunchParams': getLaunchParams,
+      'getParentUrl': getParentUrl,
       'getScrollInformation': getScrollInformation,
+      'getToolUrl': getToolUrl,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
-      'scrollToTop': scrollToTop
+      'scrollToTop': scrollToTop,
+      'setParentHash': setParentHash
     };
 
   });

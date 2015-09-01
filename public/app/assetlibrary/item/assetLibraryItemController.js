@@ -58,6 +58,9 @@
       }
     });
 
+    // Add the asset id to the parent container's to allow for deep linking to the asset
+    utilService.setParentHash({'asset': assetId});
+
     /**
      * Get the current asset
      *
@@ -287,6 +290,15 @@
         $scope.asset = updatedAsset;
       }
     });
+
+    /**
+     * Restore the asset library search options when navigating back to the asset library list. As navigating
+     * back to the asset library list doesn't trigger a new search, the easiest solution is to restore the hash
+     * value here
+     */
+    var backToAssetLibrary = $scope.backToAssetLibrary = function() {
+      utilService.setParentHash($scope.$parent.searchOptions);
+    };
 
     /**
      * Close the current browser window. This is used when an asset has been opened
