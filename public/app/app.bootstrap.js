@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-(function() {
+(function(angular) {
 
   var collabosphere = angular.module('collabosphere', [
     'ngAria',
@@ -39,7 +39,9 @@
   ]);
 
   /**
-   * TODO
+   * Get the parsed querystring parameters from the current URL
+   *
+   * @return {Object}                     The parsed querystring parameters from the current URL
    * @see https://css-tricks.com/snippets/jquery/get-query-params-object/
    */
   var getQueryParameters = function() {
@@ -47,13 +49,16 @@
   }
 
   /**
-   * TODO
+   * Get and cache the config feed and me data before bootstrapping
+   * the Collabosphere angular app to remove the need for asynchronous
+   * operations during the configuration phase
    */
-  var fetchData = function() {
+  var initData = function() {
     var initInjector = angular.injector(['ng']);
     var $http = initInjector.get('$http');
     var $q = initInjector.get('$q');
 
+    // Construct the base REST API URL
     var parameters = getQueryParameters();
     var baseUrl = '/api/' + parameters.api_domain + '/' + parameters.course_id;
 
@@ -67,14 +72,14 @@
   };
 
   /**
-   * TODO
+   * Bootstrap the Collabosphere angular app
    */
-  var bootstrapCollabosphere = function() {
+  var bootstrap = function() {
     angular.element(document).ready(function() {
       angular.bootstrap(document, ['collabosphere']);
     });
   };
 
-  fetchData().then(bootstrapCollabosphere);
+  initData().then(bootstrap);
 
-}());
+})(window.angular);

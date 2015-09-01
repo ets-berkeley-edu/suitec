@@ -23,7 +23,7 @@
     // Add `javascript:` to the list of accepted href protocols. This will be used for the Bookmarklet
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
 
-    // TODO
+    // Initialize the Mixpanel analytics with the configured API key
     if (config.analytics.enabled) {
       $mixpanelProvider.apiKey(config.analytics.apiKey);
     }
