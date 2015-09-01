@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('PointsController', function(pointsFactory, userFactory, $location, $scope) {
+  angular.module('collabosphere').controller('PointsController', function(me, pointsFactory, $location, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that will keep track of the saved activity type configuration
     $scope.activityTypeConfiguration = null;
@@ -116,10 +119,7 @@
       pointsFactory.editActivityTypeConfiguration(activityTypeUpdates);
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-      getActivityTypeConfiguration();
-    });
+    getActivityTypeConfiguration();
 
   });
 

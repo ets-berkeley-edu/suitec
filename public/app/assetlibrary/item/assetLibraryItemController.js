@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $rootScope, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, utilService, $rootScope, $scope, $state, $stateParams) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
@@ -306,14 +309,11 @@
       window.close();
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-      // Load the selected asset
-      getCurrentAsset();
-      // Scroll to the top of the page as the current scroll position could be somewhere
-      // deep in the asset library list
-      utilService.scrollToTop();
-    });
+    // Load the selected asset
+    getCurrentAsset();
+    // Scroll to the top of the page as the current scroll position could be somewhere
+    // deep in the asset library list
+    utilService.scrollToTop();
 
   });
 

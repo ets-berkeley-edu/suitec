@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function($location, $q, $state, $timeout) {
+  angular.module('collabosphere').service('utilService', function(analyticsService, $location, $q, $timeout) {
 
     // Hide the vertical toolbar when the tool is embedded in an iFrame. At that point, the scrolling
     // script injected in the parent window will ensure that the iFrame is always as high as its content

@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, userFactory, utilService, $rootScope, $scope, $state, $timeout) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, me, utilService, $rootScope, $scope, $state) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that keeps track of the URL state
     $scope.state = $state;
@@ -146,9 +149,6 @@
       $scope.assets = _.reject($scope.assets, {'id': assetId});
     });
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-    });
   });
 
 }(window.angular));

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-ng-app="collabosphere">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title data-ng-bind="header"></title>
@@ -47,6 +47,7 @@
   <script src="/lib/angular-fabric/assets/fabricUtilities.js"></script>
   <script src="/lib/angular-fabric/assets/fabricWindow.js"></script>
   <script src="/lib/angular-messages/angular-messages.js"></script>
+  <script src="/lib/angular-mixpanel/dist/angular-mixpanel.min.js"></script>
   <script src="/lib/angular-momentjs/angular-momentjs.js"></script>
   <script src="/lib/angular-sanitize/angular-sanitize.js"></script>
   <script src="/lib/angular-scroll-glue/src/scrollglue.js"></script>
@@ -60,6 +61,7 @@
   <script src="/lib/highcharts-release/highcharts.js"></script>
   <script src="/lib/highcharts-release/highcharts-more.js"></script>
   <script src="/lib/lodash/lodash.js"></script>
+  <script src="/lib/mixpanel/mixpanel-jslib-snippet.min.js"></script>
   <script src="/lib/moment/moment.js"></script>
   <script src="/lib/ng-device-detector/ng-device-detector.js"></script>
   <script src="/lib/ng-file-upload/ng-file-upload.js"></script>
@@ -73,9 +75,10 @@
   <!-- endbuild -->
 
   <!-- build:app /static/app.js -->
-  <script src="/app/app.module.js"></script>
+  <script src="/app/app.bootstrap.js"></script>
   <script src="/app/app.config.js"></script>
   <script src="/app/app.states.js"></script>
+  <script src="/app/shared/analyticsService.js"></script>
   <script src="/app/shared/autosuggestFilter.js"></script>
   <script src="/app/shared/formatDateFilter.js"></script>
   <script src="/app/shared/hashtagsFilter.js"></script>

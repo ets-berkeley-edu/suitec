@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsCreateController', function(whiteboardsFactory, userFactory, $location, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsCreateController', function(me, whiteboardsFactory, userFactory, $location, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that will keep track of the new whiteboard to be created
     $scope.whiteboard = {};
@@ -38,18 +41,12 @@
      * Get all users in the course
      */
     var getAllUsers = function() {
-      // Get our own information first, so we can filter ourselves out of
-      // the set of users who can be invited into the whiteboard
-      userFactory.getMe()
-        .then(function(me) {
-          $scope.me = me.data;
-          return userFactory.getAllUsers();
-        })
-        .then(function(response) {
-          $scope.users = response.data.filter(function(user) {
-            return (user.id != $scope.me.id);
-          });
+      // Filter ourselves out of the set of users who can be invited into the whiteboard
+      userFactory.getAllUsers().then(function(response) {
+        $scope.users = response.data.filter(function(user) {
+          return (user.id != $scope.me.id);
         });
+      });
     };
 
     getAllUsers();

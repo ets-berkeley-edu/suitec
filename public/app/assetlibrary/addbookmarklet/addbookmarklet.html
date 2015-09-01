@@ -44,7 +44,7 @@
           First, enable your browser's <span data-ng-bind="toolbar"></span>.
         </div>
         <div data-ng-if="step === 3">
-          Drag <a class="btn btn-default assetlibrary-addbookmarklet-bookmarklet" data-ng-click="preventBookmarklet($event)" data-ng-href="javascript:
+          Drag <a class="btn btn-default assetlibrary-addbookmarklet-bookmarklet" data-ng-click="preventBookmarklet($event)" data-ng-mousedown="trackBookmarkInstallation()" data-ng-href="javascript:
               (function() {
                 var api_domain = '{{me.course.canvas_api_domain}}';
                 var base_url = '{{baseUrl}}';

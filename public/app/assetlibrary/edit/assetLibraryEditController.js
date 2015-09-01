@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryEditController', function(assetLibraryCategoriesFactory, assetLibraryFactory, userFactory, $state, $stateParams, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryEditController', function(assetLibraryCategoriesFactory, assetLibraryFactory, me, $state, $stateParams, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that keeps track of the current asset id
     var assetId = $stateParams.assetId;
@@ -63,13 +66,10 @@
       });
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-      // Load the categories for the current course
-      getCategories();
-      // Load the selected asset
-      getCurrentAsset();
-    });
+    // Load the categories for the current course
+    getCategories();
+    // Load the selected asset
+    getCurrentAsset();
 
   });
 

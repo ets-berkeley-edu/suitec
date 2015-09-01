@@ -69,7 +69,7 @@
      *
      * @param  {Number}               whiteboardId                  The id of the whiteboard for which to get the most chat messages
      * @param  {String}               [before]                      The ISO 8601 timestamp before which the messages should have been created
-     * @return {Promise<Chat[]>}                                    Promise returning the most recent chat messages
+     * @return {Promise<Object>}                                    Promise returning the most recent chat messages
      */
     var getChatMessages = function(whiteboardId, before) {
       var url = '/whiteboards/' + whiteboardId + '/chat';
