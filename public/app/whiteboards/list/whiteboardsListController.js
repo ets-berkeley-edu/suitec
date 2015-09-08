@@ -22,6 +22,9 @@
     // Make the me object available to the scope
     $scope.me = me;
 
+    // Variable that will keep track of whether the initial whiteboard list request has taken place
+    $scope.hasRequested = false;
+
     $scope.whiteboards = [];
     $scope.list = {
       'page': 0,
@@ -37,6 +40,7 @@
       $scope.list.ready = false;
       whiteboardsFactory.getWhiteboards($scope.list.page).success(function(whiteboards) {
         $scope.whiteboards = $scope.whiteboards.concat(whiteboards.results);
+        $scope.hasRequested = true;
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a
         // retrieved asset library page
