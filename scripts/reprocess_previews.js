@@ -15,6 +15,7 @@
  */
 
 var _ = require('lodash');
+var async = require('async');
 var config = require('config');
 var Embdr = require('embdr');
 var argv = require('yargs')
@@ -78,23 +79,21 @@ var getAssets = function() {
     var completed = 0;
     var errored = 0;
 
-    var done = _.after(assets.length, function() {
-      log.info('Finished reprocessing asset previews. ' + completed + ' assets were processed. ' + errored + ' assets failed.');
-    });
-
-    _.each(assets, function(asset) {
+    async.eachSeries(assets, function(asset, callback) {
       reprocessAssetPreview(asset, function(err) {
         if (err) {
           errored++;
-          log.error({'id': asset.id}, 'Failed to process asset preview');
+          log.error({'id': asset.id, 'err': err}, 'Failed to process asset preview');
         } else {
           completed++;
         }
 
         log.info({'id': asset.id}, 'Processed asset preview ' + (errored + completed) + ' / ' + assets.length);
 
-        done();
+        return callback();
       });
+    }, function() {
+      log.info('Finished reprocessing asset previews. ' + completed + ' assets were processed. ' + errored + ' assets failed.');
     });
   });
 };
