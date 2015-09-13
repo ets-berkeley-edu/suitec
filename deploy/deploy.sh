@@ -7,6 +7,9 @@
 #
 #  usage: $ deploy/deploy.sh
 
+# Fail the entire script when one of the commands in it fails
+set -e
+
 # Get the remote and branch that should be
 # deployed from the provided environment variables
 TARGET_REMOTE=${REMOTE:-origin}
