@@ -38,6 +38,7 @@
     "cookie": "0.2.0",
     "cookie-parser": "1.3.5",
     "cors": "2.7.1",
+    "coveralls": "2.11.4",
     "del": "2.0.1",
     "embdr": "0.0.5",
     "event-stream": "3.3.1",
@@ -55,12 +56,14 @@
     "gulp-imagemin": "2.3.0",
     "gulp-jscs": "2.0.0",
     "gulp-minify-html": "1.0.4",
+    "gulp-mocha": "2.1.3",
     "gulp-ng-annotate": "1.1.0",
     "gulp-rev": "6.0.1",
     "gulp-rev-replace": "0.4.2",
     "gulp-uglify": "1.4.0",
     "gulp-usemin": "0.3.11",
     "ims-lti": "3.0.1",
+    "jscs": "2.1.1",
     "joi": "6.6.1",
     "lodash": "3.10.1",
     "mime": "1.3.4",
@@ -76,13 +79,8 @@
     "sequelize": "3.7.1",
     "socket.io": "1.3.6",
     "validator": "1.1.3",
+    "xml2js": "0.4.11",
     "yargs": "3.24.0"
-  },
-  "devDependencies": {
-    "coveralls": "2.11.4",
-    "gulp-mocha": "2.1.3",
-    "jscs": "2.1.1",
-    "xml2js": "0.4.11"
   },
   "bundleDependencies": [
     "col-activities",
