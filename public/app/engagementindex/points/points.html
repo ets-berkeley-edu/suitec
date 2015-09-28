@@ -13,7 +13,7 @@
     <tr data-ng-repeat="activityType in activityTypeConfiguration | filter:{enabled: true}">
       <td data-ng-bind="activityType.title"></td>
       <td class="text-center" data-ng-bind="activityType.points" data-ng-if="!editMode"></td>
-      <td class="text-center form-group" data-ng-if="editMode" data-ng-class="{'has-error': activityTypeForm.points.$invalid}">
+      <td class="text-center form-group" data-ng-if="editMode" data-ng-class="{'has-error': activityTypeForm.pointsEditPoints.$invalid}">
         <ng-form name="activityTypeForm">
           <label for="points-edit-points" class="sr-only" data-ng-bind="activityType.title"></label>
           <input type="text" id="points-edit-points" name="pointsEditPoints" class="form-control text-center points-edit" data-ng-model="activityType.points" data-ng-pattern="/^\-?(0|[1-9][0-9]*)$/" required />
