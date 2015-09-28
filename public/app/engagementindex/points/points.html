@@ -3,7 +3,7 @@
 <h2>Points configuration</h2>
 
 <!-- ENABLED ACTIVITIES -->
-<div class="points-container">
+<form class="points-container" name="activityTypeConfigurationForm" data-ng-submit="activityTypeConfigurationForm.$valid && saveActivityTypeConfiguration()" novalidate>
   <table class="table-striped">
     <tr>
       <th>Activity</th>
@@ -13,9 +13,11 @@
     <tr data-ng-repeat="activityType in activityTypeConfiguration | filter:{enabled: true}">
       <td data-ng-bind="activityType.title"></td>
       <td class="text-center" data-ng-bind="activityType.points" data-ng-if="!editMode"></td>
-      <td class="text-center" data-ng-if="editMode">
-        <label for="points-edit-{{activityType.type}}" class="sr-only" data-ng-bind="activityType.title"></label>
-        <input id="points-edit-{{activityType.type}}" data-ng-model="activityType.points" class="form-control text-center points-edit"/>
+      <td class="text-center form-group" data-ng-if="editMode" data-ng-class="{'has-error': activityTypeForm.points.$invalid}">
+        <ng-form name="activityTypeForm">
+          <label for="points-edit-{{activityType.type}}" class="sr-only" data-ng-bind="activityType.title"></label>
+          <input type="text" data-ng-pattern="/^\-?(0|[1-9][0-9]*)$/" id="points-edit-{{activityType.type}}" name="points" data-ng-model="activityType.points" class="form-control text-center points-edit" required />
+        </ng-form>
       </td>
       <td class="text-center" data-ng-if="editMode"><button class="btn btn-default" data-ng-click="disableActivityType(activityType)">Disable</button></td>
     </tr>
@@ -43,7 +45,7 @@
     <div class="text-right points-actions">
       <button type="button" class="btn btn-primary" data-ng-click="editActivityTypeConfiguration()" data-ng-if="!editMode">Edit</button>
       <button type="button" class="btn btn-default" data-ng-click="cancelActivityTypeConfiguration()" data-ng-if="editMode">Cancel</button>
-      <button type="button" class="btn btn-primary" data-ng-click="saveActivityTypeConfiguration()" data-ng-if="editMode">Save</button>
+      <button type="submit" class="btn btn-primary" data-ng-if="editMode">Save</button>
     </div>
   </div>
-</div>
+</form>
