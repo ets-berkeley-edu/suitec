@@ -17,7 +17,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('assetLibraryService', function($state, utilService) {
+  angular.module('collabosphere').service('assetLibraryService', function($state, analyticsService, utilService) {
 
     // Get the parent container's hash. In case a hash a present, restore the state to allow
     // for deep linking to an asset or asset library search
@@ -42,10 +42,27 @@
         // Check if an asset was deep linked
         if (data.asset) {
           var assetId = parseInt(data.asset, 10);
+
+          // Track the asset deep link
+          analyticsService.track('Deep link asset', {
+            'asset_id': assetId,
+            'referer': document.referrer
+          });
+
           $state.go('assetlibrarylist.item', {'assetId': assetId});
 
         // Check if an asset library search was deep linked
         } else if (data.keywords || data.category || data.user || data.type) {
+
+          // Track the asset library search deep link
+          analyticsService.track('Deep link Asset Library search', {
+            'asset_search_keywords': data.keywords,
+            'asset_search_category': data.category,
+            'asset_search_user': data.user,
+            'asset_search_types': data.type,
+            'referer': document.referrer
+          });
+
           var searchOptions = {
             'keywords': (data.keywords ? data.keywords : ''),
             'category': (data.category ? data.category : ''),
