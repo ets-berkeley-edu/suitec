@@ -145,6 +145,10 @@ ul.assetlibrary-item-metadata-authors-multiple li .assetlibrary-item-metadata-au
   font-weight: 500;
 }
 
+.assetlibrary-item-metadata-description {
+  white-space: pre-wrap;
+}
+
 /* ADD COMMENT */
 
 .assetlibrary-item-addcomment-commenter {
