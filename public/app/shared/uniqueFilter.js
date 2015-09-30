@@ -27,16 +27,7 @@
      * @return {Object[]}                 The duplicate-free array
      */
     return function(items, filterOn) {
-      var hash = {};
-      return $filter('filter')(items, function(item) {
-        if (hash[item[filterOn]]) {
-          return false;
-        }
-
-        hash[item[filterOn]] = true;
-        return true;
-      });
+      return _.uniq(items, false, filterOn);
     };
   });
 })(window.angular);
-
