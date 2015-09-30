@@ -83,7 +83,7 @@
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Description</div>
             <div class="col-xs-9">
-              <div data-ng-if="asset.description" data-ng-bind-html="asset.description | linky:'_blank' | hashtags"></div>
+              <div class="assetlibrary-item-metadata-description" data-ng-if="asset.description" data-ng-bind-html="asset.description | linky:'_blank' | hashtags"></div>
               <div data-ng-if="!asset.description">No description</div>
             </div>
           </div>
