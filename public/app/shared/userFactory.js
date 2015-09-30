@@ -20,15 +20,6 @@
   angular.module('collabosphere').factory('userFactory', function(utilService, $cacheFactory, $http) {
 
     /**
-     * Retrieve the profile information for the current user
-     *
-     * @return {Promise<Me>}                      Promise returning the profile information for the current user
-     */
-    var getMe = function() {
-      return $http.get(utilService.getApiUrl('/users/me'), {'cache': true});
-    };
-
-    /**
      * Get all users in the current course
      *
      * @return {Promise<User[]>}                  $http promise returning all users in the current course
@@ -88,7 +79,6 @@
     };
 
     return {
-      'getMe': getMe,
       'getAllUsers': getAllUsers,
       'getLeaderboard': getLeaderboard,
       'updateSharePoints': updateSharePoints

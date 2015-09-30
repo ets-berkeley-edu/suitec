@@ -125,6 +125,16 @@
     };
 
     /**
+     * Delete an asset
+     *
+     * @param  {Number}               id                              The id of the asset that is being deleted
+     * @return {Promise}                                              $http promise
+     */
+    var deleteAsset = function(id) {
+      return $http.delete(utilService.getApiUrl('/assets/' + id));
+    };
+
+    /**
      * Create a new comment on an asset
      *
      * @param  {Number}               id                              The id of the asset
@@ -183,6 +193,7 @@
       'createFile': createFile,
       'createLink': createLink,
       'editAsset': editAsset,
+      'deleteAsset': deleteAsset,
       'createComment': createComment,
       'editComment': editComment,
       'deleteComment': deleteComment,

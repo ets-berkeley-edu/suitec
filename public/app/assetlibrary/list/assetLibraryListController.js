@@ -17,7 +17,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, userFactory, utilService, $filter, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, me, utilService, $rootScope, $scope, $state) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that keeps track of the URL state
     $scope.state = $state;
@@ -61,7 +64,11 @@
      * Get the assets for the current course through an infinite scroll
      */
     var getAssets = $scope.getAssets = function() {
-      // Indicate the no further REST API requests should be made
+      // Keep track of the search options in the parent container's hash to allow
+      // for deep linking to a search
+      utilService.setParentHash($scope.searchOptions);
+
+      // Indicate that no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
@@ -135,9 +142,13 @@
       }
     });
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
+    /**
+     * Listen for events indicating that an asset has been deleted
+     */
+    $scope.$on('assetLibraryAssetDeleted', function(ev, assetId) {
+      $scope.assets = _.reject($scope.assets, {'id': assetId});
     });
+
   });
 
 }(window.angular));

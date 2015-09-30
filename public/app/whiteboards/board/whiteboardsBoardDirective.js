@@ -38,7 +38,10 @@
         'readonly': '=readonly'
       },
       'templateUrl': '/app/whiteboards/board/board.html',
-      'controller': function(Fabric, FabricConstants, userFactory, utilService, whiteboardsFactory, $alert, $cookies, $filter, $modal, $rootScope, $scope) {
+      'controller': function(analyticsService, Fabric, FabricConstants, me, utilService, whiteboardsFactory, $alert, $cookies, $modal, $rootScope, $scope) {
+
+        // Make the me object available to the scope
+        $scope.me = me;
 
         // Element that will keep track of the whiteboard viewport
         var viewport = document.getElementById('whiteboards-board-viewport');
@@ -50,15 +53,15 @@
         var CANVAS_BASE_WIDTH = 1000;
 
         // The padding that will be enforced on the canvas when it can be scrolled
-        var CANVAS_PADDING = 40;
+        var CANVAS_PADDING = 60;
 
         // Variable that will keep track of whether the chat/online sidebar is expanded
         $scope.sidebarExpanded = $scope.readonly ? false : true;
 
         // Open a websocket connection for real-time communication with the server (chat + whiteboard changes) when
         // the whiteboard is rendered in edit mode. The course ID and API domain are passed in as handshake query parameters
+        var launchParams = utilService.getLaunchParams();
         if (!$scope.readonly) {
-          var launchParams = utilService.getLaunchParams();
           var socket = io(window.location.origin, {
             'query': 'api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&whiteboard_id=' + $scope.whiteboard.id
           });
@@ -103,7 +106,8 @@
         // Variable that will keep track of the placeholder images to use for assets without a preview image
         var ASSET_PLACEHOLDERS = {
           'file': '/assets/img/whiteboard_asset_placeholder_file.png',
-          'link': '/assets/img/whiteboard_asset_placeholder_link.png'
+          'link': '/assets/img/whiteboard_asset_placeholder_link.png',
+          'whiteboard': '/assets/img/whiteboard_asset_placeholder_whiteboard.png'
         };
 
         /* WHITEBOARD */
@@ -116,15 +120,9 @@
           // regarding the sidebar have been applied
           setTimeout(setCanvasDimensions, 0);
 
-          // Set the layer index of the whiteboard elements once all elements
-          // have finished loading
-          var restoreLayers = _.after($scope.whiteboard.whiteboard_elements.length, function() {
-            canvas.forEachObject(function(element) {
-              element.moveTo(element.get('index'));
-            });
-            canvas.renderAll();
-            // Set the size of the whiteboard canvas
-            setCanvasDimensions();
+          // Restore the order of the layers once all elements have finished loading
+          var restore = _.after($scope.whiteboard.whiteboard_elements.length, function() {
+            restoreLayers();
 
             // Deactivate all elements and element selection when the whiteboard
             // is being rendered in read only mode
@@ -138,7 +136,7 @@
           _.each($scope.whiteboard.whiteboard_elements, function(element) {
             deserializeElement(element, function(element) {
               canvas.add(element);
-              restoreLayers();
+              restore();
             });
           });
         };
@@ -151,8 +149,7 @@
             if ($scope.whiteboard) {
               for (var i = 0; i < $scope.whiteboard.members.length; i++) {
                 var member = $scope.whiteboard.members[i];
-                var online = $filter('filter')(onlineUsers, {'user_id': member.id});
-                member.online = (online.length > 0);
+                member.online = _.findWhere(onlineUsers, {'user_id': member.id}) ? true : false;
               }
             }
           });
@@ -163,7 +160,7 @@
          */
         var getOnlineUsers = $scope.getOnlineUsers = function() {
           if ($scope.whiteboard) {
-            return $filter('filter')($scope.whiteboard.members, {'online': true});
+            return _.where($scope.whiteboard.members, {'online': true});
           }
         };
 
@@ -255,40 +252,7 @@
             if (!element.group) {
               bound = element.getBoundingRect();
             } else {
-              // Elements in a group are positioned relative to the group. In order to calculate the most
-              // right and most bottom point of the element, we need to calculate its position relative to
-              // the canvas and then calculate the bounding rectangle for that element
-              var position = calculateGlobalElementPosition(element.group, element);
-              var width = element.width * position.scaleX;
-              var height = element.height * position.scaleY;
-              var rotation = fabric.util.degreesToRadians(position.angle);
-
-              // The left and top position correspond to the center of the element
-              var center = new fabric.Point(position.left, position.top);
-
-              // Calculate the corners of the object, keeping its rotation into account
-              var tl = fabric.util.rotatePoint(new fabric.Point(center.x - (width / 2), center.y - (height / 2)), center, rotation);
-              var tr = fabric.util.rotatePoint(new fabric.Point(center.x + (width / 2), center.y - (height / 2)), center, rotation);
-              var br = fabric.util.rotatePoint(new fabric.Point(center.x + (width / 2), center.y + (height / 2)), center, rotation);
-              var bl = fabric.util.rotatePoint(new fabric.Point(center.x - (width / 2), center.y + (height / 2)), center, rotation);
-
-              // Calculate the position of the bounding rectangle
-              var xCoords = [tl.x, tr.x, br.x, bl.x];
-              var minX = _.min(xCoords) * canvas.getZoom();
-              var maxX = _.max(xCoords) * canvas.getZoom();
-              var boundingRectWidth = Math.abs(minX - maxX);
-
-              var yCoords = [tl.y, tr.y, br.y, bl.y];
-              var minY = _.min(yCoords) * canvas.getZoom();
-              var maxY = _.max(yCoords) * canvas.getZoom();
-              var boundingRectHeight = Math.abs(minY - maxY);
-
-              bound = {
-                'left': minX,
-                'top': minY,
-                'width': boundingRectWidth,
-                'height': boundingRectHeight
-              };
+              bound = element.group.getBoundingRect();
             }
 
             maxRight = Math.max(maxRight, bound.left + bound.width);
@@ -414,6 +378,13 @@
         };
 
         /**
+         * Check whether any elements on the whiteboard canvas are currently selected
+         */
+        var isElementSelected = $scope.isElementSelected = function() {
+          return canvas.getActiveObject() || canvas.getActiveGroup();
+        };
+
+        /**
          * Set a unique id on a Fabric.js canvas element if the element doesn't have a
          * unique id assigned
          *
@@ -462,13 +433,13 @@
             if (element.type === 'image' && element.getSrc() !== update.src) {
               element.setSrc(update.src, function() {
                 canvas.renderAll();
-                // Recalculate the size of the whiteboard canvas
-                setCanvasDimensions();
+                // Ensure that the correct position is applied
+                restoreLayers();
               });
             } else {
-              canvas.renderAll();
+              restoreLayers();
             }
-          }
+          };
 
           // If the element is an asset for which the source has changed, we preload
           // the image to prevent flickering when the image is inserted into the element
@@ -488,15 +459,135 @@
             deleteActiveElements();
             $event.preventDefault();
           // Undo the previous action when Ctrl+Z is pressed
-          } else if ($event.keyCode === 90 && $event.metaKey) {
+          // } else if ($event.keyCode === 90 && $event.metaKey) {
           //  undo();
           // Redo the previous action when Ctrl+Y is pressed
-          } else if ($event.keyCode === 89 && $event.metaKey) {
+          // } else if ($event.keyCode === 89 && $event.metaKey) {
           //  redo();
+          // Copy the selected elements
+          } else if ($event.keyCode === 67 && $event.metaKey) {
+            copy();
+          // Paste the copied elements
+          } else if ($event.keyCode === 86 && $event.metaKey) {
+            paste();
           }
         }, false);
 
+        /* LAYERS */
+
+        /**
+         * Ensure that all elements are ordered as specified by the
+         * element's index attribute
+         */
+        var restoreLayers = function() {
+          canvas.getObjects().sort(function(elementA, elementB) {
+            return elementA.index - elementB.index;
+          });
+          canvas.renderAll();
+          // Set the size of the whiteboard canvas
+          setCanvasDimensions();
+        };
+
+        /**
+         * Update the index of all elements to reflect their order in the
+         * current whiteboard
+         */
+        var updateLayers = function() {
+          var updates = [];
+          canvas.forEachObject(function(element) {
+            // Only update the elements for which the stored index no longer
+            // matches the current index
+            if (element.index !== canvas.getObjects().indexOf(element)) {
+              element.index = canvas.getObjects().indexOf(element);
+              // If the element is part of a group, calculate its global coordinates
+              if (element.group) {
+                var position = calculateGlobalElementPosition(element.group, element);
+                updates.push(angular.extend({}, element.toObject(), position));
+              } else {
+                updates.push(element.toObject());
+              }
+            }
+          });
+
+          // Notify the server about the updated layers
+          if (updates.length > 1) {
+            saveElementUpdates(updates);
+          }
+        };
+
+        /**
+         * Send the currently selected element(s) to the back or  bring the
+         * currently selected element(s) to the front
+         *
+         * @param  {String}         direction         `front` if the currently selected element(s) should be brought to the front, `back` if the currently selected element(s) should be sent to the back
+         */
+        var moveLayer = $scope.moveLayer = function(direction) {
+          // Get the selected element(s)
+          var elements = getActiveElements();
+
+          // Sort the selected elements by their position to ensure that
+          // they are in the same order when moved to the back or front
+          elements.sort(function(elementA, elementB) {
+            if (direction === 'back') {
+              return elementB.index - elementA.index;
+            } else {
+              return elementA.index - elementB.index;
+            }
+          });
+
+          // Move the elements to the back or front one by one
+          var activeGroup = canvas.getActiveGroup();
+          canvas.remove(canvas.getActiveGroup());
+          canvas.deactivateAll().renderAll();
+          _.each(elements, function(element) {
+            element = getCanvasElement(element.uid);
+            if (direction === 'back') {
+              element.sendToBack();
+            } else if (direction === 'front') {
+              element.bringToFront();
+            }
+          });
+
+          // Notify the server about the updated layers
+          canvas.renderAll();
+          updateLayers();
+
+          // When only a single item was selected, re-select it
+          if (elements.length === 1) {
+            canvas.setActiveObject(getCanvasElement(elements[0].uid));
+          }
+
+          // Track the whiteboard layer order change
+          analyticsService.track('Change whiteboard layer order', {
+            'whiteboard_id': $scope.whiteboard.id,
+            'whiteboard_direction': direction,
+            'whiteboard_elements': _.pluck(elements, 'uid'),
+            'whiteboard_elements_length': elements.length,
+            'whiteboard_elements_types': _.pluck(elements, 'type')
+          });
+        };
+
         initializeCanvas();
+
+        /* ELEMENT SELECTION */
+
+        /**
+         * Track an activity when one or multiple whiteboard elements
+         * have been selected
+         */
+        var elementsSelected = function() {
+          setTimeout(function() {
+            var elements = getActiveElements();
+            analyticsService.track('Select whiteboard elements', {
+              'whiteboard_id': $scope.whiteboard.id,
+              'whiteboard_elements': _.pluck(elements, 'uid'),
+              'whiteboard_elements_length': elements.length,
+              'whiteboard_elements_types': _.pluck(elements, 'type')
+            });
+          });
+        };
+
+        canvas.on('object:selected', elementsSelected);
 
         /* CONCURRENT EDITING */
 
@@ -507,16 +598,16 @@
          * @param  {Object}         element           The Fabric.js element for which the position relative to its group should be calculated
          * @return {Object}                           The position of the element relative to the whiteboard canvas. Will return the `angle`, `left` and `top` postion and the `scaleX` and `scaleY` scaling factors
          */
-        var calculateGlobalElementPosition = function(group, object) {
+        var calculateGlobalElementPosition = function(group, element) {
           var center = group.getCenterPoint();
-          var rotated = calculateRotatedLeftTop(group, object);
+          var rotated = calculateRotatedLeftTop(group, element);
 
           return {
-            'angle': object.getAngle() + group.getAngle(),
+            'angle': element.getAngle() + group.getAngle(),
             'left': center.x + rotated.left,
             'top': center.y + rotated.top,
-            'scaleX': object.get('scaleX') * group.get('scaleX'),
-            'scaleY': object.get('scaleY') * group.get('scaleY')
+            'scaleX': element.get('scaleX') * group.get('scaleX'),
+            'scaleY': element.get('scaleY') * group.get('scaleY')
           };
         };
 
@@ -527,12 +618,12 @@
          * @param  {Object}         element           The Fabric.js element for which the top left position in its group should be calculated
          * @return {Object}                           The top left position of the element in its group. Will return the `top` and `left` postion
          */
-        var calculateRotatedLeftTop = function(group, object) {
+        var calculateRotatedLeftTop = function(group, element) {
           var groupAngle = group.getAngle() * (Math.PI / 180);
-          var left = (-Math.sin(groupAngle) * object.getTop() * group.get('scaleY') +
-                      Math.cos(groupAngle) * object.getLeft() * group.get('scaleX'));
-          var top = (Math.cos(groupAngle) * object.getTop() * group.get('scaleY') +
-                       Math.sin(groupAngle) * object.getLeft() * group.get('scaleX'))
+          var left = (-Math.sin(groupAngle) * element.getTop() * group.get('scaleY') +
+                      Math.cos(groupAngle) * element.getLeft() * group.get('scaleX'));
+          var top = (Math.cos(groupAngle) * element.getTop() * group.get('scaleY') +
+                       Math.sin(groupAngle) * element.getLeft() * group.get('scaleX'));
           return {
             'left': left,
             'top': top
@@ -546,7 +637,7 @@
          * @param  {Object[]}       elements          The elements that should be checked for presence in the active group
          */
         var deactiveActiveGroupIfOverlap = function(elements) {
-          var group = canvas.getActiveGroup()
+          var group = canvas.getActiveGroup();
           if (group) {
             var intersection = _.intersection(_.pluck(group.objects, 'uid'), _.pluck(elements, 'uid'));
             if (intersection.length > 0) {
@@ -571,7 +662,7 @@
               var position = calculateGlobalElementPosition(group, element);
               activeElements.push(angular.extend({}, element.toObject(), position));
             });
-          } else {
+          } else if (canvas.getActiveObject()) {
             activeElements.push(canvas.getActiveObject().toObject());
           }
           return activeElements;
@@ -599,9 +690,20 @@
 
         canvas.on('object:moving', ensureWithinCanvas);
 
-        ///////////////
-        // ADD ITEMS //
-        ///////////////
+        /**
+         * When a new group has been added programmatically added, it needs to be programmatically
+         * removed from the canvas when the group is deselected
+         */
+        canvas.on('before:selection:cleared', function() {
+          if (canvas.getActiveGroup()) {
+            canvas.remove(canvas.getActiveGroup());
+          }
+        });
+
+        // Recalculate the size of the whiteboard canvas when a selection has been deselected
+        canvas.on('selection:cleared', setCanvasDimensions);
+
+        /* ADD ITEMS */
 
         /**
          * Persist a new element to the server
@@ -660,9 +762,7 @@
           });
         }
 
-        //////////////////
-        // UPDATE ITEMS //
-        //////////////////
+        /* UPDATE ITEMS */
 
         /**
          * Persist element updates to the server
@@ -747,9 +847,57 @@
           setMode('move');
         });
 
-        //////////////////
-        // DELETE ITEMS //
-        //////////////////
+        // Variable that will keep track of whether the currently selected elements are
+        // in the process of being moved, scaled or rotated
+        $scope.isModifyingElement = false;
+
+        /**
+         * Indicate that the currently selected elements are in the process of being
+         * moved, scaled or rotated
+         */
+        var setModifyingElement = function() {
+          $scope.isModifyingElement = true;
+        };
+
+        canvas.on('object:moving', setModifyingElement);
+        canvas.on('object:scaling', setModifyingElement);
+        canvas.on('object:rotating', setModifyingElement);
+
+        /**
+         * Indicate that the currently selected elements are no longer being modified
+         * once moving, scaling or rotating has finished
+         */
+        canvas.on('object:modified', function() {
+          $scope.isModifyingElement = false;
+        });
+
+        /**
+         * Draw a box around the currently selected element(s) and use this box
+         * to position the buttons that allow the selected element(s) to be
+         * modified
+         */
+        canvas.on('after:render', function() {
+          if (!$scope.isModifyingElement && isElementSelected()) {
+            // Get the bounding rectangle around the currently selected element(s)
+            var bound = null;
+            if (canvas.getActiveObject()) {
+              bound = canvas.getActiveObject().getBoundingRect();
+            } else if (canvas.getActiveGroup()) {
+              bound = canvas.getActiveGroup().getBoundingRect();
+            }
+
+            // Explicitly draw the bounding rectangle
+            canvas.contextContainer.strokeStyle = '#0295DE';
+            canvas.contextContainer.strokeRect(bound.left - 10, bound.top - 10, bound.width + 20, bound.height + 20);
+
+            // Position the buttons to modify the selected element(s)
+            var editButtons = document.getElementById('whiteboards-board-editelement');
+            editButtons.style.left = (bound.left - 10) + 'px';
+            editButtons.style.top = (bound.top + bound.height + 15) + 'px';
+          }
+        });
+
+        /* DELETE ITEMS */
 
         /**
          * Persist element deletions to the server
@@ -760,6 +908,9 @@
           // Notify the server about the deleted elements
           socket.emit('deleteActivity', elements);
 
+          // Update the layer ordering of the remaining elements
+          updateLayers();
+
           // Recalculate the size of the whiteboard canvas
           setCanvasDimensions();
         };
@@ -767,7 +918,7 @@
         /**
          * Delete the selected whiteboard element(s)
          */
-        var deleteActiveElements = function() {
+        var deleteActiveElements = $scope.deleteActiveElements = function() {
           // Get the selected items
           var elements = getActiveElements();
 
@@ -776,9 +927,11 @@
             canvas.remove(getCanvasElement(element.uid));
           });
 
-          // Discard the active group if a group selection is present
+          // If a group selection was made, remove the group as well
+          // in case Fabric doesn't clean up after itself
           if (canvas.getActiveGroup()) {
-            canvas.discardActiveGroup().renderAll();
+            canvas.remove(canvas.getActiveGroup());
+            canvas.deactivateAll().renderAll();
           }
 
           // TODO: Add undo activity
@@ -811,7 +964,7 @@
         /* ZOOMING */
 
         // Variable that will keep track of whether the whiteboard content needs to be fitted to the screen
-        $scope.fitToScreen = $scope.readonly ? true : false;
+        $scope.fitToScreen = true;
 
         /**
          * Toggle between fitting the whiteboard content to the screen and showing the
@@ -820,6 +973,12 @@
         var toggleZoom = $scope.toggleZoom = function() {
           $scope.fitToScreen = !$scope.fitToScreen;
           setCanvasDimensions();
+
+          // Track the whiteboard zoom
+          analyticsService.track('Zoom whiteboard', {
+            'whiteboard_id': $scope.whiteboard.id,
+            'whiteboard_fit_to_screen': $scope.fitToScreen
+          });
         };
 
         /* TOOLBAR */
@@ -884,13 +1043,94 @@
           }
         });
 
+        /* COPY / PASTE */
+
+        // Variable that will keep track of the copied element(s)
+        var clipboard = [];
+
+        /**
+         * Copy the selected element(s)
+         */
+        var copy = function() {
+          clipboard = getActiveElements();
+
+          // Track the whiteboard copy
+          analyticsService.track('Whiteboard copy', {
+            'whiteboard_id': $scope.whiteboard.id,
+            'whiteboard_elements': _.pluck(clipboard, 'uid'),
+            'whiteboard_elements_length': clipboard.length,
+            'whiteboard_elements_types': _.pluck(clipboard, 'type')
+          });
+        };
+
+        /**
+         * Paste the copied element(s)
+         */
+        var paste = function() {
+          var elements = [];
+
+          // Activate the pasted element(s)
+          var selectPasted = _.after(clipboard.length, function() {
+            // When only a single element was pasted, simply select it
+            if (elements.length === 1) {
+              canvas.setActiveObject(elements[0]);
+            // When multiple elements were pasted, create a new group
+            // for those elements and select them
+            } else {
+              var group = new fabric.Group();
+              group.set('isHelper', true);
+              canvas.add(group);
+              _.each(elements, function(element) {
+                group.addWithUpdate(element);
+              });
+              canvas.setActiveGroup(group);
+            }
+            canvas.renderAll();
+            // Set the size of the whiteboard canvas
+            setCanvasDimensions();
+
+            // Track the whiteboard paste
+            analyticsService.track('Whiteboard paste', {
+              'whiteboard_id': $scope.whiteboard.id,
+              'whiteboard_elements': clipboard.length,
+              'whiteboard_elements_types': _.pluck(clipboard, 'type')
+            });
+          });
+
+          if (clipboard.length > 0) {
+            // Clear the current selection
+            if (canvas.getActiveGroup()) {
+              canvas.remove(canvas.getActiveGroup());
+            }
+            canvas.deactivateAll().renderAll();
+
+            // Duplicate each copied element. In order to do this, remove
+            // the index and unique id from the element and alter the position
+            // to ensure its visibility
+            _.each(clipboard, function(element) {
+              delete element.index;
+              delete element.uid;
+              element.left += 25;
+              element.top += 25;
+              // Add the element to the whiteboard canvas
+              deserializeElement(element, function(element) {
+                canvas.add(element);
+                canvas.renderAll();
+                // Keep track of the added elements to allow them to be selected
+                elements.push(element);
+                selectPasted();
+              });
+            });
+          }
+        };
+
         /* UNDO/REDO */
 
         // Variable that will keep track of the activities the current user has taken
-        //$scope.activityQueue = [];
+        // $scope.activityQueue = [];
 
         // Variable that will keep track of the current position in the activity queue
-        //$scope.currentActivityPosition = 0;
+        // $scope.currentActivityPosition = 0;
 
         /**
          * Add a new activity to the activities queue
@@ -899,7 +1139,7 @@
          * @param  {Object[]}       elements          The Fabric.js elements that were involved in the activity
          * // TODO
          */
-        //var addUndoActivity = function(type, elements) {
+        // var addUndoActivity = function(type, elements) {
         //  console.log(type);
         //  console.log(elements);
         //  // Remove all activities that happened after the current activity in the activities queue
@@ -911,12 +1151,12 @@
         //    'elements': elements
         //  });
         //  $scope.currentActivityPosition++;
-        //};
+        // };
 
         /**
          * Undo the action at the current position in the actions queue
          */
-        //var undo = $scope.undo = function() {
+        // var undo = $scope.undo = function() {
         //  if ($scope.currentActivityPosition !== 0) {
         //    // Deactivate the currently selected item
         //    canvas.deactivateAll().renderAll();
@@ -934,15 +1174,15 @@
         //    // The previous action was an element that was deleted.
         //    // Undoing this should add the element again
         //    } else if (previousActivity.type === 'delete') {
-            //  deserializeElement(previousAction.element, function(element) {
-            //    element.set('isUndoRedo', true);
-            //    canvas.add(element);
-            //    element.moveTo(element.get('index'));
-            //    canvas.renderAll();
-            //  });
+        //  deserializeElement(previousAction.element, function(element) {
+        //    element.set('isUndoRedo', true);
+        //    canvas.add(element);
+        //    element.moveTo(element.get('index'));
+        //    canvas.renderAll();
+        //  });
 
-            // The previous action was an element that was updated.
-            // Undoing this should undo the update
+        // The previous action was an element that was updated.
+        // Undoing this should undo the update
         //    } else if (previousActivity.type === 'update') {
         //      var updates = previousActivity.elements.map(function(update) {
         //        console.log(update.originalState);
@@ -953,12 +1193,12 @@
         //      saveElementUpdates(updates);
         //    }
         //  }
-        //};
+        // };
 
         /**
          * Redo the action at the next position in the actions queue
          */
-        //var redo = $scope.redo = function() {
+        // var redo = $scope.redo = function() {
         //  if ($scope.currentActivityPosition !== $scope.activityQueue.length) {
         //    // Deactivate the currently selected item
         //    canvas.deactivateAll().renderAll();
@@ -993,7 +1233,7 @@
         //      saveElementUpdates(updates);
         //    }
         //  }
-        //};
+        // };
 
         /* DRAWING */
 
@@ -1267,6 +1507,7 @@
           scope.closeModal = function(selectedAssets) {
             _.each(selectedAssets, addAsset);
             this.$hide();
+            this.$destroy();
           };
           // Open the asset selection modal dialog
           $modal({
@@ -1322,6 +1563,48 @@
             // Add the new element to the canvas
             canvas.add(element);
             canvas.setActiveObject(element);
+          });
+        };
+
+        /**
+         * Get the id of the currently selected asset element
+         *
+         * @return {Number}                               The id of the currently selected asset element. `null` if no asset element is selected
+         */
+        var getSelectedAsset = $scope.getSelectedAsset = function() {
+          var selectedElement = canvas.getActiveObject();
+          if (selectedElement) {
+            return selectedElement.assetId;
+          }
+        };
+
+        /**
+         * Get the parameters required to construct the URL to the asset detail page
+         * of the currently selected asset element
+         *
+         * @return {Object}                               The parameters required to the construct the URL to the asset detail page of the selected asset
+         */
+        var getSelectedAssetParams = $scope.getSelectedAssetParams = function() {
+          var assetId = getSelectedAsset();
+          if (assetId) {
+            return {
+              'api_domain': launchParams.apiDomain,
+              'course_id': launchParams.courseId,
+              'tool_url': launchParams.toolUrl,
+              'assetId': assetId,
+              'whiteboard_referral': true
+            };
+          }
+        };
+
+        /**
+         * Track an activity when an asset is opened from a whiteboard
+         */
+        var trackOpenAsset = $scope.trackOpenAsset = function() {
+          var assetId = getSelectedAsset();
+          analyticsService.track('Open asset from whiteboard', {
+            'whiteboard_id': $scope.whiteboard.id,
+            'whiteboard_element_asset_id': assetId
           });
         };
 
@@ -1438,7 +1721,7 @@
           }
           whiteboardsFactory.getChatMessages($scope.whiteboard.id, lastId).success(function(chatMessages) {
             // The oldest messages go on top
-            chatMessages.reverse();
+            chatMessages = chatMessages.results.reverse();
 
             // Prepend the older messages
             $scope.chatMessages = chatMessages.concat($scope.chatMessages);
@@ -1546,7 +1829,7 @@
          * Export the whiteboard to a PNG file
          */
         var exportAsPng = $scope.exportAsPng = function($event) {
-          if ($scope.isExportingAsPng) {
+          if ($scope.isExportingAsPng || getNumberOfElements() === 0) {
             $event.preventDefault();
             return false;
           }
@@ -1585,6 +1868,9 @@
           scope.whiteboard = $scope.whiteboard;
           scope.closeModal = function(asset) {
             if (asset) {
+              // Construct the link back to the asset library
+              var assetLibraryLink = '/assetlibrary?api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&tool_url=' + launchParams.toolUrl;
+
               // Show a notification indicating the whiteboard was exported
               var myAlert = $alert({
                 'container': '#whiteboards-board-notifications',
@@ -1609,12 +1895,6 @@
           // also close the add asset popover
           setMode('move');
         };
-
-        /* INITIALIZATION */
-
-        userFactory.getMe().success(function(me) {
-          $scope.me = me;
-        });
 
       }
     };

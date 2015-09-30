@@ -17,10 +17,16 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $filter, $stateParams, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, utilService, $rootScope, $scope, $state, $stateParams) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
+
+    // Variable that will keep track of whether the user has come in via a whiteboard
+    $scope.whiteboardReferral = $stateParams.whiteboard_referral;
 
     // Variable that will keep track of the current asset
     $scope.asset = null;
@@ -28,11 +34,40 @@
     // Variable that will keep track of the new top-level comment
     $scope.newComment = null;
 
+    // Variable that will keep track of the previews status of an asset
+    $scope.previewStatus = null;
+
+    // Variable that will keep track of the timeout id when a preview is pending and its status is being retrieved
+    var previewTimeout = null;
+
+    // Variable that will keep track of the Embdr coordinator that can be used to stop polling the Embdr API for updates
+    var embdrCoordinator = null;
+
+    // Clear the preview timers if the user goes away
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+      if (fromState.name === 'assetlibrarylist.item' && toState.name !== 'assetlibrarylist.item.edit') {
+        if (previewTimeout) {
+          clearTimeout(previewTimeout);
+          previewTimeout = null;
+        }
+
+        // Tell Embdr it should stop polling
+        if (embdrCoordinator) {
+          embdrCoordinator.cancel();
+        }
+      }
+    });
+
+    // Add the asset id to the parent container's to allow for deep linking to the asset
+    utilService.setParentHash({'asset': assetId});
+
     /**
      * Get the current asset
+     *
+     * @param  {Boolean}      [incrementViews]      Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
      */
-    var getCurrentAsset = function() {
-      assetLibraryFactory.getAsset(assetId).success(function(asset) {
+    var getCurrentAsset = function(incrementViews) {
+      assetLibraryFactory.getAsset(assetId, incrementViews).success(function(asset) {
         // Build the asset comment tree
         buildCommentTree(asset);
 
@@ -40,6 +75,31 @@
 
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+
+        // Let embdr show a preview for files or links
+        if (asset.type === 'file' || asset.type === 'link') {
+          // There can be a short delay between creating an asset and getting the embed id and key back.
+          // Simply show the pending preview and try again later if we haven't heard back from Embdr yet
+          if (!asset.embed_id || !asset.embed_key) {
+            $scope.previewStatus = 'pending';
+            previewTimeout = setTimeout(getCurrentAsset, 2000, false);
+
+          } else {
+            var embdrOptions = {
+              'loadingIcon': '//' + window.location.host + '/assets/img/canvas-logo.png',
+              'complete': function(resource) {
+                $scope.previewStatus = 'complete';
+              },
+              'pending': function() {
+                $scope.previewStatus = 'pending';
+              },
+              'unsupported': function() {
+                $scope.previewStatus = 'unsupported';
+              }
+            };
+            embdrCoordinator = window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
+          }
+        }
       });
     };
 
@@ -87,7 +147,19 @@
      */
     var canManageAsset = $scope.canManageAsset = function() {
       if ($scope.asset && $scope.me) {
-        return ($scope.me.is_admin || $filter('filter')($scope.asset.users, {'id': $scope.me.id}).length > 0);
+        return ($scope.me.is_admin || _.findWhere($scope.asset.users, {'id': $scope.me.id}));
+      }
+    };
+
+    /**
+     * Delete the current asset
+     */
+    var deleteAsset = $scope.deleteAsset = function() {
+      if (confirm('Are you sure you want to delete this asset?')) {
+        assetLibraryFactory.deleteAsset($scope.asset.id).success(function() {
+          $scope.$emit('assetLibraryAssetDeleted', $scope.asset.id);
+          $state.go('assetlibrarylist');
+        });
       }
     };
 
@@ -219,14 +291,29 @@
       }
     });
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-      // Load the selected asset
-      getCurrentAsset();
-      // Scroll to the top of the page as the current scroll position could be somewhere
-      // deep in the asset library list
-      utilService.scrollToTop();
-    });
+    /**
+     * Restore the asset library search options when navigating back to the asset library list. As navigating
+     * back to the asset library list doesn't trigger a new search, the easiest solution is to restore the hash
+     * value here
+     */
+    var backToAssetLibrary = $scope.backToAssetLibrary = function() {
+      utilService.setParentHash($scope.$parent.searchOptions);
+    };
+
+    /**
+     * Close the current browser window. This is used when an asset has been opened
+     * in a separate tab and the user wants to be taken back to where the asset was
+     * launched from
+     */
+    var closeWindow = $scope.closeWindow = function() {
+      window.close();
+    };
+
+    // Load the selected asset
+    getCurrentAsset();
+    // Scroll to the top of the page as the current scroll position could be somewhere
+    // deep in the asset library list
+    utilService.scrollToTop();
 
   });
 

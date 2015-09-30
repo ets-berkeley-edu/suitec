@@ -17,10 +17,16 @@
 
   'use strict';
 
-  angular.module('collabosphere').config(function($compileProvider) {
+  var collabosphere = angular.module('collabosphere');
+  collabosphere.config(function(config, me, $compileProvider, $mixpanelProvider) {
 
     // Add `javascript:` to the list of accepted href protocols. This will be used for the Bookmarklet
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
+
+    // Initialize the Mixpanel analytics with the configured API key
+    if (config.analytics.enabled) {
+      $mixpanelProvider.apiKey(config.analytics.apiKey);
+    }
 
   });
 

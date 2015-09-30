@@ -37,7 +37,9 @@ var usemin = require('gulp-usemin');
  * Delete the build directory
  */
 gulp.task('clean', function(cb) {
-  del('target/*', cb);
+  del(['target/*']).then(function() {
+    return cb();
+  });
 });
 
 /**

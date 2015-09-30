@@ -1,4 +1,7 @@
 {
+  "analytics": {
+    "enabled": false
+  },
   "db": {
     "database": "collabospheretravis",
     "username": "postgres",
@@ -10,6 +13,9 @@
     "stream": "logs/test.log"
   },
   "canvasPoller": {
+    "enabled": false
+  },
+  "embdr": {
     "enabled": false
   }
 }

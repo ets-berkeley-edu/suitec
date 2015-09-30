@@ -7,6 +7,9 @@
 #
 #  usage: $ deploy/deploy.sh
 
+# Fail the entire script when one of the commands in it fails
+set -e
+
 # Get the remote and branch that should be
 # deployed from the provided environment variables
 TARGET_REMOTE=${REMOTE:-origin}
@@ -15,12 +18,19 @@ TARGET_BRANCH=${BRANCH:-master}
 # Clear any local changes present in the branch
 git reset --hard HEAD
 
-# Check out the requested remove and branch
+# Work on a temporary branch
+git checkout -b tmp
+
+# Get all the branches and tags from the remote
 git fetch $TARGET_REMOTE
 git fetch -t $TARGET_REMOTE
-git checkout -b tmp
-git branch -D $TARGET_BRANCH
-git checkout -b $TARGET_BRANCH $TARGET_REMOTE/$TARGET_BRANCH
+
+# Delete the local copy of the target branch (if any) as the upstream branch might have been rebased
+git rev-parse --verify $TARGET_BRANCH > /dev/null 2>&1 && git branch -D $TARGET_BRANCH
+
+# Check out the branch or tag. If a tag is being deployed, the git HEAD will point to a commit and
+# will end up in a "detached" state. As we shouldn't be committing on deployed code, this is considered OK
+git checkout $TARGET_REMOTE/$TARGET_BRANCH
 git branch -D tmp
 
 # Remove the existing node_modules and re-install
