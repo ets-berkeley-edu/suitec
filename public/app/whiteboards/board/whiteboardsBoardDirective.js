@@ -1037,8 +1037,9 @@
          * Set the toolbar back to move mode when the asset and export
          * tooltips are hidden
          */
-        $scope.$on('tooltip.hide', function() {
-          if ($scope.mode === 'asset' || $scope.mode === 'export') {
+        $scope.$on('tooltip.hide', function(ev, $tooltip) {
+          if (($scope.mode === 'asset' && $tooltip.$id === 'whiteboards-board-asset-trigger') ||
+              ($scope.mode === 'export' && $tooltip.$id === 'whiteboards-board-export-trigger')) {
             setMode('move');
           }
         });
@@ -1794,6 +1795,9 @@
             'scope': scope,
             'template': '/app/whiteboards/edit/edit.html'
           });
+          // Switch the toolbar back to move mode. This will
+          // also close any open popovers
+          setMode('move');
         };
 
         /* EXPORT */
