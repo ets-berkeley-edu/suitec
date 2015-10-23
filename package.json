@@ -11,8 +11,8 @@
   },
   "licenses": [
     {
-      "type": "ECL-2.0",
-      "url": "http://opensource.org/licenses/ECL-2.0"
+      "type": "UC Berkeley",
+      "url": "http://ipira.berkeley.edu/software-copyright-notice-and-disclaimer"
     }
   ],
   "dependencies": {
