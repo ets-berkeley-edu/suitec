@@ -1,0 +1,349 @@
+/*************
+ * CORE CSS **
+ *************/
+
+body {
+    background-color: #F3F3F4;
+    color: #333;
+    font-size: 18px;
+    height: 100%;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 150%;
+}
+
+body, h1, h2, h3, h4, h5, h6, a, span, td, div {
+    font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+body > table {
+    margin: 0 auto;
+    max-width: 700px;
+}
+
+table {
+    /* Explicitly specifying `border-collapse: separate;` forces
+       IE9 to respect cellspacing in Gmail like other browsers */
+    border-collapse: separate;
+}
+
+a {
+    color: #0088CC;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #005580;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #333;
+    line-height: 1.1;
+}
+
+h1, h2 {
+    font-weight: 200;
+}
+
+h3 {
+    font-weight: 500;
+}
+
+img {
+    border: 0;
+}
+
+.muted {
+    color: #827E7D;
+    font-size: 12px;
+}
+
+.wrapped {
+    word-wrap: break-word;
+}
+
+.row > td {
+    max-width: 600px;
+    min-width:400px;
+}
+
+
+/************
+ ** HEADER **
+ ************/
+
+#logo img {
+    margin: 0 0 45px;
+
+    /* GMail always converts `height` to `min-height` on at least images, so use
+       `min-height` with `max-height` for some client consistency */
+    max-height: 50px;
+    min-height: 50px;
+}
+
+/************
+ ** FOOTER **
+ ************/
+
+#footer {
+    font-size: 10px;
+    margin: 40px auto 0;
+}
+
+#logo td {
+    text-align: center;
+}
+
+#logo td img {
+    max-width: 220px;
+}
+
+#greeting h1 {
+    color: #6A6B6A;
+    font-size: 18px;
+    font-weight: 300;
+    margin: 0 0 5px;
+    padding: 0px 45px 45px;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+/***********
+ ** TILES **
+ ***********/
+
+.preview-tile-container {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: 1px solid #DCE0E3;
+    height: 300px;
+    padding: 0px;
+    width: 300px;
+}
+
+.preview-tile-container.collabdoc {
+    background-position: top left;
+}
+
+.preview-tile-container-wide {
+    width: 520px;
+}
+
+.preview-tile-container-inner {
+    height: 300px;
+}
+
+.preview-tile-container .preview-tile-metadata {
+    background: #000000;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    padding: 7px;
+    width: 286px;
+}
+
+.preview-tile-metadata .preview-tile-metadata-inner {
+    width: 100%;
+}
+
+.preview-tile-container .preview-tile-metadata .preview-tile-metadata-title a {
+    color: #FFF;
+    display: block;
+    font-weight: 600;
+    line-height: 35px;
+    margin: 0;
+}
+
+.preview-tile-container .preview-tile-metadata .preview-tile-metadata-description {
+    color: #FFF;
+    padding-top: 2px;
+}
+
+.preview-asset-metadata {
+    color: #aeaaaa;
+    padding-right: 10px;
+    text-align: right;
+}
+
+.preview-asset-metadata img {
+    vertical-align: middle;
+    width: 24px;
+}
+
+
+/****************
+ ** THUMBNAILS **
+ ****************/
+
+.thumbnail-user img {
+    border-radius: 30px;
+    height: 40px;
+    width: 40px;
+}
+
+
+/****************
+ ** ACTIVITIES **
+ ****************/
+
+.activity-row > td {
+    background-color: #FFF;
+    border: 1px solid #EDEDEC;
+    margin: 10px auto;
+    padding: 50px;
+}
+
+.activity-row > td > table {
+    width: 100%;
+}
+
+.activity-row .activity-thumbnail-container {
+    float: left;
+}
+
+.activity-row .activity-summary-container {
+    color: #6A6B6A;
+    max-width: 620px;
+}
+
+.activity-row .activity-date {
+    color: #888;
+    margin-top: 5px;
+}
+
+.activity-row .activity-previews-container {
+    margin: 25px 0 0 -10px;
+}
+
+.activity-row .activity-comment-container {
+    margin-top: 25px;
+    min-height: 40px;
+}
+
+.activity-row .activity-comment-container.comment-level-1 {
+    margin-left: 40px;
+}
+
+.activity-row .activity-comment-container.comment-level-2 {
+    margin-left: 80px;
+}
+
+.activity-row .activity-comment-container .activity-comment-thumbnail-container {
+    float: left;
+}
+
+.activity-row .activity-comment-container .activity-comment {
+    padding-left: 52px;
+    max-width: 650px;
+}
+
+.activity-row .activity-comment-container.comment-level-1 .activity-comment {
+    max-width: 610px;
+}
+.activity-row .activity-comment-container.comment-level-2 .activity-comment {
+    max-width: 570px;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message {
+    margin-top: 7px;
+}
+
+/* Markdown formatting */
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message h1 {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 1em 0 0.5em;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message h2 {
+    font-size: 1.05em;
+    font-weight: bold;
+    margin: 0.75em 0 0.5em;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message h3 {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0.75em 0 0.5em;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message h4 {
+    font-size: 1em;
+    font-style: italic;
+    margin: 0.75em 0 0.5em;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message h5,
+.activity-row .activity-comment-container .activity-comment .activity-comment-message h6 {
+    font-size: 1em;
+    font-style: normal;
+    font-weight: normal;
+    margin: 0.75em 0 0.5em;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message > *:first-child {
+    margin-top: 0;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message blockquote {
+    border-left: 5px solid #eeeeee;
+    margin: 20px 0;
+    padding: 10px 20px;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message code {
+    background-color: #F5F5F5;
+    display: inline-block;
+    white-space: pre-wrap;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message img {
+    max-width: 100%;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message pre {
+    background-color: #F5F5F5;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    color: #333333;
+    display: block;
+    line-height: 1.5;
+    margin: 0 0 10px;
+    padding: 10px;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message ol,
+.activity-row .activity-comment-container .activity-comment .activity-comment-message ul,
+.activity-row .activity-comment-container .activity-comment .activity-comment-message p {
+    margin: 10px 0 0 0;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message ol:first-child,
+.activity-row .activity-comment-container .activity-comment .activity-comment-message ul:first-child,
+.activity-row .activity-comment-container .activity-comment .activity-comment-message p:first-child {
+    margin-top: 0;
+}
+
+.activity-row .activity-comments-footer {
+    margin: 65px 0px 40px;
+    text-align: center;
+}
+
+.activity-row .activity-comments-footer a {
+    background-color: #009CDC;
+    border-radius: 5px;
+    border: 1px solid #00628E;
+    color: #FFF;
+    text-decoration: none;
+    padding: 15px 20px;
+}
+
+/**
+ * Invitations
+ */
+
+.invitation-row {
+    margin-top: 50px;
+}
