@@ -53,11 +53,6 @@ img {
     border: 0;
 }
 
-.muted {
-    color: #827E7D;
-    font-size: 12px;
-}
-
 .wrapped {
     word-wrap: break-word;
 }
@@ -79,23 +74,11 @@ img {
        `min-height` with `max-height` for some client consistency */
     max-height: 50px;
     min-height: 50px;
-}
-
-/************
- ** FOOTER **
- ************/
-
-#footer {
-    font-size: 10px;
-    margin: 40px auto 0;
+    max-width: 220px;
 }
 
 #logo td {
     text-align: center;
-}
-
-#logo td img {
-    max-width: 220px;
 }
 
 #greeting h1 {
@@ -106,6 +89,16 @@ img {
     padding: 0px 45px 45px;
     text-align: center;
     word-wrap: break-word;
+}
+
+
+/************
+ ** FOOTER **
+ ************/
+
+#footer {
+    font-size: 10px;
+    margin: 40px auto 0;
 }
 
 /***********
@@ -120,14 +113,6 @@ img {
     height: 300px;
     padding: 0px;
     width: 300px;
-}
-
-.preview-tile-container.collabdoc {
-    background-position: top left;
-}
-
-.preview-tile-container-wide {
-    width: 520px;
 }
 
 .preview-tile-container-inner {
@@ -159,7 +144,7 @@ img {
 }
 
 .preview-asset-metadata {
-    color: #aeaaaa;
+    color: #AEAAAA;
     padding-right: 10px;
     text-align: right;
 }
@@ -196,10 +181,6 @@ img {
     width: 100%;
 }
 
-.activity-row .activity-thumbnail-container {
-    float: left;
-}
-
 .activity-row .activity-summary-container {
     color: #6A6B6A;
     max-width: 620px;
@@ -223,10 +204,6 @@ img {
     margin-left: 40px;
 }
 
-.activity-row .activity-comment-container.comment-level-2 {
-    margin-left: 80px;
-}
-
 .activity-row .activity-comment-container .activity-comment-thumbnail-container {
     float: left;
 }
@@ -239,91 +216,9 @@ img {
 .activity-row .activity-comment-container.comment-level-1 .activity-comment {
     max-width: 610px;
 }
-.activity-row .activity-comment-container.comment-level-2 .activity-comment {
-    max-width: 570px;
-}
 
 .activity-row .activity-comment-container .activity-comment .activity-comment-message {
     margin-top: 7px;
-}
-
-/* Markdown formatting */
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message h1 {
-    font-size: 1.1em;
-    font-weight: bold;
-    margin: 1em 0 0.5em;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message h2 {
-    font-size: 1.05em;
-    font-weight: bold;
-    margin: 0.75em 0 0.5em;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message h3 {
-    font-size: 1em;
-    font-weight: bold;
-    margin: 0.75em 0 0.5em;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message h4 {
-    font-size: 1em;
-    font-style: italic;
-    margin: 0.75em 0 0.5em;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message h5,
-.activity-row .activity-comment-container .activity-comment .activity-comment-message h6 {
-    font-size: 1em;
-    font-style: normal;
-    font-weight: normal;
-    margin: 0.75em 0 0.5em;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message > *:first-child {
-    margin-top: 0;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message blockquote {
-    border-left: 5px solid #eeeeee;
-    margin: 20px 0;
-    padding: 10px 20px;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message code {
-    background-color: #F5F5F5;
-    display: inline-block;
-    white-space: pre-wrap;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message img {
-    max-width: 100%;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message pre {
-    background-color: #F5F5F5;
-    border: 1px solid #CCC;
-    border-radius: 4px;
-    color: #333333;
-    display: block;
-    line-height: 1.5;
-    margin: 0 0 10px;
-    padding: 10px;
-    word-break: break-all;
-    word-wrap: break-word;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message ol,
-.activity-row .activity-comment-container .activity-comment .activity-comment-message ul,
-.activity-row .activity-comment-container .activity-comment .activity-comment-message p {
-    margin: 10px 0 0 0;
-}
-
-.activity-row .activity-comment-container .activity-comment .activity-comment-message ol:first-child,
-.activity-row .activity-comment-container .activity-comment .activity-comment-message ul:first-child,
-.activity-row .activity-comment-container .activity-comment .activity-comment-message p:first-child {
-    margin-top: 0;
 }
 
 .activity-row .activity-comments-footer {
@@ -336,14 +231,6 @@ img {
     border-radius: 5px;
     border: 1px solid #00628E;
     color: #FFF;
-    text-decoration: none;
     padding: 15px 20px;
-}
-
-/**
- * Invitations
- */
-
-.invitation-row {
-    margin-top: 50px;
+    text-decoration: none;
 }
