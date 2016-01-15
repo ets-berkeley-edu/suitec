@@ -27,9 +27,10 @@
 
 var _ = require('lodash');
 var async = require('async');
+var contentDisposition = require('content-disposition');
 var fs = require('fs');
+var os = require('os');
 var request = require('request');
-var temp = require('temp').track();;
 var argv = require('yargs')
     .usage('Usage: $0 --fromcourse [fromcourse] --fromuser [fromuser] --tocourse [tocourse] --touser [touser]')
     .demand(['fromcourse', 'fromuser', 'tocourse', 'touser'])
@@ -107,6 +108,7 @@ var getAssets = function() {
     'where': {
       'course_id': fromCourse,
     },
+    'order': 'created_at ASC',
     'include': {
       'model': DB.User,
       'as': 'users',
@@ -195,9 +197,19 @@ var migrateLink = function(link, callback) {
  * @param  {Function}         callback            Standard callback function
  */
 var migrateFile = function(file, callback) {
-  // Download the file to a temporary folder
-  var path = temp.path();
-  request(file.download_url).pipe(fs.createWriteStream(path))
+  // Do a HEAD request to the file's download URL to retrieve
+  // the original file name
+  request.head(file.download_url, function(err, res) {
+    if (err) {
+      return callback(err);
+    }
+
+    var disposition = contentDisposition.parse(res.headers['content-disposition']);
+    var filename = disposition.parameters.filename;
+
+    // Download the file to a temporary folder
+    var path = os.tmpdir() + filename;
+    request(file.download_url).pipe(fs.createWriteStream(path))
     .on('error', callback)
     .on('finish', function() {
 
@@ -219,11 +231,12 @@ var migrateFile = function(file, callback) {
         }
 
         // Remove the temporary file
-        temp.cleanup(function(err, stats) {
+        fs.unlink(path, function(err) {
           return callback();
         });
       });
     });
+  });
 };
 
 init();
