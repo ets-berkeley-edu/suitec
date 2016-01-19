@@ -318,9 +318,8 @@ var migrateLink = function(link, callback) {
  * @param  {Function}         callback            Standard callback function
  */
 var migrateFile = function(file, callback) {
-  // Do a HEAD request to the file's download URL to retrieve
-  // the original file name
-  request.head(file.download_url, function(err, res) {
+  // Request the file a first time to retrieve the original file name
+  request(file.download_url, function(err, res) {
     if (err) {
       return callback(err);
     }
