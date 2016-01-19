@@ -32,17 +32,20 @@ var fs = require('fs');
 var os = require('os');
 var request = require('request');
 var argv = require('yargs')
-    .usage('Usage: $0 --fromcourse [fromcourse] --fromuser [fromuser] --tocourse [tocourse] --touser [touser]')
+    .usage('Usage: $0 --fromcourse [fromcourse] --fromuser [fromuser] --tocourse [tocourse] --touser [touser] --categories [categories]')
     .demand(['fromcourse', 'fromuser', 'tocourse', 'touser'])
+    .boolean('categories')
     .describe('fromcourse', 'The Collabosphere id of the course to migrate assets from')
     .describe('fromuser', 'The Collabosphere id of the user to migrate assets from')
     .describe('tocourse', 'The Collabosphere id of the course to migrate assets to')
     .describe('touser', 'The Collabosphere id of the user to migrate assets to')
+    .describe('categories', 'Whether to migrate categories')
     .help('h')
     .alias('h', 'help')
     .argv;
 
 var AssetsAPI = require('col-assets');
+var CategoriesAPI = require('col-categories');
 var DB = require('col-core/lib/db');
 var log = require('col-core/lib/logger')('scripts/migrate_assets');
 var UserAPI = require('col-users');
@@ -54,8 +57,14 @@ var fromUser = argv.fromuser;
 var toCourse = argv.tocourse;
 var toUser = argv.touser;
 
-// Variable that will keep track of the context for interaction with the API
-var ctx = null;
+// Variable that will keep track of the source user context for interaction with the API
+var fromCtx = null;
+// Variable that will keep track of the destination user context for interaction with the API
+var toCtx = null;
+// Variable that will keep track of an admin user context for interaction with the API
+var toAdminCtx = null;
+// Variable that will keep track of the mapping between source and destination categories
+var categoryMapping = {};
 // Variable that will keep track of how many assets have successfully migrated and
 // how many have failed to migrate for every asset type
 var results = {};
@@ -77,31 +86,129 @@ var init = function() {
     log.info('Connected to the database');
 
     // Create the context for interaction with the API
-    createContext(function() {
-      // Migrate all assets
-      migrateAssets();
+    createContexts(function() {
+      // Migrate all categories
+      migrateCategories(function() {
+        // Migrate all assets
+        migrateAssets();
+      });
     });
   });
 };
 
 /**
- * Create a mock context to use for interaction with the API
+ * Create mock contexts to use for interaction with the API
  *
- * @param  {Function}
+ * @param  {Function}         callback            Standard callback function
  */
-var createContext = function(callback) {
-  UserAPI.getUser(toUser, function(err, user) {
+var createContexts = function(callback) {
+  // Create the mock source user context
+  UserAPI.getUser(fromUser, function(err, fromUserObj) {
     if (err) {
-      log.error({'toUser': toUser, 'err': err}, 'Unable to retrieve user to migrate to');
+      log.error({'fromUser': fromUser, 'err': err}, 'Unable to retrieve user to migrate from');
       return callback(err);
     }
 
-    // Create the mock context
-    ctx = {
-      'user': user,
-      'course': user.course
+    fromCtx = {
+      'user': fromUserObj,
+      'course': fromUserObj.course
     };
 
+    // Create the mock destination user context
+    UserAPI.getUser(toUser, function(err, toUserObj) {
+      if (err) {
+        log.error({'toUser': toUser, 'err': err}, 'Unable to retrieve user to migrate to');
+        return callback(err);
+      }
+
+      toCtx = {
+        'user': toUserObj,
+        'course': toUserObj.course
+      };
+
+      // Create the mock admin destination user context
+      toAdminCtx = {
+        'user': {
+          'is_admin': true
+        },
+        'course': toUserObj.course
+      };
+
+      return callback();
+    });
+  });
+};
+
+/**
+ * Migrate all categories
+ *
+ * @param  {Function}         callback            Standard callback function
+ */
+var migrateCategories = function(callback) {
+  if (!argv.categories) {
+    return callback();
+  }
+
+  // Get the categories in the source course
+  CategoriesAPI.getCategories(fromCtx, false, function(err, fromCategories) {
+    if (err) {
+      log.error({'err': err}, 'Unable to retrieve the source categories');
+      return callback(err);
+    }
+
+    // Get the categories in the destination course
+    CategoriesAPI.getCategories(toCtx, false, function(err, toCategories) {
+      if (err) {
+        log.error({'err': err}, 'Unable to retrieve the destination categories');
+        return callback(err);
+      }
+
+      // Derive the mapping between the existing categories based on
+      // exact title matches
+      _.each(fromCategories, function(fromCategory) {
+        _.each(toCategories, function(toCategory) {
+          if (fromCategory.title === toCategory.title) {
+            categoryMapping[fromCategory.id] = toCategory.id;
+          }
+        });
+      });
+
+      // Migrate the categories that could not be mapped
+      var migratedCategories = 0;
+      async.eachSeries(fromCategories, function(fromCategory, done) {
+        if (!categoryMapping[fromCategory.id]) {
+          migrateCategory(fromCategory.toJSON(), function(err) {
+            if (!err) {
+              migratedCategories++;
+            }
+            return done();
+          });
+        } else {
+          return done();
+        }
+      }, function() {
+        log.info({'categories': migratedCategories}, 'Finished migrating categories');
+        return callback();
+      });
+    });
+  });
+};
+
+/**
+ * Migrate a category
+ *
+ * @param  {Category}         category            The category to migrate
+ * @param  {Function}         callback            Standard callback function
+ * @param  {Object}           callback.err        An error that occurred, if any
+ */
+var migrateCategory = function(category, callback) {
+  CategoriesAPI.createCategory(toAdminCtx, category.title, undefined, undefined, function(err, newCategory) {
+    if (err) {
+      log.error({'category': category, 'err': err}, 'Failed to migrate category');
+      return callback(err);
+    }
+
+    categoryMapping[category.id] = newCategory.id;
     return callback();
   });
 };
@@ -115,15 +222,21 @@ var migrateAssets = function() {
       'course_id': fromCourse,
     },
     'order': 'created_at ASC',
-    'include': {
-      'model': DB.User,
-      'as': 'users',
-      'required': true,
-      'attributes': UserConstants.BASIC_USER_FIELDS,
-      'where': {
-        'id': fromUser
+    'include': [
+      {
+        'model': DB.User,
+        'as': 'users',
+        'required': true,
+        'attributes': UserConstants.BASIC_USER_FIELDS,
+        'where': {
+          'id': fromUser
+        }
+      },
+      {
+        'model': DB.Category,
+        'attributes': ['id']
       }
-    }
+    ]
   };
 
   DB.Asset.findAll(options).complete(function(err, assets) {
@@ -185,7 +298,9 @@ var migrateAsset = function(asset, callback) {
  * @param  {Function}         callback            Standard callback function
  */
 var migrateLink = function(link, callback) {
-  AssetsAPI.createLink(ctx, link.title, link.url, {
+  var categories = getMappedCategories(link.categories);
+  AssetsAPI.createLink(toCtx, link.title, link.url, {
+    'categories': categories,
     'description': link.description || undefined,
     'source': link.source || undefined,
     'thumbnail_url': link.thumbnail_url || undefined,
@@ -227,11 +342,13 @@ var migrateFile = function(file, callback) {
     .on('finish', function() {
 
       // Create the file asset
-      AssetsAPI.createFile(ctx, file.title, {
+      var categories = getMappedCategories(file.categories);
+      AssetsAPI.createFile(toCtx, file.title, {
         'mimetype': file.mime,
         'file': path,
         'filename': file.title
       }, {
+        'categories': categories,
         'description': file.description || undefined,
         'thumbnail_url': file.thumbnail_url || undefined,
         'image_url': file.image_url || undefined,
@@ -241,6 +358,22 @@ var migrateFile = function(file, callback) {
       }, cleanTempFile);
     });
   });
+};
+
+/**
+ * Map a list of categories from the source course to the
+ * corresponding categories in the destination course
+ *
+ * @param  {Number[]}         categories          The ids of the source course categories to map
+ * @return {Number[]}                             The mapped destination course category ids
+ */
+var getMappedCategories = function(categories) {
+  return _.chain(categories)
+          .map(function(category) {
+            return categoryMapping[category.id];
+          })
+          .compact()
+          .value();
 };
 
 init();
