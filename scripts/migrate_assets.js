@@ -61,7 +61,8 @@ var ctx = null;
 var results = {};
 
 /**
- * Connect to the Collabosphere database
+ * Connect to the Collabosphere database and kick
+ * off the asset migration
  */
 var init = function() {
   // Apply global utilities
@@ -76,17 +77,23 @@ var init = function() {
     log.info('Connected to the database');
 
     // Create the context for interaction with the API
-    createContext();
+    createContext(function() {
+      // Migrate all assets
+      migrateAssets();
+    });
   });
 };
 
 /**
  * Create a mock context to use for interaction with the API
+ *
+ * @param  {Function}
  */
-var createContext = function() {
+var createContext = function(callback) {
   UserAPI.getUser(toUser, function(err, user) {
     if (err) {
-      return log.error({'toUser': toUser}, 'Unable to retrieve user to migrate to');
+      log.error({'toUser': toUser, 'err': err}, 'Unable to retrieve user to migrate to');
+      return callback(err);
     }
 
     // Create the mock context
@@ -95,15 +102,14 @@ var createContext = function() {
       'course': user.course
     };
 
-    // Get the assets to migrate
-    return getAssets();
+    return callback();
   });
 };
 
 /**
- * Get the assets that need to be migrated
+ * Migrate the assets that need to be migrated
  */
-var getAssets = function() {
+var migrateAssets = function() {
   var options = {
     'where': {
       'course_id': fromCourse,
@@ -204,13 +210,20 @@ var migrateFile = function(file, callback) {
       return callback(err);
     }
 
+    // Download the file to a temporary folder
     var disposition = contentDisposition.parse(res.headers['content-disposition']);
     var filename = disposition.parameters.filename;
-
-    // Download the file to a temporary folder
     var path = os.tmpdir() + filename;
+
+    // Function that will clean up the temporary file
+    var cleanTempFile = function(err) {
+      fs.unlink(path, function() {
+        return callback(err);
+      });
+    };
+
     request(file.download_url).pipe(fs.createWriteStream(path))
-    .on('error', callback)
+    .on('error', cleanTempFile)
     .on('finish', function() {
 
       // Create the file asset
@@ -225,16 +238,7 @@ var migrateFile = function(file, callback) {
         'embed_id': file.embed_id || undefined,
         'embed_key': file.embed_key || undefined,
         'embed_code': file.embed_code || undefined
-      }, function(err, asset) {
-        if (err) {
-          return callback(err);
-        }
-
-        // Remove the temporary file
-        fs.unlink(path, function(err) {
-          return callback();
-        });
-      });
+      }, cleanTempFile);
     });
   });
 };
