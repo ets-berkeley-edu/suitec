@@ -318,13 +318,9 @@ var migrateLink = function(link, callback) {
  * @param  {Function}         callback            Standard callback function
  */
 var migrateFile = function(file, callback) {
-  // Request the file a first time to retrieve the original file name
-  request(file.download_url, function(err, res) {
-    if (err) {
-      return callback(err);
-    }
-
-    // Download the file to a temporary folder
+  // Download the file to a temporary folder
+  request(file.download_url).on('response', function(res) {
+    // Extract the name of the file
     var disposition = contentDisposition.parse(res.headers['content-disposition']);
     var filename = disposition.parameters.filename;
     var path = os.tmpdir() + filename;
@@ -336,7 +332,7 @@ var migrateFile = function(file, callback) {
       });
     };
 
-    request(file.download_url).pipe(fs.createWriteStream(path))
+    res.pipe(fs.createWriteStream(path))
     .on('error', cleanTempFile)
     .on('finish', function() {
 
