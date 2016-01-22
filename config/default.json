@@ -9,7 +9,8 @@
   },
   "app": {
     "https": false,
-    "port": 2000
+    "port": 2000,
+    "url": "https://collabosphere.berkeley"
   },
   "cookie": {
     "secret": "String to encrypt the cookies with. Change me in production"
@@ -34,5 +35,10 @@
   "canvasPoller": {
     "enabled": true,
     "delay": 15
+  },
+  "email": {
+    "enabled": true,
+    "dailyHour": 8,
+    "apiKey": "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"
   }
 }

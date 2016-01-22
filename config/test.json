@@ -15,5 +15,8 @@
   },
   "embdr": {
     "enabled": false
+  },
+  "email": {
+    "enabled": false
   }
 }
