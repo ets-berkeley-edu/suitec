@@ -185,7 +185,7 @@
     /**
      * Set the parent's container hash value
      *
-     * @param {Object}  data    The data for the parent's hash container. Each key will be prefixed with `col_`. For example, `{'user': 1, 'category': 42}` would be serialized to `col_user=1&col_category=42`
+     * @param  {Object}  data    The data for the parent's hash container. Each key will be prefixed with `col_`. For example, `{'user': 1, 'category': 42}` would be serialized to `col_user=1&col_category=42`
      */
     var setParentHash = function(data) {
       if (window.parent) {
