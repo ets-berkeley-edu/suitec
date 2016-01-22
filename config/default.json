@@ -10,7 +10,7 @@
   "app": {
     "https": false,
     "port": 2000,
-    "url": "https://collabosphere.berkeley"
+    "host": "collabosphere.berkeley"
   },
   "cookie": {
     "secret": "String to encrypt the cookies with. Change me in production"

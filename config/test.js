@@ -1,5 +1,5 @@
 /**
- * Copyright ©2015. The Regents of the University of California (Regents). All Rights Reserved.
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its documentation
  * for educational, research, and not-for-profit purposes, without fee and without a
@@ -23,7 +23,26 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-var Constants = module.exports = {
-  'BASIC_USER_FIELDS': ['id', 'canvas_user_id', 'canvas_course_role', 'canvas_enrollment_state', 'canvas_full_name', 'canvas_image'],
-  'POINTS_USER_FIELDS': ['id', 'canvas_user_id', 'canvas_course_role', 'canvas_enrollment_state', 'canvas_full_name', 'canvas_image', 'points', 'share_points', 'last_activity']
-};
+module.exports = {
+  "analytics": {
+    "enabled": false
+  },
+  "db": {
+    "database": "collabospheretest",
+    "dropOnStartup": true
+  },
+  "log": {
+    "level": "trace",
+    "stream": "logs/test.log"
+  },
+  "canvasPoller": {
+    "enabled": false
+  },
+  "embdr": {
+    "enabled": false
+  },
+  "email": {
+    "enabled": false,
+    "dailyHour": ((new Date().getHours() + 2) % 34)
+  }
+}
