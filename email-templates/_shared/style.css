@@ -1,0 +1,232 @@
+/*************
+ * CORE CSS **
+ *************/
+
+body {
+  background-color: #F2F2F2;
+  color: #333;
+  font-size: 14px;
+  height: 100%;
+  padding: 40px 20px;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 150%;
+}
+
+body, h1, h2, h3, h4, h5, h6, a, span, td, div {
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+body > table {
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+table {
+  /* Explicitly specifying `border-collapse: separate;` forces
+     IE9 to respect cellspacing in Gmail like other browsers */
+  border-collapse: separate;
+}
+
+a {
+  color: #0081BD;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.1;
+}
+
+h1, h2 {
+  font-weight: 200;
+}
+
+h3 {
+  font-weight: 500;
+}
+
+img {
+  border: 0;
+}
+
+.wrapped {
+  word-wrap: break-word;
+}
+
+.row > td {
+  max-width: 600px;
+  min-width:400px;
+}
+
+
+/************
+ ** HEADER **
+ ************/
+
+#logo img {
+  margin: 0 0 30px;
+
+  /* GMail always converts `height` to `min-height` on at least images, so use
+     `min-height` with `max-height` for some client consistency */
+  max-height: 50px;
+  min-height: 50px;
+  max-width: 220px;
+}
+
+#logo td {
+  text-align: center;
+}
+
+#greeting h1 {
+  color: #575757;
+  font-weight: 300;
+  font-size: 15px;
+  margin: 0 0 30px;
+  padding: 0 45px;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+
+/***********
+ ** TILES **
+ ***********/
+
+.preview-tile-container {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 1px solid #DCE0E3;
+  padding: 0px;
+  width: 264px;
+}
+
+.preview-tile-container,
+.preview-tile-container-inner {
+  height: 264px;
+}
+
+.preview-tile-container .preview-tile-metadata {
+  background: #000000;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  padding: 13px 10px;
+  width: 244px;
+}
+
+.preview-tile-metadata .preview-tile-metadata-inner {
+  width: 100%;
+}
+
+.preview-tile-container .preview-tile-metadata .preview-tile-metadata-title a {
+  color: #FFF;
+  display: block;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.preview-tile-container .preview-tile-metadata .preview-tile-metadata-description {
+  color: #FFF;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.preview-asset-metadata {
+  color: #9D9B9A;
+  display: block;
+  margin-top: 12px;
+  padding-right: 10px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.preview-asset-metadata img {
+  height: 11px;
+  margin-left: 12px;
+}
+
+
+/****************
+ ** THUMBNAILS **
+ ****************/
+
+.thumbnail-user img {
+  border: 2px solid #fff;
+  border-radius: 100px;
+  height: 40px;
+  width: 40px;
+}
+
+
+/****************
+ ** ACTIVITIES **
+ ****************/
+
+.activity-row > td {
+  background-color: #FFF;
+  margin: 0 auto 20px;
+  padding: 40px;
+
+}
+
+.activity-row > td > table {
+  width: 100%;
+}
+
+.activity-row .activity-summary-container {
+  color: #6A6B6A;
+  font-size: 15px;
+  margin-bottom: 30px;
+  max-width: 620px;
+}
+
+.activity-row .activity-date {
+  color: #747474;
+  margin-top: 5px;
+}
+
+.activity-row .activity-comments {
+  margin-top: 40px;
+}
+
+.activity-row .activity-comment-container {
+  margin-top: 25px;
+  min-height: 48px;
+}
+
+.activity-row .activity-comment-container:first-child {
+  margin-top: 30px;
+}
+
+.activity-row .activity-comment-container.comment-level-1 {
+  margin-left: 40px;
+}
+
+.activity-row .activity-comment-container .activity-comment-thumbnail-container {
+  float: left;
+}
+
+.activity-row .activity-comment-container .activity-comment {
+  padding-left: 56px;
+  max-width: 650px;
+}
+
+.activity-row .activity-comment-container.comment-level-1 .activity-comment {
+  max-width: 610px;
+}
+
+.activity-row .activity-comment-container .activity-comment .activity-comment-message {
+  margin-top: 6px;
+}
+
+.activity-row .activity-comments-footer {
+  margin: 50px 0 15px;
+  text-align: center;
+}
+
+.activity-row .activity-comments-footer a {
+  background-color: #009CDC;
+  border-radius: 5px;
+  border: 1px solid #0C6091;
+  color: #FFF;
+  padding: 10px 20px;
+  text-decoration: none;
+}
