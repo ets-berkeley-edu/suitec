@@ -3,63 +3,58 @@
  *************/
 
 body {
-    background-color: #F3F3F4;
-    color: #333;
-    font-size: 18px;
-    height: 100%;
-    padding: 20px;
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 150%;
+  background-color: #F2F2F2;
+  color: #333;
+  font-size: 14px;
+  height: 100%;
+  padding: 40px 20px;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 150%;
 }
 
 body, h1, h2, h3, h4, h5, h6, a, span, td, div {
-    font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 
 body > table {
-    margin: 0 auto;
-    max-width: 700px;
+  margin: 0 auto;
+  max-width: 700px;
 }
 
 table {
-    /* Explicitly specifying `border-collapse: separate;` forces
-       IE9 to respect cellspacing in Gmail like other browsers */
-    border-collapse: separate;
+  /* Explicitly specifying `border-collapse: separate;` forces
+     IE9 to respect cellspacing in Gmail like other browsers */
+  border-collapse: separate;
 }
 
 a {
-    color: #0088CC;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #005580;
+  color: #0081BD;
+  text-decoration: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #333;
-    line-height: 1.1;
+  line-height: 1.1;
 }
 
 h1, h2 {
-    font-weight: 200;
+  font-weight: 200;
 }
 
 h3 {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 img {
-    border: 0;
+  border: 0;
 }
 
 .wrapped {
-    word-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .row > td {
-    max-width: 600px;
-    min-width:400px;
+  max-width: 600px;
+  min-width:400px;
 }
 
 
@@ -68,90 +63,84 @@ img {
  ************/
 
 #logo img {
-    margin: 0 0 45px;
+  margin: 0 0 30px;
 
-    /* GMail always converts `height` to `min-height` on at least images, so use
-       `min-height` with `max-height` for some client consistency */
-    max-height: 50px;
-    min-height: 50px;
-    max-width: 220px;
+  /* GMail always converts `height` to `min-height` on at least images, so use
+     `min-height` with `max-height` for some client consistency */
+  max-height: 50px;
+  min-height: 50px;
+  max-width: 220px;
 }
 
 #logo td {
-    text-align: center;
+  text-align: center;
 }
 
 #greeting h1 {
-    color: #6A6B6A;
-    font-size: 18px;
-    font-weight: 300;
-    margin: 0 0 5px;
-    padding: 0px 45px 45px;
-    text-align: center;
-    word-wrap: break-word;
+  color: #575757;
+  font-weight: 300;
+  font-size: 15px;
+  margin: 0 0 30px;
+  padding: 0 45px;
+  text-align: center;
+  word-wrap: break-word;
 }
 
-
-/************
- ** FOOTER **
- ************/
-
-#footer {
-    font-size: 10px;
-    margin: 40px auto 0;
-}
 
 /***********
  ** TILES **
  ***********/
 
 .preview-tile-container {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    border: 1px solid #DCE0E3;
-    height: 300px;
-    padding: 0px;
-    width: 300px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 1px solid #DCE0E3;
+  padding: 0px;
+  width: 264px;
 }
 
+.preview-tile-container,
 .preview-tile-container-inner {
-    height: 300px;
+  height: 264px;
 }
 
 .preview-tile-container .preview-tile-metadata {
-    background: #000000;
-    background-color: rgba(0, 0, 0, 0.8) !important;
-    padding: 7px;
-    width: 286px;
+  background: #000000;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  padding: 13px 10px;
+  width: 244px;
 }
 
 .preview-tile-metadata .preview-tile-metadata-inner {
-    width: 100%;
+  width: 100%;
 }
 
 .preview-tile-container .preview-tile-metadata .preview-tile-metadata-title a {
-    color: #FFF;
-    display: block;
-    font-weight: 600;
-    line-height: 35px;
-    margin: 0;
+  color: #FFF;
+  display: block;
+  font-weight: 600;
+  margin: 0 0 6px;
 }
 
 .preview-tile-container .preview-tile-metadata .preview-tile-metadata-description {
-    color: #FFF;
-    padding-top: 2px;
+  color: #FFF;
+  font-size: 13px;
+  font-weight: 300;
 }
 
 .preview-asset-metadata {
-    color: #AEAAAA;
-    padding-right: 10px;
-    text-align: right;
+  color: #9D9B9A;
+  display: block;
+  margin-top: 12px;
+  padding-right: 10px;
+  text-align: right;
+  vertical-align: middle;
 }
 
 .preview-asset-metadata img {
-    vertical-align: middle;
-    width: 24px;
+  height: 11px;
+  margin-left: 12px;
 }
 
 
@@ -160,9 +149,10 @@ img {
  ****************/
 
 .thumbnail-user img {
-    border-radius: 30px;
-    height: 40px;
-    width: 40px;
+  border: 2px solid #fff;
+  border-radius: 100px;
+  height: 40px;
+  width: 40px;
 }
 
 
@@ -171,66 +161,72 @@ img {
  ****************/
 
 .activity-row > td {
-    background-color: #FFF;
-    border: 1px solid #EDEDEC;
-    margin: 10px auto;
-    padding: 50px;
+  background-color: #FFF;
+  margin: 0 auto 20px;
+  padding: 40px;
+
 }
 
 .activity-row > td > table {
-    width: 100%;
+  width: 100%;
 }
 
 .activity-row .activity-summary-container {
-    color: #6A6B6A;
-    max-width: 620px;
+  color: #6A6B6A;
+  font-size: 15px;
+  margin-bottom: 30px;
+  max-width: 620px;
 }
 
 .activity-row .activity-date {
-    color: #888;
-    margin-top: 5px;
+  color: #747474;
+  margin-top: 5px;
 }
 
-.activity-row .activity-previews-container {
-    margin: 25px 0 0 -10px;
+.activity-row .activity-comments {
+  margin-top: 40px;
 }
 
 .activity-row .activity-comment-container {
-    margin-top: 25px;
-    min-height: 40px;
+  margin-top: 25px;
+  min-height: 48px;
+}
+
+.activity-row .activity-comment-container:first-child {
+  margin-top: 30px;
 }
 
 .activity-row .activity-comment-container.comment-level-1 {
-    margin-left: 40px;
+  margin-left: 40px;
 }
 
 .activity-row .activity-comment-container .activity-comment-thumbnail-container {
-    float: left;
+  float: left;
 }
 
 .activity-row .activity-comment-container .activity-comment {
-    padding-left: 52px;
-    max-width: 650px;
+  padding-left: 56px;
+  max-width: 650px;
 }
 
 .activity-row .activity-comment-container.comment-level-1 .activity-comment {
-    max-width: 610px;
+  max-width: 610px;
 }
 
 .activity-row .activity-comment-container .activity-comment .activity-comment-message {
-    margin-top: 7px;
+  margin-top: 6px;
 }
 
 .activity-row .activity-comments-footer {
-    margin: 65px 0px 40px;
-    text-align: center;
+  margin: 50px 0 15px;
+  text-align: center;
 }
 
 .activity-row .activity-comments-footer a {
-    background-color: #009CDC;
-    border-radius: 5px;
-    border: 1px solid #00628E;
-    color: #FFF;
-    padding: 15px 20px;
-    text-decoration: none;
+  background-color: #009CDC;
+  border-radius: 5px;
+  border: 1px solid #0C6091;
+  color: #FFF;
+  padding: 10px 20px;
+  text-decoration: none;
 }
