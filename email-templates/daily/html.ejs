@@ -39,7 +39,7 @@
 var getUserThumbnail = function(user) {
   var thumbnail = user.canvas_image;
   if (!thumbnail) {
-    thumbnail = baseCollabosphereUrl + '/assets/img/icon_user.png';
+    thumbnail = baseCollabosphereUrl + resolveAsset('/assets/img/icon_user.png');
   }
   return thumbnail;
 };
@@ -186,7 +186,7 @@ activities.forEach(function(activity) {
                       if (activity.asset.thumbnail_url) {
                         thumbnailUrl = activity.asset.thumbnail_url;
                       } else {
-                        thumbnailUrl =  baseCollabosphereUrl + '/assets/img/icon_' + activity.asset.type + '.png';
+                        thumbnailUrl =  baseCollabosphereUrl + resolveAsset('/assets/img/icon_' + activity.asset.type + '.png');
                       }
                     } else if (activity.whiteboard) {
                       link = course.whiteboards_url + '?col_whiteboard=' + activity.whiteboard.id;
@@ -199,7 +199,7 @@ activities.forEach(function(activity) {
                       if (activity.whiteboard.thumbnail_url) {
                         thumbnailUrl = activity.whiteboard.thumbnail_url;
                       } else {
-                        thumbnailUrl = baseCollabosphereUrl + '/assets/img/icon_whiteboard.png';
+                        thumbnailUrl = baseCollabosphereUrl + resolveAsset('/assets/img/icon_whiteboard.png');
                       }
                     }
 
@@ -234,9 +234,9 @@ activities.forEach(function(activity) {
                 <% if (activity.asset) { -%>
                 <tr>
                   <td class="preview-asset-metadata">
-                    <img src="<%= baseCollabosphereUrl %>/assets/img/icon_thumbs_up.png" alt="Number of likes" /> <%= activity.asset.likes %>
-                    <img src="<%= baseCollabosphereUrl %>/assets/img/icon_views.png" alt="Number of views" /> <%= activity.asset.views %>
-                    <img src="<%= baseCollabosphereUrl %>/assets/img/icon_comments.png" alt="Number of comments" /> <%= activity.asset.comment_count %>
+                    <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_thumbs_up.png') %>" alt="Number of likes" /> <%= activity.asset.likes %>
+                    <img src="<%= baseCollabosphereUrl  + resolveAsset('/assets/img/icon_views.png') %>" alt="Number of views" /> <%= activity.asset.views %>
+                    <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_comments.png') %>" alt="Number of comments" /> <%= activity.asset.comment_count %>
                   </td>
                 </tr>
                 <% } -%>

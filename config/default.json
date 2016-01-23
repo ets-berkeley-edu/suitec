@@ -4,7 +4,7 @@
     "apiKey": "ed26bc504e17992d16554c70f8bb3914"
   },
   "apache": {
-    "documentRoot": "/var/www/html",
+    "documentRoot": "./target",
     "logDirectory": "/usr/local/var/apache2/log"
   },
   "app": {
