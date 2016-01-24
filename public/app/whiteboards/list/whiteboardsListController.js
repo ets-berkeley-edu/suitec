@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsListController', function(me, utilService, whiteboardsFactory, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsListController', function(me, analyticsService, utilService, whiteboardsFactory, $scope, $window) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -35,11 +35,40 @@
     // Variable that will keep track of whether the initial whiteboard list request has taken place
     $scope.hasRequested = false;
 
+    $scope.popupBlocked = false;
+    $scope.deepLinkedWhiteboard = {};
     $scope.whiteboards = [];
     $scope.list = {
       'page': 0,
       'ready': true
     };
+
+    // Check whether a whiteboard was deep linked (from an email or the syllabus)
+    if (window.parent) {
+      utilService.getParentUrlData(function(data) {
+        if (data.whiteboard) {
+          var whiteboardId = parseInt(data.whiteboard, 10);
+
+          // Track the whiteboard deep link
+          analyticsService.track('Deep link whiteboard', {
+            'whiteboard_id': whiteboardId,
+            'referer': document.referrer
+          });
+
+          // Trigger the whiteboard as a popup
+          $scope.deepLinkedWhiteboard = {
+            'id': whiteboardId
+          };
+          var popup = $window.open(generateWhiteboardURL($scope.deepLinkedWhiteboard));
+
+          // Unfortunately, some browsers will block the popup as it wasn't launched from a trusted
+          // user event. If that's the case, the returned value will be null
+          if (!popup) {
+            $scope.popupBlocked = true;
+          }
+        }
+      });
+    }
 
     /**
      * Get the whiteboards to which the current user has access in the current course through an infinite scroll
