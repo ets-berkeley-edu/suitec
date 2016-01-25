@@ -58,7 +58,7 @@ if (actitiesByType.asset_comment) {
     var total = _.reduce(actitiesByType.asset_comment, function(sum, activity) {
       return sum + activity.newComments;
     }, 0);
-    parts.push(total + ' comments on ' + actitiesByType.asset_comment.length + ' assets')
+    parts.push(total + ' comments on ' + actitiesByType.asset_comment.length + ' assets');
   }
 }
 
@@ -83,7 +83,7 @@ if (actitiesByType.asset_comment_reply) {
       parts.push(replies + ' replies on 1 comment');
     }
   } else {
-    parts.push(replies + ' replies on ' + comments + ' comments')
+    parts.push(replies + ' replies on ' + comments + ' comments');
   }
 }
 
@@ -98,12 +98,12 @@ if (actitiesByType.whiteboard_chat) {
     var total = _.reduce(actitiesByType.whiteboard_chat, function(sum, activity) {
       return sum + activity.whiteboard.chats.length;
     }, 0);
-    parts.push(total + ' chat messages on ' + actitiesByType.whiteboard_chat.length + ' whiteboards')
+    parts.push(total + ' chat messages on ' + actitiesByType.whiteboard_chat.length + ' whiteboards');
   }
 }
 
 if (parts.length === 1) {
-  greeting += parts[0]
+  greeting += parts[0];
 } else if (parts.length === 2) {
   greeting += parts.join(' and ');
 } else {
@@ -137,19 +137,19 @@ activities.forEach(function(activity) {
               <div class="wrapped">
                 <%
                   if (activity.type === 'asset_comment') {
-                    var assetLink = course.assetlibrary_url + '?col_asset=' + activity.asset.id
+                    var assetLink = course.assetlibrary_url + '?col_asset=' + activity.asset.id;
                     var commenters = _.pluck(activity.asset.comments, 'user');
                     var summaryActors = getSummaryActors(commenters, user);
                 -%>
                     <%= summaryActors %> <a href="<%= assetLink %>">commented</a> on your asset <a href="<%= assetLink %>"><%= activity.asset.title %></a>.
                 <% } else if (activity.type === 'asset_comment_reply') {
-                    var assetLink = course.assetlibrary_url + '?col_asset=' + activity.asset.id
+                    var assetLink = course.assetlibrary_url + '?col_asset=' + activity.asset.id;
                     var commenters = _.pluck(activity.asset.comments, 'user');
                     var summaryActors = getSummaryActors(commenters, user);
                 -%>
                     <%= summaryActors %> <a href="<%= assetLink %>">replied</a> to your comment on the asset <a href="<%= assetLink %>"><%= activity.asset.title %></a>.
                 <% } else if (activity.type === 'whiteboard_chat') {
-                    var whiteboardLink = course.whiteboards_url + '?col_whiteboard=' + activity.whiteboard.id
+                    var whiteboardLink = course.whiteboards_url + '?col_whiteboard=' + activity.whiteboard.id;
                     if (activity.whiteboard.chats.length === 1) {
                 -%>
                       There has been <a href="<%= whiteboardLink %>">1 new chat message</a> on your whiteboard <a href="<%= whiteboardLink %>"><%= activity.whiteboard.title %></a>.
@@ -297,8 +297,8 @@ activities.forEach(function(activity) {
                   </div>
                 </div>
               <%
-                })
-                -%>
+                });
+              -%>
                 <div class="activity-comments-footer">
                   <a href="<%= link %>">
                     <% if (activity.whiteboard.chats.length > 4) { %>
