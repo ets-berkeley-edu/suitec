@@ -166,18 +166,20 @@
     };
 
     /**
-     * Get any Collabosphere related data from the parent URL. This function assumes that
-     * Collabosphere data that is passed into the query string or hash is prefixed with `col_`.
+     * Get the Collabosphere related data from the parent URL. This function assumes that
+     * Collabosphere data in the query string or hash is prefixed with `col_`.
+     *
      * For example:
      *
      *   Given the parent URL:
-     *     http://bcourses.berkeley.edu/courses/1123123/external_tools/421312#col_category=2&col_user=1
+     *     http://bcourses.berkeley.edu/courses/1123123/external_tools/421312?col_user=1#col_category=2
      *
      *   The following data would be passed into the callback function:
      *     ```
      *     {
-     *       "category": "2",
-     *       "user": 1
+     *       "user": 1,
+     *       "category": "2"
+     *
      *     }
      *     ```
      *
@@ -195,40 +197,19 @@
         }
 
         // Parse the URL
-        var parser = document.createElement('a');
-        parser.href = data.location;
-        var queryStringData = _parseUrlData(parser.search.substring(1));
-        var hashData = _parseUrlData(parser.hash.substring(1));
-        return callback(_.extend(queryStringData, hashData));
+        var url = purl(data.location);
+        var urlData = _.extend(url.param(), url.fparam());
+
+        // Filter out all non-`col_` values
+        var filteredUrlData = {};
+        _.each(urlData, function(value, key) {
+          if (key.indexOf('col_') === 0) {
+            filteredUrlData[key.substring(4)] = value;
+          }
+        });
+        return callback(filteredUrlData);
+
       });
-    }
-
-    /**
-     * Parse Collabosphere information out of query string or hash
-     *
-     * @param  {String}     str     The query string or hash to parse
-     * @return {Object}             The Collabosphere data in a query string or hash
-     * @api private
-     */
-    var _parseUrlData = function(str) {
-      return _.chain(str.split('&'))
-              .map(function(item) {
-                return item.split('=')
-              })
-
-              // Remove any non `col_` keys
-              .filter(function(item) {
-                return (item[0].indexOf('col_') !== -1);
-              })
-
-              // Remove the `col_` prefix from the key
-              .map(function(item) {
-                return [item[0].substring(4), item[1]]
-              })
-
-              // Create a simple object (e.g., `{'whiteboard': "9"}`)
-              .zipObject()
-              .value();
     };
 
     /**

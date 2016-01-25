@@ -29,8 +29,8 @@
 
   angular.module('collabosphere').service('assetLibraryService', function($state, analyticsService, utilService) {
 
-    // Get the parent container's hash. In case a hash a present, restore the state to allow
-    // for deep linking to an asset or asset library search
+    // Get the parent window's URL. In case any Collabosphere data is present,
+    // restore the state to allow for deep linking to an asset or asset library search
     if (window.parent) {
       utilService.getParentUrlData(function(data) {
         if (data.asset) {
