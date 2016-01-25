@@ -166,20 +166,69 @@
     };
 
     /**
-     * Get the full URL of the parent container
+     * Get any Collabosphere related data from the parent URL. This function assumes that
+     * Collabosphere data that is passed into the query string or hash is prefixed with `col_`.
+     * For example:
+     *
+     *   Given the parent URL:
+     *     http://bcourses.berkeley.edu/courses/1123123/external_tools/421312#col_category=2&col_user=1
+     *
+     *   The following data would be passed into the callback function:
+     *     ```
+     *     {
+     *       "category": "2",
+     *       "user": 1
+     *     }
+     *     ```
      *
      * @param  {Function}   callback          Standard callback function
-     * @param  {String}     callback.url      The URL of the parent container
+     * @param  {Object}     callback.data     The Collabosphere data that's present in the parent's URL
      */
-    var getParentUrl = function(callback) {
+    var getParentUrlData = function(callback) {
       postIFrameMessage(function() {
         return {
           'subject': 'getParent'
         };
       }, function(data) {
-        data = data || {};
-        return callback(data.location);
+        if (!data || !data.location) {
+          return callback({});
+        }
+
+        // Parse the URL
+        var parser = document.createElement('a');
+        parser.href = data.location;
+        var queryStringData = _parseUrlData(parser.search.substring(1));
+        var hashData = _parseUrlData(parser.hash.substring(1));
+        return callback(_.extend(queryStringData, hashData));
       });
+    }
+
+    /**
+     * Parse Collabosphere information out of query string or hash
+     *
+     * @param  {String}     str     The query string or hash to parse
+     * @return {Object}             The Collabosphere data in a query string or hash
+     * @api private
+     */
+    var _parseUrlData = function(str) {
+      return _.chain(str.split('&'))
+              .map(function(item) {
+                return item.split('=')
+              })
+
+              // Remove any non `col_` keys
+              .filter(function(item) {
+                return (item[0].indexOf('col_') !== -1);
+              })
+
+              // Remove the `col_` prefix from the key
+              .map(function(item) {
+                return [item[0].substring(4), item[1]]
+              })
+
+              // Create a simple object (e.g., `{'whiteboard': "9"}`)
+              .zipObject()
+              .value();
     };
 
     /**
@@ -257,7 +306,7 @@
     return {
       'getApiUrl': getApiUrl,
       'getLaunchParams': getLaunchParams,
-      'getParentUrl': getParentUrl,
+      'getParentUrlData': getParentUrlData,
       'getScrollInformation': getScrollInformation,
       'getToolUrl': getToolUrl,
       'resizeIFrame': resizeIFrame,

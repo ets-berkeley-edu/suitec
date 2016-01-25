@@ -32,24 +32,7 @@
     // Get the parent container's hash. In case a hash a present, restore the state to allow
     // for deep linking to an asset or asset library search
     if (window.parent) {
-      utilService.getParentUrl(function(url) {
-        // If no hash fragment is part of the URL, return early
-        if (url.indexOf('#') === -1 || url.indexOf('col_') === -1) {
-          return;
-        }
-
-        // Parse the hash
-        var fragments = url.split('#')[1].split('&');
-        var data = {};
-        _.each(fragments, function(fragment) {
-          var key = fragment.split('=')[0];
-          var val = decodeURIComponent(fragment.split('=')[1]);
-          if (key && key.indexOf('col_') === 0 && val) {
-            data[key.substring(4)] = val;
-          }
-        });
-
-        // Check if an asset was deep linked
+      utilService.getParentUrlData(function(data) {
         if (data.asset) {
           var assetId = parseInt(data.asset, 10);
 
