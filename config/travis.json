@@ -17,5 +17,9 @@
   },
   "embdr": {
     "enabled": false
+  },
+  "email": {
+    "enabled": false,
+    "dailyHour": ((new Date().getHours() + 2) % 34)
   }
 }
