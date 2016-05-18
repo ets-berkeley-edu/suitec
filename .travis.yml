@@ -1,7 +1,7 @@
 sudo: required
 language: node_js
 node_js:
-  - "0.10.36"
+  - "0.10.25"
 
 addons:
   postgresql: "9.3"
