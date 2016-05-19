@@ -327,7 +327,7 @@
     // approach needs to be taken
     var backgroundImageStyle = null;
     if (element.currentStyle) {
-      backgroundImageStyle = this.currentStyle.backgroundImage;
+      backgroundImageStyle = element.currentStyle.backgroundImage;
     } else if (window.getComputedStyle) {
       backgroundImageStyle = document.defaultView.getComputedStyle(element, null).getPropertyValue('background-image');
     }
