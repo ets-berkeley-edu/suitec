@@ -23,6 +23,10 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
+.assetlibrary-iconbar div {
+  display: inline;
+}
+
 .assetlibrary-iconbar .btn {
   margin-top: -2px;
   padding: 0;
