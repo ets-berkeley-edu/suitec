@@ -44,10 +44,22 @@
      * Edit the current whiteboard
      */
     var editWhiteboard = $scope.editWhiteboard = function() {
-      whiteboardsFactory.editWhiteboard($scope.whiteboard.id, $scope.updatedWhiteboard).success(function(updatedWhiteboard) {
+      // Warn if the user has removed him/herself from the whiteboard
+      if (!_.include($scope.updatedWhiteboard.members, $scope.me.id) &&
+          !confirm('Are you sure you want to remove yourself from this whiteboard?')) {
+        return;
+      }
+      whiteboardsFactory.editWhiteboard($scope.whiteboard.id, $scope.updatedWhiteboard).then(function(response) {
         // The `closeModal` is added on the scope by the caller and allows
         // the caller to deal with the results coming out of the modal
-        $scope.closeModal(updatedWhiteboard);
+        $scope.closeModal(response.data);
+      }, function(err) {
+        // An edit action may cause a user to lose whiteboard access
+        if (err.status === 404) {
+          $scope.closeModal({
+            'notFound': true
+          });
+        }
       });
     };
 

@@ -48,7 +48,7 @@
         'readonly': '=readonly'
       },
       'templateUrl': '/app/whiteboards/board/board.html',
-      'controller': function(analyticsService, Fabric, FabricConstants, me, utilService, whiteboardsFactory, $alert, $cookies, $modal, $rootScope, $scope) {
+      'controller': function(analyticsService, Fabric, FabricConstants, me, utilService, whiteboardsFactory, $alert, $cookies, $modal, $rootScope, $scope, $window) {
 
         // Make the me object available to the scope
         $scope.me = me;
@@ -1794,9 +1794,17 @@
           scope.whiteboard = $scope.whiteboard;
           scope.closeModal = function(updatedWhiteboard) {
             if (updatedWhiteboard) {
-              $scope.whiteboard = updatedWhiteboard;
-              // Set the title of the window to the new title of the whiteboard
-              $rootScope.header = $scope.whiteboard.title;
+              if (updatedWhiteboard.notFound) {
+                // If an edit has removed the user's access, refresh the whiteboard list and close this whiteboard
+                if ($window.opener) {
+                  $window.opener.refreshWhiteboardList();
+                }
+                $window.close();
+              } else {
+                $scope.whiteboard = updatedWhiteboard;
+                // Set the title of the window to the new title of the whiteboard
+                $rootScope.header = $scope.whiteboard.title;
+              }
             }
             this.$hide();
           };

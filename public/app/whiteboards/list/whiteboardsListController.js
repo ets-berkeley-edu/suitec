@@ -29,19 +29,26 @@
 
   angular.module('collabosphere').controller('WhiteboardsListController', function(me, analyticsService, utilService, whiteboardsFactory, $scope, $window) {
 
+    /**
+     * Initialize values when whiteboard list is launched or refreshed
+     */
+    var initializeWhiteboardList = function() {
+      // Variable that will keep track of whether the initial whiteboard list request has taken place
+      $scope.hasRequested = false;
+      $scope.whiteboards = [];
+      $scope.list = {
+        'page': 0,
+        'ready': true
+      };
+    };
+
+    initializeWhiteboardList();
+
     // Make the me object available to the scope
     $scope.me = me;
 
-    // Variable that will keep track of whether the initial whiteboard list request has taken place
-    $scope.hasRequested = false;
-
     $scope.popupBlocked = false;
     $scope.deepLinkedWhiteboard = {};
-    $scope.whiteboards = [];
-    $scope.list = {
-      'page': 0,
-      'ready': true
-    };
 
     // Check whether a whiteboard was deep linked (from an email or the syllabus)
     if (window.parent) {
@@ -74,7 +81,7 @@
      * Get the whiteboards to which the current user has access in the current course through an infinite scroll
      */
     var getWhiteboards = $scope.getWhiteboards = function() {
-      // Indicate the no further REST API requests should be made
+      // Indicate that no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
       whiteboardsFactory.getWhiteboards($scope.list.page).success(function(whiteboards) {
@@ -105,6 +112,12 @@
       url += '&course_id=' + launchParams.courseId;
       url += '&tool_url=' + launchParams.toolUrl;
       return url;
+    };
+
+    // Refresh function defined on the window object so that child windows can call it
+    $window.refreshWhiteboardList = function() {
+      initializeWhiteboardList();
+      getWhiteboards();
     };
 
   });
