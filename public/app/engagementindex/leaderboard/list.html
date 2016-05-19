@@ -1,17 +1,17 @@
 <div class="leaderboard-list-container">
   <div class="clearfix">
-    <form class="leaderboard-list-search-form">
+    <div class="leaderboard-list-actions-container">
+      <a href="/engagementindex/pointsconfiguration" class="btn btn-default">Points configuration</a>
+      <a data-ng-href="{{getCSVExportURL()}}" target="_blank" class="btn btn-default" data-ng-show="me.is_admin" data-ng-click="trackCSVDownload()">Download CSV</a>
+    </div>
+    <form class="pull-right leaderboard-list-search-form" data-ng-show="me.is_admin || me.share_points">
       <div class="form-group">
         <input type="text" class="form-control leaderboard-list-search" placeholder="Search the Engagement Index" data-ng-model="query.$" data-ng-change="search(query.$)">
       </div>
     </form>
-    <div class="pull-right leaderboard-list-actions-container">
-      <a href="/engagementindex/pointsconfiguration" class="btn btn-default">Points configuration</a>
-      <a data-ng-href="{{getCSVExportURL()}}" target="_blank" class="btn btn-default" data-ng-show="me.is_admin" data-ng-click="trackCSVDownload()">Download CSV</a>
-    </div>
   </div>
 
-  <table class="table-striped">
+  <table class="table-striped leaderboard-list-table" data-ng-if="me.is_admin || me.share_points">
     <tr>
       <th class="text-center" data-ng-click="sort('rank')" data-ng-class="{dropup: reverse}">Rank <span class="caret" data-ng-if="sortBy === 'rank'"></span></th>
       <th data-ng-click="sort('canvas_full_name')" data-ng-class="{dropup: reverse}">Name <span class="caret" data-ng-if="sortBy === 'canvas_full_name'"></span></th>

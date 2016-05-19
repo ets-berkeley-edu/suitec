@@ -28,17 +28,20 @@
 }
 
 .leaderboard-list-search-form {
-  display: inline-block;
   max-width: 250px;
   width: 100%;
 }
 
 .leaderboard-list-search-form .form-group {
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 .leaderboard-list-actions-container {
-  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.leaderboard-list-table {
+  margin-top: 15px;
 }
 
 .leaderboard-avatar {
