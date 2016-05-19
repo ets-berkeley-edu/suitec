@@ -18,7 +18,7 @@
   "dependencies": {
     "async": "1.4.2",
     "body-parser": "1.13.3",
-    "bower": "1.5.2",
+    "bower": "1.7.9",
     "bunyan": "1.4.0",
     "bunyan-prettystream": "0.1.3",
     "col-activities": "latest",
@@ -87,7 +87,7 @@
     "xml2js": "0.4.11",
     "yargs": "3.24.0"
   },
-  "bundleDependencies": [
+  "bundledDependencies": [
     "col-activities",
     "col-analytics",
     "col-assets",
