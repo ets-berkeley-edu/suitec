@@ -1,10 +1,15 @@
 <div class="assetlibrary-iconbar" data-ng-controller="AssetLibraryIconBarController">
   <!-- LIKES -->
-  <button class="btn btn-link" data-ng-class="{'active': asset.liked}" data-ng-click="like(asset)" data-ng-disabled="isAssetCollaborator()">
+  <button class="btn btn-link" data-ng-if="!viewonly" data-ng-class="{'active': asset.liked}" data-ng-click="like(asset)" data-ng-disabled="isAssetCollaborator()">
     <i class="fa fa-thumbs-up">
       <span class="sr-only">Like</span>
     </i>
   </button>
+  <span data-ng-class="{'active': asset.liked}" data-ng-if="viewonly">
+    <i class="fa fa-thumbs-up">
+      <span class="sr-only">Like</span>
+    </i>
+  </span>
   <span data-ng-bind="asset.likes | number"></span>
 
   <!-- VIEWS -->

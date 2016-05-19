@@ -83,3 +83,9 @@
   position: relative;
   top: 2px;
 }
+
+/* LIST ITEMS */
+
+.assetlibrary-list-item a:hover {
+  text-decoration: none;
+}
