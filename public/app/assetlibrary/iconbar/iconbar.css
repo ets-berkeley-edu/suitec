@@ -28,6 +28,7 @@
   padding: 0;
 }
 
+.assetlibrary-iconbar span.active,
 .assetlibrary-iconbar .btn.active:not(:disabled),
 .assetlibrary-iconbar .btn:hover:not(:disabled) {
   color: #4172B4;

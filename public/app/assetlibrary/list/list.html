@@ -46,9 +46,9 @@
         </div>
       </li>
       <!-- LIST ITEM -->
-      <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | unique:'id'">
-        <div class="col-list-item-container">
-          <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+      <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | unique:'id'">
+        <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+          <div class="col-list-item-container">
             <div class="col-list-item-tile">
               <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
               <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
@@ -59,9 +59,9 @@
                 <small class="col-threedots">by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
               </div>
             </div>
-          </a>
-          <div class="text-right col-list-item-actions" iconbar asset="asset"></div>
-        </div>
+            <div class="text-right col-list-item-actions" iconbar asset="asset" viewonly="true"></div>
+          </div>
+        </a>
       </li>
     </ul>
   </div>
