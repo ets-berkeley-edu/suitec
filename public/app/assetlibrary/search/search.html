@@ -2,34 +2,40 @@
 
   <!-- SIMPLE SEARCH -->
   <div data-ng-show="!isAdvancedSearch">
-    <form class="form-inline assetlibrary-search-form" name="assetlibrarySearchForm" data-ng-submit="search()">
+    <form class="form-inline assetlibrary-search-form" name="assetlibrarySearchForm">
       <label for="assetlibrary-search" class="sr-only">Search Asset Library</label>
       <div class="input-group assetlibrary-search-container">
-        <input type="text" id="assetlibrary-search" class="form-control" placeholder="Search" data-ng-model="keywords">
+        <input type="text" id="assetlibrary-search" class="form-control" placeholder="Search"
+         data-ng-model="keywords" 
+         data-ng-keypress="searchOnEnter($event)">
         <button class="btn btn-link assetlibrary-search-advanced" title="Advanced search" data-ng-click="showAdvancedView()" type="button">
           <i class="fa fa-caret-down">
             <span class="sr-only">Advanced search</span>
           </i>
         </button>
         <span class="input-group-btn">
-          <button type="submit" class="btn btn-default" title="Search">
+          <button type="button" class="btn btn-default" title="Search" data-ng-click="search()">
             <i class="fa fa-search">
               <span class="sr-only">Search</span>
             </i>
           </button>
         </span>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 
   <!-- ADVANCED SEARCH -->
   <div data-ng-show="isAdvancedSearch" class="col-pane">
-    <form name="assetlibrarySearchAdvancedForm" class="form-horizontal assetlibrary-search-advancedform" data-ng-submit="search()" novalidate>
+    <form name="assetlibrarySearchAdvancedForm" class="form-horizontal assetlibrary-search-advancedform" novalidate>
       <!-- SEARCH -->
       <div class="form-group">
         <label for="assetlibrary-search-keywords" class="col-sm-1 control-label">Search</label>
         <div class="col-sm-11">
-          <input type="text" id="assetlibrary-search-keywords" data-ng-model="keywords" name="assetlibrarySearchKeywords" class="form-control" placeholder="Keyword" data-ng-maxlength="255">
+          <input type="text" id="assetlibrary-search-keywords" class="form-control" placeholder="Keyword" 
+           data-name="assetlibrarySearchKeywords" 
+           data-ng-maxlength="255" 
+           data-ng-model="keywords" 
+           data-ng-keypress="searchOnEnter($event)">
         </div>
       </div>
 
@@ -60,7 +66,7 @@
       <div class="form-group text-right">
         <div class="col-sm-offset-1 col-sm-11">
           <a class="btn btn-default" data-ng-click="showSimpleView()">Cancel</a>
-          <button type="submit" class="btn btn-primary">Search</button>
+          <button type="button" class="btn btn-primary" data-ng-click="search()">Search</button>
         </div>
       </div>
     </form>
