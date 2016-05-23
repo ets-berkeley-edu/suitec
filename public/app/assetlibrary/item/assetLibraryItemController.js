@@ -162,13 +162,37 @@
     };
 
     /**
+     * Check whether the current user is able to delete the current asset
+     *
+     * @return {Boolean}                      Whether the current user can delete the current asset
+     */
+    var canDeleteAsset = $scope.canDeleteAsset = function() {
+      if ($scope.asset && $scope.me) {
+        if ($scope.me.is_admin) {
+          // A course instructor may delete assets
+          return true;
+        } else {
+          // Users that are not course instructors may delete an asset they are associated with, if that
+          // asset has no interactions
+          var isUser = (_.findWhere($scope.asset.users, {'id': $scope.me.id}));
+          var hasNoInteractions = !($scope.asset.comment_count || $scope.asset.dislikes || $scope.asset.likes) &&
+                                  _.isEmpty($scope.asset.whiteboard_usages);
+          return (isUser && hasNoInteractions);
+        }
+      }
+    };
+
+    /**
      * Delete the current asset
      */
     var deleteAsset = $scope.deleteAsset = function() {
       if (confirm('Are you sure you want to delete this asset?')) {
-        assetLibraryFactory.deleteAsset($scope.asset.id).success(function() {
+        assetLibraryFactory.deleteAsset($scope.asset.id).then(function() {
           $scope.$emit('assetLibraryAssetDeleted', $scope.asset.id);
           $state.go('assetlibrarylist');
+        }, function(err) {
+          // An interaction in another session might cause the user to lose delete authorization
+          alert('This asset cannot be deleted.');
         });
       }
     };
