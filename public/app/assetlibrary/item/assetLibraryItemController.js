@@ -162,27 +162,6 @@
     };
 
     /**
-     * Check whether the current user is able to delete the current asset
-     *
-     * @return {Boolean}                      Whether the current user can delete the current asset
-     */
-    var canDeleteAsset = $scope.canDeleteAsset = function() {
-      if ($scope.asset && $scope.me) {
-        if ($scope.me.is_admin) {
-          // A course instructor may delete assets
-          return true;
-        } else {
-          // Users that are not course instructors may delete an asset they are associated with, if that
-          // asset has no interactions
-          var isUser = (_.findWhere($scope.asset.users, {'id': $scope.me.id}));
-          var hasNoInteractions = !($scope.asset.comment_count || $scope.asset.dislikes || $scope.asset.likes) &&
-                                  _.isEmpty($scope.asset.whiteboard_usages);
-          return (isUser && hasNoInteractions);
-        }
-      }
-    };
-
-    /**
      * Delete the current asset
      */
     var deleteAsset = $scope.deleteAsset = function() {
