@@ -4,17 +4,17 @@
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
-    <div class="col-xs-{{ asset.canDelete ? 5 : (canManageAsset() ? 8 : 12) }} col-sm-{{ asset.canDelete ? 7 : (canManageAsset() ? 10 : 12) }}">
+    <div class="col-xs-{{ asset.can_delete ? 5 : (canManageAsset() ? 8 : 12) }} col-sm-{{ asset.can_delete ? 7 : (canManageAsset() ? 10 : 12) }}">
       <h2>{{asset.title}}</h2>
     </div>
 
     <!-- EDIT DETAILS -->
-    <div class="col-xs-{{ asset.canDelete ? 7 : 4 }} col-sm-{{ asset.canDelete ? 5 : 2 }} text-right" data-ng-show="canManageAsset()">
+    <div class="col-xs-{{ asset.can_delete ? 7 : 4 }} col-sm-{{ asset.can_delete ? 5 : 2 }} text-right" data-ng-show="canManageAsset()">
       <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default">
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
       </a>
-      <button class="btn btn-default" data-ng-click="deleteAsset()" data-ng-if="asset.canDelete">
+      <button class="btn btn-default" data-ng-click="deleteAsset()" data-ng-if="asset.can_delete">
         <i class="fa fa-trash"></i>
         <span>Delete asset</span>
       </button>
