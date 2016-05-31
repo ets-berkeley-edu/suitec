@@ -87,6 +87,15 @@
         };
 
         /**
+         * Treat enter keypress in input as an implicit submit
+         */
+        var searchOnEnter = $scope.searchOnEnter = function(keypressEvent) {
+          if (keypressEvent.which === 13) {
+            search();
+          }
+        };
+
+        /**
          * Get all users and categories in the current course
          */
         var getAdvancedViewData = function() {
