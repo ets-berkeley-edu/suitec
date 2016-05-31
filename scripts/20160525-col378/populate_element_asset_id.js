@@ -28,6 +28,7 @@
 var _ = require('lodash');
 var async = require('async');
 var config = require('config');
+
 var CollabosphereConstants = require('col-core/lib/constants');
 var DB = require('col-core/lib/db');
 var log = require('col-core/lib/logger')('scripts/20160525-col378/populate_element_asset_id');
@@ -68,7 +69,7 @@ var getAssetWhiteboardElements = function() {
     var notFound = 0;
     var errored = 0;
 
-    async.each(assetWhiteboardElements, function(assetWhiteboardElement, callback) {
+    async.eachSeries(assetWhiteboardElements, function(assetWhiteboardElement, callback) {
       populateElementAssetId(assetWhiteboardElement, function(err, assetId) {
         if (err) {
           errored++;
@@ -80,7 +81,7 @@ var getAssetWhiteboardElements = function() {
         }
 
         log.info({'id': assetWhiteboardElement.id}, 'Migrated ' + (populated + notFound + errored) + ' / ' + assetWhiteboardElements.length);
-      
+
         return callback();
       });
     }, function() {
@@ -95,13 +96,13 @@ var getAssetWhiteboardElements = function() {
  * @param  {AssetWhiteboardElement}       assetWhiteboardElement      The element to parse an asset id from
  * @param  {Function}                     callback                    Standard callback function
  * @param  {Object}                       callback.err                An error that occurred, if any
- * @param  {Number}                       callback.assetId            Parsed asset id, if any 
+ * @param  {Number}                       callback.assetId            Parsed asset id, if any
  */
 var populateElementAssetId = function(assetWhiteboardElement, callback) {
   var assetId = assetWhiteboardElement.element.assetId;
-    if (assetId) {
-      assetWhiteboardElement.element_asset_id = assetId;
-      assetWhiteboardElement.save().complete(function(err, assetWhiteboardElement) {
+  if (assetId) {
+    assetWhiteboardElement.element_asset_id = assetId;
+    assetWhiteboardElement.save().complete(function(err, assetWhiteboardElement) {
       return callback(err, assetId);
     });
   } else {
