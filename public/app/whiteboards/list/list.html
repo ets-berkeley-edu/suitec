@@ -10,8 +10,23 @@
   </div>
 </div>
 
+<div class="whiteboards-list-top">
+  <!-- SEARCH -->
+  <whiteboards-search
+    data-is-advanced-search-available="me.is_admin"
+    data-is-advanced-search="isAdvancedSearch"
+    data-search-options-keywords="searchOptions.keywords"
+    data-search-options-user="searchOptions.user"
+    class="col-xs-{{ isAdvancedSearch ? 12 : 8 }} whiteboards-list-search-container"></whiteboards-search>
+</div>
+
 <div class="alert alert-info whiteboards-list-alert" data-ng-if="hasRequested && whiteboards.length === 0">
-  You don't have any whiteboards yet. <strong><a data-ng-href="/whiteboards/create">Create your first whiteboard</a></strong>
+  <span data-ng-if="!isSearch">
+    You don't have any whiteboards yet. <strong><a data-ng-href="/whiteboards/create">Create your first whiteboard</a></strong>
+  </span>
+  <span data-ng-if="isSearch">
+    No matching whiteboards were found.
+  </span>
 </div>
 
 <div class="alert alert-warning whiteboards-list-alert" role="alert" data-ng-if="popupBlocked">

@@ -26,3 +26,12 @@
 .whiteboards-list-alert {
   margin-top: 10px;
 }
+
+.whiteboards-list-search-container {
+  padding: 0;
+}
+
+.whiteboards-list-top {
+  margin-bottom: 12px;
+  overflow: hidden;
+}

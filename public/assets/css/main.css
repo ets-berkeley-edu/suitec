@@ -349,3 +349,40 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
 .col-actions button:hover {
   color: #282B2D;
 }
+
+/* SEARCH */
+
+.search-container {
+  width: 100%;
+}
+
+.search-advanced {
+  position: absolute;
+  right: 40px;
+  z-index: 10;
+}
+
+.search-advanced,
+.search-advanced:active,
+.search-advanced:hover {
+  color: #333;
+}
+
+.search-form .input-group .input-group-btn {
+  width: 20px;
+}
+
+.search-advancedform {
+  padding: 30px 30px 0 30px;
+}
+
+@media only screen and (min-width : 768px) {
+  .search-advancedform .form-group > label {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.search-advancedform .form-group select {
+  margin-bottom: 5px;
+}

@@ -2,11 +2,11 @@
 
   <!-- SIMPLE SEARCH -->
   <div data-ng-show="!isAdvancedSearch">
-    <form class="form-inline assetlibrary-search-form" name="assetlibrarySearchForm" data-ng-submit="search()">
+    <form class="form-inline search-form" name="assetlibrarySearchForm" data-ng-submit="search()">
       <label for="assetlibrary-search" class="sr-only">Search Asset Library</label>
-      <div class="input-group assetlibrary-search-container">
+      <div class="input-group search-container">
         <input type="text" id="assetlibrary-search" class="form-control" placeholder="Search" data-ng-model="keywords">
-        <button class="btn btn-link assetlibrary-search-advanced" title="Advanced search" data-ng-click="showAdvancedView()" type="button">
+        <button class="btn btn-link search-advanced" title="Advanced search" data-ng-click="showAdvancedView()" type="button">
           <i class="fa fa-caret-down">
             <span class="sr-only">Advanced search</span>
           </i>
@@ -24,7 +24,7 @@
 
   <!-- ADVANCED SEARCH -->
   <div data-ng-show="isAdvancedSearch" class="col-pane">
-    <form name="assetlibrarySearchAdvancedForm" class="form-horizontal assetlibrary-search-advancedform" data-ng-submit="search()" novalidate>
+    <form name="assetlibrarySearchAdvancedForm" class="form-horizontal search-advancedform" data-ng-submit="search()" novalidate>
       <!-- SEARCH -->
       <div class="form-group">
         <label for="assetlibrary-search-keywords" class="col-sm-1 control-label">Search</label>

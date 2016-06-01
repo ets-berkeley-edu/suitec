@@ -27,7 +27,15 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsListController', function(me, analyticsService, utilService, whiteboardsFactory, $scope, $window) {
+  angular.module('collabosphere').controller('WhiteboardsListController', function(me, analyticsService, utilService, whiteboardsFactory, $scope, $state, $window) {
+
+    // Variable that keeps track of the search options, initially derived from the state parameters. These
+    // will be bound to the whiteboards search directive and updated when the user makes changes to the input
+    // fields.
+    $scope.searchOptions = {
+      'keywords': $state.params.keywords || '',
+      'user': parseInt($state.params.user, 10) || ''
+    };
 
     /**
      * Initialize values when whiteboard list is launched or refreshed
@@ -40,6 +48,20 @@
         'page': 0,
         'ready': true
       };
+
+      // Variable that keeps track of whether the search component is in the advanced view state. Like the
+      // search options above, this is initialized from state parameters, then bound to the whiteboards search
+      // directive to be updated on user action.
+      $scope.isAdvancedSearch = false;
+      if ($scope.searchOptions.user) {
+        $scope.isAdvancedSearch = true;
+      }
+
+      // Variable that keeps track of whether a search is being performed
+      $scope.isSearch = false;
+      if ($scope.searchOptions.keywords || $scope.searchOptions.user) {
+        $scope.isSearch = true;
+      }
     };
 
     initializeWhiteboardList();
@@ -84,7 +106,7 @@
       // Indicate that no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
-      whiteboardsFactory.getWhiteboards($scope.list.page).success(function(whiteboards) {
+      whiteboardsFactory.getWhiteboards($scope.list.page, $scope.searchOptions).success(function(whiteboards) {
         $scope.whiteboards = $scope.whiteboards.concat(whiteboards.results);
         $scope.hasRequested = true;
         // Only request another page of results if the number of items in the
@@ -120,6 +142,13 @@
       getWhiteboards();
     };
 
+    /**
+     * Listen for a search event
+     */
+    $scope.$on('whiteboardsSearchSearch', function(ev, searchOptions) {
+      $scope.searchOptions = searchOptions;
+      $window.refreshWhiteboardList();
+    });
   });
 
 }(window.angular));

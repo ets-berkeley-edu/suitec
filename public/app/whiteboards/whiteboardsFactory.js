@@ -43,10 +43,24 @@
      * Get the whiteboards to which the current user has access in the current course
      *
      * @param  {Number}               page                          The results page to retrieve
+     * @param  {Object}               [searchOptions]               A set of options to filter the results by
+     * @param  {String}               [searchOptions.keywords]      Keywords matching whiteboard title
+     * @param  {Number}               [searchOptions.user]          The user id of a whiteboard member
      * @return {Promise<Object>}                                    $http promise returning the total number of whiteboards to which the current user has access in the current course and the whiteboards in the current page
      */
-    var getWhiteboards = function(page) {
-      return $http.get(utilService.getApiUrl('/whiteboards?offset=' + (page * 10)));
+    var getWhiteboards = function(page, searchOptions) {
+      page = page || 0;
+      searchOptions = searchOptions || {};
+
+      var url = '/whiteboards';
+      url += '?offset=' + (page * 10);
+      if (searchOptions.keywords) {
+        url += '&keywords=' + encodeURIComponent(searchOptions.keywords);
+      }
+      if (searchOptions.user) {
+        url += '&user=' + searchOptions.user;
+      }
+      return $http.get(utilService.getApiUrl(url));
     };
 
     /**
