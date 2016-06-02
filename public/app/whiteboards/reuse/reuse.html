@@ -28,7 +28,7 @@
                   </div>
                 </a>
                 <div class="col-list-item-actions">
-                  <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected" data-ng-required="getSelectedAssets().length === 0" />
+                  <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
                 </div>
               </div>
             </li>
@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <form name="whiteboardsReuseForm" class="form-horizontal" data-ng-submit="whiteboardsReuseForm.$valid && addSelectedAssets()" novalidate>
+        <form name="whiteboardsReuseForm" class="form-horizontal" data-ng-submit="addSelectedAssets()" novalidate>
           <button type="button" class="btn btn-default" data-ng-click="closeModal()">Cancel</button>
           <button type="submit" class="btn btn-primary" data-ng-disabled="getSelectedAssets().length === 0">Add selected</button>
         </form>
