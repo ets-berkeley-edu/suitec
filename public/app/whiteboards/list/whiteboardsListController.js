@@ -27,14 +27,13 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsListController', function(me, analyticsService, utilService, whiteboardsFactory, $scope, $state, $window) {
+  angular.module('collabosphere').controller('WhiteboardsListController', function(me, analyticsService, utilService, whiteboardsFactory, $scope, $window) {
 
-    // Variable that keeps track of the search options, initially derived from the state parameters. These
-    // will be bound to the whiteboards search directive and updated when the user makes changes to the input
-    // fields.
+    // Variable that keeps track of the search options, initially blank. These will be bound to the whiteboards
+    // search directive and updated when the user makes changes to the input fields.
     $scope.searchOptions = {
-      'keywords': $state.params.keywords || '',
-      'user': parseInt($state.params.user, 10) || ''
+      'keywords': '',
+      'user': ''
     };
 
     /**

@@ -6,7 +6,7 @@
       <label for="whiteboards-search" class="sr-only">Search Whiteboards</label>
       <div class="input-group search-container">
         <input type="text" id="whiteboards-search" class="form-control" placeholder="Search" data-ng-model="keywords">
-        <button class="btn btn-link search-advanced" title="Advanced search" type="button" data-ng-click="showAdvancedView()" data-ng-if="isAdvancedSearchAvailable">
+        <button class="btn btn-link search-advanced" title="Advanced search" type="button" data-ng-click="showAdvancedView()">
           <i class="fa fa-caret-down">
             <span class="sr-only">Advanced search</span>
           </i>
@@ -38,7 +38,7 @@
         <label for="whiteboards-search-user" class="col-sm-1 control-label">Filter by</label>
         <div class="col-sm-4">
           <select id="whiteboards-search-user" class="form-control" data-ng-model="user" data-value="{{user}}" data-ng-options="user.id as user.canvas_full_name for user in users">
-            <option value="" selected>User</option>
+            <option value="" selected>Collaborator</option>
           </select>
         </div>
       </div>

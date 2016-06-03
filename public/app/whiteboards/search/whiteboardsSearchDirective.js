@@ -36,7 +36,6 @@
       // Define how the directive's scope is separated from the caller's scope
       // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
-        'isAdvancedSearchAvailable': '=isAdvancedSearchAvailable',
         'isAdvancedSearch': '=isAdvancedSearch',
         'keywords': '=searchOptionsKeywords',
         'user': '=searchOptionsUser'
