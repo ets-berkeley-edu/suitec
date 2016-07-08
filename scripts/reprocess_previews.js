@@ -28,7 +28,6 @@
 var _ = require('lodash');
 var async = require('async');
 var config = require('config');
-var Embdr = require('embdr');
 var argv = require('yargs')
     .usage('Usage: $0 [--all]')
     .alias('a', 'all')
@@ -49,8 +48,8 @@ var init = function() {
   // Apply global utilities
   require('col-core/lib/globals');
 
-  if (!config.get('embdr.enabled')) {
-    return log.warn('As the embdr integration has not been enabled, no reprocessing will take place');
+  if (!config.get('previews.enabled')) {
+    return log.warn('As the previews integration has not been enabled, no reprocessing will take place');
   }
 
   // Connect to the database
@@ -74,7 +73,8 @@ var getAssets = function() {
   if (!argv.all) {
     options = {
       'where': {
-        'thumbnail_url': null
+        'thumbnail_url': null,
+        'deleted_at': null
       }
     };
   }
@@ -91,74 +91,19 @@ var getAssets = function() {
     var errored = 0;
 
     async.eachSeries(assets, function(asset, callback) {
-      reprocessAssetPreview(asset, function(err) {
+      AssetsAPI.generatePreviews(asset, function(err) {
         if (err) {
           errored++;
-          log.error({'id': asset.id, 'err': err}, 'Failed to process asset preview');
+          log.error({'id': asset.id, 'err': err}, 'Failed to schedule preview processing');
         } else {
           completed++;
         }
-
-        log.info({'id': asset.id}, 'Processed asset preview ' + (errored + completed) + ' / ' + assets.length);
-
         return callback();
       });
     }, function() {
-      log.info('Finished reprocessing asset previews. ' + completed + ' assets were processed. ' + errored + ' assets failed.');
+      log.info('Finished scheduling asset previews. ' + completed + ' assets were scheduled. ' + errored + ' assets failed to be scheduled.');
+      process.exit(0);
     });
-  });
-};
-
-/**
- * Reprocess the preview for an asset
- *
- * @param  {Asset}          asset             The asset for which to reprocess the preview
- * @param  {Function}       callback          Standard callback function
- * @param  {Object}         callback.err      An error that occurred, if any
- */
-var reprocessAssetPreview = function(asset, callback) {
-  var assetUrl = null;
-  if (asset.type === 'file' || asset.type === 'whiteboard') {
-    assetUrl = asset.download_url;
-  } else if (asset.type === 'link') {
-    assetUrl = asset.url;
-  }
-
-  if (!assetUrl) {
-    return callback();
-  }
-
-  var embdr = new Embdr(config.get('embdr.apiKey'));
-  embdr.process(assetUrl, {
-    'start': function(preview) {
-      AssetsAPI.updateAssetPreview(asset, {
-        'embedId': preview.id,
-        'embedKey': preview.embedKey,
-        'embedCode': preview.embedCode
-      });
-    },
-    'thumbnails': {
-      'sizes': [CollabosphereConstants.THUMBNAIL_SIZE],
-      'complete': function(thumbnails) {
-        var thumbnail = thumbnails[CollabosphereConstants.THUMBNAIL_SIZE];
-        if (thumbnail && thumbnail.url) {
-          AssetsAPI.updateAssetPreview(asset, {'thumbnailUrl': thumbnail.url});
-        }
-      }
-    },
-    'images': {
-      'sizes': [CollabosphereConstants.IMAGE_SIZE],
-      'complete': function(images) {
-        var image = images[CollabosphereConstants.IMAGE_SIZE];
-        if (image && image.url) {
-          AssetsAPI.updateAssetPreview(asset, {'imageUrl': image.url});
-        }
-      }
-    },
-    'complete': function() {
-      return callback();
-    },
-    'error': callback
   });
 };
 

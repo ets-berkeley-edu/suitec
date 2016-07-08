@@ -1,0 +1,84 @@
+body {
+  background-color: #FFFFFF;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !important;
+}
+
+#sidebarToggle, #viewFind, #openFile, #print, #download, #viewBookmark, #secondaryToolbarToggle, #scaleSelectContainer {
+  display: none;
+}
+
+html[dir="ltr"] #toolbarContainer {
+  background-color: #F7F7F7;
+  background-image: none;
+  border-bottom: 1px solid #E0E0E0;
+  box-shadow: none;
+  height: 45px;
+}
+
+#toolbarViewer {
+  height: 45px;
+}
+
+#toolbarViewerLeft {
+  padding-top: 8px;
+}
+
+.outerCenter {
+  padding-top: 3px;
+}
+
+#toolbarViewerRight {
+  padding-right: 13px;
+  padding-top: 5px;
+}
+
+.toolbarLabel {
+  color: #000;
+  font-size: 14px;
+}
+
+input#pageNumber {
+  background-color: #FFF;
+  border: 1px solid #CCC;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #000;
+  font-size: 14px;
+  font-weight: 300;
+  padding: 6px 12px;
+  text-align: center;
+  width: 55px;
+}
+i.fa {
+  color: #747474;
+  font-size: 17px;
+}
+
+html[dir='ltr'] .toolbarButton::before {
+  content: none !important;
+}
+
+html[dir='ltr'] .toolbarButton:visited,
+html[dir='ltr'] .toolbarButton:hover,
+html[dir='ltr'] .toolbarButton:active,
+html[dir='ltr'] .toolbarButton:focus {
+  background-clip: none;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+html[dir='ltr'] #toolbarViewerMiddle > * {
+  float: none;
+}
+
+html[dir="ltr"] #viewerContainer {
+  top: 45px;
+}
+
+#viewer {
+  background-color: #FFF;
+  padding-top: 15px;
+}

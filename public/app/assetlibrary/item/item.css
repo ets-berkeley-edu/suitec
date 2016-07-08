@@ -33,12 +33,12 @@
   overflow-y: hidden;
 }
 
-.assetlibrary-item-preview .embdr-document,
+.assetlibrary-item-preview .preview-document,
 .assetlibrary-item-whiteboard-preview {
   border-bottom: 1px solid #D3D3D3;
 }
 
-.assetlibrary-item-preview .embdr-document {
+.assetlibrary-item-preview .preview-document {
   height: 400px;
   width: 100%;
 }
@@ -68,7 +68,7 @@
     min-height: 400px;
   }
 
-  .assetlibrary-item-preview .embdr-image {
+  .assetlibrary-item-preview .preview-image {
     padding: 5px;
   }
 
@@ -76,7 +76,7 @@
     height: 720px;
   }
 
-  .assetlibrary-item-preview .embdr-document {
+  .assetlibrary-item-preview .preview-document {
     height: 720px;
   }
 

@@ -206,7 +206,7 @@ gulp.task('build', function() {
  */
 gulp.task('jscs', function() {
   return gulp
-    .src(['app.js', 'gulpfile.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js'])
+    .src(['app.js', 'gulpfile.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js', '!public/viewer/**/*.js'])
     .pipe(jscs());
 });
 
