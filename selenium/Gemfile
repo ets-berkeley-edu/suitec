@@ -23,5 +23,6 @@
 
 source 'http://rubygems.org'
 
-gem 'selenium-webdriver', '2.45.0'
-gem 'page-object', '1.0.3'
+gem 'rspec', '3.3.0'
+gem 'selenium-webdriver', '2.46.2'
+gem 'page-object', '1.1.0'

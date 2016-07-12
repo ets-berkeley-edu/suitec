@@ -28,10 +28,15 @@ class AssetLibraryPage
   include PageObject
   include Logging
 
-  # SEARCH
+  # SEARCH / FILTER
   text_area(:search_input, :id => 'assetlibrary-search')
-  button(:advanced_search_button, :xpath => '//button[@title="Advanced search"]')
+  button(:advanced_search_button, :class => 'assetlibrary-search-advanced')
+  text_area(:keyword_search_input, :id => 'assetlibrary-search-keywords')
+  select_list(:category_select, :id => 'assetlibrary-search-category')
+  select_list(:uploader_select, :id => 'assetlibrary-search-user')
+  select_list(:asset_type_select, :id => 'assetlibrary-search-type')
   button(:search_button, :xpath => '//button[@title="Search"]')
+  button(:advanced_search_submit, :xpath => '//button[text()="Search"]')
 
   # ADD SITE
   link(:add_site_link, :xpath => '//a[contains(.,"Add Site")]')
@@ -64,6 +69,11 @@ class AssetLibraryPage
   elements(:list_view_asset_likes_count, :span, :xpath => '//span[@data-ng-bind="asset.likes | number"]')
   elements(:list_view_asset_comments_count, :span, :xpath => '//span[@data-ng-bind="asset.comment_count | number"]')
   h2(:detail_view_asset_title, :xpath => '//h2')
+  div(:detail_view_asset_owner_link, :xpath => '//div[@class="assetlibrary-item-metadata"]//a')
+  div(:detail_view_asset_desc, :xpath => '//div[text()="Description"]/following-sibling::div/div')
+  elements(:detail_view_asset_category, :link, :xpath => '//div[@data-ng-repeat="category in asset.categories"]/a')
+  link(:detail_view_asset_source, :xpath => '//div[@data-ng-if="asset.source || asset.url"]/a')
+  div(:detail_view_asset_nil_source, :xpath => '//div[@data-ng-if="!asset.source && !asset.url"]')
 
   # COMMENTS
   span(:asset_detail_comment_count, :xpath => '//div[@class="assetlibrary-item-metadata"]//span[@data-ng-bind="asset.comment_count | number"]')
@@ -130,6 +140,23 @@ class AssetLibraryPage
     load_list_view_asset(driver, url, asset_id)
     click_asset_link asset_id
     wait_for_asset_detail asset_title
+  end
+
+  # Populates the advanced search form and submits the search
+  # @param driver [Selenium::WebDriver]         - the browser
+  # @param keyword [String]                     - the keyword string
+  # @param category [String]                    - the category name from among the select options
+  # @param uploader [String]                    - the uploader name from among the select options
+  # @param asset_type [String]                  - the asset type from among the select options
+  def advanced_search(driver, keyword, category, uploader, asset_type)
+    logger.info "Performing advanced search of asset library by keyword '#{keyword}', category '#{category}', uploader '#{uploader}', and asset type '#{asset_type}'."
+    WebDriverUtils.wait_for_page_and_click advanced_search_button_element
+    keyword_search_input_element.when_visible timeout=WebDriverUtils.page_update_wait
+    self.keyword_search_input = keyword unless keyword.nil?
+    WebDriverUtils.wait_for_element_and_select(driver, category_select_element, category)
+    WebDriverUtils.wait_for_element_and_select(driver, uploader_select_element, uploader)
+    WebDriverUtils.wait_for_element_and_select(driver, asset_type_select_element, asset_type)
+    WebDriverUtils.wait_for_element_and_click advanced_search_submit_element
   end
 
   # ADD SITE

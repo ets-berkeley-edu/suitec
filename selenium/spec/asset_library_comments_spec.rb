@@ -28,7 +28,7 @@ include Logging
 describe 'An asset library comment', :order => :defined do
 
   test_id = WebDriverUtils.test_course_name(self)
-  test_users = WebDriverUtils.load_test_users
+  test_users = WebDriverUtils.mapped_test_users
   timeout = WebDriverUtils.page_update_wait
   asset_creator = test_users['Teacher 1']
   asset_viewer = test_users['Teacher 2']
@@ -53,7 +53,7 @@ describe 'An asset library comment', :order => :defined do
     @asset_library_url = @canvas.click_asset_library_link @driver
     @engagement_index = EngagementIndexPage.new @driver
     @engagement_index_url = @canvas.click_engagement_index_link @driver
-    @canvas.log_out
+    @canvas.log_out @driver
     @cal_net.logout_success_message_element.when_visible WebDriverUtils.page_load_wait
   end
 
@@ -108,7 +108,7 @@ describe 'An asset library comment', :order => :defined do
       end
       after(:all) do
         @canvas.load_homepage
-        @canvas.log_out
+        @canvas.log_out @driver
       end
     end
 
