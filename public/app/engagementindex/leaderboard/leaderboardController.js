@@ -46,6 +46,9 @@
     // Variable that will keep track of the users in this course and their points
     $scope.users = null;
 
+    // Whether the boxplot should be rendered
+    $scope.showBoxplot = false;
+
     /**
      * Get the users in the engagement index and their engagement
      * index points
@@ -83,128 +86,137 @@
         points.push($scope.users[i].points);
       }
 
-      // Wait until Angular has finished rendering the box plot container on the screen
-      setTimeout(function() {
-        // Render the box plot using highcharts
-        // @see http://api.highcharts.com/highcharts
-        var chart = new Highcharts.Chart({
-          'chart': {
-            'backgroundColor': 'transparent',
-            'inverted': true,
-            // Ensure that the box plot is displayed horizontally
-            'margin': [0, 20, 0, 20],
-            'renderTo': 'leaderboard-userinfo-boxplot',
-            'type': 'boxplot'
-          },
+      // Calculate the boxplot data (min, q1, q2, q3, max)
+      var boxplotData = calculateBoxPlotData(points);
 
-          'title':{
-            // Ensure that no chart title is rendered
-            'text':''
-          },
+      // Only render the boxplot when there's enough data
+      if (_.uniq(boxplotData).length >= 2) {
 
-          'legend': {
-            // Ensure that no legend is rendered
-            'enabled': false
-          },
+        $scope.showBoxplot = true;
 
-          'credits': {
-            // Ensure that no highcarts watermark is rendered
-            'enabled': false
-          },
-
-          'tooltip': {
-            'hideDelay': 100,
-            'positioner': function(labelWidth, labelHeight) {
-              // Ensure that the tooltip does not overlap with the box plot to
-              // allow access hover access to 'my points'
-              return {
-                x: 305,
-                y: 15 - (labelHeight / 2)
-              };
+        // Wait until Angular has finished rendering the box plot container on the screen
+        setTimeout(function() {
+          // Render the box plot using highcharts
+          // @see http://api.highcharts.com/highcharts
+          var chart = new Highcharts.Chart({
+            'chart': {
+              'backgroundColor': 'transparent',
+              'inverted': true,
+              // Ensure that the box plot is displayed horizontally
+              'margin': [0, 20, 0, 20],
+              'renderTo': 'leaderboard-userinfo-boxplot',
+              'type': 'boxplot'
             },
-            'shadow': false,
-            'style': {
-              'color': '#FFF'
-            },
-            // Ensure the tooltip is rendered as HTML to allow it
-            // to overflow the box plot container
-            'useHTML': true
-          },
 
-          // Ensure that no x-axis labels or lines are shown and
-          // that the box plot takes up the maximum amount of space
-          'xAxis': {
-            'endOnTick': false,
-            'labels': {
-              'enabled': false
-            },
-            'lineWidth': 0,
-            'startOnTick': false,
-            'tickLength': 0
-          },
-
-          // Ensure that no y-axis labels or lines are shown and
-          // that the box plot takes up the maximum amount of space
-          'yAxis': {
-            'endOnTick': false,
-            'gridLineWidth': 0,
-            'labels': {
-              'enabled': false
-            },
-            'lineWidth': 0,
-            'maxPadding': 0,
-            'minPadding': 0,
-            'startOnTick': false,
-            'tickLength': 0,
             'title': {
+              // Ensure that no chart title is rendered
+              'text': ''
+            },
+
+            'legend': {
+              // Ensure that no legend is rendered
               'enabled': false
-            }
-          },
+            },
 
-          // Style the box plot
-          'plotOptions': {
-            'boxplot': {
-              'color': '#88ACC4',
-              'fillColor': '#88ACC4',
-              'lineWidth': 1,
-              'medianColor': '#EEE',
-              'medianWidth': 3,
-              'whiskerLength': 20,
-              'whiskerWidth': 3
-            }
-          },
+            'credits': {
+              // Ensure that no highcarts watermark is rendered
+              'enabled': false
+            },
 
-          'series': [
-            // Box plot data serie
-            {
-              'data': [calculateBoxPlotData(points)],
-              'pointWidth': 40,
-              'tooltip': {
-                'headerFormat': '',
-                'pointFormat': 'Maximum: {point.high}<br/>' +
-                             'Upper Quartile: {point.q3}<br/>' +
-                             'Median: {point.median}<br/>' +
-                             'Lower Quartile: {point.q1}<br/>' +
-                             'Minimum: {point.low}',
-                'borderColor': 'transparent'
+            'tooltip': {
+              'hideDelay': 100,
+              'positioner': function(labelWidth, labelHeight) {
+                // Ensure that the tooltip does not overlap with the box plot to
+                // allow access hover access to 'my points'
+                return {
+                  x: 305,
+                  y: 15 - (labelHeight / 2)
+                };
+              },
+              'shadow': false,
+              'style': {
+                'color': '#FFF'
+              },
+              // Ensure the tooltip is rendered as HTML to allow it
+              // to overflow the box plot container
+              'useHTML': true
+            },
+
+            // Ensure that no x-axis labels or lines are shown and
+            // that the box plot takes up the maximum amount of space
+            'xAxis': {
+              'endOnTick': false,
+              'labels': {
+                'enabled': false
+              },
+              'lineWidth': 0,
+              'startOnTick': false,
+              'tickLength': 0
+            },
+
+            // Ensure that no y-axis labels or lines are shown and
+            // that the box plot takes up the maximum amount of space
+            'yAxis': {
+              'endOnTick': false,
+              'gridLineWidth': 0,
+              'labels': {
+                'enabled': false
+              },
+              'lineWidth': 0,
+              'maxPadding': 0,
+              'minPadding': 0,
+              'startOnTick': false,
+              'tickLength': 0,
+              'title': {
+                'enabled': false
               }
-            // Current user points
-            }, {
-              'data': [[0, $scope.me.points]],
-              'marker': {
-                'fillColor': '#3179BC',
-                'lineWidth': 5,
-                'lineColor': '#3179BC'
-              },
-              'tooltip': {
-                'headerFormat': '',
-                'pointFormat': 'My Points: {point.y}'
-              },
-              'type': 'scatter'
-            }
-          ]
-        });
-      }, 0);
+            },
+
+            // Style the box plot
+            'plotOptions': {
+              'boxplot': {
+                'color': '#88ACC4',
+                'fillColor': '#88ACC4',
+                'lineWidth': 1,
+                'medianColor': '#EEE',
+                'medianWidth': 3,
+                'whiskerLength': 20,
+                'whiskerWidth': 3
+              }
+            },
+
+            'series': [
+              // Box plot data serie
+              {
+                'data': [boxplotData],
+                'pointWidth': 40,
+                'tooltip': {
+                  'headerFormat': '',
+                  'pointFormat': 'Maximum: {point.high}<br/>' +
+                               'Upper Quartile: {point.q3}<br/>' +
+                               'Median: {point.median}<br/>' +
+                               'Lower Quartile: {point.q1}<br/>' +
+                               'Minimum: {point.low}',
+                  'borderColor': 'transparent'
+                }
+              // Current user points
+              }, {
+                'data': [[0, $scope.me.points]],
+                'marker': {
+                  'fillColor': '#3179BC',
+                  'lineWidth': 5,
+                  'lineColor': '#3179BC'
+                },
+                'tooltip': {
+                  'headerFormat': '',
+                  'pointFormat': 'My Points: {point.y}'
+                },
+                'type': 'scatter'
+              }
+            ]
+          });
+        }, 0);
+      }
     };
 
     /**
@@ -248,12 +260,12 @@
       // Calculate the position of the quartile point in the series
       var quartileIndex = Math.floor(series.length / 4 * quartile);
 
-      // If the quartile point lands on an item in the series, return that value
-      if (series.length % 2) {
-        return series[quartileIndex];
       // If the quartile point lands in between 2 items, calculate the average of those items
-      } else {
+      if (series.length % 2 === 1 && series[quartileIndex - 1]) {
         return (series[quartileIndex - 1] + series[quartileIndex]) / 2;
+      // If the quartile point lands on an item in the series, return that value
+      } else {
+        return series[quartileIndex];
       }
     };
 
