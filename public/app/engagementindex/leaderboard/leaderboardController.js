@@ -108,9 +108,9 @@
               'type': 'boxplot'
             },
 
-            'title':{
+            'title': {
               // Ensure that no chart title is rendered
-              'text':''
+              'text': ''
             },
 
             'legend': {
