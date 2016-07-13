@@ -1,16 +1,26 @@
 /**
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
@@ -23,10 +33,15 @@
      * Get an asset
      *
      * @param  {Number}               id                              The id of the asset
+     * @param  {Boolean}              [incrementViews]                Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
      * @return {Promise<Asset>}                                       $http promise returning the requested asset
      */
-    var getAsset = function(id) {
-      return $http.get(utilService.getApiUrl('/assets/' + id));
+    var getAsset = function(id, incrementViews) {
+      var url = '/assets/' + id;
+      if (incrementViews === false) {
+        url += '?incrementViews=false';
+      }
+      return $http.get(utilService.getApiUrl(url));
     };
 
     /**
@@ -37,7 +52,7 @@
      * @param  {String}               [searchOptions.keywords]        A string to filter the assets by
      * @param  {Number}               [searchOptions.category]        The id of the category to filter the assets by
      * @param  {Number}               [searchOptions.user]            The id of the user who created the assets
-     * @param  {Number}               [searchOptions.type]            The type of assets
+     * @param  {String}               [searchOptions.type]            The type of assets
      * @return {Promise<Object>}                                      $http promise returning the total number of assets for the current course and the assets in the current page
      */
     var getAssets = function(page, searchOptions) {
@@ -47,7 +62,7 @@
       var url = '/assets';
       url += '?offset=' + (page * 10);
       if (searchOptions.keywords) {
-        url += '&keywords=' + searchOptions.keywords;
+        url += '&keywords=' + encodeURIComponent(searchOptions.keywords);
       }
       if (searchOptions.category) {
         url += '&category=' + searchOptions.category;
@@ -120,6 +135,16 @@
     };
 
     /**
+     * Delete an asset
+     *
+     * @param  {Number}               id                              The id of the asset that is being deleted
+     * @return {Promise}                                              $http promise
+     */
+    var deleteAsset = function(id) {
+      return $http.delete(utilService.getApiUrl('/assets/' + id));
+    };
+
+    /**
      * Create a new comment on an asset
      *
      * @param  {Number}               id                              The id of the asset
@@ -178,6 +203,7 @@
       'createFile': createFile,
       'createLink': createLink,
       'editAsset': editAsset,
+      'deleteAsset': deleteAsset,
       'createComment': createComment,
       'editComment': editComment,
       'deleteComment': deleteComment,

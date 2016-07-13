@@ -1,16 +1,26 @@
-/*!
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+/**
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
@@ -29,12 +39,12 @@
    */
   angular.module('collabosphere').directive('infiniteScroll', function(utilService, $interval) {
     return {
-      // Restrict the directive to only match attribute names. See https://docs.angularjs.org/guide/directive#template-expanding-directive
-      // for more information
+      // Restrict the directive to only match attribute names.
+      // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
       'restrict': 'A',
 
-      // Define how the directive's scope is separated from the caller's scope. See https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
-      // for more information
+      // Define how the directive's scope is separated from the caller's scope.
+      // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
         'infiniteScroll': '&',
         'infiniteScrollContainer': '@',
@@ -43,7 +53,6 @@
         'infiniteScrollReady': '='
       },
       'link': function(scope, elem, attrs) {
-
         // Default the distance to the bottom of the page at which further results are loaded
         var infiniteScrollDistance = scope.infiniteScrollDistance || 400;
 
@@ -121,6 +130,14 @@
               checkInfiniteScrollLoad(scrollInformation.scrollToBottom, scrollInformation.scrollPosition);
             });
           } else {
+            // It is possible that the infinite scroll container will not have been present at the time of initialisation,
+            // especially inside modals. Therefore, we try to locate the infinite scroll container again if hasn't yet been
+            // located
+            infiniteScrollContainer = infiniteScrollContainer || document.getElementById(scope.infiniteScrollContainer);
+            if (!infiniteScrollContainer) {
+              return false;
+            }
+
             var scrollToBottom = infiniteScrollContainer.scrollHeight - infiniteScrollContainer.clientHeight - infiniteScrollContainer.scrollTop;
             var scrollPosition = infiniteScrollContainer.scrollTop;
             checkInfiniteScrollLoad(scrollToBottom, scrollPosition);

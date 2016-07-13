@@ -1,0 +1,323 @@
+<%
+/**
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
+ *
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
+ */
+%>
+
+<%- include('../_shared/header') %>
+
+<%
+
+/**
+ * Get a thumbnail for a user. If the user has no thumbnail, the default profile picture
+ * will be returned
+ *
+ * @param  {User}     user    The user to get a profile picture for
+ * @return {String}           A URL to a profile picture
+ */
+var getUserThumbnail = function(user) {
+  var thumbnail = user.canvas_image;
+  if (!thumbnail) {
+    thumbnail = baseCollabosphereUrl + resolveAsset('/assets/img/icon_user.png');
+  }
+  return thumbnail;
+};
+
+var greeting = 'You have ';
+var parts = [];
+var actitiesByType = _.groupBy(activities, 'type');
+if (actitiesByType.asset_comment) {
+  if (actitiesByType.asset_comment.length === 1) {
+    if (actitiesByType.asset_comment[0].newComments === 1) {
+      parts.push('a new comment on an asset');
+    } else {
+      parts.push(actitiesByType.asset_comment[0].newComments + ' comments on 1 asset');
+    }
+  } else {
+    var total = _.reduce(actitiesByType.asset_comment, function(sum, activity) {
+      return sum + activity.newComments;
+    }, 0);
+    parts.push(total + ' comments on ' + actitiesByType.asset_comment.length + ' assets');
+  }
+}
+
+if (actitiesByType.asset_comment_reply) {
+  var replies = 0;
+  var comments = 0;
+
+  _.each(actitiesByType.asset_comment_reply, function(activity) {
+    _.each(activity.asset.comments, function(comment) {
+      if (comment.level === 0 && comment.user.id === user.id) {
+        comments++;
+      } else if (comment.level === 1 && comment.user.id !== user.id) {
+        replies++;
+      }
+    })
+  });
+
+  if (comments === 1) {
+    if (replies === 1) {
+      parts.push('a new reply on a comment');
+    } else {
+      parts.push(replies + ' replies on 1 comment');
+    }
+  } else {
+    parts.push(replies + ' replies on ' + comments + ' comments');
+  }
+}
+
+if (actitiesByType.whiteboard_chat) {
+  if (actitiesByType.whiteboard_chat.length === 1) {
+    if (actitiesByType.whiteboard_chat[0].whiteboard.chats.length === 1) {
+      parts.push('a new chat message on a whiteboard');
+    } else {
+      parts.push(actitiesByType.whiteboard_chat[0].whiteboard.chats.length + ' chat messages on 1 whiteboard');
+    }
+  } else {
+    var total = _.reduce(actitiesByType.whiteboard_chat, function(sum, activity) {
+      return sum + activity.whiteboard.chats.length;
+    }, 0);
+    parts.push(total + ' chat messages on ' + actitiesByType.whiteboard_chat.length + ' whiteboards');
+  }
+}
+
+if (parts.length === 1) {
+  greeting += parts[0];
+} else if (parts.length === 2) {
+  greeting += parts.join(' and ');
+} else {
+  greeting += parts.slice(0, parts.length - 1).join(', ') + ' and ' + parts[parts.length - 1];
+}
+greeting += '.';
+
+// Only show a greeting if there is more than 1 activity type
+if (parts.length > 1) {
+-%>
+
+<tr id="greeting">
+  <td>
+    <h1><%= greeting %></h1>
+  </td>
+</tr>
+
+<%
+}
+
+activities.forEach(function(activity) {
+%>
+<tr class="row activity-row">
+  <td>
+    <table cellpadding="0" cellspacing="0">
+      <tbody>
+        <tr>
+          <td>
+
+            <div class="activity-summary-container">
+              <div class="wrapped">
+                <%
+                  if (activity.type === 'asset_comment') {
+                    var assetLink = course.assetlibrary_url + '?col_asset=' + activity.asset.id;
+                    var commenters = _.pluck(activity.asset.comments, 'user');
+                    var summaryActors = getSummaryActors(commenters, user);
+                -%>
+                    <%= summaryActors %> <a href="<%= assetLink %>">commented</a> on your asset <a href="<%= assetLink %>"><%= activity.asset.title %></a>.
+                <% } else if (activity.type === 'asset_comment_reply') {
+                    var assetLink = course.assetlibrary_url + '?col_asset=' + activity.asset.id;
+                    var commenters = _.pluck(activity.asset.comments, 'user');
+                    var summaryActors = getSummaryActors(commenters, user);
+                -%>
+                    <%= summaryActors %> <a href="<%= assetLink %>">replied</a> to your comment on the asset <a href="<%= assetLink %>"><%= activity.asset.title %></a>.
+                <% } else if (activity.type === 'whiteboard_chat') {
+                    var whiteboardLink = course.whiteboards_url + '?col_whiteboard=' + activity.whiteboard.id;
+                    if (activity.whiteboard.chats.length === 1) {
+                -%>
+                      There has been <a href="<%= whiteboardLink %>">1 new chat message</a> on your whiteboard <a href="<%= whiteboardLink %>"><%= activity.whiteboard.title %></a>.
+                    <% } else { -%>
+                      There have been <a href="<%= whiteboardLink %>"><%= activity.whiteboard.chats.length %> new chat messages</a> on your whiteboard <a href="<%= whiteboardLink %>"><%= activity.whiteboard.title %></a>.
+                    <% } -%>
+                <%
+                  }
+                -%>
+
+              </div>
+            </div>
+
+            <table class="activity-previews-container" cellspacing="0" cellpadding="0">
+              <tbody>
+                <tr>
+
+                  <%
+                    var thumbnailUrl = '';
+                    var link = '';
+                    var title = '';
+                    var thumbnailSummary = '';
+                    if (activity.asset) {
+                      link = course.assetlibrary_url + '?col_asset=' + activity.asset.id;
+                      title = activity.asset.title;
+                      thumbnailSummary = 'by ';
+                      var owners = _.values(activity.asset.users);
+                      var nrOfOwners = owners.length;
+                      if (nrOfOwners === 1) {
+                        thumbnailSummary += owners[0].canvas_full_name;
+                      } else {
+                        thumbnailSummary += nrOfOwners + ' collaborators';
+                      }
+                      if (activity.asset.thumbnail_url) {
+                        thumbnailUrl = activity.asset.thumbnail_url;
+                      } else {
+                        thumbnailUrl =  baseCollabosphereUrl + resolveAsset('/assets/img/icon_' + activity.asset.type + '.png');
+                      }
+                    } else if (activity.whiteboard) {
+                      link = course.whiteboards_url + '?col_whiteboard=' + activity.whiteboard.id;
+                      title = activity.whiteboard.title;
+                      if (activity.whiteboard.users.length === 1) {
+                        thumbnailSummary = '1 collaborator';
+                      } else {
+                        thumbnailSummary = activity.whiteboard.users.length + ' collaborators';
+                      }
+                      if (activity.whiteboard.thumbnail_url) {
+                        thumbnailUrl = activity.whiteboard.thumbnail_url;
+                      } else {
+                        thumbnailUrl = baseCollabosphereUrl + resolveAsset('/assets/img/icon_whiteboard.png');
+                      }
+                    }
+
+                    if (title.length > 27) {
+                      title = title.substring(0, 27) + '...';
+                    }
+                  -%>
+
+                  <td class="preview-tile-container" style="background-image: url('<%= thumbnailUrl %>');" background="<%= thumbnailUrl %>" valign="bottom">
+                    <a href="<%= link %>" title="<%= title %>" target="_blank">
+                      <table cellpadding="0" cellspacing="0" class="preview-tile-container-inner">
+                        <tr>
+                          <td valign="bottom">
+                            <div class="preview-tile-metadata">
+                              <table cellpadding="0" cellspacing="0" class="preview-tile-metadata-inner">
+                                <tr valign="top">
+                                  <td class="preview-tile-metadata-title">
+                                    <a href="<%= link %>" target="_blank" class="preview-tile-title wrapped"><%= title %></a>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td class="preview-tile-metadata-description"><%= thumbnailSummary %></td>
+                                </tr>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </a>
+                  </td>
+                </tr>
+                <% if (activity.asset) { -%>
+                <tr>
+                  <td class="preview-asset-metadata">
+                    <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_thumbs_up.png') %>" alt="Number of likes" /> <%= activity.asset.likes %>
+                    <img src="<%= baseCollabosphereUrl  + resolveAsset('/assets/img/icon_views.png') %>" alt="Number of views" /> <%= activity.asset.views %>
+                    <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_comments.png') %>" alt="Number of comments" /> <%= activity.asset.comment_count %>
+                  </td>
+                </tr>
+                <% } -%>
+              </tbody>
+            </table>
+
+            <div class="activity-comments">
+              <%
+              if (activity.asset) {
+                activity.asset.comments.slice(0, 4).forEach(function(comment) {
+                  var authorLink = course.assetlibrary_url + '?col_user=' + comment.user.id;
+                  var authorThumbnail = getUserThumbnail(comment.user);
+              -%>
+                <div class="activity-comment-container comment-level-<%= comment.level %>">
+                  <div class="activity-comment-thumbnail-container">
+                    <a class="thumbnail-user" href="<%= authorLink %>">
+                      <img src="<%= authorThumbnail %>" alt="<%= comment.user.canvas_full_name %>" />
+                    </a>
+                  </div>
+                  <div class="activity-comment">
+                    <a href="<%= authorLink %>" class="wrapped"><%= comment.user.canvas_full_name %></a>
+                    <span class="activity-date">on <%= formatDate(comment.created_at) %></span>
+                    <div class="activity-comment-message wrapped"><%- formatLinks(escape(comment.body).replace(/\n/g, '<br />')) %></div>
+                  </div>
+                </div>
+              <%
+                });
+              -%>
+                <div class="activity-comments-footer">
+                  <a href="<%= link %>">
+                    <% if (activity.asset.comments.length > 4) { -%>
+                      See all
+                    <% } else { %>
+                      Check it out
+                    <% } %>
+                  </a>
+                </div>
+              <%
+              } else if (activity.whiteboard) {
+                // Show the 4 oldest chat messages
+                var oldestMessages = activity.whiteboard.chats.slice(0, 4);
+
+                oldestMessages.forEach(function(chat) {
+                  var authorLink = course.assetlibrary_url + '?col_user=' + chat.user.id;
+                  var authorThumbnail = getUserThumbnail(chat.user);
+
+              -%>
+                <div class="activity-comment-container comment-level-0">
+                  <div class="activity-comment-thumbnail-container">
+                    <a class="thumbnail-user" href="<%= authorLink %>">
+                      <img src="<%= authorThumbnail %>" alt="<%= chat.user.canvas_full_name %>" />
+                    </a>
+                  </div>
+                  <div class="activity-comment">
+                    <a href="<%= authorLink %>" class="wrapped"><%= chat.user.canvas_full_name %></a>
+                    <span class="activity-date">on <%= formatDate(chat.created_at) %></span>
+                    <div class="activity-comment-message wrapped"><%= formatLinks(chat.body) %></div>
+                  </div>
+                </div>
+              <%
+                });
+              -%>
+                <div class="activity-comments-footer">
+                  <a href="<%= link %>">
+                    <% if (activity.whiteboard.chats.length > 4) { %>
+                      See all
+                    <% } else { %>
+                      Check it out
+                    <% } %>
+                  </a>
+                </div>
+              <%
+              }
+              -%>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+<% }); %>
+
+<%- include('../_shared/footer') %>

@@ -7,8 +7,8 @@ apache/collabosphere.conf
 
 config/*
 !config/default.json
-!config/test.json
-!config/travis.json
+!config/test.js
+!config/travis.js
 
 node_modules/*
 !node_modules/col-*

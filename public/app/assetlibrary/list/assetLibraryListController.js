@@ -1,35 +1,64 @@
 /**
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, userFactory, utilService, $filter, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, me, utilService, $rootScope, $scope, $state) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that keeps track of the URL state
     $scope.state = $state;
 
-    // Variable that keeps track of whether the search component is in the advanced view state
+    // Variable that keeps track of the search options. These are initially derived from the state
+    // parameters. These values will be bound to the search directive, which will update them when
+    // a user updates any of the input fields
+    $scope.searchOptions = {
+      'keywords': $state.params.keywords || '',
+      'category': parseInt($state.params.category, 10) || '',
+      'user': parseInt($state.params.user, 10) || '',
+      'type': $state.params.type || ''
+    };
+
+    // Variable that keeps track of whether the search component is in the advanced view state. The
+    // initial value gets derived from the state parameters that are passed into this controller.
+    // The value will be bound to the search directive which will update it when a user switches
+    // between simple and advanced search mode
     $scope.isAdvancedSearch = false;
+    if ($scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+      $scope.isAdvancedSearch = true;
+    }
 
-    // Variable that keeps track of whether a search is being done
+    // Variable that keeps track of whether a search is being performed
     $scope.isSearch = false;
-
-    // Variable that keeps track of the search options
-    $scope.searchOptions = {};
+    if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+      $scope.isSearch = true;
+    }
 
     // Variable that keeps track of the assets in the list
     $scope.assets = [];
@@ -45,7 +74,11 @@
      * Get the assets for the current course through an infinite scroll
      */
     var getAssets = $scope.getAssets = function() {
-      // Indicate the no further REST API requests should be made
+      // Keep track of the search options in the parent container's hash to allow
+      // for deep linking to a search
+      utilService.setParentHash($scope.searchOptions);
+
+      // Indicate that no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
@@ -97,20 +130,15 @@
       $scope.list.page = 0;
       $scope.assets = [];
       $scope.searchOptions = searchOptions;
+
       // Determine whether a search is being done
       $scope.isSearch = false;
       if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
         $scope.isSearch = true;
       }
+
       // Load the list of assets with the specified search options
       getAssets();
-    });
-
-    /**
-     * Listen for events indicating that the search view is toggled to or from the advanced view
-     */
-    $scope.$on('assetLibrarySearchViewToggle', function(ev, isAdvancedView) {
-      $scope.isAdvancedSearch = isAdvancedView;
     });
 
     /**
@@ -124,9 +152,13 @@
       }
     });
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
+    /**
+     * Listen for events indicating that an asset has been deleted
+     */
+    $scope.$on('assetLibraryAssetDeleted', function(ev, assetId) {
+      $scope.assets = _.reject($scope.assets, {'id': assetId});
     });
+
   });
 
 }(window.angular));

@@ -1,16 +1,26 @@
 /**
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
@@ -28,9 +38,12 @@
     // Variable that will keep track of the files that exceed the file size limit
     $scope.filesExceedSize = [];
 
-    // Variable that will keep track of whether the alert message that indicates that files that
-    // exceed the file size limit have been selected should be shown
-    $scope.alertFilesExceedSize = false;
+    // Variable that will keep track of the invalid files
+    $scope.filesInvalid = [];
+
+    // Variable that will keep track of whether the alert message that indicates problems with the
+    // selected files should be shown
+    $scope.alertFilesError = false;
 
     // Variable that will keep track of whether uploading is currently in progress
     $scope.isUploading = false;
@@ -60,7 +73,8 @@
       // Clear the previously selected files
       $scope.files = [];
       $scope.filesExceedSize = [];
-      $scope.alertFilesExceedSize = false;
+      $scope.filesInvalid = [];
+      $scope.alertFilesError = false;
       totalSize = 0;
 
       // Render the selected files
@@ -70,24 +84,30 @@
         // Exclude files that exceed the file size limit
         if (fileSize > MAX_FILE_SIZE) {
           $scope.filesExceedSize.push(file);
-          $scope.alertFilesExceedSize = true;
-        } else {
+          $scope.alertFilesError = true;
+        // Files with a size should be included
+        } else if (fileSize) {
           totalSize += file.size;
           $scope.files.push({
             // Default the file title to the file name
             'title': file.name,
             'file': file
           });
+        // Folders or files that are technically a folder on the
+        // filesystem (e.g. keynote) will have a file size of 0
+        // or no file size at all
+        } else {
+          $scope.filesInvalid.push(file);
+          $scope.alertFilesError = true;
         }
       }
     };
 
     /**
-     * Hide the alert message that indicates that files that exceed the file size limit
-     * have been selected
+     * Hide the alert message that indicates a problem with the selected files
      */
-    var hideFilesExceedSizeError = $scope.hideFilesExceedSizeError = function() {
-      $scope.alertFilesExceedSize = false;
+    var hideFilesError = $scope.hideFilesError = function() {
+      $scope.alertFilesError = false;
     };
 
     /**
@@ -147,6 +167,14 @@
         // ensure that the reported progress never goes above the size of the file that is currently
         // being uploaded
         var loaded = ev.loaded > currentFile.file.size ? currentFile.file.size : ev.loaded;
+
+        // The back-end needs to move the file into the course's files tool which can take a little
+        // while. Unfortunately, there are no progress events for this operation. To give the user
+        // a little bit of context, we let the progress bar not move beyond 95% and show a message
+        // that there is still something happening and that they should not move away
+        loaded = loaded * 0.95;
+
+        // Update the progress bar
         calculateProgress(uploadedSize + loaded);
       }).success(function(asset) {
         uploadedFiles.push(asset);

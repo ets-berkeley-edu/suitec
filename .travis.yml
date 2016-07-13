@@ -1,12 +1,15 @@
-sudo: false
+sudo: required
 language: node_js
 node_js:
-  - "0.10.30"
+  - "0.10.25"
 
 addons:
   postgresql: "9.3"
 
 before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libgif-dev
+
   - cd $TRAVIS_BUILD_DIR
 
   # Configure postgres

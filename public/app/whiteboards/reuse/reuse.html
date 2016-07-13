@@ -3,13 +3,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-ng-click="closeModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title">Add asset(s)</h3>
+        <h2 class="modal-title">Add asset(s)</h2>
       </div>
       <div id="whiteboards-reuse-list-container" class="modal-body whiteboards-reuse-list-container">
-        <div data-ng-include="'/app/assetlibrary/search/search.html'"></div>
+        <search
+          data-search-options-keywords="searchOptions.keywords"
+          data-search-options-category="searchOptions.category"
+          data-search-options-user="searchOptions.user"
+          data-search-options-type="searchOptions.type"></search>
         <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="whiteboards-reuse-list-container">
           <ul>
-            <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
+            <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | unique:'id'">
               <div class="col-list-item-container">
                 <a data-ng-click="selectAsset(asset)">
                   <div class="col-list-item-tile">
@@ -19,21 +23,26 @@
                     </div>
                     <div class="col-list-item-metadata">
                       <span class="col-threedots">{{asset.title}}</span>
-                      <small class="col-threedots">by {{asset.user.canvas_full_name}}</small>
+                      <small class="col-threedots">by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
                     </div>
                   </div>
                 </a>
                 <div class="col-list-item-actions">
-                  <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected" />
+                  <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
                 </div>
               </div>
             </li>
           </ul>
         </div>
+        <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="isSearch && assets.length === 0">
+          No assets could be found
+        </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-default" data-ng-click="closeModal()">Cancel</button>
-        <button class="btn btn-primary" data-ng-click="addSelectedAssets()" data-ng-disabled="getSelectedAssets().length === 0">Add selected</button>
+        <form name="whiteboardsReuseForm" class="form-horizontal" data-ng-submit="addSelectedAssets()" novalidate>
+          <button type="button" class="btn btn-default" data-ng-click="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-ng-disabled="getSelectedAssets().length === 0">Add selected</button>
+        </form>
       </div>
     </div>
   </div>

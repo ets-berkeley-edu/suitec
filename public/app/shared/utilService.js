@@ -1,23 +1,41 @@
-/*!
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+/**
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function($location, $q, $timeout) {
+  angular.module('collabosphere').service('utilService', function(analyticsService, $location, $q, $timeout) {
+
+    // Hide the vertical toolbar when the tool is embedded in an iFrame. At that point, the scrolling
+    // script injected in the parent window will ensure that the iFrame is always as high as its content
+    // TODO: Whiteboards are currently excluded from this rule as there is an element below the whiteboard
+    // that takes up space. This should be fixed and whiteboards should follow this rule
+    if (top != self || $location.path().indexOf('/whiteboards/') !== -1) {
+      document.documentElement.classList.add('embedded');
+    }
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
@@ -148,6 +166,76 @@
     };
 
     /**
+     * Get the Collabosphere related data from the parent URL. This function assumes that
+     * Collabosphere data in the query string or hash is prefixed with `col_`.
+     *
+     * For example:
+     *
+     *   Given the parent URL:
+     *     http://bcourses.berkeley.edu/courses/1123123/external_tools/421312?col_user=1#col_category=2
+     *
+     *   The following data would be passed into the callback function:
+     *     ```
+     *     {
+     *       "user": 1,
+     *       "category": "2"
+     *
+     *     }
+     *     ```
+     *
+     * @param  {Function}   callback          Standard callback function
+     * @param  {Object}     callback.data     The Collabosphere data that's present in the parent's URL
+     */
+    var getParentUrlData = function(callback) {
+      postIFrameMessage(function() {
+        return {
+          'subject': 'getParent'
+        };
+      }, function(data) {
+        if (!data || !data.location) {
+          return callback({});
+        }
+
+        // Parse the URL
+        var url = purl(data.location);
+        var urlData = _.extend(url.param(), url.fparam());
+
+        // Filter out all non-`col_` values
+        var filteredUrlData = {};
+        _.each(urlData, function(value, key) {
+          if (key.indexOf('col_') === 0) {
+            filteredUrlData[key.substring(4)] = value;
+          }
+        });
+        return callback(filteredUrlData);
+
+      });
+    };
+
+    /**
+     * Set the parent's container hash value
+     *
+     * @param  {Object}  data    The data for the parent's hash container. Each key will be prefixed with `col_`. For example, `{'user': 1, 'category': 42}` would be serialized to `col_user=1&col_category=42`
+     */
+    var setParentHash = function(data) {
+      if (window.parent) {
+        var hash = [];
+        _.each(data, function(val, key) {
+          if (val) {
+            hash.push('col_' + key + '=' + encodeURIComponent(val));
+          }
+        });
+        hash = hash.join('&');
+        postIFrameMessage(function() {
+          return {
+            'subject': 'setParentHash',
+            'hash': hash
+          };
+        });
+      }
+    };
+
+    /**
      * Utility function used to send a window event to the parent container. When running
      * Collabosphere as a BasicLTI tool, this is our main way of communicating with the container
      * application
@@ -177,9 +265,8 @@
                   // The message is not for us; ignore it
                   return;
                 }
-                if (message) {
-                  messageCallback(message);
-                }
+
+                messageCallback(message);
                 window.removeEventListener('message', callback);
               }
             };
@@ -190,6 +277,7 @@
           // message directly into this function, as we sometimes need to wait until Angular has
           // finished rendering before we can determine what message to send
           var message = messageGenerator();
+
           // Send the message to the parent container as a stringified object
           window.parent.postMessage(JSON.stringify(message), '*');
         });
@@ -197,13 +285,15 @@
     };
 
     return {
-      'getLaunchParams': getLaunchParams,
       'getApiUrl': getApiUrl,
-      'getToolUrl': getToolUrl,
+      'getLaunchParams': getLaunchParams,
+      'getParentUrlData': getParentUrlData,
       'getScrollInformation': getScrollInformation,
+      'getToolUrl': getToolUrl,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
-      'scrollToTop': scrollToTop
+      'scrollToTop': scrollToTop,
+      'setParentHash': setParentHash
     };
 
   });

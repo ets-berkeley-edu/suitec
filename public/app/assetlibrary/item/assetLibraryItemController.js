@@ -1,26 +1,42 @@
 /**
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, userFactory, utilService, $stateParams, $sce, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, utilService, $rootScope, $scope, $state, $stateParams) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that will keep track of the current asset id
     var assetId = $stateParams.assetId;
+
+    // Variable that will keep track of whether the user has come in via a whiteboard
+    $scope.whiteboardReferral = $stateParams.whiteboard_referral;
 
     // Variable that will keep track of the current asset
     $scope.asset = null;
@@ -28,42 +44,110 @@
     // Variable that will keep track of the new top-level comment
     $scope.newComment = null;
 
-    /**
-     * Get the current asset
-     */
-    var getCurrentAsset = function() {
-      assetLibraryFactory.getAsset(assetId).success(function(asset) {
+    // Variable that will keep track of the previews status of an asset
+    $scope.previewStatus = null;
 
-        // Build a comment tree that will hold a flat list of comments where each
-        // child comment should come after their parent. First, the top level comments
-        // are extracted
-        var comments = [];
-        for (var i = 0; i < asset.comments.length; i++) {
-          var comment = asset.comments[i];
-          if (!comment.parent_id) {
-            comment.level = 0;
-            comments.unshift(comment);
+    // Variable that will keep track of the timeout id when a preview is pending and its status is being retrieved
+    var previewTimeout = null;
 
-            // Find all replies for the current comment
-            for (var r = 0; r < asset.comments.length; r++) {
-              var reply = asset.comments[r];
-              if (reply.parent_id === comment.id) {
-                reply.level = 1;
-                comments.splice(1, 0, reply);
-              }
-            }
-          }
+    // Variable that will keep track of the Embdr coordinator that can be used to stop polling the Embdr API for updates
+    var embdrCoordinator = null;
+
+    // Clear the preview timers if the user goes away
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+      if (fromState.name === 'assetlibrarylist.item' && toState.name !== 'assetlibrarylist.item.edit') {
+        if (previewTimeout) {
+          clearTimeout(previewTimeout);
+          previewTimeout = null;
         }
 
-        // Calculate which comments have replies
-        flagCommentsWithReplies(comments);
+        // Tell Embdr it should stop polling
+        if (embdrCoordinator) {
+          embdrCoordinator.cancel();
+        }
+      }
+    });
 
-        asset.comments = comments;
+    // Add the asset id to the parent container's to allow for deep linking to the asset
+    utilService.setParentHash({'asset': assetId});
+
+    /**
+     * Get the current asset
+     *
+     * @param  {Boolean}      [incrementViews]      Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
+     */
+    var getCurrentAsset = function(incrementViews) {
+      assetLibraryFactory.getAsset(assetId, incrementViews).success(function(asset) {
+        // Build the asset comment tree
+        buildCommentTree(asset);
+
         $scope.asset = asset;
 
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+
+        // Let embdr show a preview for files or links
+        if (asset.type === 'file' || asset.type === 'link') {
+          // There can be a short delay between creating an asset and getting the embed id and key back.
+          // Simply show the pending preview and try again later if we haven't heard back from Embdr yet
+          if (!asset.embed_id || !asset.embed_key) {
+            $scope.previewStatus = 'pending';
+            previewTimeout = setTimeout(getCurrentAsset, 2000, false);
+
+          } else {
+            var embdrOptions = {
+              'loadingIcon': '//' + window.location.host + '/assets/img/canvas-logo.png',
+              'complete': function(resource) {
+                $scope.previewStatus = 'complete';
+              },
+              'pending': function() {
+                $scope.previewStatus = 'pending';
+              },
+              'unsupported': function() {
+                $scope.previewStatus = 'unsupported';
+              }
+            };
+            embdrCoordinator = window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
+          }
+        }
       });
+    };
+
+    /**
+     * Build the comment tree for an asset. The comment tree will hold a flat list of all comment
+     * in the order in which they should be displayed. Replies should therefore come right after
+     * their parent
+     *
+     * @param  {Asset}        asset           The asset to build the comment tree for. The comments will be replaced with the comment tree
+     */
+    var buildCommentTree = function(asset) {
+      // Order the comments from oldest to newest
+      asset.comments.sort(function(a, b) {
+        return a.id - b.id;
+      });
+
+      // Extract the top-level comments
+      var comments = [];
+      for (var i = 0; i < asset.comments.length; i++) {
+        var comment = asset.comments[i];
+        if (!comment.parent_id) {
+          comment.level = 0;
+          comment.has_replies = false;
+          comments.unshift(comment);
+
+          // Find all replies for the current comment
+          for (var r = 0; r < asset.comments.length; r++) {
+            var reply = asset.comments[r];
+            if (reply.parent_id === comment.id) {
+              reply.level = 1;
+              comment.has_replies = true;
+              comments.splice(1, 0, reply);
+            }
+          }
+        }
+      }
+
+      asset.comments = comments;
     };
 
     /**
@@ -72,35 +156,24 @@
      * @return {Boolean}                      Whether the current user can manage the current asset
      */
     var canManageAsset = $scope.canManageAsset = function() {
-      if ($scope.asset) {
-        return $scope.me.is_admin || $scope.asset.user.id === $scope.me.id;
+      if ($scope.asset && $scope.me) {
+        return ($scope.me.is_admin || _.findWhere($scope.asset.users, {'id': $scope.me.id}));
       }
     };
 
     /**
-     * Flag comments that have replies. These comments can not be deleted
-     *
-     * @param  {Comment}      comments        The comments that should be checked for replies
+     * Delete the current asset
      */
-    var flagCommentsWithReplies = function(comments) {
-      for (var i = 0; i < comments.length; i++) {
-        var comment = comments[i];
-        var nextComment = comments[i + 1];
-        if (nextComment && nextComment.parent_id === comment.id) {
-          comment.has_replies = true;
-        } else {
-          comment.has_replies = false;
-        }
+    var deleteAsset = $scope.deleteAsset = function() {
+      if (confirm('Are you sure you want to delete this asset?')) {
+        assetLibraryFactory.deleteAsset($scope.asset.id).then(function() {
+          $scope.$emit('assetLibraryAssetDeleted', $scope.asset.id);
+          $state.go('assetlibrarylist');
+        }, function(err) {
+          // An interaction in another session might cause the user to lose delete authorization
+          alert('This asset cannot be deleted.');
+        });
       }
-    };
-
-    /**
-     * Allow every URL as an iFrame source URL
-     *
-     * @param  {String}       url             The URL to trust as an iframe source
-     */
-    var trustIFrameSrc = $scope.trustIFrameSrc = function(url) {
-      return $sce.trustAsResourceUrl(url);
     };
 
     /**
@@ -145,8 +218,8 @@
           }
         }
         $scope.asset.comment_count++;
-        // Re-calculate which comments have replies
-        flagCommentsWithReplies($scope.asset.comments);
+        // Re-build the comment tree
+        buildCommentTree($scope.asset);
         // Hide the reply form
         toggleReplyComment(comment);
         // Indicate that the asset has been updated
@@ -189,18 +262,31 @@
      */
     var deleteComment = $scope.deleteComment = function(comment) {
       if (confirm('Are you sure you want to delete this comment?')) {
-        assetLibraryFactory.deleteComment(assetId, comment.id).success(function() {
+
+        /*!
+         * Delete the comment from the comments in the current scope and indicate that the asset
+         * has been updated
+         */
+        var localDelete = function() {
           // Delete the comment from the comment list
           for (var i = 0; i < $scope.asset.comments.length; i++) {
             if ($scope.asset.comments[i].id === comment.id) {
               $scope.asset.comments.splice(i, 1);
             }
           }
-          // Re-calculate which comments have replies
-          flagCommentsWithReplies($scope.asset.comments);
+          // Re-build the comment tree
+          buildCommentTree($scope.asset);
           $scope.asset.comment_count--;
           // Indicate that the asset has been updated
           $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+        };
+
+        assetLibraryFactory.deleteComment(assetId, comment.id).then(localDelete, function(err) {
+          // When the comment is removed in another session this request will return a 404. In that
+          // case we proceed as if the request succeeded as the comment no longer exists
+          if (err.status === 404) {
+            localDelete();
+          }
         });
       }
     };
@@ -210,18 +296,37 @@
      */
     $scope.$on('assetLibraryAssetUpdated', function(ev, updatedAsset) {
       if ($scope.asset.id === updatedAsset.id) {
+        // Build a tree for the asset's comments
+        buildCommentTree(updatedAsset);
+
+        // Keep track of the updated asset
         $scope.asset = updatedAsset;
       }
     });
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-      // Load the selected asset
-      getCurrentAsset();
-      // Scroll to the top of the page as the current scroll position could be somewhere
-      // deep in the asset library list
-      utilService.scrollToTop();
-    });
+    /**
+     * Restore the asset library search options when navigating back to the asset library list. As navigating
+     * back to the asset library list doesn't trigger a new search, the easiest solution is to restore the hash
+     * value here
+     */
+    var backToAssetLibrary = $scope.backToAssetLibrary = function() {
+      utilService.setParentHash($scope.$parent.searchOptions);
+    };
+
+    /**
+     * Close the current browser window. This is used when an asset has been opened
+     * in a separate tab and the user wants to be taken back to where the asset was
+     * launched from
+     */
+    var closeWindow = $scope.closeWindow = function() {
+      window.close();
+    };
+
+    // Load the selected asset
+    getCurrentAsset();
+    // Scroll to the top of the page as the current scroll position could be somewhere
+    // deep in the asset library list
+    utilService.scrollToTop();
 
   });
 

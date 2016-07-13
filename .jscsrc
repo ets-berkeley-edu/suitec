@@ -34,6 +34,11 @@
   "disallowSpacesInsideParentheses": true,
   "disallowTrailingComma": true,
   "disallowTrailingWhitespace": true,
+  "jsDoc": {
+    "checkParamNames": true,
+    "checkRedundantParams": true,
+    "requireParamTypes": true
+  },
   "requireBlocksOnNewline": true,
   "requireCommaBeforeLineBreak": true,
   "requireCurlyBraces": [
@@ -128,11 +133,6 @@
   },
   "requireSpacesInFunctionExpression": {
     "beforeOpeningCurlyBrace": true
-  },
-  "validateJSDoc": {
-    "checkParamNames": true,
-    "checkRedundantParams": true,
-    "requireParamTypes": true
   },
   "validateLineBreaks": "LF",
   "validateIndentation": 2,

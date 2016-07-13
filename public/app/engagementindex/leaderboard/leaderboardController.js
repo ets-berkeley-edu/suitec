@@ -1,23 +1,43 @@
 /**
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
 
   'use strict';
 
-  angular.module('collabosphere').controller('LeaderboardController', function(userFactory, utilService, $scope) {
+  angular.module('collabosphere').controller('LeaderboardController', function(analyticsService, me, userFactory, utilService, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
+
+    // If the user hasn't indicated if their score should be
+    // shared with the course, check the checkbox by default
+    $scope.me.new_share_points = $scope.me.share_points;
+    if ($scope.me.share_points === null && !$scope.me.is_admin) {
+      $scope.me.new_share_points = true;
+    }
 
     // Default sort
     $scope.sortBy = 'rank';
@@ -257,6 +277,24 @@
     var sort = $scope.sort = function(sortBy) {
       $scope.sortBy = sortBy;
       $scope.reverse = !$scope.reverse;
+      // Track the leaderboard sort
+      analyticsService.track('Sort engagement index', {
+        'total': $scope.users.length,
+        'ei_sort': $scope.sortBy,
+        'ei_reverse': $scope.reverse
+      });
+    };
+
+    /**
+     * Track leaderboard searches
+     *
+     * @param  {String}     query           The leaderboard search query
+     */
+    var search = $scope.search = function(query) {
+      analyticsService.track('Search engagement index', {
+        'total': $scope.users.length,
+        'ei_query': query
+      });
     };
 
     /**
@@ -265,7 +303,7 @@
      * initial save
      */
     var saveSharePoints = $scope.saveSharePoints = function() {
-      userFactory.updateSharePoints($scope.me.new_share_points).success(function() {
+      userFactory.updateSharePoints($scope.me.new_share_points).then(function() {
         $scope.me.share_points = $scope.me.new_share_points;
         getLeaderboard();
       });
@@ -285,18 +323,7 @@
       }
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-
-      // If the user hasn't indicated if their score should be
-      // shared with the course, check the checkbox by default
-      $scope.me.new_share_points = $scope.me.share_points;
-      if ($scope.me.share_points === null && !$scope.me.is_admin) {
-        $scope.me.new_share_points = true;
-      }
-
-      getLeaderboard();
-    });
+    getLeaderboard();
 
   });
 

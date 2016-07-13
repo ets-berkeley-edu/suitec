@@ -1,16 +1,26 @@
-/*!
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+/**
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 .assetlibrary-item-top {
@@ -20,33 +30,82 @@
 /* PREVIEW */
 
 .assetlibrary-item-preview {
-  padding: 5px;
-}
-
-.assetlibrary-item-preview-image img {
-  max-width: 100%;
-}
-
-@media only screen and (min-width : 768px) {
-  .assetlibrary-item-preview {
-    min-height: 400px;
-  }
-
-  .assetlibrary-item-preview-image {
-    line-height: 400px;
-  }
-}
-
-.assetlibrary-item-preview-iframe {
   overflow-y: hidden;
 }
 
-.assetlibrary-item-preview-iframe,
-.assetlibrary-item-preview-iframe iframe {
-  background-color: #FFF;
-  border: none;
-  height: 600px;
+.assetlibrary-item-preview .embdr-document,
+.assetlibrary-item-whiteboard-preview {
+  border-bottom: 1px solid #D3D3D3;
+}
+
+.assetlibrary-item-preview .embdr-document {
+  height: 400px;
   width: 100%;
+}
+
+
+.assetlibrary-item-preview iframe {
+  background-color: #FFF;
+  overflow: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+.assetlibrary-item-whiteboard-preview {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  background-color: #FFF;
+  height: 400px;
+  position: relative;
+  width: 100%;
+}
+
+
+@media only screen and (min-width : 768px) {
+  .assetlibrary-item-preview {
+    line-height: 400px;
+    max-height: 720px;
+    min-height: 400px;
+  }
+
+  .assetlibrary-item-preview .embdr-image {
+    padding: 5px;
+  }
+
+  .assetlibrary-item-preview iframe {
+    height: 720px;
+  }
+
+  .assetlibrary-item-preview .embdr-document {
+    height: 720px;
+  }
+
+  .assetlibrary-item-whiteboard-preview {
+    height: 720px;
+  }
+}
+
+.assetlibrary-item-preview-message {
+  background-color: #FFF;
+  padding: 170px 0;
+}
+
+.assetlibrary-item-preview-message > i {
+  color: #747474;
+  font-size: 50px;
+}
+
+.assetlibrary-item-preview-message p {
+  font-size: 18px;
+  margin: 15px 20px 0;
+}
+
+.assetlibrary-item-preview-message a {
+  margin-top: 15px;
+}
+
+.assetlibrary-item-preview-message i.fa-spinner {
+  margin-right: 5px;
 }
 
 /* METADATA */
@@ -68,6 +127,36 @@
   padding-left: 0;
   padding-right: 0;
   word-wrap: break-word;
+}
+
+.assetlibrary-item-metadata-column .assetlibrary-item-metadata-label {
+  word-wrap: normal;
+}
+
+ul.assetlibrary-item-metadata-authors {
+  margin: 0;
+}
+
+ul.assetlibrary-item-metadata-authors li {
+  margin: 0;
+  padding: 0;
+}
+
+ul.assetlibrary-item-metadata-authors-multiple li:last-child {
+  display: block;
+}
+
+ul.assetlibrary-item-metadata-authors-multiple li .assetlibrary-item-metadata-authors-name {
+  padding-right: 15px;
+}
+
+.assetlibrary-item-metadata-authors-name, .assetlibrary-item-metadata-authors-on {
+  color: #4172B4;
+  padding: 0;
+}
+
+.assetlibrary-item-metadata-authors-text {
+  line-height: 38px;
 }
 
 .assetlibrary-item-metadata .col-avatar {
@@ -98,6 +187,10 @@
 
 .assetlibrary-item-metadata-label {
   font-weight: 500;
+}
+
+.assetlibrary-item-metadata-description {
+  white-space: pre-wrap;
 }
 
 /* ADD COMMENT */

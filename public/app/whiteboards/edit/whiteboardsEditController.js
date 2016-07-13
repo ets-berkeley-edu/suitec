@@ -1,23 +1,36 @@
 /**
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsEditController', function(userFactory, whiteboardsFactory, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsEditController', function(me, userFactory, whiteboardsFactory, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that will keep track of all the users in the course
     $scope.users = [];
@@ -31,10 +44,22 @@
      * Edit the current whiteboard
      */
     var editWhiteboard = $scope.editWhiteboard = function() {
-      whiteboardsFactory.editWhiteboard($scope.whiteboard.id, $scope.updatedWhiteboard).success(function(updatedWhiteboard) {
+      // Warn if the user has removed him/herself from the whiteboard
+      if (!_.include($scope.updatedWhiteboard.members, $scope.me.id) &&
+          !confirm('Are you sure you want to remove yourself from this whiteboard?')) {
+        return;
+      }
+      whiteboardsFactory.editWhiteboard($scope.whiteboard.id, $scope.updatedWhiteboard).then(function(response) {
         // The `closeModal` is added on the scope by the caller and allows
         // the caller to deal with the results coming out of the modal
-        $scope.closeModal(updatedWhiteboard);
+        $scope.closeModal(response.data);
+      }, function(err) {
+        // An edit action may cause a user to lose whiteboard access
+        if (err.status === 404) {
+          $scope.closeModal({
+            'notFound': true
+          });
+        }
       });
     };
 
@@ -42,22 +67,15 @@
      * Get all users in the course
      */
     var getAllUsers = function() {
-      // Get our own information first, so we can filter ourselves out of
-      // the set of users who can be invited into the whiteboard
-      userFactory.getMe()
-        .then(function(me) {
-          $scope.me = me.data;
-          return userFactory.getAllUsers();
-        })
-        .then(function(response) {
-          $scope.users = response.data;
+      userFactory.getAllUsers().then(function(response) {
+        $scope.users = response.data;
 
-          // Prefill the updated members with the current whiteboard members
-          $scope.updatedWhiteboard.members = [];
-          for (var i = 0; i < $scope.whiteboard.members.length; i++) {
-            $scope.updatedWhiteboard.members.push($scope.whiteboard.members[i].id);
-          }
-        });
+        // Prefill the updated members with the current whiteboard members
+        $scope.updatedWhiteboard.members = [];
+        for (var i = 0; i < $scope.whiteboard.members.length; i++) {
+          $scope.updatedWhiteboard.members.push($scope.whiteboard.members[i].id);
+        }
+      });
     };
 
     getAllUsers();

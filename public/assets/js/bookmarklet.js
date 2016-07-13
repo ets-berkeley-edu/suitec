@@ -1,16 +1,26 @@
-/*!
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+/**
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function() {
@@ -285,17 +295,51 @@
   var collectImages = function(callback) {
     var $images = $('img', window.parent.document);
     $images.each(function() {
+      var $img = $(this);
+
+      // Ignore inline images
+      if (!$img.attr('src') || $img.attr('src').indexOf('data:') === 0) {
+        return;
+      }
+
       // Ensure that the image is larger than the minimum dimensions
       if (this.naturalHeight > MIN_DIMENSIONS && this.naturalWidth > MIN_DIMENSIONS) {
         var img = {
-          'url': $(this)[0].src,
+          'url': $img[0].src,
           // Try to extract a meaningful title
-          'title': $(this).attr('alt')
+          'title': $img.attr('alt')
         };
 
         callback(img);
       }
     });
+  };
+
+  /**
+   * Get the background image URL for an element
+   *
+   * @param  {Element}    element     The element for which to get the background image URL
+   * @return {String}                 The background image URL or null if the element has no background image
+   */
+  var getBackgroundImageUrl = function(element) {
+    // Check if the element has a background image. Note that using jQuery
+    // to check for a background image is too slow here and therefore a native
+    // approach needs to be taken
+    var backgroundImageStyle = null;
+    if (element.currentStyle) {
+      backgroundImageStyle = element.currentStyle.backgroundImage;
+    } else if (window.getComputedStyle) {
+      backgroundImageStyle = document.defaultView.getComputedStyle(element, null).getPropertyValue('background-image');
+    }
+
+    // Get the first URL out of the background image style, ignoring other values such as gradients
+    // or inline images
+    var match = backgroundImageStyle.match(/url\("?'?([^\)]+?)"?'?\)/i);
+    if (!match || !match[1] || match[1].indexOf('data:') === 0) {
+      return null;
+    }
+
+    return match[1];
   };
 
   /**
@@ -307,20 +351,13 @@
    */
   var collectBackgroundImages = function(callback) {
     // Extract all elements that have a background image
-    var $backgroundImages = $('*', window.parent.document).filter(function() {
-      // Check if the element has a background image. Note that using jQuery
-      // to check for a background image is too slow here and therefore a native
-      // approach needs to be taken
-      if (this.currentStyle) {
-        return this.currentStyle.backgroundImage !== 'none';
-      } else if (window.getComputedStyle) {
-        return document.defaultView.getComputedStyle(this,null).getPropertyValue('background-image') !== 'none';
+    var $backgroundImages = $('*', window.parent.document).each(function(i, element) {
+      var url = getBackgroundImageUrl(element);
+      if (!url) {
+        return;
       }
-    });
-    // Load all captured background images in a hidden image tag to extract their height and width
-    $backgroundImages.each(function() {
-      // Get the background image URL from the CSS property
-      var url = $(this).css('background-image').replace(/^url\(['"]?/,'').replace(/['"]?\)$/,'');
+
+      // Load the extracted background image in a hidden image tag to extract its height and width
       var img = {'url': url};
 
       var $tmpImg = $('<img />').hide();

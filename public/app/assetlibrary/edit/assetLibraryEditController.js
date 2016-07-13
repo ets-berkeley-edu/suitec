@@ -1,23 +1,36 @@
 /**
- * Copyright 2015 UC Berkeley (UCB) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
  *
- *     http://opensource.org/licenses/ECL-2.0
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 (function(angular) {
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryEditController', function(assetLibraryCategoriesFactory, assetLibraryFactory, userFactory, $state, $stateParams, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryEditController', function(assetLibraryCategoriesFactory, assetLibraryFactory, me, $state, $stateParams, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
 
     // Variable that keeps track of the current asset id
     var assetId = $stateParams.assetId;
@@ -32,7 +45,7 @@
      * Get the current asset
      */
     var getCurrentAsset = function() {
-      assetLibraryFactory.getAsset(assetId).success(function(asset) {
+      assetLibraryFactory.getAsset(assetId, false).success(function(asset) {
         // As the UI currently only allows for a single category to be selected,
         // set the categories value to make it easier to work with
         if (asset.categories.length > 0) {
@@ -63,13 +76,10 @@
       });
     };
 
-    userFactory.getMe().success(function(me) {
-      $scope.me = me;
-      // Load the categories for the current course
-      getCategories();
-      // Load the selected asset
-      getCurrentAsset();
-    });
+    // Load the categories for the current course
+    getCategories();
+    // Load the selected asset
+    getCurrentAsset();
 
   });
 

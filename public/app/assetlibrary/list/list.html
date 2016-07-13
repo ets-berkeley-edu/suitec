@@ -1,7 +1,13 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist'">
   <div class="row assetlibrary-list-top">
     <!-- SEARCH -->
-    <div class="assetlibrary-list-search-container col-xs-{{ isAdvancedSearch ? 12 : 8 }}" data-ng-include="'/app/assetlibrary/search/search.html'"></div>
+    <search
+      data-is-advanced-search="isAdvancedSearch"
+      data-search-options-keywords="searchOptions.keywords"
+      data-search-options-category="searchOptions.category"
+      data-search-options-user="searchOptions.user"
+      data-search-options-type="searchOptions.type"
+      class="assetlibrary-list-search-container col-xs-{{ isAdvancedSearch ? 12 : 8 }}"></search>
 
     <!-- MANAGE CATEGORIES -->
     <div class="col-xs-4 text-right" data-ng-show="!isAdvancedSearch">
@@ -26,20 +32,23 @@
                 </a>
                 <a data-ng-href="/assetlibrary/addlink" class="text-center col-pane">
                   <i class="fa fa-link"></i>
-                  <div class="assetlibrary-list-item-add-action">Add Site</div>
+                  <div class="assetlibrary-list-item-add-action">Add Link</div>
                 </a>
               </div>
             </div>
           </div>
           <div class="col-list-item-actions">
-            <a data-ng-href="/assetlibrary/addbookmarklet">Add assets from anywhere</a>
+            <a data-ng-href="/assetlibrary/addbookmarklet" class="assetlibrary-list-bookmarklet">
+              Add assets more easily
+              <i class="fa fa-bookmark pull-left"></i>
+            </a>
           </div>
         </div>
       </li>
       <!-- LIST ITEM -->
-      <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets">
-        <div class="col-list-item-container">
-          <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+      <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | unique:'id'">
+        <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+          <div class="col-list-item-container">
             <div class="col-list-item-tile">
               <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
               <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
@@ -47,18 +56,18 @@
               </div>
               <div class="col-list-item-metadata">
                 <span class="col-threedots">{{asset.title}}</span>
-                <small class="col-threedots">by {{asset.user.canvas_full_name}}</small>
+                <small class="col-threedots">by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
               </div>
             </div>
-          </a>
-          <div class="text-right col-list-item-actions" iconbar asset="asset"></div>
-        </div>
+            <div class="text-right col-list-item-actions" iconbar asset="asset" viewonly="true"></div>
+          </div>
+        </a>
       </li>
     </ul>
   </div>
   <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="isSearch && assets.length === 0">
-    No assets could be found
+    No matching assets were found.
   </div>
 </div>
 
-<div ui-view="item"></div>
+<div ui-view></div>
