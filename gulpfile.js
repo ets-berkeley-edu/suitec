@@ -161,6 +161,35 @@ gulp.task('minify', function() {
 });
 
 /**
+ * Minify the viewer's HTML, CSS and JS assets
+ */
+gulp.task('minifyViewer', function() {
+  var pipelines = {
+    'css': [cssmin({'keepSpecialComments': 0}), rev()],
+    'html': [minifyHtml({'empty': true})],
+    'js': [uglify(), rev()]
+  };
+
+  return gulp.src('./public/viewer/*.html')
+    .pipe(usemin(pipelines))
+    .pipe(gulp.dest('target/viewer'));
+});
+
+/**
+ * Copy the viewer's static assets to the build directory
+ */
+gulp.task('copyViewerAssets', function() {
+  var dirs = [
+    'public/viewer/cmaps/**/*',
+    'public/viewer/images/**/*',
+    'public/viewer/locale/**/*',
+    'public/viewer/pdf.worker.js'
+  ];
+  return gulp.src(dirs, {'base': 'public/viewer'})
+    .pipe(gulp.dest('target/viewer'));
+});
+
+/**
  * Optimize the images
  */
 gulp.task('optimizeImages', function() {
@@ -198,7 +227,7 @@ gulp.task('replaceImages', ['optimizeImages'], function() {
  * Create a build
  */
 gulp.task('build', function() {
-  return runSequence('clean', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'replaceImages');
+  return runSequence('clean', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'replaceImages', 'minifyViewer', 'copyViewerAssets');
 });
 
 /**
@@ -206,7 +235,7 @@ gulp.task('build', function() {
  */
 gulp.task('jscs', function() {
   return gulp
-    .src(['app.js', 'gulpfile.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js'])
+    .src(['app.js', 'gulpfile.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js', '!public/viewer/**/*.js'])
     .pipe(jscs());
 });
 
@@ -215,7 +244,7 @@ gulp.task('jscs', function() {
  */
 gulp.task('csslint', function() {
   return gulp
-    .src(['public/**/*.css', '!public/lib/**/*.css'])
+    .src(['public/**/*.css', '!public/lib/**/*.css', '!public/viewer/**/*.css'])
     .pipe(csslint({
       'adjoining-classes': false,
       'box-model': false,

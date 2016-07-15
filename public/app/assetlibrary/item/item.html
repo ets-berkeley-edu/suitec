@@ -24,8 +24,37 @@
   <div class="col-pane">
     <!-- PREVIEW -->
     <div data-ng-if="asset.type !== 'whiteboard'">
-      <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-show="previewStatus === 'complete'"></div>
-      <div class="text-center assetlibrary-item-preview-message" data-ng-if="previewStatus === 'pending'">
+
+      <!-- COMPLETED PREVIEWS -->
+      <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-show="asset.preview_status === 'done'">
+        <!-- Documents -->
+        <div data-ng-if="asset.type === 'file' && asset.pdf_url !== null">
+          <iframe class="preview-document" width="100%" height="800" data-ng-src="{{asset.embedUrl}}" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allowscriptaccess="always" scrolling="no"></iframe>
+        </div>
+
+        <!-- Images -->
+        <div data-ng-if="asset.type === 'file' && asset.image_url !== null">
+          <img class="preview-image" alt="{{asset.title}}" title="{{asset.title}}" src="{{asset.image_url}}" style="max-width: 100%; max-height: inherit; height: inherit; width: inherit;" />
+        </div>
+
+        <!-- Links that are iframe embeddable -->
+        <div data-ng-if="asset.type === 'link' && asset.isEmbeddable">
+          <iframe width="100%" height="800" src="{{asset.embedUrl}}" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allowscriptaccess="always" scrolling="no"></iframe>
+        </div>
+
+        <!-- Links to YouTube videos -->
+        <div data-ng-if="asset.type === 'link' && asset.preview_metadata.youtubeId !== undefined">
+          <iframe width="100%" height="800" src="{{asset.embedUrl}}" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allowscriptaccess="always" scrolling="no"></iframe>
+        </div>
+
+        <!-- Links that aren't embeddable but have an image URL -->
+        <div data-ng-if="asset.type === 'link' && !asset.isEmbeddable && asset.image_url">
+          <img class="preview-image" alt="{{asset.title}}" title="{{asset.title}}" src="{{asset.image_url}}" style="max-width: 100%; max-height: inherit; height: inherit; width: inherit;" />
+        </div>
+      </div>
+
+      <!-- PENDING PREVIEWS -->
+      <div class="text-center assetlibrary-item-preview-message" data-ng-if="asset.preview_status === 'pending'">
         <i class="fa" data-ng-class="{'fa-file-o': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
         <p><i class="fa fa-spinner fa-spin"></i> preparing a preview...</p>
         <a data-ng-href="{{asset.download_url}}" data-ng-if="asset.type === 'file'" target="_blank" class="btn btn-default">
@@ -33,14 +62,21 @@
           <span>Download</span>
         </a>
       </div>
-      <div class="text-center assetlibrary-item-preview-message" data-ng-if="previewStatus === 'unsupported'">
+
+      <!-- UNSUPPORTED OR FAILED PREVIEWS -->
+      <div class="text-center assetlibrary-item-preview-message" data-ng-if="asset.preview_status === 'unsupported' || asset.preview_status === 'error'">
         <i class="fa" data-ng-class="{'fa-file-o': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
         <p>No preview available.</p>
         <a data-ng-href="{{asset.download_url}}" data-ng-if="asset.type === 'file'" target="_blank" class="btn btn-default">
           <i class="fa fa-download"></i>
           <span>Download</span>
         </a>
+        <a data-ng-href="{{asset.url}}" data-ng-if="asset.type === 'link'" target="_blank" class="btn btn-default">
+          <i class="fa fa-external-link"></i>
+          <span>Visit website</span>
+        </a>
       </div>
+
     </div>
     <div class="assetlibrary-item-whiteboard-preview" data-ng-if="asset.type === 'whiteboard'">
       <whiteboard whiteboard="asset" readonly="true"></whiteboard>

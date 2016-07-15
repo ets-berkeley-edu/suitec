@@ -22,18 +22,20 @@
     "host": "localhost",
     "port": 5432,
     "dropOnStartup": false,
+    "version": "9.4.4",
     "sync": true
   },
   "log": {
     "level": "info",
     "stream": "stdout"
   },
-  "embdr": {
+  "previews": {
     "enabled": true,
-    "apiKey": "R7fyLMRrR2IF1t265ShCQISh9BVhM8Yw"
+    "url": "http://localhost:2001/process",
+    "apiKey": "some shared secret"
   },
   "canvasPoller": {
-    "enabled": true,
+    "enabled": false,
     "delay": 15
   },
   "email": {

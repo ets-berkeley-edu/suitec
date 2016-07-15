@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, utilService, $rootScope, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, utilService, $rootScope, $sce, $scope, $state, $stateParams) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -44,14 +44,8 @@
     // Variable that will keep track of the new top-level comment
     $scope.newComment = null;
 
-    // Variable that will keep track of the previews status of an asset
-    $scope.previewStatus = null;
-
     // Variable that will keep track of the timeout id when a preview is pending and its status is being retrieved
     var previewTimeout = null;
-
-    // Variable that will keep track of the Embdr coordinator that can be used to stop polling the Embdr API for updates
-    var embdrCoordinator = null;
 
     // Clear the preview timers if the user goes away
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
@@ -59,11 +53,6 @@
         if (previewTimeout) {
           clearTimeout(previewTimeout);
           previewTimeout = null;
-        }
-
-        // Tell Embdr it should stop polling
-        if (embdrCoordinator) {
-          embdrCoordinator.cancel();
         }
       }
     });
@@ -81,34 +70,36 @@
         // Build the asset comment tree
         buildCommentTree(asset);
 
+        // Augment the asset object with data that the view can use to show the correct preview layer
+        if (asset.preview_status === 'done') {
+          if (asset.type === 'file') {
+            if (asset.pdf_url) {
+              asset.embedUrl = '/viewer/viewer.html?file=' + asset.pdf_url;
+            }
+          } else if (asset.type === 'link') {
+            if (asset.preview_metadata.youtubeId) {
+              asset.embedUrl = $sce.trustAsResourceUrl('//www.youtube.com/embed/' + asset.preview_metadata.youtubeId + '?autoplay=false');
+            } else {
+              var currentProtocol = document.location.protocol;
+              var isHttpEmbeddable = asset.preview_metadata.httpEmbeddable;
+              var isHttpsEmbeddable = asset.preview_metadata.httpsEmbeddable;
+              asset.isEmbeddable = (
+                (currentProtocol === 'http:' && isHttpEmbeddable) ||
+                (currentProtocol === 'https:' && isHttpsEmbeddable)
+              );
+              asset.embedUrl = $sce.trustAsResourceUrl(asset.url.replace(/^https?:/, ''));
+            }
+          }
+        }
+
         $scope.asset = asset;
 
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
 
-        // Let embdr show a preview for files or links
-        if (asset.type === 'file' || asset.type === 'link') {
-          // There can be a short delay between creating an asset and getting the embed id and key back.
-          // Simply show the pending preview and try again later if we haven't heard back from Embdr yet
-          if (!asset.embed_id || !asset.embed_key) {
-            $scope.previewStatus = 'pending';
-            previewTimeout = setTimeout(getCurrentAsset, 2000, false);
-
-          } else {
-            var embdrOptions = {
-              'loadingIcon': '//' + window.location.host + '/assets/img/canvas-logo.png',
-              'complete': function(resource) {
-                $scope.previewStatus = 'complete';
-              },
-              'pending': function() {
-                $scope.previewStatus = 'pending';
-              },
-              'unsupported': function() {
-                $scope.previewStatus = 'unsupported';
-              }
-            };
-            embdrCoordinator = window.embdr('assetlibrary-item-preview', asset.embed_id, asset.embed_key, embdrOptions);
-          }
+        // If the preview is still being generated, wait a few seconds and try again
+        if ((asset.type === 'file' || asset.type === 'link') && asset.preview_status === 'pending') {
+          previewTimeout = setTimeout(getCurrentAsset, 2000, false);
         }
       });
     };

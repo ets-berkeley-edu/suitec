@@ -21,7 +21,6 @@
     "angular-strap": "~2.3.x",
     "angular-ui-router": "~0.2.x",
     "bootstrap": "~3.3.x",
-    "embdr": "latest",
     "fontawesome": "~4.4.x",
     "highcharts-release": "~4.1.x",
     "lodash": "~3.10.x",

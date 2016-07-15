@@ -38,7 +38,7 @@ module.exports = {
   "canvasPoller": {
     "enabled": false
   },
-  "embdr": {
+  "previews": {
     "enabled": false
   },
   "email": {
