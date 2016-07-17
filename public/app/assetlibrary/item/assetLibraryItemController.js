@@ -74,9 +74,7 @@
         if (asset.preview_status === 'done') {
           if (asset.type === 'file') {
             if (asset.pdf_url) {
-              console.log(asset.pdf_url);
               asset.embedUrl = '/viewer/viewer.html?file=' + encodeURIComponent(asset.pdf_url);
-              console.log(asset.embedUrl);
             }
           } else if (asset.type === 'link') {
             if (asset.preview_metadata.youtubeId) {
