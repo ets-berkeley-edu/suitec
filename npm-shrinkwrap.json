@@ -1765,9 +1765,9 @@
           "resolved": "https://registry.npmjs.org/jsdom/-/jsdom-1.1.0.tgz",
           "dependencies": {
             "contextify": {
-              "version": "0.1.15",
+              "version": "0.1.14",
               "from": "contextify@>=0.1.9 <0.2.0",
-              "resolved": "https://registry.npmjs.org/contextify/-/contextify-0.1.15.tgz",
+              "resolved": "https://registry.npmjs.org/contextify/-/contextify-0.1.14.tgz",
               "dependencies": {
                 "bindings": {
                   "version": "1.2.1",
