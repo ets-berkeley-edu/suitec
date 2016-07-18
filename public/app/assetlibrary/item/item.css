@@ -29,6 +29,10 @@
 
 /* PREVIEW */
 
+.assetlibrary-item-preview {
+  overflow-y: hidden;
+}
+
 .assetlibrary-item-preview .preview-image {
   height: 100%;
   max-height: 400px;
@@ -49,7 +53,6 @@
 
 .assetlibrary-item-preview .preview-document {
   height: 400px;
-  overflow-y: hidden;
   width: 100%;
 }
 
