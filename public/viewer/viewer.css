@@ -715,6 +715,7 @@ html[dir='ltr'] #toolbarViewerLeft > *,
 html[dir='ltr'] #toolbarViewerMiddle > *,
 html[dir='ltr'] #toolbarViewerRight > *,
 html[dir='ltr'] .findbar > * {
+  font-weight: 300;
   position: relative;
   float: left;
 }
@@ -1298,7 +1299,7 @@ html[dir='rtl'] .verticalToolbarSeparator {
 
 .toolbarLabel {
   min-width: 16px;
-  padding: 3px 6px 3px 2px;
+  padding: 3px 0 3px 2px;
   margin: 4px 2px 4px 0;
   border: 1px solid transparent;
   border-radius: 2px;
