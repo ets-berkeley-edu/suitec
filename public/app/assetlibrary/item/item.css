@@ -29,8 +29,17 @@
 
 /* PREVIEW */
 
-.assetlibrary-item-preview {
-  overflow-y: hidden;
+.assetlibrary-item-preview .preview-image {
+  height: 100%;
+  max-height: 400px;
+  max-width: 100%;
+}
+
+.assetlibrary-item-preview iframe {
+  background-color: #FFF;
+  overflow: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .assetlibrary-item-preview .preview-document,
@@ -40,15 +49,8 @@
 
 .assetlibrary-item-preview .preview-document {
   height: 400px;
+  overflow-y: hidden;
   width: 100%;
-}
-
-
-.assetlibrary-item-preview iframe {
-  background-color: #FFF;
-  overflow: auto;
-  width: 100%;
-  -webkit-overflow-scrolling: touch;
 }
 
 .assetlibrary-item-whiteboard-preview {
@@ -60,27 +62,19 @@
   width: 100%;
 }
 
-
 @media only screen and (min-width : 768px) {
   .assetlibrary-item-preview {
     line-height: 400px;
-    max-height: 720px;
-    min-height: 400px;
   }
 
   .assetlibrary-item-preview .preview-image {
+    max-height: 720px;
     padding: 5px;
   }
 
-  .assetlibrary-item-preview iframe {
-    height: 720px;
-  }
-
-  .assetlibrary-item-preview .preview-document {
-    height: 720px;
-  }
-
-  .assetlibrary-item-whiteboard-preview {
+  .assetlibrary-item-preview iframe,
+  .assetlibrary-item-preview .preview-document,
+   .assetlibrary-item-whiteboard-preview {
     height: 720px;
   }
 }

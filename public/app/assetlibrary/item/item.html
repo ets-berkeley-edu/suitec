@@ -34,12 +34,12 @@
 
         <!-- Images -->
         <div data-ng-if="asset.type === 'file' && asset.image_url !== null">
-          <img class="preview-image" alt="{{asset.title}}" title="{{asset.title}}" src="{{asset.image_url}}" style="max-width: 100%; max-height: inherit; height: inherit; width: inherit;" />
+          <img class="preview-image" alt="{{asset.title}}" title="{{asset.title}}" src="{{asset.image_url}}"/>
         </div>
 
         <!-- Links that are iframe embeddable -->
         <div data-ng-if="asset.type === 'link' && asset.isEmbeddable">
-          <iframe width="100%" height="800" src="{{asset.embedUrl}}" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allowscriptaccess="always" scrolling="no"></iframe>
+          <iframe width="100%" height="800" src="{{asset.embedUrl}}" frameborder="0"></iframe>
         </div>
 
         <!-- Links to YouTube videos -->
@@ -49,7 +49,7 @@
 
         <!-- Links that aren't embeddable but have an image URL -->
         <div data-ng-if="asset.type === 'link' && !asset.isEmbeddable && asset.image_url">
-          <img class="preview-image" alt="{{asset.title}}" title="{{asset.title}}" src="{{asset.image_url}}" style="max-width: 100%; max-height: inherit; height: inherit; width: inherit;" />
+          <img class="preview-image" alt="{{asset.title}}" title="{{asset.title}}" src="{{asset.image_url}}"/>
         </div>
       </div>
 
