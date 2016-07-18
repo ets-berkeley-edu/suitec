@@ -692,7 +692,8 @@ html[dir='ltr'] .doorHangerRight:before {
 }
 
 html[dir='ltr'] #toolbarViewerLeft {
-  margin-left: -1px;
+  margin-left: -10px;
+  padding-top: 6px;
 }
 html[dir='rtl'] #toolbarViewerRight {
   margin-right: -1px;
@@ -1095,6 +1096,12 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
 .toolbarButton.presentationMode::before,
 .secondaryToolbarButton.presentationMode::before {
   content: url(images/toolbarButton-presentationMode.png);
+}
+
+.toolbarButton.presentationMode,
+.secondaryToolbarButton.presentationMode {
+  margin-right: 6px;
+  margin-top: 4px;
 }
 
 .toolbarButton.print::before,
@@ -1857,6 +1864,12 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
   }
   html[dir='rtl'] .toolbarButton.pageDown::before {
     content: url(images/toolbarButton-pageDown-rtl@2x.png);
+  }
+
+  html[dir='ltr'] .toolbarButton.pageUp,
+  html[dir='ltr'] .toolbarButton.pageDown {
+    position: relative;
+    top: 2px;
   }
 
   .toolbarButton.zoomIn::before {
