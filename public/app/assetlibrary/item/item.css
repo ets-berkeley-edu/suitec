@@ -30,6 +30,7 @@
 /* PREVIEW */
 
 .assetlibrary-item-preview {
+  max-height: 720px;
   overflow-y: hidden;
 }
 
@@ -68,6 +69,7 @@
 @media only screen and (min-width : 768px) {
   .assetlibrary-item-preview {
     line-height: 400px;
+    max-height: 720px;
   }
 
   .assetlibrary-item-preview .preview-image {
