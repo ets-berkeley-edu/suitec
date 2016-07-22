@@ -24,6 +24,8 @@
  */
 
 var _ = require('lodash');
+var repl = require('repl');
+
 var DB = require('col-core/lib/db');
 
 /**
@@ -40,9 +42,8 @@ var init = function() {
 
     // Require additional modules and utilities, assigning them to properties 
     // to be exported to the REPL.
-
     var exports = {
-      // External modules
+      // A small set of external modules ; more could be added.
       'async': require('async'),
       'config': require('config'),
       'Joi': require('joi'),
@@ -52,7 +53,9 @@ var init = function() {
       'moment': require('moment-timezone'),
       'Sequelize': require('sequelize'),
 
-      // Collabosphere modules
+      // Collabosphere modules, including:
+      // - Top-level APIs;
+      // - 
       'ActivitiesAPI': require('col-activities'),
       'ActivitiesDefaults': require('col-activities/lib/default'),
       'AnalyticsAPI': require('col-analytics'),
@@ -67,6 +70,8 @@ var init = function() {
       'DB': DB,
       'EmailUtil': require('col-core/lib/email'),
       'log': require('col-core/lib/logger')('col-repl'),
+      'LtiAPI': require('col-lti'),
+      'LtiConstants': require('col-lti/lib/constants'),
       'RestAPI': require('col-rest'),
       'UserConstants': require('col-users/lib/constants'),
       'UsersAPI': require('col-users')
@@ -75,9 +80,8 @@ var init = function() {
     console.log('Collabosphere environment loaded. Enjoy!');
 
     // Start the REPL and make exports available.
-
-    var repl = require('repl').start({prompt: 'col-repl> '});
-    _.extend(repl.context, exports);
+    var replInstance = repl.start({'prompt': 'col-repl> '});
+    _.extend(replInstance.context, exports);
   });
 };
 
