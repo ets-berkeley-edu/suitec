@@ -1,0 +1,579 @@
+<%
+/**
+ * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its documentation
+ * for educational, research, and not-for-profit purposes, without fee and without a
+ * signed licensing agreement, is hereby granted, provided that the above copyright
+ * notice, this paragraph and the following two paragraphs appear in all copies,
+ * modifications, and distributions.
+ *
+ * Contact The Office of Technology Licensing, UC Berkeley, 2150 Shattuck Avenue,
+ * Suite 510, Berkeley, CA 94720-1620, (510) 643-7201, otl@berkeley.edu,
+ * http://ipira.berkeley.edu/industry-info for commercial licensing opportunities.
+ *
+ * IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ * SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS PROVIDED
+ * "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
+ */
+%>
+
+<%- include('../_shared/header') %>
+
+<%
+
+/**
+ * Get summary data for an asset.
+ *
+ * @param  {Asset}     asset    The asset to get data for
+ * @return {Object}             Asset summary data
+ */
+var getAssetData = function(asset) {
+  var data = {};
+
+  data.link = course.assetlibrary_url + '?col_asset=' + asset.id;
+
+  // Include user name for display, or a user count in the case of multiple users. 
+  var owners = _.values(asset.users);
+  if (owners.length === 1) {
+    data.thumbnailSummary = 'by ' + owners[0].canvas_full_name;
+  } else {
+    data.thumbnailSummary = 'by ' + owners.length + ' collaborators';
+  }
+
+  // Include URL for thumbnail URL if present, otherwise default icon URL for the asset type.
+  if (asset.thumbnail_url) {
+    data.thumbnailUrl = asset.thumbnail_url;
+  } else {
+    data.thumbnailUrl = baseCollabosphereUrl + resolveAsset('/assets/img/icon_' + asset.type + '.png');
+  }
+
+  // Include asset title, truncating if necessary.
+  if (asset.title.length > 27) {
+    data.title = asset.title.substring(0, 27) + '...';
+  } else {
+    data.title = asset.title;
+  }
+
+  return data;
+};
+
+/**
+ * Get a thumbnail for a user. If the user has no thumbnail, the default profile picture
+ * will be returned
+ *
+ * @param  {User}     user    The user to get a profile picture for
+ * @return {String}           A URL to a profile picture
+ */
+var getUserThumbnail = function(user) {
+  var thumbnail = user.canvas_image;
+  if (!thumbnail) {
+    thumbnail = baseCollabosphereUrl + resolveAsset('/assets/img/icon_user.png');
+  }
+  return thumbnail;
+};
+
+// Order the week's top assets for display, matched to the correct captions.
+var topAssets = weekly.course.topAssets;
+var topAssetsForDisplay = [];
+
+if (topAssets.comments) {
+  topAssetsForDisplay.push({
+    'asset': topAssets.comments,
+    'caption': 'Most discussed asset'
+  });
+}
+if (topAssets.likes) {
+  topAssetsForDisplay.push({
+    'asset': topAssets.likes,
+    'caption': 'Most liked asset'
+  });
+}
+if (topAssets.views) {
+  topAssetsForDisplay.push({
+    'asset': topAssets.views,
+    'caption': 'Most viewed asset'
+  }); 
+}
+
+-%>
+
+<tr class="activity-row">
+  <td>
+    <table cellpadding="0" cellspacing="0">
+      <tbody>
+
+        <tr>
+          <td>
+            <h4 class="section-header-first">
+              What has your class been up to this week?
+            </h4>
+          </div>
+        </tr>
+
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="5" class="graph-container">
+              <tbody>
+                <tr>
+                <%
+                topAssetsForDisplay.forEach(function(item) {
+                  var assetData = getAssetData(item.asset);
+                -%>
+                  <td>
+                    <div class="preview-tile-caption">
+                      <%= item.caption %>
+                    </div>
+                    <table class="activity-previews-container" cellspacing="0" cellpadding="0">
+                      <tbody>
+                        <tr>
+                          <td class="preview-tile-container small-container" style="background-image: url('<%= assetData.thumbnailUrl %>');" background="<%= assetData.thumbnailUrl %>" valign="bottom">
+                            <a href="<%= assetData.link %>" title="<%= assetData.title %>" target="_blank">
+                              <table cellpadding="0" cellspacing="0" class="preview-tile-container-inner small-container-inner">
+                                <tr>
+                                  <td valign="bottom">
+                                    <div class="preview-tile-metadata">
+                                      <table cellpadding="0" cellspacing="0" class="preview-tile-metadata-inner">
+                                        <tr valign="top">
+                                          <td class="preview-tile-metadata-title">
+                                            <a href="<%= assetData.link %>" target="_blank" class="preview-tile-title wrapped"><%= assetData.title %></a>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="preview-tile-metadata-description"><%= assetData.thumbnailSummary %></td>
+                                        </tr>
+                                      </table>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="preview-asset-metadata">
+                            <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_thumbs_up.png') %>" alt="Number of likes" /> <%= item.asset.likes %>
+                            <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_views.png') %>" alt="Number of views" /> <%= item.asset.views %>
+                            <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_comments.png') %>" alt="Number of comments" /> <%= item.asset.comment_count %>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="centered">
+                            <div class="outbound-button">
+                              <a href="<%= assetData.link %>" target="_blank">
+                                Check it out
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                <%
+                });
+                -%>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="5" class="graph-container">
+              <tbody>
+                <%
+                var mostGenerated = weekly.course.topUsers.pointsGenerated;
+                var mostReceived = weekly.course.topUsers.pointsReceived;
+
+                var maximumPoints = _.chain([mostGenerated, mostReceived]).map('total').max().value();
+                var scaleFactor = 200 / maximumPoints;
+                -%>
+
+                <tr>
+                  <td class="most-points-outer-left">
+                  <%
+                  if (mostGenerated) {
+                  -%>
+                    <h4 class="section-header">
+                      Most points generated
+                    </h4>
+                  <% 
+                  } 
+                  -%>
+                  </td>
+                  <td class="most-points-outer-right">
+                  <%
+                  if (mostReceived) {
+                  -%>
+                    <h4 class="section-header">
+                      Most points received
+                    </h4>
+                  <% 
+                  } 
+                  -%>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="most-points-outer-left">
+                  <%
+
+                  if (mostGenerated) {
+                    var thumbnail = getUserThumbnail(mostGenerated.user);
+
+                    var mostPoints = mostGenerated.total;
+                    var mostPointsHeight = Math.round(mostPoints * scaleFactor);
+
+                    var averagePoints = weekly.course.averages.pointsGenerated;
+                    var averagePointsHeight = Math.round(averagePoints * scaleFactor);
+
+                  -%>
+                    <table cellpadding="0" cellspacing="0" class="graph-container">
+                      <tbody>
+                        <tr>
+
+                          <td class="most-points-inner">
+                            <table cellpadding="0" cellspacing="0">
+                              <tbody>
+                                <tr>
+                                  <td class="most-points-user" valign="bottom">
+                                    <img src="<%= thumbnail %>"/>
+                                    <div><%= mostGenerated.user.canvas_full_name %></div>
+                                  </td> 
+                                </tr>
+                                <tr>
+                                  <td class="most-points-column-outer" style="height:<%= mostPointsHeight %>px;" valign="bottom">
+                                    <div class="most-points-column-inner" style="height:<%= mostPointsHeight %>px;"></div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td class="most-points-value">
+                                    <%= mostPoints %> points
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+
+                          <td class="most-points-inner">
+                            <table cellpadding="0" cellspacing="0">
+                              <tbody>
+                                <tr>
+                                  <td class="most-points-user" valign="bottom">
+                                    <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_class.png') %>"/>
+                                    <div>Class average</div>
+                                  </td> 
+                                </tr>
+                                <tr>
+                                  <td class="most-points-column-outer" style="height:<%= averagePointsHeight %>px;" valign="bottom">
+                                    <div class="most-points-column-inner" style="height:<%= averagePointsHeight %>px;"></div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td class="most-points-value">
+                                    <%= averagePoints %> points
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+
+                        </tr>
+                      </tbody>
+                    </table>
+                  <%
+                  }
+                  -%>
+                  </td>
+
+                  <td class="most-points-outer-right">
+                  <%
+
+                  if (mostReceived) {
+                    var thumbnail = getUserThumbnail(mostReceived.user);
+
+                    var mostPoints = mostReceived.total;
+                    var mostPointsHeight = Math.round(mostPoints * scaleFactor);
+
+                    var averagePoints = weekly.course.averages.pointsReceived;
+                    var averagePointsHeight = Math.round(averagePoints * scaleFactor);
+
+                  -%>
+                    <table cellpadding="0" cellspacing="0" class="graph-container">
+                      <tbody>
+                        <tr>
+
+                          <td class="most-points-inner">
+                            <table cellpadding="0" cellspacing="0">
+                              <tbody>
+                                <tr>
+                                  <td class="most-points-user" valign="bottom">
+                                    <img src="<%= thumbnail %>"/>
+                                    <div><%= mostReceived.user.canvas_full_name %></div>
+                                  </td> 
+                                </tr>
+                                <tr>
+                                  <td class="most-points-column-outer" style="height:<%= mostPointsHeight %>px;" valign="bottom">
+                                    <div class="most-points-column-inner" style="height:<%= mostPointsHeight %>px;"></div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td class="most-points-value">
+                                    <%= mostPoints %> points
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+
+                          <td class="most-points-inner">
+                            <table cellpadding="0" cellspacing="0">
+                              <tbody>
+                                <tr>
+                                  <td class="most-points-user" valign="bottom">
+                                    <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_class.png') %>"/>
+                                    <div>Class average</div>
+                                  </td> 
+                                </tr>
+                                <tr>
+                                  <td class="most-points-column-outer" style="height:<%= averagePointsHeight %>px;" valign="bottom">
+                                    <div class="most-points-column-inner" style="height:<%= averagePointsHeight %>px;"></div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td class="most-points-value">
+                                    <%= averagePoints %> points
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+
+                        </tr>
+                      </tbody>
+                    </table>
+                  <%
+                  }
+                  -%>
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="centered">
+          <% 
+          if (course.engagementindex_url) { 
+          -%>
+            <div class="outbound-button">
+              <a href="<%= course.engagementindex_url %>">
+                View leaderboard
+              </a>
+            </div>
+          <% 
+          } 
+          -%>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <h4 class="section-header">
+              Your activity
+            </h4>
+
+            <table cellpadding="0" cellspacing="5" class="graph-container">
+
+              <tr>
+                <td class="your-activity-outer">
+                  <div class="your-activity-header">
+                    Points you collected this week
+                  </div>
+                  <div class="your-activity-badge">
+                    <%= weekly.user.pointsCollected %>
+                  </div>
+                  <div class="your-activity-footer">
+                    Class average: <strong><%= weekly.course.averages.pointsGenerated %></strong>
+                  </div>
+                </td>
+
+                <td class="your-activity-outer">
+                <% 
+                if (weekly.user.rank) { 
+                -%>
+                  <div class="your-activity-header">
+                    Your rank this week
+                  </div>
+                  <div class="your-activity-badge">
+                    <%= weekly.user.rank.thisWeek %>
+                  </div>
+                <% 
+                } 
+                -%>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  Total points so far: <strong><%= user.points %></strong>
+                <% 
+                if (course.engagementindex_url) { 
+                -%>
+                  <div class="outbound-button">
+                    <a href="<%= course.engagementindex_url %>">
+                      View leaderboard
+                    </a>
+                  </div>
+                <% 
+                } 
+                -%>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <h4 class="section-header">
+              How others engaged with your contributions
+            </h4>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="5" class="graph-container">
+              <tbody>
+                <tr>
+
+                  <td class="assets-received-outer-left">
+                    This week your assets received
+                  </td>
+
+                  <td class="assets-received-outer-right">
+                  <% if (weekly.user.topAsset) { %>
+                    Your most popular asset
+                  <% } -%>
+                  </td>
+
+                </tr>
+                <tr>
+                  <td class="assets-received-outer-left">
+
+                    <table cellpadding="0" cellspacing="5" class="assets-received-summary">
+                      <tr>
+                        <td class="assets-received-icon">
+                          <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_comments_large.png') %>" alt="Number of likes" />
+                        </td>
+                        <td class="assets-received-totals">
+                          <div>
+                            <span class="assets-received-count"><%= weekly.user.commentsReceived %></span> comments
+                          </div>
+                          <div class="assets-received-points">
+                            <%= weekly.user.pointsFromCommentsReceived %> points
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <table cellpadding="0" cellspacing="5" class="assets-received-summary">
+                      <tr>
+                        <td class="assets-received-icon">
+                          <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_thumbs_up_large.png') %>" alt="Number of likes" />
+                        </td>
+                        <td class="assets-received-totals">
+                          <div>
+                            <span class="assets-received-count"><%= weekly.user.likesReceived %></span> likes
+                          </div>
+                          <div class="assets-received-points">
+                            <%= weekly.user.pointsFromLikesReceived %> points
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+
+                  <td class="assets-received-outer-right">
+                  <%
+                  if (weekly.user.topAsset) {
+                    var assetData = getAssetData(weekly.user.topAsset);
+                  -%>
+
+                    <table cellpadding="0" cellspacing="0">
+                      <tbody>
+                        <tr>
+                          <td class="preview-tile-container medium-container" style="background-image: url('<%= assetData.thumbnailUrl %>');" background="<%= assetData.thumbnailUrl %>" valign="bottom">
+                            <a href="<%= assetData.link %>" title="<%= assetData.title %>" target="_blank">
+                              <table cellpadding="0" cellspacing="0" class="preview-tile-container-inner medium-container-inner">
+                                <tr>
+                                  <td valign="bottom">
+                                    <div class="preview-tile-metadata">
+                                      <table cellpadding="0" cellspacing="0" class="preview-tile-metadata-inner">
+                                        <tr valign="top">
+                                          <td class="preview-tile-metadata-title">
+                                            <a href="<%= assetData.link %>" target="_blank" class="preview-tile-title wrapped"><%= assetData.title %></a>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td class="preview-tile-metadata-description"><%= assetData.thumbnailSummary %></td>
+                                        </tr>
+                                      </table>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </a>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td class="preview-asset-metadata">
+                            <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_thumbs_up.png') %>" alt="Number of likes" /> <%= weekly.user.topAsset.likes %>
+                            <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_views.png') %>" alt="Number of views" /> <%= weekly.user.topAsset.views %>
+                            <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_comments.png') %>" alt="Number of comments" /> <%= weekly.user.topAsset.comment_count %>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  <% } -%>
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="centered">
+            <div class="outbound-button">
+
+            <% var assetsUrl = course.assetlibrary_url + '?col_user=' + user.id; %>
+
+              <a href="<%= assetsUrl %>">
+                View your assets
+              </a>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </td>
+</tr>
+
+<%- include('../_shared/footer') %>
