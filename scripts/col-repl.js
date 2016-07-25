@@ -28,11 +28,12 @@ var repl = require('repl');
 
 var DB = require('col-core/lib/db');
 
-/**
- * Load Collabosphere environment and start REPL
- */
 console.log('Loading Collabosphere environment...');
 
+/**
+ * Load Collabosphere environment and start an instance of Node's REPL (read-eval-print loop), 
+ an interactive interpreter that evaluates input line by line and displays evaluation results.
+ */
 var init = function() {
   // Apply global utilities
   require('col-core/lib/globals');
@@ -43,7 +44,7 @@ var init = function() {
     // Require additional modules and utilities, assigning them to properties 
     // to be exported to the REPL.
     var exports = {
-      // A small set of external modules ; more could be added.
+      // A small set of external modules frequently used in code; more could be added.
       'async': require('async'),
       'config': require('config'),
       'Joi': require('joi'),
@@ -55,7 +56,7 @@ var init = function() {
 
       // Collabosphere modules, including:
       // - Top-level APIs;
-      // - 
+      // - Constants and utilities frequently called across modules.
       'ActivitiesAPI': require('col-activities'),
       'ActivitiesDefaults': require('col-activities/lib/default'),
       'AnalyticsAPI': require('col-analytics'),
@@ -75,6 +76,7 @@ var init = function() {
       'RestAPI': require('col-rest'),
       'UserConstants': require('col-users/lib/constants'),
       'UsersAPI': require('col-users')
+      // WhiteboardAPI is not included as it expects a running Express server on load.
     };
 
     console.log('Collabosphere environment loaded. Enjoy!');
