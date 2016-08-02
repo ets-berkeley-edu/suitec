@@ -85,6 +85,14 @@
   padding: 20px;
 }
 
+.assetlibrary-upload-list {
+  font-weight: 300;
+}
+
+.assetlibrary-upload-list input {
+  margin-right: 6px;
+}
+
 /* PROGRESS */
 
 .assetlibrary-upload-progress-content {

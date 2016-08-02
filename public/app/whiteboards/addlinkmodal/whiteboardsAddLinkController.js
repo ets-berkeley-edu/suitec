@@ -29,6 +29,9 @@
 
   angular.module('collabosphere').controller('WhiteboardsAddLinkController', function($scope) {
 
+    // Indicate that the new link modal dialog is loaded in a whiteboard context
+    $scope.context = 'whiteboard';
+
     /**
      * Listen for events indicating that a new link has been added or
      * adding a new link has been cancelled

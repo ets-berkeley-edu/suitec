@@ -23,25 +23,10 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-(function(angular) {
+.assetlibrary-addlink-list {
+  font-weight: 300;
+}
 
-  'use strict';
-
-  angular.module('collabosphere').controller('WhiteboardsUploadController', function($scope) {
-
-    // Indicate that the upload modal dialog is loaded in a whiteboard context
-    $scope.context = 'whiteboard';
-
-    /**
-     * Listen for events indicating that a new link has been added or
-     * adding a new link has been cancelled
-     */
-    $scope.$on('assetLibraryUploadDone', function(ev, assets) {
-      // The `closeModal` is added on the scope by the caller and allows
-      // the caller to deal with the results coming out of the modal
-      $scope.closeModal(assets);
-    });
-
-  });
-
-}(window.angular));
+.assetlibrary-addlink-list input {
+  margin-right: 6px;
+}

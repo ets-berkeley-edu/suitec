@@ -39,6 +39,7 @@
      * Create a new link asset
      */
     var createLink = $scope.createLink = function() {
+      console.log($scope.link);
       assetLibraryFactory.createLink($scope.link).success(function(asset) {
         $scope.$emit('assetLibraryAddLinkDone', asset);
       });

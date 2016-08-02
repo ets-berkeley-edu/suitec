@@ -68,6 +68,13 @@
                 <label for="assetlibrary-upload-description" class="control-label">Description</label>
                 <textarea id="assetlibrary-upload-description" class="form-control" placeholder="Add some more context to your file. You can use plain text or #keywords" rows="3" data-ng-model="file.description"></textarea>
               </div>
+
+              <!-- ADD TO ASSET LIBRARY -->
+              <div class="form-group" data-ng-if="context === 'whiteboard'">
+                <label class="assetlibrary-upload-list">
+                  <input type="checkbox" data-ng-init="file.list = false" data-ng-model="file.list"> Also add this file to Asset Library
+                </label>
+              </div>
             </ng-form>
           </div>
         </div>
