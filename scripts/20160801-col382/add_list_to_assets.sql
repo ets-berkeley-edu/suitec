@@ -1,3 +1,3 @@
 -- Add list column to assets table
 
-ALTER TABLE assets ADD list BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE assets ADD visible BOOLEAN NOT NULL DEFAULT true;

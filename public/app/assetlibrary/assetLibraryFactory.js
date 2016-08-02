@@ -85,7 +85,7 @@
      * @param  {String}               [file.description]              The description of the file
      * @param  {Number[]}             [file.categories]               The ids of the categories to which the file should be associated
      * @param  {String}               [file.source]                   The source of the file
-     * @param  {Boolean}              [file.list]                     Whether the file should be listed in the asset library
+     * @param  {Boolean}              [file.visible]                  Whether the file will be visible in the assets library list
      * @param  {Function}             [progressCallback]              Callback function that will be informed of progress updates
      * @return {Promise<Asset>}                                       Promise returning the created file asset
      */
@@ -97,7 +97,7 @@
         'description': file.description,
         'categories': file.categories,
         'source': file.source,
-        'list': file.list
+        'visible': file.visible
       };
       return Upload.upload({
         'url': utilService.getApiUrl('/assets'),
@@ -115,7 +115,7 @@
      * @param  {String}               [link.description]              The description of the link
      * @param  {Number[]}             [link.categories]               The ids of the categories to which the link should be associated
      * @param  {String}               [link.source]                   The source of the link
-     * @param  {Boolean}              [link.list]                     Whether the link should be listed in the asset library
+     * @param  {Boolean}              [link.visible]                  Whether the link will be visible in the assets library list
      * @return {Promise<Asset>}                                       Promise returning the created link asset
      */
     var createLink = function(link) {

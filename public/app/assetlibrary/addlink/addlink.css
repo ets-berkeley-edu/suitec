@@ -23,10 +23,10 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-.assetlibrary-addlink-list {
+.assetlibrary-addlink-visible {
   font-weight: 300;
 }
 
-.assetlibrary-addlink-list input {
+.assetlibrary-addlink-visible input {
   margin-right: 6px;
 }

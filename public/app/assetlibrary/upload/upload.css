@@ -85,11 +85,11 @@
   padding: 20px;
 }
 
-.assetlibrary-upload-list {
+.assetlibrary-upload-visible {
   font-weight: 300;
 }
 
-.assetlibrary-upload-list input {
+.assetlibrary-upload-visible input {
   margin-right: 6px;
 }
 
