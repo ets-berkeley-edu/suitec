@@ -54,7 +54,7 @@
     "ims-lti": "latest",
     "joi": "latest",
     "jscs": "latest",
-    "jsdom": "latest",
+    "node-jsdom": "latest",
     "lodash": "latest",
     "mime": "latest",
     "mixpanel": "latest",

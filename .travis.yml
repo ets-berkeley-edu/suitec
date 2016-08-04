@@ -11,6 +11,7 @@ before_install:
   - sudo apt-get install -y libgif-dev
 
   - cd $TRAVIS_BUILD_DIR
+  - export MOCHA_GREP='Export a whiteboard to a PNG file'
 
   # Configure postgres
   - psql -c 'create database collabospheretravis;' -U postgres
