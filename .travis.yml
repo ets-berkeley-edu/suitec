@@ -17,5 +17,8 @@ before_install:
   - psql -c 'create database collabospheretravis;' -U postgres
   - psql collabospheretravis -c 'create extension pg_trgm;' -U postgres
 
+after_install:
+  - ls -la node_modules/fabric/node_modules
+
 script:
   - node_modules/.bin/gulp test-travis
