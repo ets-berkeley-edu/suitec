@@ -62,6 +62,7 @@
     "oauth": "latest",
     "pg": "latest",
     "pg-hstore": "latest",
+    "pg-native": "latest",
     "randomstring": "latest",
     "request": "latest",
     "restjsdoc": "latest",
