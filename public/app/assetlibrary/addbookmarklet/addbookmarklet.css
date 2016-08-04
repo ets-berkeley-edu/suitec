@@ -29,18 +29,15 @@
   max-width: 850px;
 }
 
-#assetlibrary-addbookmarklet-title h2,
-#assetlibrary-addbookmarklet-title i {
-  color: #0072AE;
-}
-
 #assetlibrary-addbookmarklet-title h2 {
+  color: #0072AE;
   display: inline-block;
   font-size: 24px;
   margin-bottom: 15px;
 }
 
 #assetlibrary-addbookmarklet-title i {
+  color: #0072AE;
   font-size: 20px;
   margin-left: 15px;
   margin-right: 10px;
@@ -73,7 +70,6 @@
 #assetlibrary-addbookmarklet-text > div {
   color: #6B6B6B;
   font-size: 19px;
-  font-weight: light;
 }
 
 #assetlibrary-addbookmarklet-text .btn-primary {
