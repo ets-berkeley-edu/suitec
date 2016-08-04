@@ -29,6 +29,9 @@
 
   angular.module('collabosphere').controller('WhiteboardsUploadController', function($scope) {
 
+    // Indicate that the upload modal dialog is loaded in a whiteboard context
+    $scope.context = 'whiteboard';
+
     /**
      * Listen for events indicating that a new link has been added or
      * adding a new link has been cancelled

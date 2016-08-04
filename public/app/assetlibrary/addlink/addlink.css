@@ -23,83 +23,10 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-.assetlibrary-upload-drag-container,
-.assetlibrary-upload-progress-container {
-  background-color: #F7F7F7;
-  border: 1px solid #E0E0E0;
-  border-radius: 4px;
-  display: table;
-  height: 280px;
-  margin-bottom: 10px;
-  padding-left: 10%;
-  padding-right: 10%;
-  width: 100%;
-}
-
-.assetlibrary-upload-drag-container > div,
-.assetlibrary-upload-progress-container > div {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-/* SELECT FILE(S) */
-
-.assetlibrary-upload-drag-hover {
-  border: 3px dashed #E0E0E0;
-  opacity: 0.4;
-}
-
-.assetlibrary-upload-drag-container i {
-  color: #747474;
-  font-size: 48px;
-}
-
-.assetlibrary-upload-drag-text {
-  font-size: 20px;
-  line-height: 24px;
-  margin: 10px;
-}
-
-/* ERROR */
-
-.assetlibrary-upload-error + .assetlibrary-upload-error {
-  margin-top: 5px;
-}
-
-.assetlibrary-upload-error i {
-  margin-right: 7px;
-}
-
-/* METADATA */
-
-.assetlibrary-upload-file-remove,
-.assetlibrary-upload-file-remove i {
-  color: #747474;
-  font-size: 18px;
-}
-
-.assetlibrary-upload-file-container {
-  background-color: #F7F7F7;
-  border-radius: 4px;
-  margin: 0 0 20px 50px;
-  padding: 20px;
-}
-
-.assetlibrary-upload-visible {
+.assetlibrary-addlink-visible {
   font-weight: 300;
 }
 
-.assetlibrary-upload-visible input {
+.assetlibrary-addlink-visible input {
   margin-right: 6px;
-}
-
-/* PROGRESS */
-
-.assetlibrary-upload-progress-content {
-  margin: 0 auto;
-  max-width: 600px;
-}
-
-.assetlibrary-upload-progress-content .progress {
-  margin-bottom: 5px;
 }
