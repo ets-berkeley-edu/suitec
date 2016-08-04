@@ -11,6 +11,7 @@ before_install:
   - sudo apt-get install -y libgif-dev
 
   - cd $TRAVIS_BUILD_DIR
+  - export MOCHA_GREP='updates the points when commenting on an asset with multiple owners'
 
   # Configure postgres
   - psql -c 'create database collabospheretravis;' -U postgres
