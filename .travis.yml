@@ -7,8 +7,13 @@ addons:
   postgresql: "9.4"
 
 before_install:
+  - sudo apt-get install python-software-properties
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get -qq update
-  - sudo apt-get install -y libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
+  - sudo apt-get install gcc-5 g++-5
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 80 --slave /usr/bin/g++ g++ /usr/bin/g++-5
+  - sudo update-alternatives --set gcc /usr/bin/gcc-5
+  - sudo apt-get install -y libgif-dev
 
   - cd $TRAVIS_BUILD_DIR
   - export MOCHA_GREP='Export a whiteboard to a PNG file'
@@ -16,9 +21,6 @@ before_install:
   # Configure postgres
   - psql -c 'create database collabospheretravis;' -U postgres
   - psql collabospheretravis -c 'create extension pg_trgm;' -U postgres
-
-after_install:
-  - ls -la node_modules/fabric/node_modules
 
 script:
   - node_modules/.bin/gulp test-travis
