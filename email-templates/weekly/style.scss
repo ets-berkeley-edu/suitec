@@ -1,0 +1,192 @@
+@import '../_shared/style';
+
+/*************
+ ** GENERAL **
+ *************/
+
+.activity-container-table {
+  width: 100%;
+}
+
+.centered {
+  text-align: center;
+}
+
+.outbound-button {
+  margin: 30px 0 15px;
+}
+
+.outbound-button a {
+  background-color: #4080a0;
+  border-radius: 5px;
+  border: 1px solid #0c6091;
+  color: #fff;
+  padding: 10px 20px;
+  text-decoration: none;
+}
+
+.section-header, 
+.section-header-first {
+  color: #6a6b6a;
+  word-wrap: break-word;
+}
+
+.section-header {
+  margin: 40px 5px 20px 5px;  
+}
+
+.section-header-first {
+  margin: 0 5px 20px 5px;
+}
+
+/*******************
+ ** PREVIEW TILES **
+ *******************/
+
+.medium-container,
+.medium-container-inner {
+  border-radius: 5px;
+  height: 244px;
+  width: 244px;
+}
+
+.medium-container .preview-tile-metadata {
+  width: 224px;
+}
+
+.preview-tile-caption {
+  color: #6a6b6a;
+  margin: 5px 0 10px 0; 
+  word-wrap: break-word;
+}
+
+.small-container,
+.small-container-inner {
+  border-radius: 5px;
+  height: 165px;
+  width: 165px;
+}
+
+.small-container .preview-tile-metadata {
+  width: 145px;
+}
+
+/*****************
+ ** MOST POINTS **
+ *****************/
+
+.most-points-column-outer {
+  text-align: center;
+  width: 110px;
+}
+
+.most-points-column-inner {
+  background-color: #f2f2f2;
+  margin: 0 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  width: 90px;
+}
+
+.most-points-inner {
+  text-align: center;
+  vertical-align: bottom;
+  width: 110px;
+}
+
+.most-points-outer-left {
+  padding-right: 10px;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.most-points-outer-right {
+  padding-left: 10px;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.most-points-user {
+  height: 100%;
+  padding-bottom: 10px;
+  text-align: center;
+  width: 110px;
+}
+
+.most-points-value {
+  color: #6a6b6a;
+  font-weight: 800;
+  margin-top: 10px;
+  text-align: center;
+  width: 110px;
+}
+
+/*******************
+ ** YOUR ACTIVITY **
+ *******************/
+
+.your-activity-badge {
+  background-color: #ffc020;
+  border-radius: 80px;
+  color: #fff;
+  font-size: 48px;
+  font-weight: 800;
+  height: 160px;
+  line-height: 160px;
+  margin: 0 auto;
+  text-align: center;
+  width: 160px;
+}
+
+.your-activity-footer {
+  margin: 10px 0 30px 0;
+}
+
+.your-activity-header {
+  margin: 5px 0 10px 0;
+}
+
+.your-activity-outer {
+  text-align: center;
+  vertical-align: top;
+}
+
+/**************************
+ ** YOUR ASSETS RECEIVED **
+ **************************/
+
+.assets-received-count {
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.assets-received-icon {
+  text-align: center;
+  vertical-align: middle;
+  width: 80px;
+}
+
+.assets-received-outer-left {
+  padding: 0 10px 5px 0;
+  vertical-align: top;
+}
+
+.assets-received-outer-right {
+  padding: 0 0 5px 10px;
+  vertical-align: top;
+}
+
+.assets-received-points {
+  font-weight: 800;
+}
+
+.assets-received-summary {
+  background-color: #f2f2f2;
+  height: 115px;
+  margin: 0 10px 15px 0;
+  width: 244px;
+}
+
+.assets-received-totals {
+  vertical-align: middle;
+}
