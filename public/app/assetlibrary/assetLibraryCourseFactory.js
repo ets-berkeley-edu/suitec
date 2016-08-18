@@ -23,53 +23,45 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-.assetlibrary-assignment-sync-form {
-  margin-bottom: 30px;
-}
+(function(angular) {
 
-.assetlibrary-categories-container {
-  max-width: 600px;
-}
+  'use strict';
 
-.assetlibrary-categories-info {
-  margin-bottom: 20px;
-}
+  angular.module('collabosphere').factory('assetLibraryCourseFactory', function(utilService, $http) {
 
-.assetlibrary-categories-create-form {
-  margin-bottom: 20px;
-}
+    /**
+     * Get attributes for a course
+     *
+     * @return {Promise}                          $http promise
+     */
+    var getCourse = function() {
+      return $http.get(utilService.getApiUrl('/course'));
+    };
 
-.assetlibrary-categories-edit-form .form-group {
-  margin-bottom: 5px;
-}
+    /**
+     * Enable assignment sync for a course
+     *
+     * @return {Promise}                          $http promise
+     */
+    var enableAssignmentSync = function() {
+      return $http.post(utilService.getApiUrl('/course/enable_sync'));
+    };
 
-.assetlibrary-categories-list {
-  border: 1px solid #CCC;
-  padding: 0;
-}
+    /**
+     * Disable assignment sync for a course
+     *
+     * @return {Promise}                          $http promise
+     */
+    var disableAssignmentSync = function() {
+      return $http.post(utilService.getApiUrl('/course/disable_sync'));
+    };
 
-.assetlibrary-categories-list li {
-  list-style-type: none;
-  padding: 10px 20px 10px 10px;
-}
+    return {
+      'getCourse': getCourse,
+      'enableAssignmentSync': enableAssignmentSync,
+      'disableAssignmentSync': disableAssignmentSync
+    };
 
-.assetlibrary-categories-list li:nth-child(even) {
-  background-color: #F9F9F9;
-  border-top: 1px solid #E5E5E5;
-  border-bottom: 1px solid #E5E5E5;
-}
+  });
 
-.assetlibrary-categories-list li:last-child {
-  border-bottom: none;
-}
-
-.assetlibrary-categories-list small {
-  color: #ADABAA;
-  font-weight: 400;
-}
-
-.assetlibrary-categories-list .col-actions button {
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 5px;
-}
+}(window.angular));
