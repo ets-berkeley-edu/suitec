@@ -4,7 +4,12 @@
 
   <h2>Manage Categories</h2>
 
-  <p class="assetlibrary-categories-info">Categories can be used to tag items. Assignments are automatically pulled in as categories, but you can also create new categories that aren't necessarily related to assignments.</p>
+  <p class="assetlibrary-categories-info">Categories can be used to tag items. Assignments will be automatically pulled in as categories if syncing of assignments to the Asset Library is enabled. You can also create new categories that aren't related to assignments.</p>
+
+  <form class="assetlibrary-assignment-sync-form">
+    <input type="checkbox" data-ng-model="isAssignmentSyncEnabled" data-ng-change="updateAssignmentSyncStatus()"></input>
+    Automatically sync assignments to the Asset Library
+  </form>
 
   <form class="assetlibrary-categories-create-form" name="assetlibraryCreateCategoryForm" data-ng-submit="assetlibraryCreateCategoryForm.$valid && createCategory(newCategory)" novalidate>
     <div class="form-group" data-ng-class="{'has-error': !assetlibraryCreateCategoryForm.$submitted && assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$touched && assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$invalid}">
