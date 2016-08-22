@@ -30,6 +30,8 @@ var async = require('async');
 var contentDisposition = require('content-disposition');
 var fs = require('fs');
 var os = require('os');
+var fs = require('fs');
+var path = require('path');
 var request = require('request');
 var argv = require('yargs')
     .usage('Usage: $0 --fromcourse [fromcourse] --fromuser [fromuser] --tocourse [tocourse] --touser [touser] --categories [categories]')
@@ -57,6 +59,7 @@ var fromUser = argv.fromuser;
 var toCourse = argv.tocourse;
 var toUser = argv.touser;
 
+var processStartTime = Date.now();
 // Variable that will keep track of the source user context for interaction with the API
 var fromCtx = null;
 // Variable that will keep track of the destination user context for interaction with the API
@@ -318,39 +321,50 @@ var migrateLink = function(link, callback) {
  * @param  {Function}         callback            Standard callback function
  */
 var migrateFile = function(file, callback) {
-  // Download the file to a temporary folder
-  request(file.download_url).on('response', function(res) {
-    // Extract the name of the file
-    var disposition = contentDisposition.parse(res.headers['content-disposition']);
-    var filename = disposition.parameters.filename;
-    var path = os.tmpdir() + filename;
-
-    // Function that will clean up the temporary file
-    var cleanTempFile = function(err) {
-      fs.unlink(path, function() {
+  var downloadDir = path.join(os.tmpdir(), processStartTime.toString());
+  fs.stat(downloadDir, function(err, stat) {
+    // Download the file to a temporary folder
+    if (err) {
+      if (err.code === 'ENOENT') {
+        fs.mkdirSync(downloadDir);
+      } else {
+        log.error({downloadDir: downloadDir, errorCode: err.code}, 'Failed to create temp directory during file migration');
         return callback(err);
+      }
+    }
+    request(file.download_url).on('response', function(res) {
+      // Extract the name of the file
+      var disposition = contentDisposition.parse(res.headers['content-disposition']);
+      var filename = disposition.parameters.filename;
+      var filePath = path.join(downloadDir, filename);
+
+      // Function that will clean up the temporary file
+      var cleanTempFile = function(err) {
+        fs.unlink(filePath, function() {
+          return callback(err);
+        });
+      };
+
+      res.pipe(fs.createWriteStream(filePath))
+      .on('error', cleanTempFile)
+      .on('finish', function() {
+
+        // Create the file asset
+        var categories = getMappedCategories(file.categories);
+        AssetsAPI.createFile(toCtx, file.title, {
+          'mimetype': file.mime,
+          'file': filePath,
+          'filename': file.title
+        }, {
+          'categories': categories,
+          'description': file.description || undefined,
+          'thumbnail_url': file.thumbnail_url || undefined,
+          'image_url': file.image_url || undefined,
+          'embed_id': file.embed_id || undefined,
+          'embed_key': file.embed_key || undefined,
+          'embed_code': file.embed_code || undefined
+        }, cleanTempFile);
       });
-    };
-
-    res.pipe(fs.createWriteStream(path))
-    .on('error', cleanTempFile)
-    .on('finish', function() {
-
-      // Create the file asset
-      var categories = getMappedCategories(file.categories);
-      AssetsAPI.createFile(toCtx, file.title, {
-        'mimetype': file.mime,
-        'file': path,
-        'filename': file.title
-      }, {
-        'categories': categories,
-        'description': file.description || undefined,
-        'thumbnail_url': file.thumbnail_url || undefined,
-        'image_url': file.image_url || undefined,
-        'embed_id': file.embed_id || undefined,
-        'embed_key': file.embed_key || undefined,
-        'embed_code': file.embed_code || undefined
-      }, cleanTempFile);
     });
   });
 };
