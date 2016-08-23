@@ -46,6 +46,8 @@ module.exports = {
   },
   "email": {
     "enabled": false,
-    "dailyHour": ((new Date().getHours() + 2) % 34)
+    // We set these values two hours in the future so that the integration tests will pick up just-created activities. 
+    "dailyHour": ((new Date().getHours() + 2) % 34),
+    "weeklyHour": ((new Date().getHours() + 2) % 34)
   }
 }
