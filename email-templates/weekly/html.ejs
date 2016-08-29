@@ -110,6 +110,9 @@ if (topAssets.views) {
     <table cellpadding="0" cellspacing="0">
       <tbody>
 
+        <%
+        if (topAssetsForDisplay.length) {
+        -%>
         <tr>
           <td>
             <h4 class="section-header-first">
@@ -158,7 +161,7 @@ if (topAssets.views) {
                           </td>
                         </tr>
                         <tr>
-                          <td class="preview-asset-metadata">
+                          <td class="preview-asset-metadata preview-asset-metadata-small">
                             <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_thumbs_up.png') %>" alt="Number of likes" /> <%= item.asset.likes %>
                             <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_views.png') %>" alt="Number of views" /> <%= item.asset.views %>
                             <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_comments.png') %>" alt="Number of comments" /> <%= item.asset.comment_count %>
@@ -184,6 +187,9 @@ if (topAssets.views) {
             </table>
           </td>
         </tr>
+        <% 
+        } 
+        -%>
 
         <tr>
           <td>
@@ -244,7 +250,7 @@ if (topAssets.views) {
                             <table cellpadding="0" cellspacing="0">
                               <tbody>
                                 <tr>
-                                  <td class="most-points-user" valign="bottom">
+                                  <td class="most-points-user thumbnail-user" valign="bottom">
                                     <img src="<%= thumbnail %>"/>
                                     <div><%= mostGenerated.user.canvas_full_name %></div>
                                   </td> 
@@ -256,7 +262,7 @@ if (topAssets.views) {
                                 </tr>
                                 <tr>
                                   <td class="most-points-value">
-                                    <%= mostPoints %> points
+                                    <%= mostPoints %> <%= mostPoints === 1 ? 'point' : 'points' %>
                                   </td>
                                 </tr>
                               </tbody>
@@ -267,7 +273,7 @@ if (topAssets.views) {
                             <table cellpadding="0" cellspacing="0">
                               <tbody>
                                 <tr>
-                                  <td class="most-points-user" valign="bottom">
+                                  <td class="most-points-user thumbnail-user" valign="bottom">
                                     <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_class.png') %>"/>
                                     <div>Class average</div>
                                   </td> 
@@ -279,7 +285,7 @@ if (topAssets.views) {
                                 </tr>
                                 <tr>
                                   <td class="most-points-value">
-                                    <%= averagePoints %> points
+                                    <%= averagePoints %> <%= averagePoints === 1 ? 'point' : 'points' %>
                                   </td>
                                 </tr>
                               </tbody>
@@ -315,7 +321,7 @@ if (topAssets.views) {
                             <table cellpadding="0" cellspacing="0">
                               <tbody>
                                 <tr>
-                                  <td class="most-points-user" valign="bottom">
+                                  <td class="most-points-user thumbnail-user" valign="bottom">
                                     <img src="<%= thumbnail %>"/>
                                     <div><%= mostReceived.user.canvas_full_name %></div>
                                   </td> 
@@ -327,7 +333,7 @@ if (topAssets.views) {
                                 </tr>
                                 <tr>
                                   <td class="most-points-value">
-                                    <%= mostPoints %> points
+                                    <%= mostPoints %> <%= mostPoints === 1 ? 'point' : 'points' %>
                                   </td>
                                 </tr>
                               </tbody>
@@ -338,7 +344,7 @@ if (topAssets.views) {
                             <table cellpadding="0" cellspacing="0">
                               <tbody>
                                 <tr>
-                                  <td class="most-points-user" valign="bottom">
+                                  <td class="most-points-user thumbnail-user" valign="bottom">
                                     <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_class.png') %>"/>
                                     <div>Class average</div>
                                   </td> 
@@ -350,7 +356,7 @@ if (topAssets.views) {
                                 </tr>
                                 <tr>
                                   <td class="most-points-value">
-                                    <%= averagePoints %> points
+                                    <%= averagePoints %> <%= averagePoints === 1 ? 'point' : 'points' %>
                                   </td>
                                 </tr>
                               </tbody>
@@ -393,7 +399,7 @@ if (topAssets.views) {
               Your activity
             </h4>
 
-            <table cellpadding="0" cellspacing="5" class="graph-container">
+            <table cellpadding="0" cellspacing="5" class="activity-container-table">
 
               <tr>
                 <td class="your-activity-outer">
@@ -401,22 +407,22 @@ if (topAssets.views) {
                     Points you collected this week
                   </div>
                   <div class="your-activity-badge">
-                    <%= weekly.user.pointsCollected %>
+                    <%= weekly.user.pointsCollected || 0 %>
                   </div>
                   <div class="your-activity-footer">
-                    Class average: <strong><%= weekly.course.averages.pointsGenerated %></strong>
+                    Class average: <strong><%= weekly.course.averages.pointsGenerated || 0 %></strong>
                   </div>
                 </td>
 
                 <td class="your-activity-outer">
                 <% 
-                if (weekly.user.rank) { 
+                if (user.rank) { 
                 -%>
                   <div class="your-activity-header">
                     Your rank this week
                   </div>
                   <div class="your-activity-badge">
-                    <%= weekly.user.rank.thisWeek %>
+                    <%= user.rank.thisWeek %>
                   </div>
                 <% 
                 } 
@@ -480,10 +486,10 @@ if (topAssets.views) {
                         </td>
                         <td class="assets-received-totals">
                           <div>
-                            <span class="assets-received-count"><%= weekly.user.commentsReceived %></span> comments
+                            <span class="assets-received-count"><%= weekly.user.commentsReceived || 0 %></span> <%= weekly.user.commentsReceived === 1 ? 'comment' : 'comments' %>
                           </div>
                           <div class="assets-received-points">
-                            <%= weekly.user.pointsFromCommentsReceived %> points
+                            <%= weekly.user.pointsFromCommentsReceived || 0 %> <%= weekly.user.pointsFromCommentsReceived === 1 ? 'point' : 'points' %>
                           </div>
                         </td>
                       </tr>
@@ -496,10 +502,10 @@ if (topAssets.views) {
                         </td>
                         <td class="assets-received-totals">
                           <div>
-                            <span class="assets-received-count"><%= weekly.user.likesReceived %></span> likes
+                            <span class="assets-received-count"><%= weekly.user.likesReceived || 0 %></span> <%= weekly.user.likesReceived === 1 ? 'like' : 'likes' %>
                           </div>
                           <div class="assets-received-points">
-                            <%= weekly.user.pointsFromLikesReceived %> points
+                            <%= weekly.user.pointsFromLikesReceived || 0 %> <%= weekly.user.pointsFromLikesReceived === 1 ? 'point' : 'points' %>
                           </div>
                         </td>
                       </tr>
