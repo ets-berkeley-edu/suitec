@@ -4,6 +4,10 @@
  ** GENERAL **
  *************/
 
+td {
+  font-size: 13px;
+}
+
 .activity-container-table {
   width: 100%;
 }
@@ -28,6 +32,7 @@
 .section-header, 
 .section-header-first {
   color: #6a6b6a;
+  font-size: 14px;
   word-wrap: break-word;
 }
 
@@ -52,6 +57,14 @@
 
 .medium-container .preview-tile-metadata {
   width: 224px;
+}
+
+.preview-asset-metadata-small {
+  margin-top: 5px;
+}
+
+.preview-asset-metadata-small img {
+  margin-left: 6px;
 }
 
 .preview-tile-caption {
