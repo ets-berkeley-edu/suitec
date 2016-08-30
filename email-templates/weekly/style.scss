@@ -164,6 +164,44 @@ td {
   vertical-align: top;
 }
 
+/*************************
+ ** HOW YOU CONTRIBUTED **
+ *************************/
+
+.radarchart-image {
+  height: 244px;
+  width: 244px;
+}
+
+.radarchart-legend {
+  background-color: #f2f2f2;
+  float: left;
+  padding: 5px;
+  text-align: left;
+}
+
+.radarchart-legend-class-average {
+  background-color: #ffc020;
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+}
+
+.radarchart-legend-line {
+  line-height: 1.6em;
+}
+
+.radarchart-legend-you {
+  background-color: #4080a0;
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+}
+
+.radarchart-points {
+  font-weight: 800;
+}
+
 /**************************
  ** YOUR ASSETS RECEIVED **
  **************************/
