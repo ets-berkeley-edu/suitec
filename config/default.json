@@ -41,8 +41,8 @@
   "email": {
     "enabled": true,
     "dailyHour": 8,
-    "weeklyDay": 5,
-    "weeklyHour": 12,
+    "weeklyDay": 1,
+    "weeklyHour": 9,
     "apiKey": "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"
   }
 }
