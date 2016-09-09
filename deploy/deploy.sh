@@ -1,57 +1,114 @@
 #!/bin/bash
 
-# Script that deploys the latest Collabosphere code from
-# a specified remote and branch. The `DOCUMENT_ROOT` environment
-# variable should be set to the directory in which the static
-# need to be deployed
-#
-#  usage: $ deploy/deploy.sh
-
 # Fail the entire script when one of the commands in it fails
 set -e
 
-# Get the remote and branch that should be
-# deployed from the provided environment variables
-TARGET_REMOTE=${REMOTE:-origin}
-TARGET_BRANCH=${BRANCH:-master}
+# Go to base directory of local git repo
+cd $(dirname "${BASH_SOURCE[0]}")/..
+base_directory="${PWD}"
 
-# Clear any local changes present in the branch
+# The important steps are recorded in time-stamped log file
+logger="tee -a $(date +"${base_directory}/logs/deploy_%Y-%m-%d-%H%M%S.log")"
+
+echo_usage() {
+  echo; echo "USAGE"; echo "  ${0} [-r remote] [-b branch] [-t tag]"; echo
+  echo "Deploy the latest SuiteC code from a specified branch or tag."; echo
+  echo "Set environment variable DOCUMENT_ROOT to the Apache directory which will serve SuiteC static files."; echo
+  echo "Common usages:"; echo
+  echo "   # Deploy Arthur's branch"
+  echo "   ${0} -r arthur_guinness -b irish_dry_stout"; echo
+  echo "   # Deploy qa branch using default remote (origin)"
+  echo "   ${0} -b qa"; echo
+  echo "   # Deploy tag 1.6"
+  echo "   ${0} -t 1.6"; echo
+}
+
+log() {
+  echo | ${logger}
+  echo "${1}" | ${logger}
+  echo | ${logger}
+}
+
+# If we have missing requirements then echo usage info and exit.
+[[ $# -gt 0 ]] || { echo_usage; exit 0; }
+[[ "${DOCUMENT_ROOT}" ]] || { echo; echo "[ERROR] 'DOCUMENT_ROOT' is undefined"; echo_usage; exit 1; }
+
+# Default remote repository
+git_remote="origin"
+
+while getopts "b:r:t:" arg; do
+  case ${arg} in
+    b)
+      git_branch="${OPTARG}"
+      ;;
+    r)
+      git_remote="${OPTARG}"
+      ;;
+    t)
+      git_tag="${OPTARG}"
+      ;;
+  esac
+done
+
+# Validation
+[[ "${git_tag}" || "${git_branch}" ]] || { log "[ERROR] You must specify branch or tag."; echo_usage; exit 1; }
+[[ "${git_tag}" && "${git_branch}" ]] && { log "[ERROR] Specify branch or tag but NOT both."; echo_usage; exit 1; }
+
+echo; echo "WARNING! In two seconds we will clear local changes with git reset. Control-c to abort."
+sleep 2.5
+
+log "Deploy SuiteC with command: ${0} ${*}"
+
+# Clear local changes
 git reset --hard HEAD
-
-# Work on a temporary branch
-git checkout -b tmp
-
-# Get all the branches and tags from the remote
-git fetch $TARGET_REMOTE
-git fetch -t $TARGET_REMOTE
-
-# Delete the local copy of the target branch (if any) as the upstream branch might have been rebased
-git rev-parse --verify $TARGET_BRANCH > /dev/null 2>&1 && git branch -D $TARGET_BRANCH
 
 # Check out the branch or tag. If a tag is being deployed, the git HEAD will point to a commit and
 # will end up in a "detached" state. As we shouldn't be committing on deployed code, this is considered OK
-git checkout $TARGET_REMOTE/$TARGET_BRANCH
-git branch -D tmp
 
-# Remove the existing node_modules and re-install
-# all npm dependencies
+# Learn about remote branches
+git fetch ${git_remote}
+
+if [[ "${git_branch}" ]] ; then
+  local_branch_name=$(date +"deploy-${git_remote}/${git_branch}_%Y-%m-%d-%H%M%S")
+  log "git checkout branch: ${git_branch}"
+  # Delete the local copy of the target branch (if any) as the upstream branch might have been rebased
+  git rev-parse --verify ${git_branch} > /dev/null 2>&1 && git branch -D ${git_branch}
+  log "Begin Git checkout of remote branch: ${git_remote}/${git_branch}"
+  git checkout ${git_remote}/${git_branch} || { log "[ERROR] Unknown Git branch: ${git_branch}"; exit 1; }
+else
+  local_branch_name=$(date +"deploy-tags/${git_tag}_%Y-%m-%d-%H%M%S")
+  log "git checkout tag: ${git_tag}"
+  # Learn about remote tags
+  git fetch -t ${git_remote}
+  git checkout tags/${git_tag} || { log "[ERROR] Unknown Git tag: ${git_tag}"; exit 1; }
+fi
+
+# Create tmp branch
+log "Create a local, temporary Git branch: ${local_branch_name}"
+git checkout -b "${local_branch_name}"
+
+log "The Git checkout is complete. Now remove the existing node_modules and re-install all npm dependencies"
+
+# npm install
 find node_modules/ -mindepth 1 -maxdepth 1 ! -name 'col-*' -exec rm -rf {} +
 npm install contextify@0.1.14
 npm install
 
-# Remove the existing bower dependencies and
-# re-install
+log "Remove the existing bower dependencies and re-install"
 rm -rf public/lib
 node_modules/.bin/bower install
 
-# Run the production build
+log "Run gulp build"
 node_modules/.bin/gulp build
 
-# Kill the existing node process
+log "Kill the existing SuiteC process"
 ./deploy/stop.sh
 
-# Copy the static files over to the apache directory
-cp -R target/* ${DOCUMENT_ROOT}
+log "Copy SuiteC static files to Apache directory: ${DOCUMENT_ROOT}"
+cp -R target/* "${DOCUMENT_ROOT}"
 
-# Start the new node process
+log "Start a new and improved SuiteC process."
 ./deploy/start.sh
+
+log "We are done. Time to smoke-test the application."
+exit 0
