@@ -153,14 +153,14 @@ var migrateCategories = function(callback) {
   }
 
   // Get the categories in the source course
-  CategoriesAPI.getCategories(fromCtx, false, function(err, fromCategories) {
+  CategoriesAPI.getCategories(fromCtx, true, false, function(err, fromCategories) {
     if (err) {
       log.error({'err': err}, 'Unable to retrieve the source categories');
       return callback(err);
     }
 
     // Get the categories in the destination course
-    CategoriesAPI.getCategories(toCtx, false, function(err, toCategories) {
+    CategoriesAPI.getCategories(toCtx, true, false, function(err, toCategories) {
       if (err) {
         log.error({'err': err}, 'Unable to retrieve the destination categories');
         return callback(err);
