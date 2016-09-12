@@ -29,9 +29,13 @@ log() {
   echo | ${logger}
 }
 
+log "DOCUMENT_ROOT (env variable) is path to Apache directory, where we copy SuiteC static files."
+
 # If we have missing requirements then echo usage info and exit.
 [[ $# -gt 0 ]] || { echo_usage; exit 0; }
 [[ "${DOCUMENT_ROOT}" ]] || { echo; echo "[ERROR] 'DOCUMENT_ROOT' is undefined"; echo_usage; exit 1; }
+
+log "DOCUMENT_ROOT is set to: ${DOCUMENT_ROOT}"
 
 # Default remote repository
 git_remote="origin"
@@ -91,7 +95,6 @@ log "The Git checkout is complete. Now remove the existing node_modules and re-i
 
 # npm install
 find node_modules/ -mindepth 1 -maxdepth 1 ! -name 'col-*' -exec rm -rf {} +
-npm install contextify@0.1.14
 npm install
 
 log "Remove the existing bower dependencies and re-install"
