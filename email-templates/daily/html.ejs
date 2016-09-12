@@ -138,13 +138,13 @@ activities.forEach(function(activity) {
                 <%
                   if (activity.type === 'asset_comment') {
                     var assetLink = course.assetlibrary_url + '?col_asset=' + activity.asset.id;
-                    var commenters = _.pluck(activity.asset.comments, 'user');
+                    var commenters = _.map(activity.asset.comments, 'user');
                     var summaryActors = getSummaryActors(commenters, user);
                 -%>
                     <%= summaryActors %> <a href="<%= assetLink %>">commented</a> on your asset <a href="<%= assetLink %>"><%= activity.asset.title %></a>.
                 <% } else if (activity.type === 'asset_comment_reply') {
                     var assetLink = course.assetlibrary_url + '?col_asset=' + activity.asset.id;
-                    var commenters = _.pluck(activity.asset.comments, 'user');
+                    var commenters = _.map(activity.asset.comments, 'user');
                     var summaryActors = getSummaryActors(commenters, user);
                 -%>
                     <%= summaryActors %> <a href="<%= assetLink %>">replied</a> to your comment on the asset <a href="<%= assetLink %>"><%= activity.asset.title %></a>.

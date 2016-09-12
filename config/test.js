@@ -32,7 +32,7 @@ module.exports = {
     "dropOnStartup": true
   },
   "log": {
-    "level": "trace",
+    "level": "error",
     "stream": "logs/test.log"
   },
   "canvasPoller": {
