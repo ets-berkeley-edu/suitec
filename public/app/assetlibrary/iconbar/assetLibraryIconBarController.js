@@ -57,7 +57,7 @@
      * @return {Boolean}        `true` if the user is a collaborator, `false` otherwise
      */
     $scope.isAssetCollaborator = function() {
-      if ($scope.me && $scope.asset && !_.find($scope.asset.users, {'id': $scope.me.id})) {
+      if ($scope.me && $scope.asset && !_.findWhere($scope.asset.users, {'id': $scope.me.id})) {
         return false;
       } else {
         return true;

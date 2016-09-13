@@ -148,7 +148,7 @@
      */
     var canManageAsset = $scope.canManageAsset = function() {
       if ($scope.asset && $scope.me) {
-        return ($scope.me.is_admin || _.find($scope.asset.users, {'id': $scope.me.id}));
+        return ($scope.me.is_admin || _.findWhere($scope.asset.users, {'id': $scope.me.id}));
       }
     };
 
