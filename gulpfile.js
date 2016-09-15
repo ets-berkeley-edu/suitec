@@ -252,7 +252,7 @@ gulp.task('csslint', function() {
       'overqualified-elements': false,
       'qualified-headings': false
     }))
-    .pipe(csslint.formatter());
+    .pipe(csslint.reporter());
 });
 
 /**
