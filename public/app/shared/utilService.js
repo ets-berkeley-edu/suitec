@@ -27,15 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function(analyticsService, $location, $q, $timeout) {
-
-    // Hide the vertical toolbar when the tool is embedded in an iFrame. At that point, the scrolling
-    // script injected in the parent window will ensure that the iFrame is always as high as its content
-    // TODO: Whiteboards are currently excluded from this rule as there is an element below the whiteboard
-    // that takes up space. This should be fixed and whiteboards should follow this rule
-    if (top != self || $location.path().indexOf('/whiteboards/') !== -1) {
-      document.documentElement.classList.add('embedded');
-    }
+  angular.module('collabosphere').service('utilService', function(analyticsService, $cookies, $location, $q, $timeout) {
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
@@ -57,6 +49,26 @@
       };
       return launchParams;
     };
+
+    /**
+     * Check cookie set on launch to see whether custom cross-window messaging is supported in this Canvas instance.
+     *
+     * @return {Boolean}                      Whether custom cross-window messaging is supported
+     */
+    var checkCustomMessagingSupport = function() {
+      var customMessagingCookieName = apiDomain + '_supports_custom_messaging';
+      return ($cookies.get(customMessagingCookieName) === 'true');
+    };
+    var isCustomMessagingSupported = checkCustomMessagingSupport();
+
+    // If custom messaging is supported, hide the vertical toolbar when the tool is embedded in an iframe. At that
+    // point, the scrolling script injected in the parent window will ensure that the iframe is always as high
+    // as its content.
+    // TODO: Whiteboards are currently excluded from this rule as there is an element below the whiteboard
+    // that takes up space. This should be fixed and whiteboards should follow this rule
+    if (isCustomMessagingSupported && (top != self || $location.path().indexOf('/whiteboards/') !== -1)) {
+      document.documentElement.classList.add('embedded');
+    }
 
     /**
      * Construct the full URL for a REST API request. All REST API requests should
@@ -84,8 +96,11 @@
     var resizeIFrame = function() {
       postIFrameMessage(function() {
         var height = document.body.offsetHeight;
+        // If the Canvas instance supports custom cross-window messaging, send our custom 'changeParent' event; otherwise use
+        // the standard Canvas event.
+        var subject = isCustomMessagingSupported ? 'changeParent' : 'lti.frameResize';
         return {
-          'subject': 'changeParent',
+          'subject': subject,
           'height': height
         };
       });
@@ -103,14 +118,25 @@
     var scrollToTop = function() {
       // Always scroll the current window to the top
       window.scrollTo(0, 0);
-      // When running Collabosphere as a BasicLTI tool, also scroll
-      // the parent window to the top
-      postIFrameMessage(function() {
-        return {
-          'subject': 'changeParent',
-          'scrollToTop': true
-        };
-      });
+      // When running Collabosphere as a BasicLTI tool, also scroll the parent window to the top.
+      if (window.parent) {
+        // Use our custom 'changeParent' cross-window event, if the hosting Canvas instance supports it.
+        if (isCustomMessagingSupported) {
+          postIFrameMessage(function() {
+            return {
+              'subject': 'changeParent',
+              'scrollToTop': true
+            };
+          });
+        // Otherwise, use the standard Canvas event.
+        } else {
+          postIFrameMessage(function() {
+            return {
+              'subject': 'lti.scrollToTop'
+            };
+          });
+        }
+      }
     };
 
     /**
@@ -121,16 +147,18 @@
      * @param  {Number}           position            The vertical scroll position to scroll to
      */
     var scrollTo = function(position) {
-      // When running Collabosphere as a BasicLTI tool, scroll the parent window
-      if (window.parent) {
+      // When running Collabosphere as a BasicLTI tool, scroll the parent window via our custom 'changeParent'
+      // event, if the hosting Canvas instance supports it.
+      if (window.parent && isCustomMessagingSupported) {
         postIFrameMessage(function() {
           return {
             'subject': 'changeParent',
             'scrollTo': position
           };
         });
-      // Otherwise, scroll the current window
-      } else {
+      }
+      // Otherwise, scroll the current window.
+      if (!window.parent) {
         window.scrollTo(0, position);
       }
     };
@@ -144,8 +172,9 @@
      */
     var getScrollInformation = function() {
       var deferred = $q.defer();
-      // When running Collabosphere as a BasicLTI tool, request the scroll position of the parent window
-      if (window.parent) {
+      // When running Collabosphere as a BasicLTI tool, request the scroll position of the parent window via cross-window
+      // messaging, if the hosting Canvas instance supports it.
+      if (window.parent && isCustomMessagingSupported) {
         postIFrameMessage(function() {
           return {
             'subject': 'getScrollInformation'
@@ -187,6 +216,11 @@
      * @param  {Object}     callback.data     The Collabosphere data that's present in the parent's URL
      */
     var getParentUrlData = function(callback) {
+      // This functionality requires our custom 'getParent' cross-window event to be supported in the hosting Canvas instance.
+      if (!isCustomMessagingSupported) {
+        return callback({});
+      }
+
       postIFrameMessage(function() {
         return {
           'subject': 'getParent'
@@ -218,6 +252,11 @@
      * @param  {Object}  data    The data for the parent's hash container. Each key will be prefixed with `col_`. For example, `{'user': 1, 'category': 42}` would be serialized to `col_user=1&col_category=42`
      */
     var setParentHash = function(data) {
+      // This functionality requires our custom 'setParentHash' cross-window event to be supported in the hosting Canvas instance.
+      if (!isCustomMessagingSupported) {
+        return;
+      }
+
       if (window.parent) {
         var hash = [];
         _.each(data, function(val, key) {

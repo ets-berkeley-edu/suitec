@@ -55,8 +55,8 @@
         ExpiresDefault "access plus 1 year"
     </LocationMatch>
 
-    # Don't cache the root HTML pages or the bookmarklet init script
-    <LocationMatch "^(/assets/js/bookmarklet-init.js|/bookmarklet.html)">
+    # Don't cache the root HTML pages or public scripts
+    <LocationMatch "^(/assets/js/|/bookmarklet.html)">
         <IfModule mod_headers.c>
              Header unset ETag
              Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"

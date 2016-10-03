@@ -77,6 +77,14 @@ gulp.task('copyBookmarkletFiles', function() {
 });
 
 /**
+ * Copy Canvas customization code. Do not version or minify, since this code serves as a public reference.
+ */
+gulp.task('copyCanvasCustomization', function() {
+  return gulp.src('public/assets/js/canvas-customization.js', {'base': 'public'})
+    .pipe(gulp.dest('target'));
+});
+
+/**
  * Copy the bookmarklet dependencies to the build directory
  */
 gulp.task('minifyBookmarkletFiles', ['copyBookmarkletFiles'], function() {
@@ -227,7 +235,7 @@ gulp.task('replaceImages', ['optimizeImages'], function() {
  * Create a build
  */
 gulp.task('build', function() {
-  return runSequence('clean', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'replaceImages', 'minifyViewer', 'copyViewerAssets');
+  return runSequence('clean', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'copyCanvasCustomization', 'replaceImages', 'minifyViewer', 'copyViewerAssets');
 });
 
 /**
