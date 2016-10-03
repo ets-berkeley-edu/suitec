@@ -71,7 +71,8 @@
     $scope.popupBlocked = false;
     $scope.deepLinkedWhiteboard = {};
 
-    // Check whether a whiteboard was deep linked (from an email or the syllabus)
+    // Check whether a whiteboard was deep linked (from an email or the syllabus).
+    // NOTE: Deep linking to whiteboards requires our custom 'getParentUrlData' event in the hosting Canvas instance.
     if (window.parent) {
       utilService.getParentUrlData(function(data) {
         if (data.whiteboard) {
