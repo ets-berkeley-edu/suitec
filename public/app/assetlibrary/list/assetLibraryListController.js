@@ -76,6 +76,8 @@
     var getAssets = $scope.getAssets = function() {
       // Keep track of the search options in the parent container's hash to allow
       // for deep linking to a search
+      // NOTE: For deep linking to work, our custom 'getParentUrlData' and 'setParentHash' cross-window events must be supported
+      // in the hosting Canvas instance.
       utilService.setParentHash($scope.searchOptions);
 
       // Indicate that no further REST API requests should be made
@@ -117,6 +119,7 @@
         // Resize the iFrame the Asset Library is being run in
         utilService.resizeIFrame();
         // Restore the scroll position to the position the list was in previously
+        // NOTE: This functionality requires our custom 'scrollTo' event to be supported in the hosting Canvas instance.
         utilService.scrollTo(scrollPosition);
         // Indicate that more results can be loaded
         $scope.list.ready = true;
