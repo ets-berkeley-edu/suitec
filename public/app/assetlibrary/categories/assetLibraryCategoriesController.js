@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryCategoriesController', function(assetLibraryCategoriesFactory, assetLibraryCourseFactory, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryCategoriesController', function(assetLibraryCategoriesFactory, $scope) {
 
     // Variable that will keep track of the categories in the current course
     $scope.categories = null;
@@ -35,24 +35,12 @@
     // Variable that will keep track of the new category
     $scope.newCategory = null;
 
-    // Variable that will keep track whether assignments are synced in the current course
-    $scope.isAssignmentSyncEnabled = null;
-
     /**
      * Get the categories for the current course
      */
     var getCategories = function() {
-      assetLibraryCategoriesFactory.getCategories().success(function(categories) {
+      assetLibraryCategoriesFactory.getCategories(true).success(function(categories) {
         $scope.categories = categories;
-      });
-    };
-
-    /**
-     * Get the assignment sync status for the current course
-     */
-    var getAssignmentSyncStatus = function() {
-      assetLibraryCourseFactory.getCourse().success(function(course) {
-        $scope.isAssignmentSyncEnabled = !!course.enable_assignment_sync_from;
       });
     };
 
@@ -90,10 +78,19 @@
      * @param  {Category}       category          The category that is being edited
      */
     var editCategory = $scope.editCategory = function(category) {
-      assetLibraryCategoriesFactory.editCategory(category.id, category.newTitle).success(function() {
+      assetLibraryCategoriesFactory.editCategory(category.id, category.newTitle, category.visible).success(function() {
         category.title = category.newTitle;
         toggleEditCategory(category);
       });
+    };
+
+    /**
+     * Edit an assignment category
+     *
+     * @param  {Category}       category          The assignment category that is being edited
+     */
+    var editAssignmentCategory = $scope.editAssignmentCategory = function(category) {
+      assetLibraryCategoriesFactory.editCategory(category.id, category.title, category.visible);
     };
 
     /**
@@ -114,18 +111,6 @@
       }
     };
 
-    /**
-     * Update assignment sync status
-     */
-    var updateAssignmentSyncStatus = $scope.updateAssignmentSyncStatus = function() {
-      if ($scope.isAssignmentSyncEnabled) {
-        assetLibraryCourseFactory.enableAssignmentSync();
-      } else {
-        assetLibraryCourseFactory.disableAssignmentSync();
-      }
-    };
-
-    getAssignmentSyncStatus();
     getCategories();
 
   });

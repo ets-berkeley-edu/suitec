@@ -23,12 +23,13 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-.assetlibrary-assignment-sync-form {
-  margin-bottom: 30px;
-}
-
 .assetlibrary-categories-container {
   max-width: 600px;
+}
+
+.assetlibrary-categories-container h2,
+.assetlibrary-categories-container h3 {
+  margin-bottom: 15px;
 }
 
 .assetlibrary-categories-info {
@@ -72,4 +73,11 @@
   font-size: 18px;
   font-weight: 500;
   margin-top: 5px;
+}
+
+.assetlibrary-categories-list .col-actions .assetlibrary-categories-assignment-checkbox {
+  font-size: 18px;
+  height: 18px;
+  margin-top: 3px;
+  width: 18px;
 }

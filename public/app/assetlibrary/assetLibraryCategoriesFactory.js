@@ -32,17 +32,22 @@
     /**
      * Get the categories for the current course
      *
-     * @return {Promise<Category[]>}              $http promise returning the categories for the current course
+     * @param  {Boolean}              includeInvisible      Whether invisible categories should be included
+     * @return {Promise<Category[]>}                        $http promise returning the categories for the current course
      */
-    var getCategories = function() {
-      return $http.get(utilService.getApiUrl('/categories'));
+    var getCategories = function(includeInvisible) {
+      var url = '/categories';
+      if (includeInvisible) {
+        url += '?includeInvisible=true';
+      }
+      return $http.get(utilService.getApiUrl(url));
     };
 
     /**
      * Create a new category
      *
-     * @param  {String}               title       The name of the category
-     * @return {Promise<Category>}                $http promise returning the created category
+     * @param  {String}               title                 The name of the category
+     * @return {Promise<Category>}                          $http promise returning the created category
      */
     var createCategory = function(title) {
       var category = {
@@ -54,13 +59,15 @@
     /**
      * Edit a category
      *
-     * @param  {Number}               id          The id of the category that is being edited
-     * @param  {String}               title       The updated category name
-     * @return {Promise<Category>}                $http promise returning the updated category
+     * @param  {Number}               id                    The id of the category that is being edited
+     * @param  {String}               title                 The updated category name
+     * @param  {Boolean}              visible               Whether assets associated to this category should be visible in the Asset Library
+     * @return {Promise<Category>}                          $http promise returning the updated category
      */
-    var editCategory = function(id, title) {
+    var editCategory = function(id, title, visible) {
       var update = {
-        'title': title
+        'title': title,
+        'visible': visible
       };
       return $http.post(utilService.getApiUrl('/categories/' + id), update);
     };
@@ -68,8 +75,8 @@
     /**
      * Delete a category
      *
-     * @param  {Number}               id          The id of the category that is being deleted
-     * @return {Promise}                          $http promise
+     * @param  {Number}               id                    The id of the category that is being deleted
+     * @return {Promise}                                    $http promise
      */
     var deleteCategory = function(id) {
       return $http.delete(utilService.getApiUrl('/categories/' + id));

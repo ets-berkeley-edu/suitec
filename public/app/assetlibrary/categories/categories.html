@@ -1,17 +1,14 @@
-<div class="assetlibrary-categories-container">
+<div class="clearfix assetlibrary-categories-container">
 
   <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
 
   <h2>Manage Categories</h2>
 
-  <p class="assetlibrary-categories-info">Categories are used to tag items. You can create new categories below.</p>
+  <p class="assetlibrary-categories-info">Categories can be used to tag items and are a great way of classifying items within the Asset Library. The Asset Library can also be filtered by category.</p>
 
-  <p class="assetlibrary-categories-info">You can also choose to automatically sync assignments to the Asset Library. If you enable automatic syncing, any new student assignment submissions will appear in the Asset Library for review and commenting by all course participants, and assignment names will be added to the list of categories below.</p>
+  <h3>Custom Categories</h3>
 
-  <form class="assetlibrary-assignment-sync-form">
-    <input type="checkbox" data-ng-model="isAssignmentSyncEnabled" data-ng-change="updateAssignmentSyncStatus()"></input>
-    Automatically sync assignments to the Asset Library
-  </form>
+  <p class="assetlibrary-categories-info">Create custom categories that can can be used to tag items:</p>
 
   <form class="assetlibrary-categories-create-form" name="assetlibraryCreateCategoryForm" data-ng-submit="assetlibraryCreateCategoryForm.$valid && createCategory(newCategory)" novalidate>
     <div class="form-group" data-ng-class="{'has-error': !assetlibraryCreateCategoryForm.$submitted && assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$touched && assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$invalid}">
@@ -29,8 +26,8 @@
     </div>
   </form>
 
-  <ul class="assetlibrary-categories-list">
-    <li data-ng-repeat="category in categories">
+  <ul class="assetlibrary-categories-list" data-ng-show="filteredCustomCategories.length > 0">
+    <li data-ng-repeat="category in filteredCustomCategories = (categories | filter: {canvas_assignment_id: '!'})">
       <div class="row"  data-ng-if="!category.editing">
         <div class="col-xs-9">
           <span class="col-threedots" data-ng-bind="category.title"></span>
@@ -65,5 +62,36 @@
       </form>
     </li>
   </ul>
+  <div class="alert alert-info" data-ng-if="filteredCustomCategories.length === 0">
+    There are no custom categories.
+  </div>
+
+  <h3>Assignments</h3>
+
+  <p class="assetlibrary-categories-info">You can also choose to automatically sync the assignment submissions for certain assignments to the Asset Library. In this case, all student assignment submissions for these assignments will appear in the Asset Library for review and commenting by all students.</p>
+
+  <ul class="assetlibrary-categories-list" data-ng-show="filteredAssignmentCategories.length > 0">
+    <li data-ng-repeat="category in filteredAssignmentCategories = (categories | filter: {canvas_assignment_id: ''})">
+      <div class="row"  data-ng-if="!category.editing">
+        <div class="col-xs-9">
+          <span class="col-threedots" data-ng-bind="category.title"></span>
+          <small>
+            <ng-pluralize count="category.asset_count" when="{'0': 'No submissions', 'one': '1 submission', 'other': '{} submissions'}"></ng-pluralize>
+          </small>
+        </div>
+        <div class="text-right col-xs-3 col-actions">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" class="assetlibrary-categories-assignment-checkbox" title="Synchronize this assignment" data-ng-model="category.visible" data-ng-change="editAssignmentCategory(category)">
+              <span class="sr-only">Synchronize this assignment</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <div class="alert alert-info" data-ng-if="filteredAssignmentCategories.length === 0">
+    There are no assignments.
+  </div>
 
 </div>
