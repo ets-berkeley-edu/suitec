@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('assetLibraryCourseFactory', function(utilService, $http) {
+  angular.module('collabosphere').factory('courseFactory', function(utilService, $http) {
 
     /**
      * Get attributes for a course
@@ -56,10 +56,38 @@
       return $http.post(utilService.getApiUrl('/course/disable_sync'));
     };
 
+    /**
+     * Update the daily notification settings for a course
+     *
+     * @param  {Boolean}        enabled         Whether daily notifications should be enabled for the course
+     * @return {Promise}                        $http promise
+     */
+    var updateDailyNotifications = function(enabled) {
+      var update = {
+        'enabled': enabled
+      };
+      return $http.post(utilService.getApiUrl('/course/daily_notifications'), update);
+    };
+
+    /**
+     * Update the weekly notification settings for a course
+     *
+     * @param  {Boolean}        enabled         Whether weekly notifications should be enabled for the course
+     * @return {Promise}                        $http promise
+     */
+    var updateWeeklyNotifications = function(enabled) {
+      var update = {
+        'enabled': enabled
+      };
+      return $http.post(utilService.getApiUrl('/course/weekly_notifications'), update);
+    };
+
     return {
       'getCourse': getCourse,
       'enableAssignmentSync': enableAssignmentSync,
-      'disableAssignmentSync': disableAssignmentSync
+      'disableAssignmentSync': disableAssignmentSync,
+      'updateDailyNotifications': updateDailyNotifications,
+      'updateWeeklyNotifications': updateWeeklyNotifications
     };
 
   });

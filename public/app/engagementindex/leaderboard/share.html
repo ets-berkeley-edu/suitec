@@ -11,4 +11,22 @@
       <button type="submit" class="btn btn-primary">Continue</button>
     </div>
   </form>
+
+  <div data-ng-if="me.is_admin">
+    <h3>Notification emails</h3>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" id="daily-notifications-enabled" data-ng-model="course.enable_daily_notifications" data-ng-change="changeDailyNotifications()">
+        Send daily emails to users with activity in the course
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" id="weekly-notifications-enabled" data-ng-model="course.enable_weekly_notifications" data-ng-change="changeWeeklyNotifications()">
+        Send weekly activity summary emails to all users in the course
+      </label>
+    </div>
+  </div>
 </div>
+
+
