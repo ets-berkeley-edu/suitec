@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryCategoriesController', function(assetLibraryCategoriesFactory, assetLibraryCourseFactory, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryCategoriesController', function(assetLibraryCategoriesFactory, courseFactory, $scope) {
 
     // Variable that will keep track of the categories in the current course
     $scope.categories = null;
@@ -51,7 +51,7 @@
      * Get the assignment sync status for the current course
      */
     var getAssignmentSyncStatus = function() {
-      assetLibraryCourseFactory.getCourse().success(function(course) {
+      courseFactory.getCourse().success(function(course) {
         $scope.isAssignmentSyncEnabled = !!course.enable_assignment_sync_from;
       });
     };
@@ -119,9 +119,9 @@
      */
     var updateAssignmentSyncStatus = $scope.updateAssignmentSyncStatus = function() {
       if ($scope.isAssignmentSyncEnabled) {
-        assetLibraryCourseFactory.enableAssignmentSync();
+        courseFactory.enableAssignmentSync();
       } else {
-        assetLibraryCourseFactory.disableAssignmentSync();
+        courseFactory.disableAssignmentSync();
       }
     };
 
