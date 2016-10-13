@@ -137,7 +137,12 @@ var updateAssetPreviewsForWhiteboard = function(whiteboard, callback) {
         // Nothing to do if this element is not sourced from an asset.
         return done();
       } else {
-        var matchingAsset = _.find(assets, ['id', assetId]);
+        var matchingAsset = _.find(assets, {'id': assetId});
+
+        if (!matchingAsset) {
+          errors[assetId] = 'Asset not found';
+          return done();
+        }
 
         var imageUrl = _.get(matchingAsset, 'image_url');
         var previewStatus = _.get(matchingAsset, 'preview_status');
