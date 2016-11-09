@@ -1,6 +1,6 @@
-# Collabosphere
+# SuiteC
 
-Collabosphere is a collection of Instructure Canvas Basic LTI tools, allowing for innovative functionality to be added to any course site:
+SuiteC is a collection of Instructure Canvas Basic LTI tools, allowing for innovative functionality to be added to any course site:
 
 #### Asset Library
 
@@ -20,9 +20,12 @@ Note: this documentation is currently limited to OS X.
 
 ### PostgresSQL
 
-Collabosphere uses PostgresSQL as its database. In order to set up PostgresSQL and the required database and database users, the following steps should be taken:
+SuiteC uses [PostgreSQL](http://www.postgresql.org). Set up the required database and users:
 
 ```
+# Update Homebrew
+brew update
+
 # Install postgres
 brew install postgresql
 
@@ -30,25 +33,21 @@ brew install postgresql
 postgres -D /usr/local/var/postgres
 
 # Create a database and user
-psql template1
-  template1=# CREATE USER collabosphere WITH PASSWORD 'collabosphere';
-    CREATE ROLE
-  template1=# CREATE DATABASE collabosphere;
-    CREATE DATABASE
-  template1=# CREATE DATABASE collabospheretest;
-    CREATE DATABASE
-  template1=# GRANT ALL PRIVILEGES ON DATABASE collabosphere TO collabosphere;
-    GRANT
-  template1=# GRANT ALL PRIVILEGES ON DATABASE collabospheretest TO collabosphere;
-    GRANT
+createuser collabosphere --no-createdb --no-superuser --no-createrole --pwprompt
+
+Enter password for new role:  collabosphere
+Enter it again:  collabosphere
+
+createdb collabosphere --owner=collabosphere
+createdb collabospheretest --owner=collabosphere
 ```
 
-### Collabosphere
+### SuiteC
 
-In order to install and start the Collabosphere app server, the following steps should be taken:
+Install and start SuiteC:
 
 ```
-# Clone the Collabosphere codebase
+# Clone the SuiteC codebase
 git clone git://github.com/ets-berkeley-edu/collabosphere.git
 ```
 
@@ -58,7 +57,8 @@ git clone git://github.com/ets-berkeley-edu/collabosphere.git
 
 Ensure you have the following packages installed and available in your `$PATH`:
 
- * Node.JS and NPM
+ * [Node.js](http://nodejs.org)
+ * NPM
  * Cairo and all its dependencies. On RHEL systems the following packages have to be installed:
    - cairo
    - cairo-devel
@@ -74,14 +74,19 @@ Ensure you have the following packages installed and available in your `$PATH`:
 
 ## Node modules
 
-Depending on your X11 installation you might have to explicitly set the `PKG_CONFIG` environment variable
+**Optional:** Set explicit `PKG_CONFIG_PATH` in your BASH `.profile` per, for example, X11 installation:
 
 ```
 export PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
+```
+
+### Install
+
+```
 npm install
 ```
 
-# Run Collabosphere
+# Run SuiteC
 
 ```
 node app
@@ -89,11 +94,11 @@ node app
 
 ### Canvas synchronization
 
-By default, Collabosphere will poll the Canvas API for any new activities that are included in the
+By default, SuiteC will poll the Canvas API for any new activities that are included in the
 engagement index. Whether polling should be enabled and how often it should run can be configured
 in the `canvasPoller` section of the configuration file.
 
-You will need to configure a Canvas API key for a user, preferably a global Canvas administrator, that is able to list the:
+Configure a Canvas API key for a user, preferably a global Canvas administrator, that is able to list the:
  - users
  - assignments *and* all their submissions
  - discussion
@@ -101,8 +106,8 @@ You will need to configure a Canvas API key for a user, preferably a global Canv
 ### Production build
 
 The production build will:
- - Concatenate and revision all vendor files (angular, bootstrap, etc..)
- - Concatenate and revision all application javascript files
+ - Concatenate and revision all vendor files (AngularJS, Bootstrap, etc.)
+ - Concatenate and revision all application JavaScript files
  - Concatenate and revision all CSS files
  - Concatenate and revision all HTML fragments
  - Optimize and revision images
