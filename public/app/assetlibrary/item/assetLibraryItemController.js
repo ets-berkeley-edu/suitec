@@ -58,6 +58,8 @@
     });
 
     // Add the asset id to the parent container's to allow for deep linking to the asset
+    // NOTE: For deep linking to work, our custom 'getParentUrlData' and 'setParentHash' cross-window events must be supported
+    // in the hosting Canvas instance.
     utilService.setParentHash({'asset': assetId});
 
     /**
@@ -299,6 +301,8 @@
      * Restore the asset library search options when navigating back to the asset library list. As navigating
      * back to the asset library list doesn't trigger a new search, the easiest solution is to restore the hash
      * value here
+     * NOTE: This functionality requires our custom 'getParentUrlData' and 'setParentHash' cross-window events to be
+     * supported in the hosting Canvas instance.
      */
     var backToAssetLibrary = $scope.backToAssetLibrary = function() {
       utilService.setParentHash($scope.$parent.searchOptions);

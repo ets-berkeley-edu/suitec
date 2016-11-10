@@ -33,7 +33,7 @@ var fs = require('fs');
 var gulp = require('gulp');
 var imagemin = require('gulp-imagemin');
 var jscs = require('gulp-jscs');
-var minifyHtml = require('gulp-minify-html');
+var minifyHtml = require('gulp-htmlmin');
 var mocha = require('gulp-mocha');
 var ngAnnotate = require('gulp-ng-annotate');
 var rev = require('gulp-rev');
@@ -74,6 +74,14 @@ gulp.task('copyBookmarkletFiles', function() {
       .pipe(minifyHtml({'empty': true}))
       .pipe(gulp.dest('target'))
   );
+});
+
+/**
+ * Copy Canvas customization code. Do not version or minify, since this code serves as a public reference.
+ */
+gulp.task('copyCanvasCustomization', function() {
+  return gulp.src('public/assets/js/canvas-customization.js', {'base': 'public'})
+    .pipe(gulp.dest('target'));
 });
 
 /**
@@ -227,7 +235,7 @@ gulp.task('replaceImages', ['optimizeImages'], function() {
  * Create a build
  */
 gulp.task('build', function() {
-  return runSequence('clean', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'replaceImages', 'minifyViewer', 'copyViewerAssets');
+  return runSequence('clean', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'copyCanvasCustomization', 'replaceImages', 'minifyViewer', 'copyViewerAssets');
 });
 
 /**

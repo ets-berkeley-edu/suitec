@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('LeaderboardController', function(analyticsService, me, userFactory, utilService, $scope) {
+  angular.module('collabosphere').controller('LeaderboardController', function(analyticsService, me, courseFactory, userFactory, utilService, $scope) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -72,6 +72,13 @@
           if ($scope.me.share_points) {
             drawBoxPlot();
           }
+        });
+      }
+
+      // Admins also get course notification settings
+      if ($scope.me.is_admin) {
+        courseFactory.getCourse().success(function(course) {
+          $scope.course = course;
         });
       }
     };
@@ -331,6 +338,28 @@
       // splash screens, so their changes can be saved straight away
       if ($scope.me.share_points !== null || $scope.me.is_admin) {
         $scope.saveSharePoints();
+      }
+    };
+
+    /**
+     * Change daily notification settings for the course.
+     */
+    var changeDailyNotifications = $scope.changeDailyNotifications = function() {
+      if ($scope.me.is_admin) {
+        courseFactory.updateDailyNotifications($scope.course.enable_daily_notifications).then(function() {
+          getLeaderboard();
+        });
+      }
+    };
+
+    /**
+     * Change weekly notification settings for the course.
+     */
+    var changeWeeklyNotifications = $scope.changeWeeklyNotifications = function() {
+      if ($scope.me.is_admin) {
+        courseFactory.updateWeeklyNotifications($scope.course.enable_weekly_notifications).then(function() {
+          getLeaderboard();
+        });
       }
     };
 
