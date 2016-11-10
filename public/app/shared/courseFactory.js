@@ -39,24 +39,6 @@
     };
 
     /**
-     * Enable assignment sync for a course
-     *
-     * @return {Promise}                          $http promise
-     */
-    var enableAssignmentSync = function() {
-      return $http.post(utilService.getApiUrl('/course/enable_sync'));
-    };
-
-    /**
-     * Disable assignment sync for a course
-     *
-     * @return {Promise}                          $http promise
-     */
-    var disableAssignmentSync = function() {
-      return $http.post(utilService.getApiUrl('/course/disable_sync'));
-    };
-
-    /**
      * Update the daily notification settings for a course
      *
      * @param  {Boolean}        enabled         Whether daily notifications should be enabled for the course
@@ -84,8 +66,6 @@
 
     return {
       'getCourse': getCourse,
-      'enableAssignmentSync': enableAssignmentSync,
-      'disableAssignmentSync': disableAssignmentSync,
       'updateDailyNotifications': updateDailyNotifications,
       'updateWeeklyNotifications': updateWeeklyNotifications
     };
