@@ -68,12 +68,31 @@
         // Variable that will keep track of whether the chat/online sidebar is expanded
         $scope.sidebarExpanded = $scope.readonly ? false : true;
 
+        // Variable that keeps track of the connection failure notification
+        $scope.connectionFailureNotification = $alert({
+          'container': '#whiteboards-board-notifications',
+          'content': 'An error occurred when trying to connect to the server.',
+          'dismissable': false,
+          'keyboard': true,
+          'show': false,
+          'templateUrl': 'whiteboards-notification-template',
+          'type': 'danger'
+        });
+
         // Open a websocket connection for real-time communication with the server (chat + whiteboard changes) when
         // the whiteboard is rendered in edit mode. The course ID and API domain are passed in as handshake query parameters
         var launchParams = utilService.getLaunchParams();
         if (!$scope.readonly) {
           var socket = io(window.location.origin, {
             'query': 'api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&whiteboard_id=' + $scope.whiteboard.id
+          });
+
+          socket.on('connect', function() {
+            $scope.connectionFailureNotification.hide();
+          });
+
+          socket.on('connect_error', function() {
+            $scope.connectionFailureNotification.show();
           });
         }
 
@@ -1894,9 +1913,10 @@
               var assetLibraryLink = '/assetlibrary?api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&tool_url=' + launchParams.toolUrl;
 
               // Show a notification indicating the whiteboard was exported
-              var myAlert = $alert({
+              $alert({
                 'container': '#whiteboards-board-notifications',
                 'content': 'This board has been successfully added to the <strong>Asset Library</strong>.',
+                'dismissable': true,
                 'duration': 5,
                 'keyboard': true,
                 'show': true,
