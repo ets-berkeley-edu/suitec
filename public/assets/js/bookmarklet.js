@@ -298,14 +298,15 @@
       var $img = $(this);
 
       // Ignore inline images
-      if (!$img.attr('src') || $img.attr('src').indexOf('data:') === 0) {
+      var src = $img.attr('src') || $img.attr('data-default-src');
+      if (!src || src.indexOf('data:') === 0) {
         return;
       }
 
       // Ensure that the image is larger than the minimum dimensions
       if (this.naturalHeight > MIN_DIMENSIONS && this.naturalWidth > MIN_DIMENSIONS) {
         var img = {
-          'url': $img[0].src,
+          'url': src,
           // Try to extract a meaningful title
           'title': $img.attr('alt')
         };
