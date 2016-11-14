@@ -4,15 +4,19 @@
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
-    <div class="col-xs-{{ asset.can_delete ? 5 : (canManageAsset() ? 8 : 12) }} col-sm-{{ asset.can_delete ? 7 : (canManageAsset() ? 10 : 12) }}">
+    <div class="col-xs-{{ asset.can_delete ? 5 : 7 }} col-sm-{{ asset.can_delete ? 5 : 7 }}">
       <h2>{{asset.title}}</h2>
     </div>
 
     <!-- EDIT DETAILS -->
-    <div class="col-xs-{{ asset.can_delete ? 7 : 4 }} col-sm-{{ asset.can_delete ? 5 : 2 }} text-right" data-ng-show="canManageAsset()">
-      <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default">
+    <div class="col-xs-{{ asset.can_delete ? 7 : 5 }} col-sm-{{ asset.can_delete ? 7 : 5 }} text-right">
+      <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default" data-ng-if="canManageAsset()">
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
+      </a>
+      <a class="btn btn-default" data-ng-href="{{asset.download_url}}" target="_blank" data-ng-if="asset.type === 'file' && asset.download_url">
+        <i class="fa fa-download"></i>
+        <span>Download asset</span>
       </a>
       <button class="btn btn-default" data-ng-click="deleteAsset()" data-ng-if="asset.can_delete">
         <i class="fa fa-trash"></i>
@@ -26,7 +30,7 @@
     <div data-ng-if="asset.type !== 'whiteboard'">
 
       <!-- COMPLETED PREVIEWS -->
-      <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-show="asset.preview_status === 'done'">
+      <div class="text-center assetlibrary-item-preview" id="assetlibrary-item-preview" data-ng-if="asset.preview_status === 'done'">
         <!-- Documents -->
         <div data-ng-if="asset.type === 'file' && asset.pdf_url !== null">
           <iframe class="preview-document" width="100%" height="800" data-ng-src="{{asset.embedUrl}}" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allowscriptaccess="always" scrolling="no"></iframe>
@@ -57,20 +61,12 @@
       <div class="text-center assetlibrary-item-preview-message" data-ng-if="asset.preview_status === 'pending'">
         <i class="fa" data-ng-class="{'fa-file-o': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
         <p><i class="fa fa-spinner fa-spin"></i> preparing a preview...</p>
-        <a data-ng-href="{{asset.download_url}}" data-ng-if="asset.type === 'file'" target="_blank" class="btn btn-default">
-          <i class="fa fa-download"></i>
-          <span>Download</span>
-        </a>
       </div>
 
       <!-- UNSUPPORTED OR FAILED PREVIEWS -->
       <div class="text-center assetlibrary-item-preview-message" data-ng-if="asset.preview_status === 'unsupported' || asset.preview_status === 'error'">
         <i class="fa" data-ng-class="{'fa-file-o': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
         <p>No preview available.</p>
-        <a data-ng-href="{{asset.download_url}}" data-ng-if="asset.type === 'file'" target="_blank" class="btn btn-default">
-          <i class="fa fa-download"></i>
-          <span>Download</span>
-        </a>
         <a data-ng-href="{{asset.url}}" data-ng-if="asset.type === 'link'" target="_blank" class="btn btn-default">
           <i class="fa fa-external-link"></i>
           <span>Visit website</span>
