@@ -1,22 +1,36 @@
 # SuiteC
 
-SuiteC is a collection of Instructure Canvas Basic LTI tools, allowing for innovative functionality to be added to any course site:
+SuiteC is a collection of Instructure Canvas Basic LTI tools, allowing for innovative functionality to be added to any course site. A technical overview can be found in [SuiteC architectural diagram](docs/SuiteC-architectural-diagram.pdf) (PDF).
 
-#### Asset Library
+### Asset Library
 
 The Asset Library is a place where students and instructors can collect relevant materials for the course. The materials can  be seen by the other students in the class and can be discussed, liked, disliked, etc.
 
-#### Whiteboarding Tool
+### Whiteboarding Tool
 
 The Whiteboarding Tool allows for students to collaboratively work on whiteboards. Whiteboards can be used to remix assets from the Asset Library, create mindmaps, provide feedback, etc.
 
-#### Engagement Index
+### Engagement Index
 
 The Engagement Index provides a leaderboard based on the student's activity in the course. The Engagement Index will record activities such as discussion posts, likes, comments, etc.
 
-## Development Environment
+# Set Up Your Dev Environment
 
-Note: this documentation is currently limited to OS X.
+**Note:**
+ - These instructions are specific to Mac OS X.
+ - Typically, the steps in this section are done only once. The sections that follow (e.g., *Install*) will be repeated often.
+
+### Get the SuiteC source
+
+```
+git clone git://github.com/ets-berkeley-edu/collabosphere.git
+```
+
+## Dependencies
+
+### Apache
+
+Apache setup is covered in [SuiteC deployment instructions](docs/deployment.md).
 
 ### PostgresSQL
 
@@ -42,20 +56,9 @@ createdb collabosphere --owner=collabosphere
 createdb collabospheretest --owner=collabosphere
 ```
 
-### SuiteC
+### Node
 
-Install and start SuiteC:
-
-```
-# Clone the SuiteC codebase
-git clone git://github.com/ets-berkeley-edu/collabosphere.git
-```
-
-# Dependencies
-
-## Packages
-
-Ensure you have the following packages installed and available in your `$PATH`:
+Ensure you have the following packages installed and available in your `${PATH}`:
 
  * [Node.js](http://nodejs.org)
  * NPM
@@ -70,9 +73,7 @@ Ensure you have the following packages installed and available in your `$PATH`:
    - pangomm-devel
    - giflib-devel
 
-   Check out [the node-canvas installation wiki](https://github.com/Automattic/node-canvas/wiki/Installation---Fedora) for more information.
-
-## Node modules
+Check out [the node-canvas installation wiki](https://github.com/Automattic/node-canvas/wiki/Installation---Fedora) for more information.
 
 **Optional:** Set explicit `PKG_CONFIG_PATH` in your BASH `.profile` per, for example, X11 installation:
 
@@ -80,7 +81,11 @@ Ensure you have the following packages installed and available in your `$PATH`:
 export PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
 ```
 
-### Install
+## Configure SuiteC
+
+[Instructions on configuring SuiteC](docs/configuration.md)
+
+# Install SuiteC
 
 ```
 npm install
@@ -91,6 +96,8 @@ npm install
 ```
 node app
 ```
+
+# Notes
 
 ### Canvas synchronization
 
