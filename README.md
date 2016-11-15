@@ -30,7 +30,7 @@ git clone git://github.com/ets-berkeley-edu/collabosphere.git
 
 ### Apache
 
-Apache setup is covered in [SuiteC deployment instructions](docs/deployment.md).
+Apache setup is described in the [SuiteC configuration](docs/configuration.md) doc.
 
 ### PostgresSQL
 
