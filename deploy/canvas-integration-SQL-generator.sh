@@ -15,7 +15,7 @@ to_boolean() {
 }
 
 generate_token() {
-  echo "$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'A-Za-z0-9\+\/\_' | fold -w 32 | head -n 1)"
+  echo "$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'A-Za-z0-9' | fold -w 32 | head -n 1)"
 }
 
 echo2() {
@@ -44,15 +44,15 @@ echo "The SQL targets the 'canvas' table."
 echo; echo "Let us begin..."; echo
 
 is_update="$(read_input 'Are you updating the LTI Key and Secret of an existing Canvas integration? [Y/n]')"
-canvas_api_domain="$(read_input 'What is the Canvas API domain?')"
+name="$(read_input 'Name of Canvas integration?')"
 
 if [[ "$(to_boolean ${is_update})" = 'true' ]]; then
-  sql_file="UPDATE-Canvas-LTI-tokens_${canvas_api_domain}.sql"
+  sql_file="UPDATE-Canvas-LTI-tokens_${name// /_}.sql"
 
-  is_optional='(Hit RETURN to exclude this column from UPDATE)'
+  is_optional='(Optional. Type RETURN to skip.)'
   api_key="$(read_input "Canvas API key? ${is_optional}" 1)"
   use_https="$(read_input "Use HTTPS? [Y/n] ${is_optional}" 1)"
-  name="$(read_input "Name of Canvas integration? ${is_optional}" 1)"
+  canvas_api_domain="$(read_input "What is the Canvas API domain? ${is_optional}" 1)"
   logo="$(read_input "Logo URL? ${is_optional}" 1)"
   supports_custom_messaging="$(read_input "Partner supports Canvas customization? [Y/n] ${is_optional}" 1)"
 
@@ -63,7 +63,7 @@ SET
 SQL
   [ ! -z "${api_key}" ] && sql_prefix=$(printf "${sql_prefix}\n  api_key='${api_key}'")
   [ ! -z "${use_https}" ] && sql_prefix=$(printf "${sql_prefix}\n  use_https=$(to_boolean ${use_https})")
-  [ ! -z "${name}" ] && sql_prefix=$(printf "${sql_prefix}\n  name='${name}'")
+  [ ! -z "${canvas_api_domain}" ] && sql_prefix=$(printf "${sql_prefix}\n  canvas_api_domain='${canvas_api_domain}'")
   [ ! -z "${logo}" ] && sql_prefix=$(printf "${sql_prefix}\n  logo='${logo}'")
   [ ! -z "${supports_custom_messaging}" ] && sql_prefix=$(printf "${sql_prefix}\n  supports_custom_messaging=$(to_boolean ${supports_custom_messaging})")
 
@@ -72,14 +72,14 @@ SQL
   lti_key='$(generate_token)',
   lti_secret='$(generate_token)'
 WHERE
-  canvas_api_domain='${canvas_api_domain}'
+  name='${name}'
 SQL
 
 else
-  sql_file="INSERT-Canvas-LTI-data_${canvas_api_domain}.sql"
+  sql_file="INSERT-Canvas-LTI-data_${name// /_}.sql"
+  echo; canvas_api_domain="$(read_input 'What is the Canvas API domain?')"
   echo; api_key="$(read_input 'Canvas API key?')"
   echo; use_https="$(read_input 'Use HTTPS? [Y/n]')"
-  echo; name="$(read_input 'Name of Canvas integration?')"
   echo; logo="$(read_input 'Logo URL?')"
   echo; supports_custom_messaging="$(read_input 'Partner supports Canvas customization? [Y/n]')"
 
@@ -114,11 +114,14 @@ SQL
 
 fi
 
-echo; echo "The following SQL has been written to the file ${sql_file}."
-echo; echo "------------------------------"
+# NOTE: Writing the SQL to a file makes it easier for dev to run via psql.
 
-rm -f "${sql_file}" && echo "${sql}" | tee "${sql_file}"
+rm -f "${sql_file}"
 
-echo "------------------------------"; echo
+echo; echo "--"; echo
+echo "${sql}" | tee "${sql_file}"
+echo; echo "--"; echo
+
+echo; echo "The SQL above was written to ${sql_file}; use 'psql -f' to execute that file."; echo
 
 exit 0
