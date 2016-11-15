@@ -119,8 +119,6 @@
               <div data-ng-if="!asset.description">No description</div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-6 assetlibrary-item-metadata-column">
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Category</div>
             <div class="col-xs-9">
@@ -132,6 +130,8 @@
               <div data-ng-if="asset.categories.length === 0">No category</div>
             </div>
           </div>
+        </div>
+        <div class="col-sm-6 assetlibrary-item-metadata-column">
           <div class="row">
             <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Source</div>
             <div class="col-xs-9">
@@ -139,6 +139,14 @@
                 <a data-ng-href="{{asset.source || asset.url}}" target="_blank">{{asset.source || asset.url}}</a>
               </div>
               <div data-ng-if="asset.type === 'whiteboard' || (!asset.source && !asset.url)">No source</div>
+            </div>
+          </div>
+          <div class="row" data-ng-if="asset.exported_whiteboards.length">
+            <div class="col-xs-3 text-right assetlibrary-item-metadata-label">Used in</div>
+            <div class="col-xs-9">
+              <div data-ng-repeat="whiteboard in asset.exported_whiteboards">
+                <a ui-sref="assetlibrarylist.item({assetId: whiteboard.id})">{{whiteboard.title}}</a>
+              </div>
             </div>
           </div>
         </div>
