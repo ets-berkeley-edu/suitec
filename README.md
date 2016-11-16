@@ -85,17 +85,18 @@ export PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
 
 [Instructions on configuring SuiteC](docs/configuration.md)
 
-# Install SuiteC
+# Install and run SuiteC
+
+## In your development environment
 
 ```
 npm install
-```
-
-# Run SuiteC
-
-```
 node app
 ```
+
+## On the network
+
+Read [instructions on deploying SuiteC](docs/deployment.md) on a network server.
 
 # Notes
 

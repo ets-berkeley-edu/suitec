@@ -1,17 +1,28 @@
-# Deploying SuiteC
+# Deploy SuiteC
 
-SuiteC contains a deployment script that can be used to deploy the latest code of a specific branch. Before running the script, the following environment variables should be set:
+**WARNING:** The `deploy.sh` script performs `git reset --hard HEAD` which will wipe away un-stashed work. The script is intended for dev, qa and prod; not developer workstations.
 
-- `DOCUMENT_ROOT`: The directory where the checked out SuiteC code can be found
-- `ORIGIN` (optional): The GitHub repository from which the branch should be deployed. By default, the deploy will happen from origin
-- `BRANCH` (optional): The GitHub branch that should be deployed. By default, the deploy will happen from master
+Deploy SuiteC by branch or tag name:
+```
+cd ~
 
-The deployment script can be run by executing the following command from the project's root folder:
+# Skip the next step if you have already cloned the Git repo
+git clone git://github.com/ets-berkeley-edu/collabosphere.git
 
+cd ~/collabosphere
+
+# Get the latest code
+git pull
+
+# Deploy specified branch or tag and then start the server:
+./deploy/deploy.sh [-r remote] [-b branch] [-t tag]
+
+# You are done. Time to smoke-test the running application.
+```
+
+For complete usage information, with examples, run the script with no args:
 ```
 ./deploy/deploy.sh
 ```
-
-**WARNING:** The `deploy.sh` script performs `git reset --hard HEAD` which will wipe away un-stashed work. The script is intended for dev, qa and prod; not developer workstations.
 
 Have a nice day!

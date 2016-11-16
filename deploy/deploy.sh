@@ -12,9 +12,9 @@ logger="tee -a $(date +"${base_directory}/logs/deploy_%Y-%m-%d-%H%M%S.log")"
 
 echo_usage() {
   echo; echo "USAGE"; echo "  ${0} [-r remote] [-b branch] [-t tag]"; echo
-  echo "Deploy the latest SuiteC code from a specified branch or tag."; echo
-  echo "Set environment variable DOCUMENT_ROOT to the Apache directory which will serve SuiteC static files."; echo
-  echo "Common usages:"; echo
+  echo "Deploy SuiteC per the branch or tag that you specify. This script requires that the environment"
+  echo "variable DOCUMENT_ROOT is set to the Apache directory which will serve SuiteC static files."
+  echo; echo "Common usages:"; echo
   echo "   # Deploy Arthur's branch"
   echo "   ${0} -r arthur_guinness -b irish_dry_stout"; echo
   echo "   # Deploy qa branch using default remote (origin)"
@@ -29,13 +29,11 @@ log() {
   echo | ${logger}
 }
 
-log "DOCUMENT_ROOT (env variable) is path to Apache directory, where we copy SuiteC static files."
-
 # If we have missing requirements then echo usage info and exit.
 [[ $# -gt 0 ]] || { echo_usage; exit 0; }
 [[ "${DOCUMENT_ROOT}" ]] || { echo; echo "[ERROR] 'DOCUMENT_ROOT' is undefined"; echo_usage; exit 1; }
 
-log "DOCUMENT_ROOT is set to: ${DOCUMENT_ROOT}"
+log "DOCUMENT_ROOT, the Apache directory to which we copy SuiteC static files, is set to: ${DOCUMENT_ROOT}"
 
 # Default remote repository
 git_remote="origin"
