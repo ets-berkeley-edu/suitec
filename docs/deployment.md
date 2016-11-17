@@ -11,9 +11,6 @@ git clone git://github.com/ets-berkeley-edu/collabosphere.git
 
 cd ~/collabosphere
 
-# Get the latest code
-git pull
-
 # Deploy specified branch or tag and then start the server:
 ./deploy/deploy.sh [-r remote] [-b branch] [-t tag]
 
