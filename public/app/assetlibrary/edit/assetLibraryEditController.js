@@ -72,7 +72,7 @@
         // Indicate that the asset has been updated
         $scope.$emit('assetLibraryAssetUpdated', updatedAsset);
         // Redirect back to the asset item view
-        $state.go('assetlibrarylist.item', {'assetId': updatedAsset.id});
+        $state.go('assetlibrarylist.item', {'assetId': updatedAsset.id}, {'reload': true});
       });
     };
 
