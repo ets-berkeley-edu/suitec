@@ -12,6 +12,10 @@
     "port": 2000,
     "host": "collabosphere.berkeley"
   },
+  "canvasPoller": {
+    "enabled": true,
+    "delay": 15
+  },
   "cookie": {
     "secret": "String to encrypt the cookies with. Change me in production"
   },
@@ -25,6 +29,13 @@
     "version": "9.4.4",
     "sync": true
   },
+  "email": {
+    "enabled": false,
+    "dailyHour": 0,
+    "weeklyDay": 0,
+    "weeklyHour": 0,
+    "apiKey": "secret"
+  },
   "log": {
     "level": "info",
     "stream": "stdout"
@@ -33,16 +44,5 @@
     "enabled": true,
     "url": "http://localhost:2001/process",
     "apiKey": "some shared secret"
-  },
-  "canvasPoller": {
-    "enabled": true,
-    "delay": 15
-  },
-  "email": {
-    "enabled": true,
-    "dailyHour": 8,
-    "weeklyDay": 1,
-    "weeklyHour": 9,
-    "apiKey": "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"
   }
 }
