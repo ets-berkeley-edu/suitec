@@ -68,7 +68,7 @@
 
   <h3>Assignments</h3>
 
-  <p class="assetlibrary-categories-info">You can also choose to automatically sync the assignment submissions for certain assignments to the Asset Library. In this case, all student assignment submissions for these assignments will appear in the Asset Library for review and commenting by all students.</p>
+  <p class="assetlibrary-categories-info">Check the box next to the name of an Assignment in order to sync student submissions for that Assignment to the Asset Library. All submissions for each checked Assignment will be shared for review and commenting by other students.</p>
 
   <ul class="assetlibrary-categories-list" data-ng-show="filteredAssignmentCategories.length > 0">
     <li data-ng-repeat="category in filteredAssignmentCategories = (categories | filter: {canvas_assignment_id: ''})">
@@ -82,8 +82,13 @@
         <div class="text-right col-xs-3 col-actions">
           <div class="checkbox">
             <label>
-              <input type="checkbox" class="assetlibrary-categories-assignment-checkbox" title="Synchronize this assignment" data-ng-model="category.visible" data-ng-change="editAssignmentCategory(category)">
-              <span class="sr-only">Synchronize this assignment</span>
+              <input
+               type="checkbox"
+               class="assetlibrary-categories-assignment-checkbox"
+               data-ng-attr-title="{{category.visible ? 'Unsynchronize' : 'Synchronize'}} this assignment"
+               data-ng-model="category.visible"
+               data-ng-change="editAssignmentCategory(category)">
+              <span class="sr-only" data-ng-bind-template="{{category.visible ? 'Unsynchronize' : 'Synchronize'}} this assignment"></span>
             </label>
           </div>
         </div>
