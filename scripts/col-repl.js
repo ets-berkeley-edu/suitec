@@ -1,5 +1,5 @@
 /**
- * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
+ * Copyright ©2017. The Regents of the University of California (Regents). All Rights Reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its documentation
  * for educational, research, and not-for-profit purposes, without fee and without a
@@ -31,25 +31,25 @@ var DB = require('col-core/lib/db');
 console.log('Loading Collabosphere environment...');
 
 /**
- * Load Collabosphere environment and start an instance of Node's REPL (read-eval-print loop), 
+ * Load Collabosphere environment and start an instance of Node's REPL (read-eval-print loop),
  * an interactive interpreter that evaluates input line by line and displays evaluation results.
  * @see https://nodejs.org/api/repl.html
  */
 var init = function() {
   // Apply global utilities
   require('col-core/lib/globals');
-    
+
   // Connect to the Collabosphere database
   DB.init(function() {
 
-    // Require additional modules and utilities, assigning them to properties 
+    // Require additional modules and utilities, assigning them to properties
     // to be exported to the REPL.
     var exports = {
       // A small set of external modules frequently used in code; more could be added.
       'async': require('async'),
       'config': require('config'),
       'Joi': require('joi'),
-      // Node's REPL treats _ as a special variable, returning the result of the last 
+      // Node's REPL treats _ as a special variable, returning the result of the last
       // expression, so we can't assign to it.
       'lodash': _,
       'moment': require('moment-timezone'),
