@@ -1,5 +1,5 @@
 /**
- * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
+ * Copyright ©2017. The Regents of the University of California (Regents). All Rights Reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its documentation
  * for educational, research, and not-for-profit purposes, without fee and without a
@@ -43,7 +43,7 @@ module.exports = {
   },
   "email": {
     "enabled": false,
-    // We set these values two hours in the future so that the integration tests will pick up just-created activities. 
+    // We set these values two hours in the future so that the integration tests will pick up just-created activities.
     "dailyHour": ((new Date().getHours() + 2) % 34),
     "weeklyHour": ((new Date().getHours() + 2) % 34)
   }

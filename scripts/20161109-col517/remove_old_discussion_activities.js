@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
+ * Copyright ©2017. The Regents of the University of California (Regents). All Rights Reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its documentation
  * for educational, research, and not-for-profit purposes, without fee and without a
@@ -106,7 +106,7 @@ var removeOldActivities = function() {
                 log.error({'err': err, 'activity': activity}, 'Failed to delete activity ' + activity.id);
                 errored++;
               } else {
-                log.info('Delete activity ' + id); 
+                log.info('Delete activity ' + id);
                 removed++;
               }
               return done();
@@ -114,7 +114,7 @@ var removeOldActivities = function() {
           });
         });
       });
-    }, function(err, results) { 
+    }, function(err, results) {
       if (err) {
         log.error({'err': err}, 'Failed to remove activities');
       } else {

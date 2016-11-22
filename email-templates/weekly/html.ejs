@@ -1,6 +1,6 @@
 <%
 /**
- * Copyright ©2016. The Regents of the University of California (Regents). All Rights Reserved.
+ * Copyright ©2017. The Regents of the University of California (Regents). All Rights Reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its documentation
  * for educational, research, and not-for-profit purposes, without fee and without a
@@ -40,7 +40,7 @@ var getAssetData = function(asset) {
 
   data.link = course.assetlibrary_url + '?col_asset=' + asset.id;
 
-  // Include user name for display, or a user count in the case of multiple users. 
+  // Include user name for display, or a user count in the case of multiple users.
   var owners = _.values(asset.users);
   if (owners.length === 1) {
     data.thumbnailSummary = 'by ' + owners[0].canvas_full_name;
@@ -100,7 +100,7 @@ if (topAssets.views) {
   topAssetsForDisplay.push({
     'asset': topAssets.views,
     'caption': 'Most viewed asset'
-  }); 
+  });
 }
 
 -%>
@@ -187,8 +187,8 @@ if (topAssets.views) {
             </table>
           </td>
         </tr>
-        <% 
-        } 
+        <%
+        }
         -%>
 
         <tr>
@@ -211,8 +211,8 @@ if (topAssets.views) {
                     <h4 class="section-header">
                       Most points generated
                     </h4>
-                  <% 
-                  } 
+                  <%
+                  }
                   -%>
                   </td>
                   <td class="most-points-outer-right">
@@ -222,8 +222,8 @@ if (topAssets.views) {
                     <h4 class="section-header">
                       Most points received
                     </h4>
-                  <% 
-                  } 
+                  <%
+                  }
                   -%>
                   </td>
                 </tr>
@@ -253,7 +253,7 @@ if (topAssets.views) {
                                   <td class="most-points-user thumbnail-user" valign="bottom">
                                     <img src="<%= thumbnail %>"/>
                                     <div><%= mostGenerated.user.canvas_full_name %></div>
-                                  </td> 
+                                  </td>
                                 </tr>
                                 <tr>
                                   <td class="most-points-column-outer" style="height:<%= mostPointsHeight %>px;" valign="bottom">
@@ -276,7 +276,7 @@ if (topAssets.views) {
                                   <td class="most-points-user thumbnail-user" valign="bottom">
                                     <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_class.png') %>"/>
                                     <div>Class average</div>
-                                  </td> 
+                                  </td>
                                 </tr>
                                 <tr>
                                   <td class="most-points-column-outer" style="height:<%= averagePointsHeight %>px;" valign="bottom">
@@ -324,7 +324,7 @@ if (topAssets.views) {
                                   <td class="most-points-user thumbnail-user" valign="bottom">
                                     <img src="<%= thumbnail %>"/>
                                     <div><%= mostReceived.user.canvas_full_name %></div>
-                                  </td> 
+                                  </td>
                                 </tr>
                                 <tr>
                                   <td class="most-points-column-outer" style="height:<%= mostPointsHeight %>px;" valign="bottom">
@@ -347,7 +347,7 @@ if (topAssets.views) {
                                   <td class="most-points-user thumbnail-user" valign="bottom">
                                     <img src="<%= baseCollabosphereUrl + resolveAsset('/assets/img/icon_class.png') %>"/>
                                     <div>Class average</div>
-                                  </td> 
+                                  </td>
                                 </tr>
                                 <tr>
                                   <td class="most-points-column-outer" style="height:<%= averagePointsHeight %>px;" valign="bottom">
@@ -379,16 +379,16 @@ if (topAssets.views) {
 
         <tr>
           <td class="centered">
-          <% 
-          if (course.engagementindex_url) { 
+          <%
+          if (course.engagementindex_url) {
           -%>
             <div class="outbound-button">
               <a href="<%= course.engagementindex_url %>">
                 View Engagement Index
               </a>
             </div>
-          <% 
-          } 
+          <%
+          }
           -%>
           </td>
         </tr>
@@ -415,8 +415,8 @@ if (topAssets.views) {
                 </td>
 
                 <td class="your-activity-outer">
-                <% 
-                if (user.rank) { 
+                <%
+                if (user.rank) {
                 -%>
                   <div class="your-activity-header">
                     Your rank this week
@@ -424,8 +424,8 @@ if (topAssets.views) {
                   <div class="your-activity-badge">
                     <%= user.rank.thisWeek %>
                   </div>
-                <% 
-                } 
+                <%
+                }
                 -%>
                 </td>
               </tr>
@@ -433,16 +433,16 @@ if (topAssets.views) {
               <tr>
                 <td>
                   Total points so far: <strong><%= user.points %></strong>
-                <% 
-                if (course.engagementindex_url) { 
+                <%
+                if (course.engagementindex_url) {
                 -%>
                   <div class="outbound-button">
                     <a href="<%= course.engagementindex_url %>">
                       View Engagement Index
                     </a>
                   </div>
-                <% 
-                } 
+                <%
+                }
                 -%>
                 </td>
               </tr>
