@@ -23,7 +23,7 @@ The Engagement Index provides a leaderboard based on the student's activity in t
 ### Get the SuiteC source
 
 ```
-git clone git://github.com/ets-berkeley-edu/collabosphere.git
+git clone git://github.com/ets-berkeley-edu/suitec.git
 ```
 
 ## Dependencies

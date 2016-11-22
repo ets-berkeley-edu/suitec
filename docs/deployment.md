@@ -7,7 +7,7 @@ Deploy SuiteC by branch or tag name:
 cd ~
 
 # Skip the next step if you have already cloned the Git repo
-git clone git://github.com/ets-berkeley-edu/collabosphere.git
+git clone git://github.com/ets-berkeley-edu/suitec.git
 
 cd ~/collabosphere
 
