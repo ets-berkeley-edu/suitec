@@ -30,7 +30,7 @@ var config = require('config');
 var fs = require('fs');
 
 // Read the Apache config template
-fs.readFile(__dirname + '/collabosphere.template', 'utf8', function(err, template) {
+fs.readFile(__dirname + '/suitec.template', 'utf8', function(err, template) {
   if (err) {
     return console.log('An error occurred when reading the Apache config template');
   }
@@ -45,7 +45,7 @@ fs.readFile(__dirname + '/collabosphere.template', 'utf8', function(err, templat
   var templateOutput = _.template(template)(templateData);
 
   // Store the generated Apache config file
-  fs.writeFile(__dirname + '/collabosphere.conf', templateOutput, function(err) {
+  fs.writeFile(__dirname + '/suitec.conf', templateOutput, function(err) {
     if (err) {
       return console.log('An error occurred when writing the generated Apache config file');
     }

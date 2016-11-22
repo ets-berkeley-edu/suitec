@@ -10,9 +10,9 @@
 
     Header set Access-Control-Allow-Origin "*"
 
-    ErrorLog <%= logDirectory %>/collabosphere_error.log
-    CustomLog <%= logDirectory %>/collabosphere_access_log common
-    CustomLog <%= logDirectory %>/collabosphere-combined_log combined
+    ErrorLog <%= logDirectory %>/suitec_error.log
+    CustomLog <%= logDirectory %>/suitec_access_log common
+    CustomLog <%= logDirectory %>/suitec-combined_log combined
 
     RewriteEngine on
     RewriteCond %{QUERY_STRING} transport=polling

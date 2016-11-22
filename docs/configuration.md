@@ -5,28 +5,28 @@
 SuiteC uses Apache as its [reverse proxy](https://httpd.apache.org/docs/2.4/howto/reverse_proxy.html). SuiteC contains a script that will generate an Apache config file based on the project's configuration. Steps:
 
 1. Edit the JSON config file per current environment. If you're setting up your development environment then edit `config/local.json`.
-1. Add the following snippet to the JSON config. **Customize the Apache paths and replace `/Users/john/Projects/collabosphere` with the path to base SuiteC directory.**
+1. Add the following snippet to the JSON config. **Customize the Apache paths and replace `/Users/jane_doe/Projects/suitec` with the path to base SuiteC directory.**
 
     ```
     {
       "apache": {
-        "documentRoot": "/Users/john/Projects/collabosphere/public",
+        "documentRoot": "/Users/jane_doe/Projects/suitec/public",
         "logDirectory": "/usr/local/apache2/logs",
         "modulesDirectory": "/usr/libexec/apache2"
       },
     ...
     ```
 1. The `deploy/deploy.sh` script, which is NOT used in development environment, requires environment variable DOCUMENT_ROOT. The value of that variable should match `apache.documentRoot` above.
-1. Next, generate `apache/collabosphere.conf`, an Apache config snippet with:
+1. Next, generate `apache/suitec.conf`, an Apache config snippet with:
 
     ```
-    cd ~/Projects/collabosphere
+    cd ~/Projects/suitec
     node apache/apache.js
     ```
 1. Edit your main Apache config file (`/etc/apache2/httpd.conf` or `/etc/apache2/httpd.conf`) and add the following line. Personalize the path to conf file, as above.
 
     ```
-    Include /Users/john/Projects/collabosphere/apache/collabosphere.conf
+    Include /Users/jane_doe/Projects/suitec/apache/suitec.conf
     ```
 1. If you are running SuiteC behind SSL, the Apache config file will need to include `RequestHeader set X-Forwarded-Proto "https"` to ensure that Node.js correctly picks up the request protocol.
 
