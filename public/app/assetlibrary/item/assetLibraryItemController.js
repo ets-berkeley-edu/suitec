@@ -83,13 +83,18 @@
               asset.embedUrl = $sce.trustAsResourceUrl('//www.youtube.com/embed/' + asset.preview_metadata.youtubeId + '?autoplay=false');
             } else {
               var currentProtocol = document.location.protocol;
-              var isHttpEmbeddable = asset.preview_metadata.httpEmbeddable;
-              var isHttpsEmbeddable = asset.preview_metadata.httpsEmbeddable;
-              asset.isEmbeddable = (
-                (currentProtocol === 'http:' && isHttpEmbeddable) ||
-                (currentProtocol === 'https:' && isHttpsEmbeddable)
-              );
-              asset.embedUrl = $sce.trustAsResourceUrl(asset.url.replace(/^https?:/, ''));
+              var alternateEmbedUrl = null;
+
+              if (currentProtocol === 'http:') {
+                asset.isEmbeddable = asset.preview_metadata.httpEmbeddable;
+                alternateEmbedUrl = asset.preview_metadata.httpEmbedUrl;
+              } else if (currentProtocol === 'https:') {
+                asset.isEmbeddable = asset.preview_metadata.httpsEmbeddable;
+                alternateEmbedUrl = asset.preview_metadata.httpsEmbedUrl;
+              }
+
+              var urlWithoutProtocol = (alternateEmbedUrl || asset.url).replace(/^https?:/, '');
+              asset.embedUrl = $sce.trustAsResourceUrl(urlWithoutProtocol);
             }
           }
         }
