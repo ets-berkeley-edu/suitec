@@ -89,6 +89,16 @@
     };
 
     /**
+     * Delete a whiteboard
+     *
+     * @param  {Number}               id                            The id of the whiteboard that is being delete
+     * @return {Promise<Whiteboard>}                                Promise returning the deletion result
+     */
+    var deleteWhiteboard = function(id) {
+      return $http.delete(utilService.getApiUrl('/whiteboards/' + id));
+    };
+
+    /**
      * Get the most recent chat messages for a whiteboard
      *
      * @param  {Number}               whiteboardId                  The id of the whiteboard for which to get the most chat messages
@@ -122,6 +132,7 @@
       'getWhiteboard': getWhiteboard,
       'getWhiteboards': getWhiteboards,
       'createWhiteboard': createWhiteboard,
+      'deleteWhiteboard': deleteWhiteboard,
       'editWhiteboard': editWhiteboard,
       'getChatMessages': getChatMessages,
       'exportWhiteboardAsAsset': exportWhiteboardAsAsset

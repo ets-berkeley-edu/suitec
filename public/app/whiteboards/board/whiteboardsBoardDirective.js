@@ -1818,6 +1818,23 @@
           setMode('move');
         };
 
+        /**
+         * Delete the current whiteboard
+         */
+        var deleteWhiteboard = $scope.deleteWhiteboard = function() {
+          if (confirm('Are you sure you want to delete this whiteboard?')) {
+            whiteboardsFactory.deleteWhiteboard($scope.whiteboard.id).then(function() {
+              // Refresh the whiteboard list and close this whiteboard
+              if ($window.opener) {
+                $window.opener.refreshWhiteboardList();
+              }
+              $window.close();
+            }, function(err) {
+              alert('There was an error deleting the whiteboard.');
+            });
+          }
+        };
+
         /* EXPORT */
 
         // Depending on the size of the whiteboard, exporting it to PNG can sometimes take a while. To
