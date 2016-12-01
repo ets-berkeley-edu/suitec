@@ -3,6 +3,9 @@
 # The directory where forever logs should be sent to
 LOG_DIR=~/log
 
+# Go to base SuiteC directory
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
 # Make sure nothing else is running before we start the app server
 ./deploy/stop.sh
 
