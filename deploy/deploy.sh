@@ -30,7 +30,7 @@ log() {
 }
 
 # If we have missing requirements then echo usage info and exit.
-[[ $# -gt 0 ]] || { echo_usage; exit 0; }
+[[ $# -gt 0 ]] || { echo_usage; exit 1; }
 [[ "${DOCUMENT_ROOT}" ]] || { echo; echo "[ERROR] 'DOCUMENT_ROOT' is undefined"; echo_usage; exit 1; }
 
 log "DOCUMENT_ROOT, the Apache directory to which we copy SuiteC static files, is set to: ${DOCUMENT_ROOT}"
@@ -108,8 +108,6 @@ log "Kill the existing SuiteC process"
 log "Copy SuiteC static files to Apache directory: ${DOCUMENT_ROOT}"
 cp -R target/* "${DOCUMENT_ROOT}"
 
-log "Start a new and improved SuiteC process."
-./deploy/start.sh
+log "We are done but SuiteC has NOT been started. Perform post-deploy tasks, if any, then run deploy/start.sh."
 
-log "We are done. Time to smoke-test the application."
 exit 0
