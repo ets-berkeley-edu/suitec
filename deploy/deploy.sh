@@ -64,7 +64,7 @@ log "Deploy SuiteC with command: ${0} ${*}"
 # Clear local changes
 git reset --hard HEAD
 
-# Check out the branch or tag. If a tag is being deployed, the git HEAD will point to a commit and
+# Check out the branch or tag. If a tag is being deployed, the git HEAD will point to a commit and
 # will end up in a "detached" state. As we shouldn't be committing on deployed code, this is considered OK
 
 # Learn about remote branches
@@ -91,8 +91,9 @@ git checkout -b "${local_branch_name}"
 
 log "The Git checkout is complete. Now remove the existing node_modules and re-install all npm dependencies"
 
-# npm install
-find node_modules/ -mindepth 1 -maxdepth 1 ! -name 'col-*' -exec rm -rf {} +
+# clean and npm install
+/bin/find node_modules/ -mindepth 1 -maxdepth 1 -not -name 'col-*' -exec /bin/rm -rf '{}' \+
+npm cache clean
 npm install
 
 log "Remove the existing bower dependencies and re-install"
