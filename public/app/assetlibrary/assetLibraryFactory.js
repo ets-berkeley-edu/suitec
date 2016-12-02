@@ -148,6 +148,19 @@
     };
 
     /**
+     * Migrate user assets to another course
+     *
+     * @param  {Number}    destinationUserId                          The course-specific SuiteC user id to be associated with migrated assets
+     * @return {Promise}                                              $http promise
+     */
+    var migrateAssets = function(destinationUserId) {
+      var opts = {
+        'destinationUserId': destinationUserId
+      };
+      return $http.post(utilService.getApiUrl('/assets/migrate'), opts);
+    };
+
+    /**
      * Create a new comment on an asset
      *
      * @param  {Number}               id                              The id of the asset
@@ -207,6 +220,7 @@
       'createLink': createLink,
       'editAsset': editAsset,
       'deleteAsset': deleteAsset,
+      'migrateAssets': migrateAssets,
       'createComment': createComment,
       'editComment': editComment,
       'deleteComment': deleteComment,

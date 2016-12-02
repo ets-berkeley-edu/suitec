@@ -9,11 +9,11 @@
       data-search-options-type="searchOptions.type"
       class="assetlibrary-list-search-container col-xs-{{ isAdvancedSearch ? 12 : 8 }}"></search>
 
-    <!-- MANAGE CATEGORIES -->
+    <!-- MANAGE ASSETS -->
     <div class="col-xs-4 text-right" data-ng-show="!isAdvancedSearch">
-      <a data-ng-href="/assetlibrary/categories" data-ng-if="me.is_admin" class="btn btn-default">
+      <a data-ng-href="/assetlibrary/manage" data-ng-if="me.is_admin" class="btn btn-default">
         <i class="fa fa-cog"></i>
-        <span>Manage categories</span>
+        <span>Manage assets</span>
       </a>
     </div>
   </div>

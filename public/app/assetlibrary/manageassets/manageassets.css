@@ -23,61 +23,71 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-.assetlibrary-categories-container {
+.assetlibrary-manageassets-container {
   max-width: 600px;
 }
 
-.assetlibrary-categories-container h2,
-.assetlibrary-categories-container h3 {
+.assetlibrary-manageassets-container h2,
+.assetlibrary-manageassets-container h3 {
   margin-bottom: 15px;
 }
 
-.assetlibrary-categories-info {
+.assetlibrary-manageassets-info {
   margin-bottom: 20px;
 }
 
-.assetlibrary-categories-create-form {
+.assetlibrary-manageassets-create-form {
   margin-bottom: 20px;
 }
 
-.assetlibrary-categories-edit-form .form-group {
+.assetlibrary-manageassets-edit-form .form-group {
   margin-bottom: 5px;
 }
 
-.assetlibrary-categories-list {
+.assetlibrary-manageassets-list {
   border: 1px solid #CCC;
   padding: 0;
 }
 
-.assetlibrary-categories-list li {
+.assetlibrary-manageassets-list li {
   list-style-type: none;
   padding: 10px 20px 10px 10px;
 }
 
-.assetlibrary-categories-list li:nth-child(even) {
+.assetlibrary-manageassets-list li:nth-child(even) {
   background-color: #F9F9F9;
   border-top: 1px solid #E5E5E5;
   border-bottom: 1px solid #E5E5E5;
 }
 
-.assetlibrary-categories-list li:last-child {
+.assetlibrary-manageassets-list li:last-child {
   border-bottom: none;
 }
 
-.assetlibrary-categories-list small {
+.assetlibrary-manageassets-list small {
   color: #ADABAA;
   font-weight: 400;
 }
 
-.assetlibrary-categories-list .col-actions button {
+.assetlibrary-manageassets-list .col-actions button {
   font-size: 18px;
   font-weight: 500;
   margin-top: 5px;
 }
 
-.assetlibrary-categories-list .col-actions .assetlibrary-categories-assignment-checkbox {
+.assetlibrary-manageassets-list .col-actions .assetlibrary-manageassets-assignment-checkbox {
   font-size: 18px;
   height: 18px;
   margin-top: 3px;
   width: 18px;
+}
+
+.assetlibrary-manageassets-migrate-form {
+  margin-bottom: 20px;
+}
+
+.assetlibrary-manageassets-migrate-form .input-group .input-group-btn .btn {
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+  margin-left: 20px;
 }
