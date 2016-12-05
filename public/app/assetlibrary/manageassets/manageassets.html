@@ -1,20 +1,18 @@
-<div class="clearfix assetlibrary-categories-container">
+<div class="clearfix assetlibrary-manageassets-container">
 
   <a data-ng-href="/assetlibrary" class="col-back"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
 
-  <h2>Manage Categories</h2>
-
-  <p class="assetlibrary-categories-info">Categories can be used to tag items and are a great way of classifying items within the Asset Library. The Asset Library can also be filtered by category.</p>
+  <h2>Manage Assets</h2>
 
   <h3>Custom Categories</h3>
 
-  <p class="assetlibrary-categories-info">Create custom categories that can be used to tag items:</p>
+  <p class="assetlibrary-manageassets-info">Categories can be used to tag items and are a great way of classifying items within the Asset Library. The Asset Library can also be filtered by category.</p>
 
-  <form class="assetlibrary-categories-create-form" name="assetlibraryCreateCategoryForm" data-ng-submit="assetlibraryCreateCategoryForm.$valid && createCategory(newCategory)" novalidate>
+  <form class="assetlibrary-manageassets-create-form" name="assetlibraryCreateCategoryForm" data-ng-submit="assetlibraryCreateCategoryForm.$valid && createCategory(newCategory)" novalidate>
     <div class="form-group" data-ng-class="{'has-error': !assetlibraryCreateCategoryForm.$submitted && assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$touched && assetlibraryCreateCategoryForm.assetlibraryCategoriesName.$invalid}">
-      <label for="assetlibrary-categories-create-name" class="sr-only">Enter a new category</label>
+      <label for="assetlibrary-manageassets-create-name" class="sr-only">Enter a new category</label>
       <div class="input-group">
-        <input type="text" id="assetlibrary-categories-create-name" name="assetlibraryCreateCategoryName" class="form-control" placeholder="Enter a new category" data-ng-model="newCategory" data-ng-maxlength="255" required>
+        <input type="text" id="assetlibrary-manageassets-create-name" name="assetlibraryCreateCategoryName" class="form-control" placeholder="Enter a new category" data-ng-model="newCategory" data-ng-maxlength="255" required>
         <span class="input-group-btn">
           <button type="submit" class="btn btn-default" data-ng-disabled="assetlibraryCreateCategoryForm.$invalid">Add</button>
         </span>
@@ -26,7 +24,7 @@
     </div>
   </form>
 
-  <ul class="assetlibrary-categories-list" data-ng-show="filteredCustomCategories.length > 0">
+  <ul class="assetlibrary-manageassets-list" data-ng-show="filteredCustomCategories.length > 0">
     <li data-ng-repeat="category in filteredCustomCategories = (categories | filter: {canvas_assignment_id: '!'})">
       <div class="row"  data-ng-if="!category.editing">
         <div class="col-xs-9">
@@ -46,10 +44,10 @@
       </div>
 
       <!-- EDIT CATEGORY -->
-      <form name="assetlibraryEditCategoryForm" class="assetlibrary-categories-edit-form " data-ng-submit="assetlibraryEditCategoryForm.$valid && editCategory(category)" data-ng-if="category.editing" novalidate>
+      <form name="assetlibraryEditCategoryForm" class="assetlibrary-manageassets-edit-form " data-ng-submit="assetlibraryEditCategoryForm.$valid && editCategory(category)" data-ng-if="category.editing" novalidate>
         <div class="form-group" data-ng-class="{'has-error': assetlibraryEditCategoryForm.assetLibraryEditCategoryName.$invalid}">
-          <label for="assetlibrary-categories-edit-name" class="sr-only">Edit a category</label>
-          <input type="text" id="assetlibrary-categories-edit-name" class="form-control" name="assetLibraryEditCategoryName" placeholder="Edit a category" data-ng-model="category.newTitle" data-ng-maxlength="255" required>
+          <label for="assetlibrary-manageassets-edit-name" class="sr-only">Edit a category</label>
+          <input type="text" id="assetlibrary-manageassets-edit-name" class="form-control" name="assetLibraryEditCategoryName" placeholder="Edit a category" data-ng-model="category.newTitle" data-ng-maxlength="255" required>
           <div class="help-block" data-ng-messages="assetlibraryEditCategoryForm.assetLibraryEditCategoryName.$error">
             <div data-ng-message="required">Please enter a category</div>
             <div data-ng-message="maxlength">A category can only be 255 characters long</div>
@@ -68,9 +66,9 @@
 
   <h3>Assignments</h3>
 
-  <p class="assetlibrary-categories-info">Check the box next to the name of an Assignment in order to sync student submissions for that Assignment to the Asset Library. Each checked Assignment will appear as a category in the Asset Library, with all submissions shared for review and commenting by other students.</p>
+  <p class="assetlibrary-manageassets-info">Check the box next to the name of an Assignment in order to sync student submissions for that Assignment to the Asset Library. Each checked Assignment will appear as a category in the Asset Library, with all submissions shared for review and commenting by other students.</p>
 
-  <ul class="assetlibrary-categories-list" data-ng-show="filteredAssignmentCategories.length > 0">
+  <ul class="assetlibrary-manageassets-list" data-ng-show="filteredAssignmentCategories.length > 0">
     <li data-ng-repeat="category in filteredAssignmentCategories = (categories | filter: {canvas_assignment_id: ''})">
       <div class="row"  data-ng-if="!category.editing">
         <div class="col-xs-9">
@@ -84,7 +82,7 @@
             <label>
               <input
                type="checkbox"
-               class="assetlibrary-categories-assignment-checkbox"
+               class="assetlibrary-manageassets-assignment-checkbox"
                data-ng-attr-title="{{category.visible ? 'Unsynchronize' : 'Synchronize'}} this assignment"
                data-ng-model="category.visible"
                data-ng-change="editAssignmentCategory(category)">
@@ -99,4 +97,33 @@
     There are no assignments.
   </div>
 
+  <h3>Migrate Assets</h3>
+
+  <p class="assetlibrary-manageassets-info">If you have instructor privileges in another course site using the Asset Library, you can copy all of your assets into that site's Asset Library. Only assets that you have submitted yourself will be copied, not assets submitted by other instructors or by students.</p>
+  
+  <div data-ng-if="assetMigration === 'pending'">
+    <i class="fa fa-spinner fa-spin"></i> Migration in progress...
+  </div>
+  <div class="alert alert-success" role="alert" data-ng-if="assetMigration === 'complete'">
+    Migration complete.
+  </div>
+  <div class="alert alert-danger" role="alert" data-ng-if="assetMigration === 'error'">
+    Migration failed.
+  </div>
+  <div data-ng-if="!assetMigration">
+    <form class="assetlibrary-manageassets-migrate-form" name="assetlibraryMigrateAssetsForm" data-ng-submit="destinationUserId && migrateAssets(destinationUserId)" novalidate data-ng-if="assetLibraryCourses.length > 0">
+      <label for="assetlibrary-manageassets-migrate-coursesite" class="sr-only">Course site</label>
+      <div class="input-group">
+        <select id="assetlibrary-manageassets-migrate-coursesite" class="form-control" data-ng-model="destinationUserId" data-value="{{destinationUserId}}" data-ng-options="course.user_id as course.name for course in assetLibraryCourses">
+          <option value="" selected>Course site</option>
+        </select>
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-default" data-ng-disabled="!destinationUserId">Migrate assets</button>
+        </span>
+      </div>
+    </form>
+    <div class="alert alert-info" data-ng-if="assetLibraryCourses.length === 0">
+      You are not an instructor in any other course sites using the Asset Library.
+    </div>
+  </div>
 </div>

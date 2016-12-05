@@ -49,15 +49,15 @@
         'templateUrl': '/app/assetlibrary/addlinkcontainer/addlinkcontainer.html',
         'controller': 'AssetLibraryAddLinkContainerController'
       })
-      .state('assetlibrarycategories', {
-        'url': '/assetlibrary/categories',
-        'templateUrl': '/app/assetlibrary/categories/categories.html',
-        'controller': 'AssetLibraryCategoriesController'
-      })
       .state('assetlibraryaddbookmarklet', {
         'url': '/assetlibrary/addbookmarklet',
         'templateUrl': '/app/assetlibrary/addbookmarklet/addbookmarklet.html',
         'controller': 'AssetLibraryAddBookmarkletController'
+      })
+      .state('assetlibrarymanage', {
+        'url': '/assetlibrary/manage',
+        'templateUrl': '/app/assetlibrary/manageassets/manageassets.html',
+        'controller': 'AssetLibraryManageAssetsController'
       })
       .state('assetlibrarylist', {
         'url': '/assetlibrary?category&user&keywords&type',

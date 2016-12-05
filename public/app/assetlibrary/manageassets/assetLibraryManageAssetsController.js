@@ -27,13 +27,38 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryCategoriesController', function(assetLibraryCategoriesFactory, $scope) {
+  angular.module('collabosphere').controller('AssetLibraryManageAssetsController', function(assetLibraryCategoriesFactory, assetLibraryFactory, courseFactory, $scope) {
 
     // Variable that will keep track of the categories in the current course
     $scope.categories = null;
 
     // Variable that will keep track of the new category
     $scope.newCategory = null;
+
+    // Variable that will keep track of any other courses using the Asset Library where user is an instructor
+    $scope.assetLibraryCourses = null;
+
+    // Variable that will keep track of a destination user ID for migrations
+    $scope.destinationUserId = null;
+
+    // Variable that will keep track of in-progress asset migration
+    $scope.assetMigration = null;
+
+    /**
+     * Get any other courses using the Asset Library where user is an instructor
+     */
+    var getAssetLibraryCourses = function() {
+      var courseOptions = {
+        admin: true,
+        assetLibrary: true,
+        excludeCurrent: true
+      };
+      courseFactory.getCourses(courseOptions).success(function(userCourses) {
+        $scope.assetLibraryCourses = _.map(userCourses, function(userCourse) {
+          return _.extend({'user_id': userCourse.id}, userCourse.course);
+        });
+      });
+    };
 
     /**
      * Get the categories for the current course
@@ -111,6 +136,21 @@
       }
     };
 
+    /**
+     * Copy all user assets to the Asset Library of another course
+     *
+     * @param  {Number}    destinationUserId    The course-specific SuiteC user id to be associated with migrated assets
+     */
+    var migrateAssets = $scope.migrateAssets = function(destinationUserId) {
+      $scope.assetMigration = 'pending';
+      assetLibraryFactory.migrateAssets(destinationUserId).then(function() {
+        $scope.assetMigration = 'complete';
+      }, function(err) {
+        $scope.assetMigration = 'error';
+      });
+    };
+
+    getAssetLibraryCourses();
     getCategories();
 
   });

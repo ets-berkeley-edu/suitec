@@ -39,6 +39,35 @@
     };
 
     /**
+     * Get active courses associated with the current user's Canvas ID
+     *
+     * @param  {Object}     opts                      A set of options to filter on
+     * @param  {Boolean}    [opts.admin]              Whether to only return courses in which the user is an admin
+     * @param  {Boolean}    [opts.assetLibrary]       Whether to only return courses in which the asset library is enabled
+     * @param  {Boolean}    [opts.excludeCurrent]     Whether to exclude the current course
+     * @return {Promise}                              $http promise
+     */
+    var getCourses = function(opts) {
+      var url = '/courses';
+      if (opts) {
+        var params = [];
+        if (opts.admin) {
+          params.push('admin=true');
+        }
+        if (opts.assetLibrary) {
+          params.push('assetLibrary=true');
+        }
+        if (opts.excludeCurrent) {
+          params.push('excludeCurrent=true');
+        }
+        if (params.length) {
+          url = url + '?' + params.join('&');
+        }
+      }
+      return $http.get(utilService.getApiUrl(url));
+    };
+
+    /**
      * Update the daily notification settings for a course
      *
      * @param  {Boolean}        enabled         Whether daily notifications should be enabled for the course
@@ -66,6 +95,7 @@
 
     return {
       'getCourse': getCourse,
+      'getCourses': getCourses,
       'updateDailyNotifications': updateDailyNotifications,
       'updateWeeklyNotifications': updateWeeklyNotifications
     };
