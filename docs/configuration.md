@@ -16,7 +16,7 @@ SuiteC uses Apache as its [reverse proxy](https://httpd.apache.org/docs/2.4/howt
       },
     ...
     ```
-1. The `deploy/deploy.sh` script, which is NOT used in development environment, requires environment variable DOCUMENT_ROOT. The value of that variable should match `apache.documentRoot` above.
+1. The [SuiteC deployment process](docs/deployment.md) requires DOCUMENT_ROOT (environment variable) value that matches `apache.documentRoot` above.
 1. Next, generate `apache/suitec.conf`, an Apache config snippet with:
 
     ```

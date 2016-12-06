@@ -1,25 +1,32 @@
 # Deploy SuiteC
 
-**WARNING:** The `deploy.sh` script performs `git reset --hard HEAD` which will wipe away un-stashed work. The script is intended for dev, qa and prod; not developer workstations.
+**WARNING:** The deploy script performs `git reset --hard HEAD` which will wipe away un-stashed work. The script is intended for dev, qa and prod; not developer workstations.
 
-Deploy SuiteC by branch or tag name:
+First time deploying to this machine? If so, clone the `suite-ops` repo.
 ```
 cd ~
 
-# Skip the next step if you have already cloned the Git repo
-git clone git://github.com/ets-berkeley-edu/suitec.git
+git clone git://github.com/ets-berkeley-edu/suitec-ops.git
 
-cd ~/collabosphere
+```
 
-# Deploy specified branch or tag and then start the server:
-./deploy/deploy.sh [-r remote] [-b branch] [-t tag]
+Deploy SuiteC by branch or tag name:
+```
+# The following might have been performed by .bash_profile
+export SUITEC_BASE_DIR=~/collabosphere
 
-# You are done. Time to smoke-test the running application.
+cd ~/suitec-ops
+
+git pull
+
+./scripts/deploy.sh [-r remote] [-b branch] [-t tag]
+
+# You are done. Perform post-deploy tasks, if any, and then start SuiteC.
 ```
 
 For complete usage information, with examples, run the script with no args:
 ```
-./deploy/deploy.sh
+./suitec-ops/scripts/deploy.sh
 ```
 
 Have a nice day!
