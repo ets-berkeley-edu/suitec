@@ -35,6 +35,16 @@
     // Variable that keeps track of the URL state
     $scope.state = $state;
 
+    // Variable that keeps track of the assets in the list
+    $scope.assets = [];
+    $scope.list = {
+      'page': 0,
+      'ready': true
+    };
+
+    // Variable that will keep track of the scroll position in the list
+    var scrollPosition = 0;
+
     // Variable that keeps track of the search options. These are initially derived from the state
     // parameters. These values will be bound to the search directive, which will update them when
     // a user updates any of the input fields
@@ -54,21 +64,53 @@
       $scope.isAdvancedSearch = true;
     }
 
-    // Variable that keeps track of whether a search is being performed
-    $scope.isSearch = false;
-    if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
-      $scope.isSearch = true;
-    }
-
-    // Variable that keeps track of the assets in the list
-    $scope.assets = [];
-    $scope.list = {
-      'page': 0,
-      'ready': true
+    /**
+     * If a search is being performed, initialize variables
+     */
+    var initializeSearchContext = function() {
+      $scope.isSearch = false;
+      $scope.resultsMessage = null;
+      if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+        $scope.isSearch = true;
+      }
     };
 
-    // Variable that will keep track of the scroll position in the list
-    var scrollPosition = 0;
+    initializeSearchContext();
+
+    /**
+     * Return a message based on search options
+     */
+    var buildResultsMessage = function(message) {
+      var filters = [];
+
+      if ($scope.searchOptions.keywords) {
+        filters.push('search term ' + $scope.searchOptions.keywords);
+      }
+      if ($scope.searchOptions.type) {
+        filters.push('asset type ' + $scope.searchOptions.type);
+      }
+
+      if ($scope.searchOptions.categoryObject) {
+        // If we have access to the selected category title, include it.
+        filters.push('category ' + $scope.searchOptions.categoryObject.title);
+      } else if ($scope.searchOptions.category) {
+        // Otherwise just indicate that a category is selected.
+        filters.push('selected category');
+      }
+
+      if ($scope.searchOptions.userObject) {
+        // If we have access to the selected user name, include it.
+        filters.push('user ' + $scope.searchOptions.userObject.canvas_full_name);
+      } else if ($scope.searchOptions.user) {
+        // Otherwise just indicate that a user is selected.
+        filters.push('selected user');
+      }
+
+      if (filters.length) {
+        message += ' for ' + filters.join(' and ');
+      }
+      return message;
+    };
 
     /**
      * Get the assets for the current course through an infinite scroll
@@ -83,6 +125,9 @@
       // Indicate that no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
+
+      var isFirstResultSet = ($scope.list.page === 0);
+
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
@@ -90,6 +135,14 @@
         // retrieved asset library page
         if (assets.results.length === 10) {
           $scope.list.ready = true;
+        }
+        if (isFirstResultSet) {
+          // If this is the first result set, set an appropriate message.
+          if ($scope.assets.length === 0) {
+            $scope.resultsMessage = buildResultsMessage('Found no assets');
+          } else {
+            $scope.resultsMessage = buildResultsMessage('Displaying assets');
+          }
         }
       });
       // Ensure that the next page is requested the next time
@@ -134,11 +187,7 @@
       $scope.assets = [];
       $scope.searchOptions = searchOptions;
 
-      // Determine whether a search is being done
-      $scope.isSearch = false;
-      if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
-        $scope.isSearch = true;
-      }
+      initializeSearchContext();
 
       // Load the list of assets with the specified search options
       getAssets();

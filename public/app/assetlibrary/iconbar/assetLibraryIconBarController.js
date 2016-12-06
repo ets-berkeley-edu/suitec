@@ -32,6 +32,9 @@
     // Make the me object available to the scope
     $scope.me = me;
 
+    // Screenreader alert message for like actions
+    $scope.likeAlertMessage = null;
+
     /**
      * Like an asset. If the asset has been liked by the current user already, the like will be undone
      *
@@ -42,8 +45,10 @@
       assetLibraryFactory.like(asset.id, liked).success(function() {
         asset.liked = liked;
         if (liked === true) {
+          $scope.likeAlertMessage = 'Liked asset';
           asset.likes++;
         } else {
+          $scope.likeAlertMessage = 'Removed like from asset';
           asset.likes--;
         }
         // Indicate that the asset has been updated

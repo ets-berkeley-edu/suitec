@@ -56,11 +56,21 @@
          */
         var search = $scope.search = function() {
           if ($scope.isAdvancedSearch) {
+            var categoryObject = null;
+            var userObject = null;
+            if ($scope.category) {
+              categoryObject = _.find($scope.categories, {'id': $scope.category});
+            }
+            if ($scope.user) {
+              userObject = _.find($scope.users, {'id': $scope.user});
+            }
             var searchOptions = {
               'keywords': $scope.keywords,
               'category': $scope.category,
               'user': $scope.user,
-              'type': $scope.type
+              'type': $scope.type,
+              'categoryObject': categoryObject,
+              'userObject': userObject
             };
             $scope.$emit('assetLibrarySearchSearch', searchOptions);
           } else {
