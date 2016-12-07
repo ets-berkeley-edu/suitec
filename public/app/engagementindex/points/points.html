@@ -24,6 +24,7 @@
   </table>
 
   <div data-ng-if="me.is_admin">
+    <div role="alert" class="sr-only" aria-live="polite" data-ng-bind="enablePointsAlertMessage"></div>
 
     <!-- DISABLED ACTIVITIES -->
     <div data-ng-show="hasDisabledActivities()">

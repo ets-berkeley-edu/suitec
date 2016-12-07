@@ -78,6 +78,7 @@
      */
     var disableActivityType = $scope.disableActivityType = function(activityType) {
       activityType.enabled = false;
+      $scope.enablePointsAlertMessage = 'Disabled activity type ' + activityType.title;
     };
 
     /**
@@ -88,6 +89,7 @@
      */
     var enableActivityType = $scope.enableActivityType = function(activityType) {
       activityType.enabled = true;
+      $scope.enablePointsAlertMessage = 'Enabled activity type ' + activityType.title;
     };
 
     /**

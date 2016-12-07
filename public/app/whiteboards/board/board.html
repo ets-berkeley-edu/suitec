@@ -260,6 +260,7 @@
         </form>
       </div>
     </div>
+    <div role="alert" class="sr-only" aria-live="polite" data-ng-bind="sendingChatAlert ? 'Sending chat message' : ''"></div>
     <div id="whiteboards-board-members" data-ng-if="sidebarMode === 'online'">
       <h3 class="whiteboard-board-members-title">Board collaborators ({{whiteboard.members.length}})</h3>
       <div class="media" data-ng-repeat="member in whiteboard.members | orderBy:['-online', 'canvas_full_name']">

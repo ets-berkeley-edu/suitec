@@ -7,6 +7,7 @@
         Yes, I want to share my score on the Engagement Index
       </label>
     </div>
+    <div role="alert" class="sr-only" aria-live="polite" data-ng-bind="sharePointsAlertMessage"></div>
     <div class="form-group" data-ng-if="me.share_points === null && !me.is_admin">
       <button type="submit" class="btn btn-primary">Continue</button>
     </div>
