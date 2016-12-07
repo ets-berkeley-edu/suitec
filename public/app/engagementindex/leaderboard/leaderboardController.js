@@ -323,6 +323,7 @@
     var saveSharePoints = $scope.saveSharePoints = function() {
       userFactory.updateSharePoints($scope.me.new_share_points).then(function() {
         $scope.me.share_points = $scope.me.new_share_points;
+        $scope.sharePointsAlertMessage = $scope.me.share_points ? 'Sharing points' : 'Not sharing points';
         getLeaderboard();
       });
     };

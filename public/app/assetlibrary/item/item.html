@@ -156,6 +156,8 @@
 
   <h3><ng-pluralize count="asset.comment_count" when="{'0': 'No comments', 'one': '1 comment', 'other': '{} comments'}"></ng-pluralize></h3>
 
+  <div class="sr-only" role="alert" aria-live="polite" data-ng-bind="commentAlertMessage"></div>
+
   <!-- NEW COMMENT -->
   <div class="col-pane assetlibrary-item-newcomment-container">
     <div class="media">

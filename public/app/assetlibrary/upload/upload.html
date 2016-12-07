@@ -89,6 +89,7 @@
   </div>
 
   <!-- PROGRESS -->
+  <div role="alert" class="sr-only" aria-live="polite" data-ng-bind="isUploading ? 'Uploading files' : ''"></div>
   <div data-ng-if="isUploading">
     <div class="assetlibrary-upload-progress-container">
       <div>

@@ -44,6 +44,9 @@
     // Variable that will keep track of the new top-level comment
     $scope.newComment = null;
 
+    // Screenreader alert message for comment actions
+    $scope.commentAlertMessage = null;
+
     // Variable that will keep track of the timeout id when a preview is pending and its status is being retrieved
     var previewTimeout = null;
 
@@ -183,6 +186,7 @@
         comment.level = 0;
         $scope.asset.comments.unshift(comment);
         $scope.asset.comment_count++;
+        $scope.commentAlertMessage = 'Comment created';
         // Clear the new comment
         $scope.newComment = null;
         // Indicate that the asset has been updated
@@ -216,6 +220,7 @@
           }
         }
         $scope.asset.comment_count++;
+        $scope.commentAlertMessage = 'Reply added';
         // Re-build the comment tree
         buildCommentTree($scope.asset);
         // Hide the reply form
@@ -249,6 +254,7 @@
     var editComment = $scope.editComment = function(comment) {
       assetLibraryFactory.editComment(assetId, comment.id, comment.newBody).success(function() {
         comment.body = comment.newBody;
+        $scope.commentAlertMessage = 'Comment edited';
         toggleEditComment(comment);
       });
     };
@@ -272,6 +278,7 @@
               $scope.asset.comments.splice(i, 1);
             }
           }
+          $scope.commentAlertMessage = 'Comment deleted';
           // Re-build the comment tree
           buildCommentTree($scope.asset);
           $scope.asset.comment_count--;

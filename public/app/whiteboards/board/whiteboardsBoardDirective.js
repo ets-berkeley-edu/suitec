@@ -1710,6 +1710,7 @@
           // Only submit the chat message when the enter button is pressed
           if ($event.which === 13) {
             if ($scope.newChatMessage.body) {
+              $scope.sendingChatAlert = true;
               socket.emit('chat', $scope.newChatMessage.body);
             }
             // Reset the new chat message
@@ -1770,6 +1771,7 @@
           socket.on('chat', function(chatMessage) {
             // Add the message to the set of chat messages
             $scope.chatMessages.push(chatMessage);
+            $scope.sendingChatAlert = false;
 
             // Angular uses a `$$hashKey` property on each object to determine whether it needs to update
             // the DOM. When the new chat message is added on a new day, we have to update all the date
