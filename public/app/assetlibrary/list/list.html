@@ -1,4 +1,6 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist'">
+  <div data-ng-if="me.is_admin && (!me.course.active || me.course.reactivated)" data-ng-include="'/app/shared/syncdisabled.html'"></div>
+
   <div class="row assetlibrary-list-top">
     <!-- SEARCH -->
     <search

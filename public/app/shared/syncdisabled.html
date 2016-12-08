@@ -1,0 +1,26 @@
+<div role="alert" class="alert alert-warning" data-ng-controller="SyncDisabledController" data-ng-if="!me.course.active">
+  <div class="sync-disabled-header">
+    <i class="fa fa-exclamation-circle"></i> SuiteC syncing is disabled for this course.
+  </div>
+  <p class="sync-disabled-content">
+    After a period of inactivity, the SuiteC tools stop synchronizing their data with the Canvas course site that hosts them. While syncing is disabled:
+  </p>
+  <ul class="sync-disabled-content">
+    <li>Changes in course site membership and user roles will not be reflected in the SuiteC tools.</li>
+    <li>Assignment submissions will not sync to the Asset Library.</li>
+    <li>Assignment submissions and Discussions activity will not be tracked in the Engagement Index.</li>
+  </ul>
+  <p class="sync-disabled-content">
+    If you resume syncing, the SuiteC tools will update to reflect submissions, activities and membership changes that took place while syncing was disabled.
+  </p>
+  <div class="sync-disabled-content text-right" style="margin-top:10px;">
+    <button type="button" class="btn btn-primary ng-scope" data-ng-click="activateCourse()">
+      <span data-ng-if="!activatingCourse">Resume syncing</span>
+      <span data-ng-if="activatingCourse"><i class="fa fa-spinner fa-spin"></i> Resuming...</span>
+    </button>
+  </div>
+</div>
+
+<div role="alert" class="alert alert-success" data-ng-controller="SyncDisabledController" data-ng-if="me.course.reactivated">
+  Syncing has been resumed for this course. There may be a short delay before SuiteC tools are updated.
+</div>
