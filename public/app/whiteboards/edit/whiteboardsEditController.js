@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsEditController', function(me, userFactory, whiteboardsFactory, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsEditController', function(me, userFactory, whiteboardsFactory, $scope, $window) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -61,6 +61,23 @@
           });
         }
       });
+    };
+
+    /**
+     * Delete the current whiteboard
+     */
+    var deleteWhiteboard = $scope.deleteWhiteboard = function() {
+      if (confirm('Are you sure you want to delete this whiteboard?')) {
+        whiteboardsFactory.deleteWhiteboard($scope.whiteboard.id).then(function() {
+          // Refresh the whiteboard list and close this whiteboard
+          if ($window.opener) {
+            $window.opener.refreshWhiteboardList();
+          }
+          $window.close();
+        }, function(err) {
+          alert('There was an error deleting the whiteboard.');
+        });
+      }
     };
 
     /**

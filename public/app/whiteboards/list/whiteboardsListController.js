@@ -32,6 +32,7 @@
     // Variable that keeps track of the search options, initially blank. These will be bound to the whiteboards
     // search directive and updated when the user makes changes to the input fields.
     $scope.searchOptions = {
+      'includeDeleted': false,
       'keywords': '',
       'user': ''
     };
@@ -58,7 +59,7 @@
 
       // Variable that keeps track of whether a search is being performed
       $scope.isSearch = false;
-      if ($scope.searchOptions.keywords || $scope.searchOptions.user) {
+      if ($scope.searchOptions.includeDeleted || $scope.searchOptions.keywords || $scope.searchOptions.user) {
         $scope.isSearch = true;
       }
     };

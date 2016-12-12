@@ -65,6 +65,11 @@
         // The padding that will be enforced on the canvas when it can be scrolled
         var CANVAS_PADDING = 60;
 
+        // Force readonly mode on deleted whiteboards
+        if ($scope.whiteboard.deleted_at) {
+          $scope.readonly = true;
+        }
+
         // Variable that will keep track of whether the chat/online sidebar is expanded
         $scope.sidebarExpanded = $scope.readonly ? false : true;
 
@@ -172,6 +177,30 @@
           if ($scope.whiteboard) {
             return _.where($scope.whiteboard.members, {'online': true});
           }
+        };
+
+        /**
+         * Restore the whiteboard if deleted
+         */
+        var restoreWhiteboard = $scope.restoreWhiteboard = function() {
+          if ($scope.whiteboard && $scope.whiteboard.deleted_at) {
+            whiteboardsFactory.restoreWhiteboard($scope.whiteboard.id).then(function() {
+              // Update local state
+              $scope.whiteboard.deleted_at = null;
+              $scope.readonly = false;
+
+              // Show a notification indicating the whiteboard was restored
+              var myAlert = $alert({
+                'container': '#whiteboards-board-notifications',
+                'content': 'The whiteboard has been restored.',
+                'duration': 5,
+                'keyboard': true,
+                'show': true,
+                'templateUrl': 'whiteboards-notification-template',
+                'type': 'success'
+              });
+            });
+          };
         };
 
         /* CANVAS */
@@ -1818,23 +1847,6 @@
           // Switch the toolbar back to move mode. This will
           // also close any open popovers
           setMode('move');
-        };
-
-        /**
-         * Delete the current whiteboard
-         */
-        var deleteWhiteboard = $scope.deleteWhiteboard = function() {
-          if (confirm('Are you sure you want to delete this whiteboard?')) {
-            whiteboardsFactory.deleteWhiteboard($scope.whiteboard.id).then(function() {
-              // Refresh the whiteboard list and close this whiteboard
-              if ($window.opener) {
-                $window.opener.refreshWhiteboardList();
-              }
-              $window.close();
-            }, function(err) {
-              alert('There was an error deleting the whiteboard.');
-            });
-          }
         };
 
         /* EXPORT */
