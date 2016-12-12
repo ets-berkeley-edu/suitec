@@ -1,5 +1,7 @@
 <h2>Engagement Index</h2>
 
+<div data-ng-if="me.is_admin && (!me.course.active || me.course.reactivated)" data-ng-include="'/app/shared/syncdisabled.html'"></div>
+
 <!-- SPLASH -->
 <div data-ng-if="!me.is_admin && me.share_points === null" data-ng-include="'/app/engagementindex/leaderboard/splash.html'"></div>
 

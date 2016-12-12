@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('courseFactory', function(utilService, $http) {
+  angular.module('collabosphere').factory('courseFactory', function(utilService, $cacheFactory, $http) {
 
     /**
      * Get attributes for a course
@@ -68,6 +68,19 @@
     };
 
     /**
+     * Mark a course as active
+     *
+     * @return {Promise}                        $http promise
+     */
+    var activateCourse = function() {
+      return $http.post(utilService.getApiUrl('/course/activate')).then(function() {
+        // Remove the me object from the cache as its `course.active` value is now updated
+        var $httpDefaultCache = $cacheFactory.get('$http');
+        $httpDefaultCache.remove(utilService.getApiUrl('/users/me'));
+      });
+    };
+
+    /**
      * Update the daily notification settings for a course
      *
      * @param  {Boolean}        enabled         Whether daily notifications should be enabled for the course
@@ -96,6 +109,7 @@
     return {
       'getCourse': getCourse,
       'getCourses': getCourses,
+      'activateCourse': activateCourse,
       'updateDailyNotifications': updateDailyNotifications,
       'updateWeeklyNotifications': updateWeeklyNotifications
     };
