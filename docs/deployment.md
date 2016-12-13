@@ -17,8 +17,6 @@ export SUITEC_BASE_DIR=~/collabosphere
 
 cd ~/suitec-ops
 
-git pull
-
 ./scripts/deploy.sh [-r remote] [-b branch] [-t tag]
 
 # You are done. Perform post-deploy tasks, if any, and then start SuiteC.
