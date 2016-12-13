@@ -289,6 +289,10 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
   font-size: 13px;
 }
 
+.col-list-item-metadata-deleted {
+  background-color: #999;
+}
+
 .col-list-item-actions {
   font-size: 13px;
   padding: 12px 10px 0;
@@ -374,6 +378,10 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
 
 .search-advancedform {
   padding: 30px 30px 0 30px;
+}
+
+.search-advancedform .form-group > .form-checkbox {
+  margin-right: 10px;
 }
 
 @media only screen and (min-width : 768px) {

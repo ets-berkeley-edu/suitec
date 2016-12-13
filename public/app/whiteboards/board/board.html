@@ -1,7 +1,16 @@
 <div id="whiteboards-board-container" class="text-center" data-ng-class="{'whiteboards-sidebar-expanded': sidebarExpanded}">
   <!-- NOTIFICATIONS -->
   <div id="whiteboards-board-notifications-container">
-    <div id="whiteboards-board-notifications"></div>
+    <div id="whiteboards-board-notifications">
+      <div class="alert alert-danger" data-ng-if="me.is_admin && whiteboard.deleted_at">
+        This whiteboard has been deleted.
+        <div class="alert-button-container">
+          <button type="button" class="btn btn-default" title="Restore" data-ng-click="restoreWhiteboard()">
+            Restore
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- WHITEBOARD -->
   <div id="whiteboards-board-viewport" tabindex="0">
@@ -81,11 +90,6 @@
       <button type="button" class="btn btn-default" title="Settings" data-ng-click="editWhiteboard()">
         <i class="fa fa-cog">
           <span class="sr-only">Settings</span>
-        </i>
-      </button>
-      <button type="button" class="btn btn-default" title="Delete" data-ng-click="deleteWhiteboard()" data-ng-if="me.is_admin">
-        <i class="fa fa-trash-o">
-          <span class="sr-only">Delete</span>
         </i>
       </button>
     </div>

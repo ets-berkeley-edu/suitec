@@ -36,6 +36,7 @@
       // Define how the directive's scope is separated from the caller's scope
       // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
+        'includeDeleted': '=includeDeleted',
         'isAdvancedSearch': '=isAdvancedSearch',
         'keywords': '=searchOptionsKeywords',
         'user': '=searchOptionsUser'
@@ -46,12 +47,16 @@
         // Variable that keeps track of the users in the current course
         $scope.users = null;
 
+        // Variable that keeps track of whether deleted whiteboards should be included
+        $scope.includeDeleted = false;
+
         /**
          * Emit an event indicating that we want to search through whiteboards
          */
         var search = $scope.search = function() {
           if ($scope.isAdvancedSearch) {
             var searchOptions = {
+              'includeDeleted': $scope.includeDeleted,
               'keywords': $scope.keywords,
               'user': $scope.user
             };

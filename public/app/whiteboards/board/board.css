@@ -67,6 +67,10 @@
   z-index: 101;
 }
 
+#whiteboards-board-notifications .alert .alert-button-container {
+  margin-top: 15px;
+}
+
 /* READ-ONLY */
 
 #whiteboards-board-readonly {

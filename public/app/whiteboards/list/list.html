@@ -35,9 +35,10 @@
             <div class="text-center col-list-item-thumbnail-default" data-ng-if="!whiteboard.thumbnail_url">
               <i class="fa fa-calendar-o"></i>
             </div>
-            <div class="col-list-item-metadata">
+            <div class="col-list-item-metadata" data-ng-class="{'col-list-item-metadata-deleted': whiteboard.deleted_at}">
               <span class="col-threedots">{{whiteboard.title}}</span>
-              <small class="col-threedots">{{whiteboard.online_count}} online</small>
+              <small class="col-threedots" data-ng-if="!whiteboard.deleted_at">{{whiteboard.online_count}} online</small>
+              <small class="col-threedots" data-ng-if="whiteboard.deleted_at">Deleted</small>
             </div>
           </div>
         </a>
