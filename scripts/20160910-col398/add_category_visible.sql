@@ -6,3 +6,7 @@ ALTER TABLE categories ADD visible BOOLEAN NOT NULL DEFAULT true;
 -- Categories derived from Canvas assignments should be invisible by default.
 
 UPDATE categories SET visible = false WHERE canvas_assignment_id IS NOT NULL;
+
+/**** ROLLBACK ****
+
+ALTER TABLE categories DROP visible;

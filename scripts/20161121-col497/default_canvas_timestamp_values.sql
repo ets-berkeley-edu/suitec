@@ -14,3 +14,11 @@ END;
 $$ language 'plpgsql';
 
 CREATE TRIGGER update_canvas_updated_at BEFORE UPDATE ON canvas FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+/**** ROLLBACK ****
+
+DROP TRIGGER update_canvas_updated_at ON canvas;
+DROP FUNCTION update_updated_at_column();
+
+ALTER TABLE canvas ALTER COLUMN created_at DROP DEFAULT;
+ALTER TABLE canvas ALTER COLUMN updated_at DROP DEFAULT;

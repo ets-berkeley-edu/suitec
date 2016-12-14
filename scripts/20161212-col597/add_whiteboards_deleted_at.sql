@@ -2,3 +2,7 @@
 -- around for recovery instead of removing them from the table entirely.
 
 ALTER TABLE whiteboards ADD deleted_at TIMESTAMP WITH TIME ZONE;
+
+/**** ROLLBACK ****
+
+ALTER TABLE categories DROP deleted_at;

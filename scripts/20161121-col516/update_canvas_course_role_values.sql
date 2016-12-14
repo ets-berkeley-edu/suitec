@@ -2,3 +2,8 @@
 
 update users set canvas_course_role='urn:lti:role:ims/lis/Instructor' where canvas_course_role='Instructor';
 update users set canvas_course_role='urn:lti:role:ims/lis/ContentDeveloper' where canvas_course_role='ContentDeveloper';
+
+/**** ROLLBACK ****
+
+update users set canvas_course_role='Instructor' where canvas_course_role='urn:lti:role:ims/lis/Instructor';
+update users set canvas_course_role='ContentDeveloper' where canvas_course_role='urn:lti:role:ims/lis/ContentDeveloper';
