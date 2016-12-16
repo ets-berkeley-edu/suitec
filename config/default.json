@@ -14,7 +14,8 @@
   },
   "canvasPoller": {
     "enabled": true,
-    "delay": 15
+    "delay": 15,
+    "deactivationThreshold": 90
   },
   "cookie": {
     "secret": "String to encrypt the cookies with. Change me in production"
