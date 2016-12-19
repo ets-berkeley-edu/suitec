@@ -69,12 +69,18 @@ var init = function() {
         'validateUserAccounts': false
       }
 
-      MigrateAssetsAPI.migrate(fromCtx, opts, function(err, results) {
+      MigrateAssetsAPI.getMigrationContexts(fromCtx, opts, function(err, toCtx, adminCtx) {
         if (err) {
           return log.error({'err': err}, 'Migration failed');
         }
 
-        log.info('Migration succeeded.');            
+        MigrateAssetsAPI.migrate(fromCtx, toCtx, adminCtx, opts, function(err, results) {
+          if (err) {
+            return log.error({'err': err}, 'Migration failed');
+          }
+
+          log.info('Migration succeeded.');            
+        });
       });
     });
   });

@@ -142,9 +142,8 @@
      * @param  {Number}    destinationUserId    The course-specific SuiteC user id to be associated with migrated assets
      */
     var migrateAssets = $scope.migrateAssets = function(destinationUserId) {
-      $scope.assetMigration = 'pending';
       assetLibraryFactory.migrateAssets(destinationUserId).then(function() {
-        $scope.assetMigration = 'complete';
+        $scope.assetMigration = 'working';
       }, function(err) {
         $scope.assetMigration = 'error';
       });

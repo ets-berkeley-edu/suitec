@@ -101,11 +101,8 @@
 
   <p class="assetlibrary-manageassets-info">If you have instructor privileges in another course site using the Asset Library, you can copy all of your assets into that site's Asset Library. Only assets that you have submitted yourself will be copied, not assets submitted by other instructors or by students.</p>
   
-  <div data-ng-if="assetMigration === 'pending'">
-    <i class="fa fa-spinner fa-spin"></i> Migration in progress...
-  </div>
-  <div class="alert alert-success" role="alert" data-ng-if="assetMigration === 'complete'">
-    Migration complete.
+  <div class="alert alert-success" role="alert" data-ng-if="assetMigration === 'working'">
+    Your migration has started. Copied assets will appear in the Asset Library of the destination course.
   </div>
   <div class="alert alert-danger" role="alert" data-ng-if="assetMigration === 'error'">
     Migration failed.
