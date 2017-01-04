@@ -5,4 +5,4 @@ ALTER TABLE whiteboards ADD deleted_at TIMESTAMP WITH TIME ZONE;
 
 /**** ROLLBACK ****
 
-ALTER TABLE categories DROP deleted_at;
+ALTER TABLE whiteboards DROP deleted_at;
