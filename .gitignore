@@ -18,3 +18,8 @@ public/lib
 public/app/canvas-customization.js
 
 target
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
