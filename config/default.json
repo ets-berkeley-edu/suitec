@@ -28,7 +28,8 @@
     "port": 5432,
     "dropOnStartup": false,
     "version": "9.4.4",
-    "sync": true
+    "sync": true,
+    "ssl": false
   },
   "email": {
     "enabled": false,
