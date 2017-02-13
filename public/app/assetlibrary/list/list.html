@@ -59,8 +59,10 @@
                 <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link'), 'fa-calendar-o': (asset.type === 'whiteboard')}"></i>
               </div>
               <div class="col-list-item-metadata">
-                <span class="col-threedots">{{asset.title}}</span>
-                <small class="col-threedots">by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+                <div class="col-threedots">{{asset.title}} </div>
+                <div class="col-threedots">
+                  <small>by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}></small>
+                </div>
               </div>
             </div>
             <div class="text-right col-list-item-actions" iconbar asset="asset" viewonly="true"></div>
