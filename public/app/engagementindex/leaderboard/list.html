@@ -11,15 +11,37 @@
     </form>
   </div>
 
+  <div class="sr-only" role="alert" data-ng-bind-template="Sorted by {{sortBy}} {{reverse ? 'descending' : ''}}"></div>
+
   <table class="table-striped leaderboard-list-table" data-ng-if="me.is_admin || me.share_points">
     <tr>
-      <th class="text-center" data-ng-click="sort('rank')" data-ng-class="{dropup: reverse}">Rank <span class="caret" data-ng-if="sortBy === 'rank'"></span></th>
-      <th data-ng-click="sort('canvas_full_name')" data-ng-class="{dropup: reverse}">Name <span class="caret" data-ng-if="sortBy === 'canvas_full_name'"></span></th>
-      <th class="text-center" data-ng-click="sort('share_points')" data-ng-class="{dropup: reverse}" data-ng-if="me.is_admin">Share <span class="caret" data-ng-if="sortBy === 'share_points'"></span></th>
-      <th class="text-center" data-ng-click="sort('points')" data-ng-class="{dropup: reverse}">Points <span class="caret" data-ng-if="sortBy === 'points'"></span></th>
-      <th data-ng-click="sort('last_activity')" data-ng-class="{dropup: reverse}">Last Activity <span class="caret" data-ng-if="sortBy === 'last_activity'"></span></th>
+      <th class="text-center" data-ng-click="sort('rank')" data-ng-class="{dropup: !reverse}">
+        <span class="sr-only">Sort by </span>Rank 
+        <span class="sr-only" data-ng-if="sortBy === 'rank' && !reverse">Descending</span>
+        <span class="caret" data-ng-if="sortBy === 'rank'"></span>
+      </th>
+      <th data-ng-click="sort('canvas_full_name')" data-ng-class="{dropup: !reverse}">
+        <span class="sr-only">Sort by </span>Name 
+        <span class="sr-only" data-ng-if="sortBy === 'canvas_full_name' && !reverse">Descending</span>
+        <span class="caret" data-ng-if="sortBy === 'canvas_full_name'"></span>
+      </th>
+      <th class="text-center" data-ng-click="sort('share_points')" data-ng-class="{dropup: !reverse}" data-ng-if="me.is_admin">
+        <span class="sr-only">Sort by </span>Share 
+        <span class="sr-only" data-ng-if="sortBy === 'share_points' && !reverse">Descending</span>
+        <span class="caret" data-ng-if="sortBy === 'share_points'"></span>
+      </th>
+      <th class="text-center" data-ng-click="sort('points')" data-ng-class="{dropup: !reverse}">
+        <span class="sr-only">Sort by </span>Points 
+        <span class="sr-only" data-ng-if="sortBy === 'points' && !reverse">Descending</span>
+        <span class="caret" data-ng-if="sortBy === 'points'"></span>
+      </th>
+      <th data-ng-click="sort('last_activity')" data-ng-class="{dropup: !reverse}">
+        <span class="sr-only">Sort by </span>Last Activity 
+        <span class="sr-only" data-ng-if="sortBy === 'last_activity' && !reverse">Descending</span>
+        <span class="caret" data-ng-if="sortBy === 'last_activity'"></span>
+      </th>
     </tr>
-    <tr data-ng-repeat="user in users | orderBy:sortBy:!reverse | filter:query:strict" data-ng-class="{'active': user.id === me.id}">
+    <tr data-ng-repeat="user in users | orderBy:sortBy:reverse | filter:query:strict" data-ng-class="{'active': user.id === me.id}">
       <td class="col-sm-1 text-center" data-ng-bind="user.rank"></td>
       <td class="col-sm-5">
         <div class="media">
