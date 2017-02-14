@@ -144,6 +144,15 @@ textarea {
   border-right: none;
 }
 
+.btn-row-reversed {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.btn-row-reversed .btn:not(:first-child) {
+  margin: 0 5px;
+}
+
 .popover-content {
   padding: 5px;
 }
