@@ -1,0 +1,29 @@
+version: 0.1
+
+eb_codebuild_settings:
+  CodeBuildServiceRole: arn:aws:iam::234923831700:role/service-role/codebuild-suitec-service-role
+  ComputeType: Linux
+  Image: aws/codebuild/nodejs:6.3.1
+  Timeout: 60
+
+phases:
+  install:
+    commands:
+      - npm install
+  pre_build:
+    commands:
+      - ./node_modules/.bin/gulp jscs
+  build:
+    commands:
+      - echo "build phase"
+  post_build:
+    commands:
+      - for i in $(ls node_modules | grep -v ^col-); do rm -Rf node_modules/$i; done
+
+artifacts:
+  files:
+    - '.bowerrc'
+    - '.ebextensions/*'
+    - '.elasticbeanstalk/*'
+    - '.gitignore'
+    - '**/*'
