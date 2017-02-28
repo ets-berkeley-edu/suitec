@@ -5,6 +5,11 @@
 
       <div>
         <h2>Export Whiteboard to Asset Library</h2>
+
+        <div class="alert alert-danger" role="alert" data-ng-if="exportErrored">
+          There was an error exporting the whiteboard.
+        </div>
+
         <form name="whiteboardsExportAsAssetForm" data-ng-submit="whiteboardsExportAsAssetForm.$valid && exportAsAsset()" novalidate>
 
           <div class="row whiteboards-exportasset-container">

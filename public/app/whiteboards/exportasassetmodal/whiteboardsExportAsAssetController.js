@@ -40,14 +40,21 @@
     // Variable that will keep track of whether the current whiteboard is being exported to an asset
     $scope.isExporting = false;
 
+    // Variable that will keep track of whether the export errored
+    $scope.exportErrored = false;
+
     /**
      * Export the whiteboard as an asset
      */
     var exportAsAsset = $scope.exportAsAsset = function() {
       $scope.isExporting = true;
+      $scope.exportErrored = false;
       whiteboardsFactory.exportWhiteboardAsAsset($scope.whiteboard.id, $scope.asset).success(function(asset) {
         $scope.isExporting = false;
         $scope.closeModal(asset);
+      }).error(function() {
+        $scope.isExporting = false;
+        $scope.exportErrored = true;
       });
     };
 
