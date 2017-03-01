@@ -41,7 +41,7 @@
 
     // Default sort
     $scope.sortBy = 'rank';
-    $scope.reverse = true;
+    $scope.reverse = false;
 
     // Variable that will keep track of the users in this course and their points
     $scope.users = null;
@@ -293,13 +293,17 @@
      * @param  {String}     sortBy          The name of the field to sort by
      */
     var sort = $scope.sort = function(sortBy) {
-      $scope.sortBy = sortBy;
-      $scope.reverse = !$scope.reverse;
+      if ($scope.sortBy === sortBy) {
+        $scope.reverse = !$scope.reverse;
+      } else {
+        $scope.sortBy = sortBy;
+        $scope.reverse = false;
+      }
       // Track the leaderboard sort
       analyticsService.track('Sort engagement index', {
         'total': $scope.users.length,
         'ei_sort': $scope.sortBy,
-        'ei_reverse': $scope.reverse
+        'ei_reverse': !$scope.reverse
       });
     };
 

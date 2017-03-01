@@ -606,7 +606,144 @@
           });
         };
 
+        /* UPDATE ITEMS */
+
+        /**
+         * Persist element updates to the server
+         *
+         * @param  {Object[]}       elements          The updated elements to persist to the server
+         */
+        var saveElementUpdates = function(elements) {
+          // Notify the server about the updated elements
+          socket.emit('updateActivity', elements);
+
+          // Recalculate the size of the whiteboard canvas
+          setCanvasDimensions();
+        };
+
+        /**
+         * One or multiple whiteboard canvas elements were updated by a different user
+         */
+        if (socket) {
+          socket.on('updateActivity', function(elements) {
+            // Deactivate the current group if any of the updated elements
+            // are in the current group
+            deactiveActiveGroupIfOverlap(elements);
+
+            // Update the elements
+            _.each(elements, function(element) {
+              updateCanvasElement(element.uid, element);
+            });
+
+            // Recalculate the size of the whiteboard canvas
+            setCanvasDimensions();
+          });
+        }
+
+        /**
+         * An IText whiteboard canvas element was updated by the current user
+         */
+        fabric.IText.prototype.on('editing:exited', function() {
+          var element = this;
+
+          // If the text element is empty, it can be removed from the whiteboard canvas
+          var text = element.text.trim();
+          if (!text) {
+            // TODO: Add the action to the undo/redo queue
+            // element.text = element.originalState.text;
+            // Only persist the delete to the server when the element
+            // already existed
+            if (element.get('uid')) {
+              saveDeleteElements([element]);
+            }
+            canvas.remove(element);
+
+          // The text element did not exist before. Notify the server that the element was added
+          } else if (!element.get('uid')) {
+            saveNewElement(element);
+
+          // The text element existed before. Notify the server that the element was updated
+          } else {
+            saveElementUpdates([element]);
+            // TODO: Add the action to the undo/redo queue
+            // addUndoAction('update', element.toObject(), element.originalState);
+          }
+
+          // Switch back to move mode
+          setMode('move');
+        });
+
+        // The whiteboard canvas should be initialized only after our additions are made to Fabric
+        // prototypes.
         initializeCanvas();
+
+        // Variable that will keep track of whether the currently selected elements are
+        // in the process of being moved, scaled or rotated
+        $scope.isModifyingElement = false;
+
+        /**
+         * Indicate that the currently selected elements are in the process of being
+         * moved, scaled or rotated
+         */
+        var setModifyingElement = function() {
+          $scope.isModifyingElement = true;
+        };
+
+        canvas.on('object:moving', setModifyingElement);
+        canvas.on('object:scaling', setModifyingElement);
+        canvas.on('object:rotating', setModifyingElement);
+
+        /**
+         * One or multiple whiteboard canvas elements have been updated by the current user
+         */
+        canvas.on('object:modified', function(ev) {
+          // Ensure that none of the modified objects are positioned off screen
+          ensureWithinCanvas(ev);
+
+          // Get the selected whiteboard elements
+          var elements = getActiveElements();
+
+          // Add the action to the undo/redo queue
+          // TODO
+          // addUndoActivity('update', updates);
+
+          // Notify the server about the updates
+          saveElementUpdates(elements);
+        });
+
+        /**
+         * Indicate that the currently selected elements are no longer being modified
+         * once moving, scaling or rotating has finished
+         */
+        canvas.on('object:modified', function() {
+          $scope.isModifyingElement = false;
+        });
+
+        /**
+         * Draw a box around the currently selected element(s) and use this box
+         * to position the buttons that allow the selected element(s) to be
+         * modified
+         */
+        canvas.on('after:render', function() {
+          if (!$scope.isModifyingElement && isElementSelected()) {
+            // Get the bounding rectangle around the currently selected element(s)
+            var bound = null;
+            if (canvas.getActiveObject()) {
+              bound = canvas.getActiveObject().getBoundingRect();
+            } else if (canvas.getActiveGroup()) {
+              bound = canvas.getActiveGroup().getBoundingRect();
+            }
+
+            // Explicitly draw the bounding rectangle
+            canvas.contextContainer.strokeStyle = '#0295DE';
+            canvas.contextContainer.strokeRect(bound.left - 10, bound.top - 10, bound.width + 20, bound.height + 20);
+
+            // Position the buttons to modify the selected element(s)
+            var editButtons = document.getElementById('whiteboards-board-editelement');
+            editButtons.style.left = (bound.left - 10) + 'px';
+            editButtons.style.top = (bound.top + bound.height + 15) + 'px';
+          }
+        });
 
         /* ELEMENT SELECTION */
 
@@ -800,141 +937,6 @@
             });
           });
         }
-
-        /* UPDATE ITEMS */
-
-        /**
-         * Persist element updates to the server
-         *
-         * @param  {Object[]}       elements          The updated elements to persist to the server
-         */
-        var saveElementUpdates = function(elements) {
-          // Notify the server about the updated elements
-          socket.emit('updateActivity', elements);
-
-          // Recalculate the size of the whiteboard canvas
-          setCanvasDimensions();
-        };
-
-        /**
-         * One or multiple whiteboard canvas elements have been updated by the current user
-         */
-        canvas.on('object:modified', function(ev) {
-          // Ensure that none of the modified objects are positioned off screen
-          ensureWithinCanvas(ev);
-
-          // Get the selected whiteboard elements
-          var elements = getActiveElements();
-
-          // Add the action to the undo/redo queue
-          // TODO
-          // addUndoActivity('update', updates);
-
-          // Notify the server about the updates
-          saveElementUpdates(elements);
-        });
-
-        /**
-         * One or multiple whiteboard canvas elements were updated by a different user
-         */
-        if (socket) {
-          socket.on('updateActivity', function(elements) {
-            // Deactivate the current group if any of the updated elements
-            // are in the current group
-            deactiveActiveGroupIfOverlap(elements);
-
-            // Update the elements
-            _.each(elements, function(element) {
-              updateCanvasElement(element.uid, element);
-            });
-
-            // Recalculate the size of the whiteboard canvas
-            setCanvasDimensions();
-          });
-        }
-
-        /**
-         * An IText whiteboard canvas element was updated by the current user
-         */
-        fabric.IText.prototype.on('editing:exited', function() {
-          var element = this;
-
-          // If the text element is empty, it can be removed from the whiteboard canvas
-          var text = element.text.trim();
-          if (!text) {
-            // TODO: Add the action to the undo/redo queue
-            // element.text = element.originalState.text;
-            // Only persist the delete to the server when the element
-            // already existed
-            if (element.get('uid')) {
-              saveDeleteElements([element]);
-            }
-            canvas.remove(element);
-
-          // The text element did not exist before. Notify the server that the element was added
-          } else if (!element.get('uid')) {
-            saveNewElement(element);
-
-          // The text element existed before. Notify the server that the element was updated
-          } else {
-            saveElementUpdates([element]);
-            // TODO: Add the action to the undo/redo queue
-            // addUndoAction('update', element.toObject(), element.originalState);
-          }
-
-          // Switch back to move mode
-          setMode('move');
-        });
-
-        // Variable that will keep track of whether the currently selected elements are
-        // in the process of being moved, scaled or rotated
-        $scope.isModifyingElement = false;
-
-        /**
-         * Indicate that the currently selected elements are in the process of being
-         * moved, scaled or rotated
-         */
-        var setModifyingElement = function() {
-          $scope.isModifyingElement = true;
-        };
-
-        canvas.on('object:moving', setModifyingElement);
-        canvas.on('object:scaling', setModifyingElement);
-        canvas.on('object:rotating', setModifyingElement);
-
-        /**
-         * Indicate that the currently selected elements are no longer being modified
-         * once moving, scaling or rotating has finished
-         */
-        canvas.on('object:modified', function() {
-          $scope.isModifyingElement = false;
-        });
-
-        /**
-         * Draw a box around the currently selected element(s) and use this box
-         * to position the buttons that allow the selected element(s) to be
-         * modified
-         */
-        canvas.on('after:render', function() {
-          if (!$scope.isModifyingElement && isElementSelected()) {
-            // Get the bounding rectangle around the currently selected element(s)
-            var bound = null;
-            if (canvas.getActiveObject()) {
-              bound = canvas.getActiveObject().getBoundingRect();
-            } else if (canvas.getActiveGroup()) {
-              bound = canvas.getActiveGroup().getBoundingRect();
-            }
-
-            // Explicitly draw the bounding rectangle
-            canvas.contextContainer.strokeStyle = '#0295DE';
-            canvas.contextContainer.strokeRect(bound.left - 10, bound.top - 10, bound.width + 20, bound.height + 20);
-
-            // Position the buttons to modify the selected element(s)
-            var editButtons = document.getElementById('whiteboards-board-editelement');
-            editButtons.style.left = (bound.left - 10) + 'px';
-            editButtons.style.top = (bound.top + bound.height + 15) + 'px';
-          }
-        });
 
         /* DELETE ITEMS */
 

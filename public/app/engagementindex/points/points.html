@@ -43,10 +43,10 @@
       </table>
     </div>
 
-    <div class="text-right points-actions">
+    <div class="points-actions btn-row-reversed">
+      <button type="submit" class="btn btn-primary" data-ng-if="editMode">Save</button>
       <button type="button" class="btn btn-primary" data-ng-click="editActivityTypeConfiguration()" data-ng-if="!editMode">Edit</button>
       <button type="button" class="btn btn-default" data-ng-click="cancelActivityTypeConfiguration()" data-ng-if="editMode">Cancel</button>
-      <button type="submit" class="btn btn-primary" data-ng-if="editMode">Save</button>
     </div>
   </div>
 </form>
