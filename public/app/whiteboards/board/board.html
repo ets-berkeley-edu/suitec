@@ -276,6 +276,8 @@
         <div class="media-body media-middle">
           <i class="fa fa-graduation-cap" data-ng-if="member.is_admin"></i> {{member.canvas_full_name}}
           <span data-ng-if="me.id === member.id">(me)</span>
+          <span class="sr-only" data-ng-if="member.online">Online</span>
+          <span class="sr-only" data-ng-if="!member.online">Not online</span>
         </div>
       </div>
     </div>
