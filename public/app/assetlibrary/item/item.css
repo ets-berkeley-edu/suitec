@@ -77,6 +77,14 @@
     padding: 5px;
   }
 
+  .assetlibrary-item-preview .preview-video {
+    margin-top: 20px;
+  }
+
+  .assetlibrary-item-preview .preview-video-wrapper {
+    line-height: 0;
+  }
+
   .assetlibrary-item-preview iframe,
   .assetlibrary-item-preview .preview-document,
    .assetlibrary-item-whiteboard-preview {
