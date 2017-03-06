@@ -283,3 +283,9 @@ ul.assetlibrary-item-metadata-authors-multiple li .assetlibrary-item-metadata-au
   margin-top: 10px;
   white-space: pre-wrap;
 }
+
+/* NOTIFICATIONS */
+
+#assetlibrary-item-notifications .alert {
+  margin: 20px 0;
+}
