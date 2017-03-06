@@ -37,8 +37,15 @@
         </div>
 
         <!-- Images -->
-        <div data-ng-if="asset.type === 'file' && asset.image_url !== null">
+        <div data-ng-if="asset.type === 'file' && asset.image_url !== null && !asset.video_url">
           <img class="preview-image" alt="{{asset.title}}" title="{{asset.title}}" src="{{asset.image_url}}"/>
+        </div>
+
+        <!-- Videos -->
+        <div class="preview-video-wrapper" data-ng-if="asset.type === 'file' && asset.video_url !== null">
+          <video class="preview-video" alt="{{asset.title}}" title="{{asset.title}}" poster="{{asset.image_url}}" width="{{asset.width}}" height="{{asset.height}}" controls>
+            <source src="{{asset.video_url}}" type="video/mp4">
+          </video>
         </div>
 
         <!-- Links that are iframe embeddable -->

@@ -80,6 +80,10 @@
           if (asset.type === 'file') {
             if (asset.pdf_url) {
               asset.embedUrl = '/viewer/viewer.html?file=' + encodeURIComponent(asset.pdf_url);
+            } else if (asset.mime && asset.mime.lastIndexOf('video') === 0 && asset.image_url !== null && asset.download_url !== null) {
+              asset.video_url = $sce.trustAsResourceUrl(asset.preview_metadata.converted_video || asset.download_url);
+              asset.height = asset.preview_metadata.image_height;
+              asset.width = asset.preview_metadata.image_width;
             }
           } else if (asset.type === 'link') {
             if (asset.preview_metadata.youtubeId) {
