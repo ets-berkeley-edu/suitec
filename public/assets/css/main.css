@@ -363,6 +363,12 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
   color: #282B2D;
 }
 
+.col-footer {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 40px;
+}
+
 /* SEARCH */
 
 .search-container {
