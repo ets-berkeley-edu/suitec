@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, utilService, $rootScope, $sce, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -110,6 +110,9 @@
 
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+
+        // Set upper right button count
+        $scope.upperRightButtonCount = getUpperRightButtonCount();
 
         // If the preview is still being generated, wait a few seconds and try again
         if ((asset.type === 'file' || asset.type === 'link') && asset.preview_status === 'pending') {
@@ -300,6 +303,36 @@
       }
     };
 
+    var remixWhiteboard = $scope.remixWhiteboard = function() {
+      assetLibraryFactory.createWhiteboardFromAsset($scope.asset.id).success(function(whiteboard) {
+
+        var launchParams = utilService.getLaunchParams();
+        var whiteboardUrl = '/whiteboards/' + whiteboard.id;
+        whiteboardUrl += '?api_domain=' + launchParams.apiDomain;
+        whiteboardUrl += '&course_id=' + launchParams.courseId;
+        whiteboardUrl += '&tool_url=' + launchParams.toolUrl;
+
+        var successAlert = $alert({
+          'container': '#assetlibrary-item-notifications',
+          'content': 'A new board <a target="_blank" href="' + whiteboardUrl + '">"' + whiteboard.title + '"</a> has been created in Whiteboards.',
+          'keyboard': true,
+          'show': true,
+          'templateUrl': 'assetlibrary-item-notification-template',
+          'type': 'success'
+        });
+
+      }).error(function() {
+        var failureAlert = $alert({
+          'container': '#assetlibrary-item-notifications',
+          'content': 'There was an error creating a new board.',
+          'keyboard': true,
+          'show': true,
+          'templateUrl': 'assetlibrary-item-notification-template',
+          'type': 'danger'
+        });
+      });
+    };
+
     /**
      * Listen for events indicating that the current asset has been updated
      */
@@ -331,6 +364,32 @@
      */
     var closeWindow = $scope.closeWindow = function() {
       window.close();
+    };
+
+    /**
+     * For layout purposes, calculate the number of buttons that will appear at the upper right
+     */
+    var getUpperRightButtonCount = function() {
+      var count = 0;
+      if ($scope.asset) {
+        // Edit details
+        if (canManageAsset()) {
+          count++;
+        }
+        // Remix
+        if ($scope.asset.type === 'whiteboard') {
+          count++;
+        }
+        // Download
+        if ($scope.asset.type !== 'link' && $scope.asset.download_url) {
+          count++;
+        }
+        // Delete
+        if ($scope.asset.can_delete) {
+          count++;
+        }
+      }
+      return count;
     };
 
     // Load the selected asset
