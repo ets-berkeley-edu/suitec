@@ -3,7 +3,7 @@
 *.log
 logs/*.log
 
-apache/collabosphere.conf
+apache/suitec.conf
 
 config/*
 !config/default.json
