@@ -29,6 +29,7 @@
 
     RewriteEngine On
     RewriteRule ^/assetlibrary         <%= documentRoot %>/index.html
+    RewriteRule ^/dashboard            <%= documentRoot %>/index.html
     RewriteRule ^/engagementindex      <%= documentRoot %>/index.html
     RewriteRule ^/whiteboards          <%= documentRoot %>/index.html
 
