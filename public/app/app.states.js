@@ -75,6 +75,13 @@
         'templateUrl': '/app/assetlibrary/edit/edit.html'
       })
 
+      // Dashboard routes
+      .state('dashboard', {
+        'url': '/dashboard',
+        'templateUrl': '/app/dashboard/splash.html',
+        'controller': 'SplashController'
+      })
+
       // Engagement Index routes
       .state('engagementindex', {
         'url': '/engagementindex',
