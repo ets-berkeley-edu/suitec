@@ -60,7 +60,7 @@
         'controller': 'AssetLibraryManageAssetsController'
       })
       .state('assetlibrarylist', {
-        'url': '/assetlibrary?category&user&keywords&type',
+        'url': '/assetlibrary?category&user&keywords&type&sort',
         'templateUrl': '/app/assetlibrary/list/list.html',
         'controller': 'AssetLibraryListController'
       })
