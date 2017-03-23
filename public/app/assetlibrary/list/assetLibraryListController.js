@@ -52,7 +52,8 @@
       'keywords': $state.params.keywords || '',
       'category': parseInt($state.params.category, 10) || '',
       'user': parseInt($state.params.user, 10) || '',
-      'type': $state.params.type || ''
+      'type': $state.params.type || '',
+      'sort': $state.params.sort || ''
     };
 
     // Variable that keeps track of whether the search component is in the advanced view state. The
@@ -60,7 +61,7 @@
     // The value will be bound to the search directive which will update it when a user switches
     // between simple and advanced search mode
     $scope.isAdvancedSearch = false;
-    if ($scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+    if ($scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type || $scope.searchOptions.sort) {
       $scope.isAdvancedSearch = true;
     }
 
@@ -70,7 +71,7 @@
     var initializeSearchContext = function() {
       $scope.isSearch = false;
       $scope.resultsMessage = null;
-      if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+      if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type || $scope.searchOptions.sort) {
         $scope.isSearch = true;
       }
     };

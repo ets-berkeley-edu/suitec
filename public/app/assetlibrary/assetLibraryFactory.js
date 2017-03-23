@@ -73,6 +73,9 @@
       if (searchOptions.type) {
         url += '&type=' + searchOptions.type;
       }
+      if (searchOptions.sort) {
+        url += '&sort=' + searchOptions.sort;
+      }
       return $http.get(utilService.getApiUrl(url));
     };
 

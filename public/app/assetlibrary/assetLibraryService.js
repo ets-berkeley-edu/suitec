@@ -45,7 +45,7 @@
           $state.go('assetlibrarylist.item', {'assetId': assetId});
 
         // Check if an asset library search was deep linked
-        } else if (data.keywords || data.category || data.user || data.type) {
+        } else if (data.keywords || data.category || data.user || data.type || data.sort) {
 
           // Track the asset library search deep link
           analyticsService.track('Deep link Asset Library search', {
@@ -60,7 +60,8 @@
             'keywords': (data.keywords ? data.keywords : ''),
             'category': (data.category ? data.category : ''),
             'user': (data.user ? data.user : ''),
-            'type': (data.type ? data.type : '')
+            'type': (data.type ? data.type : ''),
+            'sort': (data.sort ? data.sort : '')
           };
           $state.go('assetlibrarylist', searchOptions);
         }

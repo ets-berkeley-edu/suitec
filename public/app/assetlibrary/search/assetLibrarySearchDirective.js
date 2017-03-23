@@ -40,7 +40,8 @@
         'keywords': '=searchOptionsKeywords',
         'category': '=searchOptionsCategory',
         'user': '=searchOptionsUser',
-        'type': '=searchOptionsType'
+        'type': '=searchOptionsType',
+        'sort': '=searchOptionsSort'
       },
       'templateUrl': '/app/assetlibrary/search/search.html',
       'controller': function($scope, assetLibraryCategoriesFactory, userFactory) {
@@ -69,6 +70,7 @@
               'category': $scope.category,
               'user': $scope.user,
               'type': $scope.type,
+              'sort': $scope.sort,
               'categoryObject': categoryObject,
               'userObject': userObject
             };
