@@ -23,25 +23,42 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-var Constants = module.exports = {
-  'DASHBOARD': {
-    'id': 'dashboard',
-    'title': 'Dashboard',
-    'description': 'The SuiteC Dashboard is where students and instructors begin to explore SuiteC.'
-  },
-  'ASSETLIBRARY': {
-    'id': 'assetlibrary',
-    'title': 'Asset Library',
-    'description': 'The Asset Library is a place where students and instructors can collect relevant materials for the course. The materials can  be seen by the other students in the class and can be discussed, liked, disliked, etc.'
-  },
-  'WHITEBOARDS': {
-    'id': 'whiteboards',
-    'title': 'Whiteboards',
-    'description': 'The Whiteboarding Tool allows for students to collaboratively work on whiteboards. Whiteboards can be used to remix assets from the Asset Library, create mindmaps, provide feedback, etc.'
-  },
-  'ENGAGEMENTINDEX': {
-    'id': 'engagementindex',
-    'title': 'Engagement Index',
-    'description': 'The Engagement Index provides a leaderboard based on the student\'s activity in the course. The Engagement Index will record activities such as discussion posts, likes, comments, etc.'
-  }
-};
+.myactivity-container {
+  display: flex;
+}
+
+.myactivity-column {
+  border-radius: 4px;
+  border: 1px solid lightgrey;
+  margin: 5px;
+  padding: 10px 10px 10px 10px;
+}
+
+.myactivity-profile-column {
+  display: inline-block;
+  padding-right: 20px;
+  vertical-align: top;
+}
+
+.myactivity-profile-avatar {
+  border-radius: 50%;
+  width: 100px;
+}
+
+.myactivity-profile-column h2 {
+  margin-bottom: 0;
+}
+
+.myactivity-profile-column div {
+  border-top: 1px solid lightgrey;
+  margin-top: 5px;
+}
+
+.myactivity-profile-column img {
+  padding: 10px 10px 10px 10px;
+  vertical-align: bottom;
+}
+
+.myactivity-mock-img {
+  height: 144px;
+}

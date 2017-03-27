@@ -2,25 +2,32 @@
   <a ui-sref="assetlibrarylist($parent.searchOptions)" class="col-back" data-ng-click="backToAssetLibrary()" data-ng-if="!whiteboardReferral"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
   <button type="button" class="btn btn-link col-back" data-ng-if="whiteboardReferral" data-ng-click="closeWindow()"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
 
+  <!-- NOTIFICATIONS -->
+  <div id="assetlibrary-item-notifications"></div>
+
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
-    <div class="col-xs-{{ asset.can_delete ? 5 : 7 }} col-sm-{{ asset.can_delete ? 5 : 7 }}">
+    <div class="col-xs-{{ 11 - (2 * upperRightButtonCount) }} col-sm-{{ 11 - (2 * upperRightButtonCount) }}">
       <h2>{{asset.title}}</h2>
     </div>
 
     <!-- EDIT DETAILS -->
-    <div class="col-xs-{{ asset.can_delete ? 7 : 5 }} col-sm-{{ asset.can_delete ? 7 : 5 }} text-right">
+    <div class="col-xs-{{ (2 * upperRightButtonCount) + 1 }} col-sm-{{ (2 * upperRightButtonCount) + 1 }} text-right">
       <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default" data-ng-if="canManageAsset()">
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
       </a>
-      <a class="btn btn-default" data-ng-href="{{asset.download_url}}" target="_blank" data-ng-if="asset.type === 'file' && asset.download_url">
+      <button class="btn btn-default" data-ng-click="remixWhiteboard()" data-ng-if="asset.type === 'whiteboard'">
+        <i class="fa fa-refresh"></i>
+        <span>Remix</span>
+      </button>
+      <a class="btn btn-default" data-ng-href="{{asset.download_url}}" target="_blank" data-ng-if="asset.type !== 'link' && asset.download_url">
         <i class="fa fa-download"></i>
-        <span>Download asset</span>
+        <span>Download</span>
       </a>
       <button class="btn btn-default" data-ng-click="deleteAsset()" data-ng-if="asset.can_delete">
         <i class="fa fa-trash"></i>
-        <span>Delete asset</span>
+        <span>Delete</span>
       </button>
     </div>
   </div>
@@ -37,8 +44,15 @@
         </div>
 
         <!-- Images -->
-        <div data-ng-if="asset.type === 'file' && asset.image_url !== null">
+        <div data-ng-if="asset.type === 'file' && asset.image_url !== null && !asset.video_url">
           <img class="preview-image" alt="{{asset.title}}" title="{{asset.title}}" src="{{asset.image_url}}"/>
+        </div>
+
+        <!-- Videos -->
+        <div class="preview-video-wrapper" data-ng-if="asset.type === 'file' && asset.video_url">
+          <video class="preview-video" alt="{{asset.title}}" title="{{asset.title}}" poster="{{asset.image_url}}" width="{{asset.width}}" height="{{asset.height}}" controls>
+            <source src="{{asset.video_url}}" type="video/mp4">
+          </video>
         </div>
 
         <!-- Links that are iframe embeddable -->
@@ -77,6 +91,16 @@
     <div class="assetlibrary-item-whiteboard-preview" data-ng-if="asset.type === 'whiteboard'">
       <whiteboard whiteboard="asset" readonly="true"></whiteboard>
     </div>
+
+    <!-- NOTIFICATIONS -->
+    <script type="text/ng-template" id="assetlibrary-item-notification-template">
+      <div class="alert" ng-class="'alert-' + type">
+        <button type="button" class="btn btn-link pull-right close" ng-click="$hide()">
+          <i class="fa fa-times-circle"><span class="sr-only">Close</span></i>
+        </button>
+        <strong ng-bind="title"></strong>&nbsp;<span ng-bind-html="content"></span>
+      </div>
+    </script>
 
     <!-- METADATA -->
     <div class="assetlibrary-item-metadata">
@@ -255,6 +279,9 @@
       </div>
     </div>
   </div>
+  
+  <!-- COPYRIGHT -->
+  <div data-ng-include="'/app/shared/copyright.html'"></div>
 </div>
 
 <div ui-view></div>

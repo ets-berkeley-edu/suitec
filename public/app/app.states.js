@@ -60,7 +60,7 @@
         'controller': 'AssetLibraryManageAssetsController'
       })
       .state('assetlibrarylist', {
-        'url': '/assetlibrary?category&user&keywords&type',
+        'url': '/assetlibrary?category&user&keywords&type&sort',
         'templateUrl': '/app/assetlibrary/list/list.html',
         'controller': 'AssetLibraryListController'
       })
@@ -73,6 +73,13 @@
         'url': '/edit',
         'controller': 'AssetLibraryEditController',
         'templateUrl': '/app/assetlibrary/edit/edit.html'
+      })
+
+      // Dashboard routes
+      .state('dashboard', {
+        'url': '/dashboard',
+        'templateUrl': '/app/dashboard/splash.html',
+        'controller': 'SplashController'
       })
 
       // Engagement Index routes

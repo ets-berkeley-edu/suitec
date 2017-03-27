@@ -56,6 +56,19 @@
         </div>
       </div>
 
+      <!-- SORT BY -->
+      <div class="form-group">
+        <label for="assetlibrary-sort-by" class="col-sm-1 control-label">Sort by</label>
+        <div class="col-sm-4">
+          <select id="assetlibrary-sort-by" class="form-control" data-ng-model="sort" data-value="{{sort}}">
+            <option value="" selected>Most recent</option>
+            <option value="likes">Most likes</option>
+            <option value="views">Most views</option>
+            <option value="comments">Most comments</option>
+          </select>
+        </div>
+      </div>
+
       <!-- BUTTONS -->
       <div class="form-group text-right">
         <div class="col-sm-offset-1 col-sm-11">

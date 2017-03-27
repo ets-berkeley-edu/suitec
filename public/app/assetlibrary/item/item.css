@@ -77,6 +77,14 @@
     padding: 5px;
   }
 
+  .assetlibrary-item-preview .preview-video {
+    margin-top: 20px;
+  }
+
+  .assetlibrary-item-preview .preview-video-wrapper {
+    line-height: 0;
+  }
+
   .assetlibrary-item-preview iframe,
   .assetlibrary-item-preview .preview-document,
    .assetlibrary-item-whiteboard-preview {
@@ -274,4 +282,10 @@ ul.assetlibrary-item-metadata-authors-multiple li .assetlibrary-item-metadata-au
 .assetlibrary-item-comments p {
   margin-top: 10px;
   white-space: pre-wrap;
+}
+
+/* NOTIFICATIONS */
+
+#assetlibrary-item-notifications .alert {
+  margin: 20px 0;
 }

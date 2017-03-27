@@ -9,6 +9,7 @@
       data-search-options-category="searchOptions.category"
       data-search-options-user="searchOptions.user"
       data-search-options-type="searchOptions.type"
+      data-search-options-sort="searchOptions.sort"
       class="assetlibrary-list-search-container col-xs-{{ isAdvancedSearch ? 12 : 8 }}"></search>
 
     <!-- MANAGE ASSETS -->
@@ -74,6 +75,8 @@
   <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="isSearch && assets.length === 0">
     No matching assets were found.
   </div>
+  <!-- COPYRIGHT -->
+  <div data-ng-include="'/app/shared/copyright.html'"></div>
 </div>
 
 <div ui-view></div>

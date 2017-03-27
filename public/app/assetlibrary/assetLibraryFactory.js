@@ -73,6 +73,9 @@
       if (searchOptions.type) {
         url += '&type=' + searchOptions.type;
       }
+      if (searchOptions.sort) {
+        url += '&sort=' + searchOptions.sort;
+      }
       return $http.get(utilService.getApiUrl(url));
     };
 
@@ -213,6 +216,16 @@
       return $http.post(utilService.getApiUrl('/assets/' + id + '/like'), {'like': like});
     };
 
+    /**
+     * Create a new whiteboard from an exported whiteboard asset
+     *
+     * @param  {Number}               id                            The id of the whiteboard asset
+     * @return {Promise}                                            $http promise
+     */
+    var createWhiteboardFromAsset = function(id, asset) {
+      return $http.post(utilService.getApiUrl('/assets/' + id + '/whiteboard'));
+    };
+
     return {
       'getAsset': getAsset,
       'getAssets': getAssets,
@@ -224,7 +237,8 @@
       'createComment': createComment,
       'editComment': editComment,
       'deleteComment': deleteComment,
-      'like': like
+      'like': like,
+      'createWhiteboardFromAsset': createWhiteboardFromAsset
     };
 
   });

@@ -66,7 +66,8 @@
 
   <h3>Assignments</h3>
 
-  <p class="assetlibrary-manageassets-info">Check the box next to the name of an Assignment in order to sync student submissions for that Assignment to the Asset Library. Each checked Assignment will appear as a category in the Asset Library, with all submissions shared for review and commenting by other students.</p>
+  <p class="assetlibrary-manageassets-info">Check the box next to the name of an Assignment in order to sync student submissions for that Assignment to the Asset Library. Each checked Assignment will appear as a category in the Asset Library, with all submissions shared for review and commenting by other students. There may be a short delay before
+  submissions appear for a checked Assignment.</p>
 
   <ul class="assetlibrary-manageassets-list" data-ng-show="filteredAssignmentCategories.length > 0">
     <li data-ng-repeat="category in filteredAssignmentCategories = (categories | filter: {canvas_assignment_id: ''})">
@@ -123,4 +124,7 @@
       You are not an instructor in any other course sites using the Asset Library.
     </div>
   </div>
+
+  <!-- COPYRIGHT -->
+  <div data-ng-include="'/app/shared/copyright.html'"></div>
 </div>

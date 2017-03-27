@@ -23,25 +23,15 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-var Constants = module.exports = {
-  'DASHBOARD': {
-    'id': 'dashboard',
-    'title': 'Dashboard',
-    'description': 'The SuiteC Dashboard is where students and instructors begin to explore SuiteC.'
-  },
-  'ASSETLIBRARY': {
-    'id': 'assetlibrary',
-    'title': 'Asset Library',
-    'description': 'The Asset Library is a place where students and instructors can collect relevant materials for the course. The materials can  be seen by the other students in the class and can be discussed, liked, disliked, etc.'
-  },
-  'WHITEBOARDS': {
-    'id': 'whiteboards',
-    'title': 'Whiteboards',
-    'description': 'The Whiteboarding Tool allows for students to collaboratively work on whiteboards. Whiteboards can be used to remix assets from the Asset Library, create mindmaps, provide feedback, etc.'
-  },
-  'ENGAGEMENTINDEX': {
-    'id': 'engagementindex',
-    'title': 'Engagement Index',
-    'description': 'The Engagement Index provides a leaderboard based on the student\'s activity in the course. The Engagement Index will record activities such as discussion posts, likes, comments, etc.'
-  }
-};
+(function(angular) {
+
+  'use strict';
+
+  angular.module('collabosphere').controller('SplashController', function(me, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
+
+  });
+
+}(window.angular));
