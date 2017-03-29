@@ -81,6 +81,11 @@
         'templateUrl': '/app/dashboard/splash.html',
         'controller': 'SplashController'
       })
+      .state('profile', {
+        'url': '/profile/:userId',
+        'templateUrl': '/app/dashboard/splash.html',
+        'controller': 'SplashController'
+      })
 
       // Engagement Index routes
       .state('engagementindex', {

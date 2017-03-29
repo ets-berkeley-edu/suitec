@@ -55,9 +55,15 @@
    * @see https://css-tricks.com/snippets/jquery/get-query-params-object/
    */
   var getQueryParameters = function() {
-    return decodeURIComponent(document.location.search).replace(/(^\?)/,'').split('&').map(function(n) {
+    var queryArgs = decodeURIComponent(document.location.search).replace(/(^\?)/,'');
+    var parameters = queryArgs.split('&').map(function(n) {
       return n = n.split('='), this[n[0]] = n[1], this;
     }.bind({}))[0];
+
+    // Extract '_id' from embedded toolUrl to support deep-linking from other SuiteC tool or email, possible.
+    var m = queryArgs.match(/.*[\?&]_id=([0-9a-zA-Z]+).*/);
+    parameters.deep_link_id = (m && m.length > 0) ? m[1] : null;
+    return parameters;
   };
 
   /**
@@ -80,6 +86,7 @@
     }).then(function(results) {
       collabosphere.constant('me', results.me.data);
       collabosphere.constant('config', results.config.data);
+      collabosphere.constant('deepLinkId', parameters.deep_link_id);
     });
   };
 

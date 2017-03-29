@@ -39,6 +39,15 @@
     };
 
     /**
+     * Get user of current course by id
+     *
+     * @return {Promise<User[]>}                  $http promise returning user of the current course
+     */
+    var getUser = function(id) {
+      return $http.get(utilService.getApiUrl('/users/id/' + id));
+    };
+
+    /**
      * Get the users in the current course and their points
      *
      * @return {Promise<User[]>}                  $http promise returning the users in the current course and their points
@@ -90,6 +99,7 @@
 
     return {
       'getAllUsers': getAllUsers,
+      'getUser': getUser,
       'getLeaderboard': getLeaderboard,
       'updateSharePoints': updateSharePoints
     };
