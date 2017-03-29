@@ -27,11 +27,19 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('SplashController', function(me, $scope) {
+  angular.module('collabosphere').controller('SplashController', function(deepLinkId, me, userFactory, $scope) {
 
-    // Make the me object available to the scope
-    $scope.me = me;
+    var loadProfile = function() {
+      if (deepLinkId) {
+        userFactory.getUser(deepLinkId).success(function(user) {
+          $scope.user = user;
+        });
+      } else {
+        $scope.user = me;
+      }
+    };
 
+    loadProfile();
   });
 
 }(window.angular));
