@@ -1,2 +1,16 @@
 
 <div data-ng-include="'/app/dashboard/myactivity.html'"></div>
+
+<div data-ng-if="userActivity">
+  <h3 data-ng-bind="user.id === me.id ? 'My Activity' : 'Activity'"></h3>
+  <div class="activity-timeline"
+       data-activity-timeline="userActivity"
+       data-labels-width="200"></div>
+</div>
+
+<div data-ng-if="userAssetActivity">
+  <h3 data-ng-bind="user.id === me.id ? 'My Classmates' : 'Classmates'"></h3>
+  <div class="activity-timeline"
+       data-activity-timeline="userAssetActivity"
+       data-labels-width="200"></div>
+</div>

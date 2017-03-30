@@ -23,52 +23,25 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-.myactivity-container {
-  display: flex;
-}
+(function(angular) {
 
-.myactivity-column {
-  border-radius: 4px;
-  border: 1px solid lightgrey;
-  margin: 5px;
-  padding: 10px 10px 10px 10px;
-}
+  'use strict';
 
-.myactivity-profile-column {
-  display: inline-block;
-  padding-right: 20px;
-  vertical-align: top;
-}
+  angular.module('collabosphere').factory('dashboardFactory', function(utilService, $http) {
 
-.myactivity-profile-avatar {
-  border-radius: 50%;
-  width: 100px;
-}
+    /**
+     * Get activities for a user
+     *
+     * @return {Promise}                          $http promise
+     */
+    var getActivitiesForUser = function(userId) {
+      var path = '/activities/user/' + userId;
+      return $http.get(utilService.getApiUrl(path));
+    };
 
-.myactivity-profile-column h2 {
-  margin-bottom: 0;
-}
+    return {
+      'getActivitiesForUser': getActivitiesForUser
+    };
+  });
 
-.myactivity-profile-column div {
-  border-top: 1px solid lightgrey;
-  margin-top: 5px;
-}
-
-.myactivity-profile-column img {
-  padding: 10px 10px 10px 10px;
-  vertical-align: bottom;
-}
-
-.myactivity-mock-img {
-  height: 144px;
-}
-
-.activity-timeline {
-  margin-bottom: 75px;
-  width: 570px;
-}
-
-.activity-timeline-label {
-  font-size: 13px;
-  font-weight: 300;
-}
+}(window.angular));

@@ -27,15 +27,43 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('SplashController', function(deepLinkId, me, userFactory, $scope) {
+  angular.module('collabosphere').controller('SplashController', function(dashboardFactory, deepLinkId, me, userFactory, $scope) {
+
+    // Make the me object available to the scope
+    $scope.me = me;
+
+    var getUserActivity = function(userId) {
+      dashboardFactory.getActivitiesForUser(userId).success(function(activities) {
+        $scope.userActivity = {
+          "Added an asset": activities.add_asset,
+          "Liked an asset": activities.like,
+          "Viewed an asset": activities.view_asset,
+          "Commented on an asset": activities.asset_comment,
+          "Added an asset to a whiteboard": activities.whiteboard_add_asset,
+          "Exported a whiteboard": activities.export_whiteboard
+        };
+
+        $scope.userAssetActivity = {
+          "Viewed my assets": activities.get_view_asset,
+          "Liked my assets": activities.get_like,
+          "Commented on my assets": activities.get_asset_comment,
+          "Replied to my comments": activities.get_asset_comment_reply,
+          "Added my assets to a whiteboard": activities.get_whiteboard_add_asset
+        };
+      });
+    };
 
     var loadProfile = function() {
       if (deepLinkId) {
         userFactory.getUser(deepLinkId).success(function(user) {
           $scope.user = user;
+          if (me.is_admin || user.id === me.id) {
+            getUserActivity(user.id);
+          }
         });
       } else {
         $scope.user = me;
+        getUserActivity(me.id);
       }
     };
 
