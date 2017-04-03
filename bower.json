@@ -21,6 +21,8 @@
     "angular-strap": "2.3.10",
     "angular-ui-router": "0.2.18",
     "bootstrap": "3.3.7",
+    "d3": "4.2.8",
+    "event-drops": "marmelab/eventDrops#08210231b851854ae3526e54ebfe04fc0b0f1092",
     "fontawesome": "4.4.0",
     "highcharts-release": "4.1.10",
     "lodash": "3.10.1",
