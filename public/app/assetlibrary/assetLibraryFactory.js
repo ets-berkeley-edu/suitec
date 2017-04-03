@@ -137,7 +137,12 @@
      * @return {Promise<Asset>}                                       $http promise returning the updated asset
      */
     var editAsset = function(id, updatedAsset) {
-      return $http.post(utilService.getApiUrl('/assets/' + id), updatedAsset);
+      var properties = {
+        'categories': updatedAsset.categories,
+        'description': updatedAsset.description,
+        'title': updatedAsset.title
+      };
+      return $http.post(utilService.getApiUrl('/assets/' + id), properties);
     };
 
     /**
