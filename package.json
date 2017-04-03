@@ -1,7 +1,7 @@
 {
   "name": "collabosphere",
   "description": "Collabosphere Instructure Canvas LTI Tools",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/ets-berkeley-edu/suitec.git"
