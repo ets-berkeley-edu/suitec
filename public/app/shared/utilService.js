@@ -89,6 +89,29 @@
     };
 
     /**
+     * URL of Dashboard tool, if added to the course
+     *
+     * @param  {Object}       course          Course with one or more SuiteC tools
+     * @return {String}                       URL without an appended user id
+     */
+    var getGenericDashboardUrl = function(course) {
+      return course.dashboard_url;
+    };
+
+    /**
+     * If the appropriate LTI tool has been added to the course site then
+     * return URL of profile per user id.
+     *
+     * @param  {Object}       course          Course with one or more SuiteC tools
+     * @param  {Object}       user            Member of course
+     * @return {String}                       URL with necessary query args
+     */
+    var getUserDashboardUrl = function(course, user) {
+      var dashboardUrl = getGenericDashboardUrl(course);
+      return dashboardUrl && user ? dashboardUrl + '?_id=' + user.id : null;
+    };
+
+    /**
      * Adjust the height of the current iFrame to the size of its content.
      * This will only happen when Collabosphere is embedded as an LTI tool in
      * a different application
@@ -325,10 +348,12 @@
 
     return {
       'getApiUrl': getApiUrl,
+      'getGenericDashboardUrl': getGenericDashboardUrl,
       'getLaunchParams': getLaunchParams,
       'getParentUrlData': getParentUrlData,
       'getScrollInformation': getScrollInformation,
       'getToolUrl': getToolUrl,
+      'getUserDashboardUrl': getUserDashboardUrl,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
       'scrollToTop': scrollToTop,
