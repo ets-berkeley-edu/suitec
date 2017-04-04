@@ -75,18 +75,12 @@
         });
       }
 
-      courseFactory.getCourse().success(function(course) {
-        // Offer links to user profile if the necessary LTI tool is installed
-        // NOTE: we use 'toolProvider' because other logic hinges on '$scope.course'
-        $scope.toolProvider = course;
-        $scope.dashboardToolInstalled = !!utilService.getGenericDashboardUrl(course);
-        $scope.getUserDashboardUrl = utilService.getUserDashboardUrl;
-
-        // Admins also get course notification settings
-        if ($scope.me.is_admin) {
+      // Admins also get course notification settings
+      if ($scope.me.is_admin) {
+        courseFactory.getCourse().success(function(course) {
           $scope.course = course;
-        }
-      });
+        });
+      }
     };
 
     /**
