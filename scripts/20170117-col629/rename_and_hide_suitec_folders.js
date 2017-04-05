@@ -57,7 +57,7 @@ var init = function() {
 
 var updateFolders = function() {
   // Get all active courses.
-  CourseAPI.getCourses(function(err, courses) {
+  CourseAPI.getCourses(null, function(err, courses) {
     if (err) {
       log.error({'err': err}, 'Failed to get courses');
       return callback(err);
