@@ -66,13 +66,13 @@
       })
       .state('assetlibrarylist.item', {
         'url': '/:assetId?whiteboard_referral&course_id&api_domain&tool_url',
-        'controller': 'AssetLibraryItemController',
-        'templateUrl': '/app/assetlibrary/item/item.html'
+        'templateUrl': '/app/assetlibrary/item/item.html',
+        'controller': 'AssetLibraryItemController'
       })
       .state('assetlibrarylist.item.edit', {
         'url': '/edit',
-        'controller': 'AssetLibraryEditController',
-        'templateUrl': '/app/assetlibrary/edit/edit.html'
+        'templateUrl': '/app/assetlibrary/edit/edit.html',
+        'controller': 'AssetLibraryEditController'
       })
 
       // Dashboard routes
