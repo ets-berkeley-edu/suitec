@@ -72,7 +72,7 @@
     "socket.io": "1.7.2",
     "validator": "6.2.1",
     "xml2js": "0.4.17",
-    "yargs": "6.6.0"
+    "yargs": "7.0.2"
   },
   "bundledDependencies": [
     "col-activities",
