@@ -27,22 +27,28 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('assetLibraryService', function($state, analyticsService, utilService) {
+  angular.module('collabosphere').service('assetLibraryService', function(analyticsService, deepLinkId, utilService, $state) {
 
-    // Get the parent window's URL. In case any Collabosphere data is present,
-    // restore the state to allow for deep linking to an asset or asset library search
-    if (window.parent) {
+    var assetViewRedirect = function(assetId) {
+      // Track the asset deep link
+      analyticsService.track('Deep link asset', {
+        'asset_id': assetId,
+        'referer': document.referrer
+      });
+
+      $state.go('assetlibrarylist.item', {'assetId': assetId});
+    };
+
+    if (deepLinkId) {
+      // Link to asset from tools other than assetlibrary (eg, user profile)
+      assetViewRedirect(deepLinkId);
+
+    } else if (window.parent) {
+      // Get the parent window's URL. In case any SuiteC data is present,
+      // restore the state to allow for deep linking to an asset or asset library search
       utilService.getParentUrlData(function(data) {
         if (data.asset) {
-          var assetId = parseInt(data.asset, 10);
-
-          // Track the asset deep link
-          analyticsService.track('Deep link asset', {
-            'asset_id': assetId,
-            'referer': document.referrer
-          });
-
-          $state.go('assetlibrarylist.item', {'assetId': assetId});
+          assetViewRedirect(parseInt(data.asset, 10));
 
         // Check if an asset library search was deep linked
         } else if (data.keywords || data.category || data.user || data.type || data.sort) {
