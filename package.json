@@ -9,12 +9,7 @@
   "bugs": {
     "url": "https://jira.ets.berkeley.edu/jira/browse/COL"
   },
-  "licenses": [
-    {
-      "type": "UC Berkeley",
-      "url": "http://ipira.berkeley.edu/software-copyright-notice-and-disclaimer"
-    }
-  ],
+  "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "async": "2.1.4",
     "body-parser": "1.16.0",
