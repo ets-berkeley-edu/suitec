@@ -40,7 +40,9 @@
       scope: {
         tool: '=',
         course: '=',
-        id: '='
+        id: '=',
+        referringTool: '=',
+        referringId: '='
       },
 
       'link': function(scope, elem, attrs) {
@@ -64,6 +66,13 @@
           }
         };
         var queryArgs = scope.id ? '?_id=' + scope.id : '';
+        if (attrs.referringTool) {
+          queryArgs = queryArgs ? queryArgs + '&' : '?';
+          queryArgs += '_referring_tool=' + attrs.referringTool;
+          if (scope.referringId) {
+            queryArgs += '&_referring_id=' + scope.referringId;
+          }
+        }
         elem.attr('href', getToolUrl(scope.course, attrs.tool) + queryArgs);
         elem.attr('target', '_parent');
       }

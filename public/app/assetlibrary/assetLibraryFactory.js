@@ -76,6 +76,9 @@
       if (searchOptions.sort) {
         url += '&sort=' + searchOptions.sort;
       }
+      if (searchOptions.limit) {
+        url += '&limit=' + searchOptions.limit;
+      }
       return $http.get(utilService.getApiUrl(url));
     };
 

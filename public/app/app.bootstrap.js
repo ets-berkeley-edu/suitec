@@ -60,9 +60,16 @@
       return n = n.split('='), this[n[0]] = n[1], this;
     }.bind({}))[0];
 
-    // Extract '_id' from embedded toolUrl to support deep-linking from other SuiteC tool or email, possible.
+    // Extract '_id' from embedded toolUrl to support linking from one SuiteC tool to another.
     var m = queryArgs.match(/.*[\?&]_id=([0-9a-zA-Z]+).*/);
     parameters.deep_link_id = (m && m.length > 0) ? m[1] : null;
+    // Optional arg '_referring_tool' indicates origin of link
+    var tool = queryArgs.match(/.*[\?&]_referring_tool=([a-z]+).*/);
+    parameters.referring_tool = (tool && tool.length > 0) ? tool[1] : null;
+    // Optional arg '_referring_id' describes state of the referring tool when exited.
+    var id = queryArgs.match(/.*[\?&]_referring_id=([0-9a-zA-Z]+).*/);
+    parameters.referring_id = (id && id.length > 0) ? id[1] : null;
+
     return parameters;
   };
 
@@ -87,11 +94,13 @@
       collabosphere.constant('me', results.me.data);
       collabosphere.constant('config', results.config.data);
       collabosphere.constant('deepLinkId', parameters.deep_link_id);
+      collabosphere.constant('referringTool', parameters.referring_tool);
+      collabosphere.constant('referringId', parameters.referring_id);
     });
   };
 
   /**
-   * Bootstrap the Collabosphere angular app
+   * Fire it up
    */
   var bootstrap = function() {
     angular.element(document).ready(function() {

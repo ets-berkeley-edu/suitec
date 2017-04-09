@@ -72,3 +72,11 @@
   font-size: 13px;
   font-weight: 300;
 }
+
+.featured-assets-container {
+  margin-bottom: 30px;
+}
+
+.featured-list-name {
+  font-weight: bolder;
+}

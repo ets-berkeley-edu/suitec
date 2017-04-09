@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, referringId, referringTool, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -37,6 +37,12 @@
 
     // Variable that will keep track of whether the user has come in via a whiteboard
     $scope.whiteboardReferral = $stateParams.whiteboard_referral;
+
+    // Variable set by directive which enables linking across tools.
+    $scope.referringTool = referringTool;
+
+    // Variable describes state of the referring tool. E.g., Dashboard tool per user id.
+    $scope.referringId = referringId;
 
     // Variable that will keep track of the current asset
     $scope.asset = null;

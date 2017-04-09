@@ -27,10 +27,11 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('SplashController', function(dashboardFactory, deepLinkId, me, userFactory, $scope) {
+  angular.module('collabosphere').controller('SplashController', function(assetLibraryFactory, dashboardFactory, deepLinkId, me, userFactory, $scope) {
 
     // Make the me object available to the scope
     $scope.me = me;
+    $scope.sortAssetsBy = 'recent';
 
     var getUserActivity = function(userId) {
       dashboardFactory.getActivitiesForUser(userId).success(function(activities) {
@@ -53,18 +54,39 @@
       });
     };
 
+    /**
+     * Get custom type of asset list (e.g., 'Most Impactful') per user.
+     */
+    var sortFeaturedAssets = $scope.sortFeaturedAssets = function(sortType) {
+      var searchOptions = {
+        'sort': sortType,
+        'user': $scope.user,
+        'limit': 5
+      };
+
+      assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
+        $scope.featuredAssets = assets.results;
+      }).then(function() {
+        $scope.sortAssetsBy = sortType;
+      });
+    };
+
     var loadProfile = function() {
       if (deepLinkId) {
         userFactory.getUser(deepLinkId).success(function(user) {
+          $scope.isMyProfile = user.id === me.id;
           $scope.user = user;
           if (me.is_admin || user.id === me.id) {
             getUserActivity(user.id);
           }
         });
       } else {
+        $scope.isMyProfile = true;
         $scope.user = me;
         getUserActivity(me.id);
       }
+
+      sortFeaturedAssets($scope.sortAssetsBy);
     };
 
     loadProfile();
