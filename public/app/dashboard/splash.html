@@ -1,51 +1,54 @@
+<div class="dashboard-splash-container">
 
-<div data-ng-include="'/app/dashboard/myactivity.html'"></div>
+  <div data-ng-include="'/app/dashboard/myactivity.html'"></div>
 
-<div data-ng-if="userActivity">
-  <h3 data-ng-bind="isMyProfile ? 'My Activity' : 'Activity'"></h3>
-  <div class="activity-timeline"
-       data-activity-timeline="userActivity"
-       data-labels-width="200"></div>
-</div>
+  <div data-ng-if="userActivity">
+    <h3 data-ng-bind="isMyProfile ? 'My Activity' : 'Activity'"></h3>
+    <div class="activity-timeline"
+         data-activity-timeline="userActivity"
+         data-labels-width="200"></div>
+  </div>
 
-<div data-ng-if="userAssetActivity">
-  <h3 data-ng-bind="isMyProfile ? 'My Classmates' : 'Classmates'"></h3>
-  <div class="activity-timeline"
-       data-activity-timeline="userAssetActivity"
-       data-labels-width="200"></div>
-</div>
+  <div data-ng-if="userAssetActivity">
+    <h3 data-ng-bind="isMyProfile ? 'My Classmates' : 'Classmates'"></h3>
+    <div class="activity-timeline"
+         data-activity-timeline="userAssetActivity"
+         data-labels-width="200"></div>
+  </div>
 
-<div class="featured-assets-container" data-ng-if="featuredAssets.length">
-  <h3>
-    <span class="featured-list-name" data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
-    <a data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
-    <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
-    |
-    <a data-ng-click="sortFeaturedAssets('likes')" data-ng-if="sortAssetsBy !== 'likes'">Most Impactful</a>
-    <span data-ng-if="sortAssetsBy === 'likes'">Most Impactful</span>
-  </h3>
+  <div class="featured-assets-container" data-ng-if="featuredAssets.length">
+    <h3>
+      <span class="featured-list-name" data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
+      <a data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
+      <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
+      |
+      <a data-ng-click="sortFeaturedAssets('likes')" data-ng-if="sortAssetsBy !== 'likes'">Most Impactful</a>
+      <span data-ng-if="sortAssetsBy === 'likes'">Most Impactful</span>
+    </h3>
 
-  <div class="col-list-container">
-    <ul>
-      <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in featuredAssets">
-      <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id" data-ng-if="me.course.assetlibrary_url">
-          <div class="col-list-item-container">
-            <div class="col-list-item-tile">
-              <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
-              <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
-                <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link'), 'fa-calendar-o': (asset.type === 'whiteboard')}"></i>
-              </div>
-              <div class="col-list-item-metadata">
-                <div class="col-threedots">{{asset.title}} </div>
-                <div class="col-threedots">
-                  <small>by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+    <div class="col-list-container">
+      <ul>
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in featuredAssets">
+        <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id" data-ng-if="me.course.assetlibrary_url">
+            <div class="col-list-item-container">
+              <div class="col-list-item-tile">
+                <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
+                <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+                  <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link'), 'fa-calendar-o': (asset.type === 'whiteboard')}"></i>
+                </div>
+                <div class="col-list-item-metadata">
+                  <div class="col-threedots">{{asset.title}} </div>
+                  <div class="col-threedots">
+                    <small>by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </a>
-      </li>
-    </ul>
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 
+  <div data-ng-include="'/app/shared/copyright.html'"></div>
 </div>
