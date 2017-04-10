@@ -36,6 +36,7 @@
 
     $scope.me = me;
     $scope.sortAssetsBy = 'recent';
+    $scope.sortCommunityBy = 'recent';
 
     var getUserActivity = function(userId) {
       dashboardFactory.getActivitiesForUser(userId).success(function(activities) {
@@ -65,13 +66,29 @@
       var searchOptions = {
         'sort': sortType,
         'user': $scope.user,
-        'limit': 5
+        'limit': 4
       };
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
         $scope.featuredAssets = assets.results;
       }).then(function() {
         $scope.sortAssetsBy = sortType;
+      });
+    };
+
+    /**
+     * "Community" represents all users of the course site.
+     */
+    var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType) {
+      var searchOptions = {
+        'sort': sortType,
+        'limit': 4
+      };
+
+      assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
+        $scope.communityAssets = assets.results;
+      }).then(function() {
+        $scope.sortCommunityBy = sortType;
       });
     };
 
@@ -91,6 +108,7 @@
       }
 
       sortFeaturedAssets($scope.sortAssetsBy);
+      sortCommunityAssets($scope.sortCommunityBy);
     };
 
     loadProfile();

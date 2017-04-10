@@ -18,9 +18,11 @@
 
   <div class="featured-assets-container" data-ng-if="isMyProfile || featuredAssets.length">
     <h3>
-      <span class="featured-list-name" data-ng-bind="isMyProfile ? 'My Assets' : 'Assets'"></span>
+      <span class="featured-list-name" data-ng-if="!featuredAssets.length">My Assets</span>
+
       <div class="featured-list-filters" data-ng-if="featuredAssets.length">
-        :
+        <span class="featured-list-name" data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
+
         <a data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
         <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
         |
@@ -58,7 +60,47 @@
         </li>
 
         <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in featuredAssets">
-        <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
+          <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
+            <div class="col-list-item-container">
+              <div class="col-list-item-tile">
+                <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
+                <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+                  <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link'), 'fa-calendar-o': (asset.type === 'whiteboard')}"></i>
+                </div>
+                <div class="col-list-item-metadata">
+                  <div class="col-threedots">{{asset.title}} </div>
+                  <div class="col-threedots">
+                    <small>by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="featured-assets-container" data-ng-if="communityAssets.length">
+    <h3>
+      <div class="featured-list-filters" data-ng-if="communityAssets.length">
+        <span class="featured-list-name">Everyone's Assets:</span>
+
+        <a data-ng-click="sortCommunityAssets('recent')" data-ng-if="sortCommunityBy !== 'recent'">Recent</a>
+        <span data-ng-if="sortCommunityBy === 'recent'">Recent</span>
+        |
+        <a data-ng-click="sortCommunityAssets('comments')" data-ng-if="sortCommunityBy !== 'comments'">Most Discussed</a>
+        <span data-ng-if="sortCommunityBy === 'comments'">Most Discussed</span>
+        |
+        <a data-ng-click="sortCommunityAssets('likes')" data-ng-if="sortCommunityBy !== 'likes'">Most Impactful</a>
+        <span data-ng-if="sortCommunityBy === 'likes'">Most Impactful</span>
+      </div>
+    </h3>
+
+    <div class="col-list-container">
+      <ul>
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in communityAssets">
+          <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
             <div class="col-list-item-container">
               <div class="col-list-item-tile">
                 <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
