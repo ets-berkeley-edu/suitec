@@ -16,20 +16,49 @@
          data-labels-width="200"></div>
   </div>
 
-  <div class="featured-assets-container" data-ng-if="featuredAssets.length">
+  <div class="featured-assets-container" data-ng-if="isMyProfile || featuredAssets.length">
     <h3>
-      <span class="featured-list-name" data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
-      <a data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
-      <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
-      |
-      <a data-ng-click="sortFeaturedAssets('likes')" data-ng-if="sortAssetsBy !== 'likes'">Most Impactful</a>
-      <span data-ng-if="sortAssetsBy === 'likes'">Most Impactful</span>
+      <span class="featured-list-name" data-ng-bind="isMyProfile ? 'My Assets' : 'Assets'"></span>
+      <div class="featured-list-filters" data-ng-if="featuredAssets.length">
+        :
+        <a data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
+        <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
+        |
+        <a data-ng-click="sortFeaturedAssets('likes')" data-ng-if="sortAssetsBy !== 'likes'">Most Impactful</a>
+        <span data-ng-if="sortAssetsBy === 'likes'">Most Impactful</span>
+      </div>
     </h3>
 
     <div class="col-list-container">
       <ul>
+        <!-- UPLOAD / ADD LINK -->
+        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !featuredAssets.length">
+          <div class="col-list-item-container col-list-add-tile">
+            <div class="col-list-item-tile">
+              <div class="assetlibrary-list-item-add-container">
+                <div class="assetlibrary-list-item-add-table">
+                  <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateUploadAsset" class="text-center col-pane">
+                    <i class="fa fa-laptop"></i>
+                    <div class="assetlibrary-list-item-add-action">Upload</div>
+                  </a>
+                  <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateAddLink" class="text-center col-pane">
+                    <i class="fa fa-link"></i>
+                    <div class="assetlibrary-list-item-add-action">Add Link</div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="col-list-item-actions">
+              <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateBookmarkletInfo" class="text-center col-pane">
+                Add assets more easily
+                <i class="fa fa-bookmark pull-left"></i>
+              </a>
+            </div>
+          </div>
+        </li>
+
         <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in featuredAssets">
-        <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id" data-ng-if="me.course.assetlibrary_url">
+        <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
             <div class="col-list-item-container">
               <div class="col-list-item-tile">
                 <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">

@@ -29,14 +29,19 @@
 
   angular.module('collabosphere').service('assetLibraryService', function(analyticsService, deepLinkId, utilService, $state) {
 
-    var assetViewRedirect = function(assetId) {
-      // Track the asset deep link
-      analyticsService.track('Deep link asset', {
-        'asset_id': assetId,
-        'referer': document.referrer
-      });
+    var assetViewRedirect = function(id) {
+      if (id.match(/^assetlibrary/)) {
+        // Pattern match identifies id as a "router state name" (see app.states.js)
+        $state.go(id);
+      } else {
+        // Track the asset deep link
+        analyticsService.track('Deep link asset', {
+          'asset_id': id,
+          'referer': document.referrer
+        });
 
-      $state.go('assetlibrarylist.item', {'assetId': assetId});
+        $state.go('assetlibrarylist.item', {'assetId': id});
+      }
     };
 
     if (deepLinkId) {

@@ -1,0 +1,5 @@
+<div data-ng-controller="BackToReferrerController">
+  <a data-ng-href="/assetlibrary" class="col-back" data-ng-if="!referringTool"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
+
+  <a tool-href data-tool="dashboard" data-course="me.course" data-id="referringTool.id" class="col-back" data-ng-if="referringTool.name === 'dashboard'"><i class="fa fa-angle-left"></i> Back to Dashboard</a>
+</div>

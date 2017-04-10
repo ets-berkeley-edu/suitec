@@ -29,27 +29,31 @@
 
   angular.module('collabosphere').controller('SplashController', function(assetLibraryFactory, dashboardFactory, deepLinkId, me, userFactory, $scope) {
 
-    // Make the me object available to the scope
+    // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
+    $scope.routerStateAddLink = 'assetlibraryaddlink';
+    $scope.routerStateBookmarkletInfo = 'assetlibraryaddbookmarklet';
+    $scope.routerStateUploadAsset = 'assetlibraryupload';
+
     $scope.me = me;
     $scope.sortAssetsBy = 'recent';
 
     var getUserActivity = function(userId) {
       dashboardFactory.getActivitiesForUser(userId).success(function(activities) {
         $scope.userActivity = {
-          "Added an asset": activities.add_asset,
-          "Liked an asset": activities.like,
-          "Viewed an asset": activities.view_asset,
-          "Commented on an asset": activities.asset_comment,
-          "Added an asset to a whiteboard": activities.whiteboard_add_asset,
-          "Exported a whiteboard": activities.export_whiteboard
+          'Added an asset': activities.add_asset,
+          'Liked an asset': activities.like,
+          'Viewed an asset': activities.view_asset,
+          'Commented on an asset': activities.asset_comment,
+          'Added an asset to a whiteboard': activities.whiteboard_add_asset,
+          'Exported a whiteboard': activities.export_whiteboard
         };
 
         $scope.userAssetActivity = {
-          "Viewed my assets": activities.get_view_asset,
-          "Liked my assets": activities.get_like,
-          "Commented on my assets": activities.get_asset_comment,
-          "Replied to my comments": activities.get_asset_comment_reply,
-          "Added my assets to a whiteboard": activities.get_whiteboard_add_asset
+          'Viewed my assets': activities.get_view_asset,
+          'Liked my assets': activities.get_like,
+          'Commented on my assets': activities.get_asset_comment,
+          'Replied to my comments': activities.get_asset_comment_reply,
+          'Added my assets to a whiteboard': activities.get_whiteboard_add_asset
         };
       });
     };
