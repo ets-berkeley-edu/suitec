@@ -23,6 +23,10 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
+.dashboard-splash-container {
+  margin-bottom: 30px;
+}
+
 .myactivity-container {
   display: flex;
 }
