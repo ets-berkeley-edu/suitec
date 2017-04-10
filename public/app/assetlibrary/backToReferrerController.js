@@ -23,69 +23,29 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-.dashboard-splash-container {
-  margin-bottom: 30px;
-}
+(function(angular) {
 
-.myactivity-container {
-  display: flex;
-}
+  'use strict';
 
-.myactivity-column {
-  border-radius: 4px;
-  border: 1px solid lightgrey;
-  margin: 5px;
-  padding: 10px 10px 10px 10px;
-}
+  angular.module('collabosphere').controller('BackToReferrerController', function(me, referringId, referringTool, $scope) {
 
-.myactivity-profile-column {
-  display: inline-block;
-  padding-right: 20px;
-  vertical-align: top;
-}
+    // Make the me object available to the scope
+    $scope.me = me;
 
-.myactivity-profile-avatar {
-  border-radius: 50%;
-  width: 100px;
-}
+    /**
+     * Bundle the properties forwarded by toolHrefDirective. This allows user to link between LTI tools.
+     */
+    var bundle = function() {
+      if (referringTool) {
+        $scope.referringTool = {
+          'id': referringId,
+          'name': referringTool
+        };
+      }
+    };
 
-.myactivity-profile-column h2 {
-  margin-bottom: 0;
-}
+    bundle();
 
-.myactivity-profile-column div {
-  border-top: 1px solid lightgrey;
-  margin-top: 5px;
-}
+  });
 
-.myactivity-profile-column img {
-  padding: 10px 10px 10px 10px;
-  vertical-align: bottom;
-}
-
-.myactivity-mock-img {
-  height: 144px;
-}
-
-.activity-timeline {
-  margin-bottom: 75px;
-  width: 570px;
-}
-
-.activity-timeline-label {
-  font-size: 13px;
-  font-weight: 300;
-}
-
-.featured-assets-container {
-  margin-bottom: 30px;
-}
-
-.featured-list-name {
-  font-weight: bolder;
-}
-
-.featured-list-filters {
-  display: inline-block;
-  white-space: nowrap;
-}
+}(window.angular));

@@ -38,12 +38,6 @@
     // Variable that will keep track of whether the user has come in via a whiteboard
     $scope.whiteboardReferral = $stateParams.whiteboard_referral;
 
-    // Variable set by directive which enables linking across tools.
-    $scope.referringTool = referringTool;
-
-    // Variable describes state of the referring tool. E.g., Dashboard tool per user id.
-    $scope.referringId = referringId;
-
     // Variable that will keep track of the current asset
     $scope.asset = null;
 
@@ -364,6 +358,18 @@
     };
 
     /**
+     * Bundle the properties forwarded by toolHrefDirective. This allows user to link between LTI tools.
+     */
+    var getReferringTool = function() {
+      if (referringTool) {
+        $scope.referringTool = {
+          'id': referringId,
+          'name': referringTool
+        };
+      }
+    };
+
+    /**
      * Close the current browser window. This is used when an asset has been opened
      * in a separate tab and the user wants to be taken back to where the asset was
      * launched from
@@ -400,6 +406,8 @@
 
     // Load the selected asset
     getCurrentAsset();
+    // If referringTool is not null then offer user a link to go back.
+    getReferringTool();
     // Scroll to the top of the page as the current scroll position could be somewhere
     // deep in the asset library list
     utilService.scrollToTop();

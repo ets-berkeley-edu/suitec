@@ -65,6 +65,7 @@
             }
           }
         };
+        // Note: Value of '_id' arg can be router-state, asset id, etc.
         var queryArgs = scope.id ? '?_id=' + scope.id : '';
         if (attrs.referringTool) {
           queryArgs = queryArgs ? queryArgs + '&' : '?';

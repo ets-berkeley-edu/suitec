@@ -1,7 +1,7 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist.item'">
   <a ui-sref="assetlibrarylist($parent.searchOptions)" class="col-back" data-ng-click="backToAssetLibrary()" data-ng-if="!whiteboardReferral && !referringTool"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
 
-  <a tool-href data-tool="dashboard" data-course="me.course" data-id="referringId" class="col-back" data-ng-if="referringTool === 'dashboard'"><i class="fa fa-angle-left"></i> Back to Dashboard</a>
+  <a tool-href data-tool="dashboard" data-course="me.course" data-id="referringTool.id" class="col-back" data-ng-if="referringTool.name === 'dashboard'"><i class="fa fa-angle-left"></i> Back to Dashboard</a>
 
   <button type="button" class="btn btn-link col-back" data-ng-if="whiteboardReferral" data-ng-click="closeWindow()"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
 
