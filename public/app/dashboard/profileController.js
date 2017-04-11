@@ -65,7 +65,7 @@
     var sortFeaturedAssets = $scope.sortFeaturedAssets = function(sortType) {
       var searchOptions = {
         'sort': sortType,
-        'user': $scope.user,
+        'user': $scope.user.id,
         'limit': 4
       };
 
