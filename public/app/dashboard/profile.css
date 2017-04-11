@@ -49,8 +49,8 @@
   padding: 10px 10px 10px 10px;
 }
 
-.profile-engagement-score {
-  color: lightgrey;
+.profile-engagement-score-not-shared {
+  color: #666666;
 }
 
 .profile-activity-timeline {
