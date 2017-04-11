@@ -19,17 +19,23 @@
       </div>
     </div>
     <div class="profile-engagement-column" data-ng-if="showEngagementIndexBox">
-      <h2>
-        <a tool-href data-tool="engagementindex" data-course="me.course">
-          Engagement Index
-        </a>
-      </h2>
-      <hr/>
-      <div data-ng-class="{'profile-engagement-score-not-shared': me.id === user.id && !user.share_points}">
-        {{user.points}} {{user.points === 1 ? 'Point' : 'Points'}}
+      <div class="profile-engagement-box">
+        <h2>
+          <a tool-href data-tool="engagementindex" data-course="me.course">
+            Engagement Index
+          </a>
+        </h2>
+        <hr/>
+        <div class="profile-engagement-score" data-ng-class="{'profile-engagement-score-not-shared': me.id === user.id && !user.share_points}">
+          {{user.points}} {{user.points === 1 ? 'Point' : 'Points'}}
+        </div>
+        <div data-ng-if="userRank">
+          <span data-ng-bind="userRank"></span> out of <span data-ng-bind="courseUserCount"></span>
+        </div>
+        <div data-ng-if="(user.id === me.id) && !user.share_points">
+          Sharing off. <a tool-href data-tool="engagementindex" data-course="me.course">Turn on?</a>
+        </div>
       </div>
-      <div data-ng-if="me.is_admin || user.share_points">4th out of 27</div>
-      <div data-ng-if="(user.id === me.id) && !user.share_points">Sharing off. <a tool-href data-tool="engagementindex" data-course="me.course">Turn on?</a></div>
     </div>
   </div>
 
