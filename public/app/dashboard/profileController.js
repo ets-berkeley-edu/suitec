@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('SplashController', function(assetLibraryFactory, dashboardFactory, deepLinkId, me, userFactory, $scope) {
+  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, profileFactory, deepLinkId, me, userFactory, $scope) {
 
     // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
     $scope.routerStateAddLink = 'assetlibraryaddlink';
@@ -39,7 +39,7 @@
     $scope.sortCommunityBy = 'recent';
 
     var getUserActivity = function(userId) {
-      dashboardFactory.getActivitiesForUser(userId).success(function(activities) {
+      profileFactory.getActivitiesForUser(userId).success(function(activities) {
         $scope.userActivity = {
           'Added an asset': activities.add_asset,
           'Liked an asset': activities.like,

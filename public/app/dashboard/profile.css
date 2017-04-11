@@ -23,25 +23,51 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-(function(angular) {
+.profile-container {
+  margin-bottom: 30px;
+}
 
-  'use strict';
+.profile-summary-container {
+  display: flex;
+}
 
-  angular.module('collabosphere').factory('dashboardFactory', function(utilService, $http) {
+.profile-summary-column {
+  border-radius: 4px;
+  margin: 5px;
+  padding: 10px 10px 10px 10px;
+}
 
-    /**
-     * Get activities for a user
-     *
-     * @return {Promise}                          $http promise
-     */
-    var getActivitiesForUser = function(userId) {
-      var path = '/activities/user/' + userId;
-      return $http.get(utilService.getApiUrl(path));
-    };
+.profile-summary-avatar {
+  border-radius: 50%;
+  width: 100px;
+}
 
-    return {
-      'getActivitiesForUser': getActivitiesForUser
-    };
-  });
+.profile-engagement-column {
+  border-radius: 4px;
+  border: 1px solid lightgrey;
+  margin: 5px;
+  padding: 10px 10px 10px 10px;
+}
 
-}(window.angular));
+.profile-engagement-score {
+  color: lightgrey;
+}
+
+.profile-activity-timeline {
+  margin-bottom: 75px;
+  width: 570px;
+}
+
+.profile-activity-timeline-label {
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.profile-featured-assets-container {
+  margin-bottom: 30px;
+}
+
+.profile-featured-list-filters {
+  display: inline-block;
+  white-space: nowrap;
+}

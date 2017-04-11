@@ -23,69 +23,25 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-.dashboard-splash-container {
-  margin-bottom: 30px;
-}
+(function(angular) {
 
-.myactivity-container {
-  display: flex;
-}
+  'use strict';
 
-.myactivity-column {
-  border-radius: 4px;
-  border: 1px solid lightgrey;
-  margin: 5px;
-  padding: 10px 10px 10px 10px;
-}
+  angular.module('collabosphere').factory('profileFactory', function(utilService, $http) {
 
-.myactivity-profile-column {
-  display: inline-block;
-  padding-right: 20px;
-  vertical-align: top;
-}
+    /**
+     * Get activities for a user
+     *
+     * @return {Promise}                          $http promise
+     */
+    var getActivitiesForUser = function(userId) {
+      var path = '/activities/user/' + userId;
+      return $http.get(utilService.getApiUrl(path));
+    };
 
-.myactivity-profile-avatar {
-  border-radius: 50%;
-  width: 100px;
-}
+    return {
+      'getActivitiesForUser': getActivitiesForUser
+    };
+  });
 
-.myactivity-profile-column h2 {
-  margin-bottom: 0;
-}
-
-.myactivity-profile-column div {
-  border-top: 1px solid lightgrey;
-  margin-top: 5px;
-}
-
-.myactivity-profile-column img {
-  padding: 10px 10px 10px 10px;
-  vertical-align: bottom;
-}
-
-.myactivity-mock-img {
-  height: 144px;
-}
-
-.activity-timeline {
-  margin-bottom: 75px;
-  width: 570px;
-}
-
-.activity-timeline-label {
-  font-size: 13px;
-  font-weight: 300;
-}
-
-.featured-assets-container {
-  margin-bottom: 30px;
-}
-
-.featured-list-name {
-  font-weight: bolder;
-}
-
-.featured-list-filters {
-  display: inline-block;
-  white-space: nowrap;
-}
+}(window.angular));

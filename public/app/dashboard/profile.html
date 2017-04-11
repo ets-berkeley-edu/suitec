@@ -1,27 +1,52 @@
-<div class="dashboard-splash-container">
+<div class="profile-container">
 
-  <div data-ng-include="'/app/dashboard/myactivity.html'"></div>
+  <div class="profile-summary-container">
+    <div class="profile-summary-column profile">
+      <div>
+        <img class="profile-summary-avatar" data-ng-src="{{user.canvas_image}}" data-ng-if="user.canvas_image"/>
+        <a>Edit Profile</a>
+      </div>
+      <div>
+        <h2 data-ng-bind="user.canvas_full_name"></h2>
+        <div>Write4Change</div>
+        <div>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div>
+        <div>
+          <a>#photography</a> <a>#camping</a> <a>#travel</a>
+        </div>
+      </div>
+    </div>
+    <div class="profile-engagement-column">
+      <h2 data-ng-class="'profile-engagement-score': !user.share_points)">Engagement Index</h2>
+      <hr/>
+      <div>327 Points</div>
+      <div data-ng-if="user.share_points">4th out of 27</div>
+      <div data-ng-if="!user.share_points">Sharing off. <a>Turn on?</a></div>
+    </div>
+  </div>
 
   <div data-ng-if="userActivity">
     <h3 data-ng-bind="isMyProfile ? 'My Activity' : 'Activity'"></h3>
-    <div class="activity-timeline"
+    <div class="profile-activity-timeline"
          data-activity-timeline="userActivity"
          data-labels-width="200"></div>
   </div>
 
   <div data-ng-if="userAssetActivity">
     <h3 data-ng-bind="isMyProfile ? 'My Classmates' : 'Classmates'"></h3>
-    <div class="activity-timeline"
+    <div class="profile-activity-timeline"
          data-activity-timeline="userAssetActivity"
          data-labels-width="200"></div>
   </div>
 
-  <div class="featured-assets-container" data-ng-if="isMyProfile || featuredAssets.length">
+  <div class="profile-featured-assets-container" data-ng-if="isMyProfile || featuredAssets.length">
     <h3>
-      <span class="featured-list-name" data-ng-if="!featuredAssets.length">My Assets</span>
+      <span data-ng-if="!featuredAssets.length">My Assets</span>
 
-      <div class="featured-list-filters" data-ng-if="featuredAssets.length">
-        <span class="featured-list-name" data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
+      <div class="profile-featured-list-filters" data-ng-if="featuredAssets.length">
+        <span data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
 
         <a data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
         <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
@@ -32,6 +57,9 @@
     </h3>
 
     <div class="col-list-container">
+      <div class="alert alert-info assetlibrary-list-noresults"  data-ng-if="!featuredAssets.length">
+        No matching assets were found.
+      </div>
       <ul>
         <!-- UPLOAD / ADD LINK -->
         <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !featuredAssets.length">
@@ -81,10 +109,12 @@
     </div>
   </div>
 
-  <div class="featured-assets-container" data-ng-if="communityAssets.length">
+  <div class="profile-featured-assets-container">
     <h3>
-      <div class="featured-list-filters" data-ng-if="communityAssets.length">
-        <span class="featured-list-name">Everyone's Assets:</span>
+      <span data-ng-if="!communityAssets.length">Everyone's Assets</span>
+
+      <div class="profile-featured-list-filters" data-ng-if="communityAssets.length">
+        Everyone's Assets:
 
         <a data-ng-click="sortCommunityAssets('recent')" data-ng-if="sortCommunityBy !== 'recent'">Recent</a>
         <span data-ng-if="sortCommunityBy === 'recent'">Recent</span>
@@ -98,6 +128,9 @@
     </h3>
 
     <div class="col-list-container">
+      <div class="alert alert-info assetlibrary-list-noresults"  data-ng-if="!communityAssets.length">
+        No matching assets were found.
+      </div>
       <ul>
         <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in communityAssets">
           <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
