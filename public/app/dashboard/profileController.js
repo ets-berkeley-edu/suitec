@@ -101,16 +101,18 @@
           if (me.is_admin || user.id === me.id) {
             getUserActivity(user.id);
           }
+          sortFeaturedAssets($scope.sortAssetsBy);
+          sortCommunityAssets($scope.sortCommunityBy);
         });
       } else {
         $scope.isMyProfile = true;
         $scope.showEngagementIndexBox = !!me.course.engagementindex_url;
         $scope.user = me;
         getUserActivity(me.id);
+        sortFeaturedAssets($scope.sortAssetsBy);
+        sortCommunityAssets($scope.sortCommunityBy);
       }
 
-      sortFeaturedAssets($scope.sortAssetsBy);
-      sortCommunityAssets($scope.sortCommunityBy);
     };
 
     loadProfile();
