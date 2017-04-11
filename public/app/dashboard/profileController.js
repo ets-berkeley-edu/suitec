@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('SplashController', function(assetLibraryFactory, dashboardFactory, deepLinkId, me, userFactory, $scope) {
+  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, profileFactory, deepLinkId, me, userFactory, $scope) {
 
     // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
     $scope.routerStateAddLink = 'assetlibraryaddlink';
@@ -36,9 +36,10 @@
 
     $scope.me = me;
     $scope.sortAssetsBy = 'recent';
+    $scope.sortCommunityBy = 'recent';
 
     var getUserActivity = function(userId) {
-      dashboardFactory.getActivitiesForUser(userId).success(function(activities) {
+      profileFactory.getActivitiesForUser(userId).success(function(activities) {
         $scope.userActivity = {
           'Added an asset': activities.add_asset,
           'Liked an asset': activities.like,
@@ -65,13 +66,29 @@
       var searchOptions = {
         'sort': sortType,
         'user': $scope.user,
-        'limit': 5
+        'limit': 4
       };
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
         $scope.featuredAssets = assets.results;
       }).then(function() {
         $scope.sortAssetsBy = sortType;
+      });
+    };
+
+    /**
+     * "Community" represents all users of the course site.
+     */
+    var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType) {
+      var searchOptions = {
+        'sort': sortType,
+        'limit': 4
+      };
+
+      assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
+        $scope.communityAssets = assets.results;
+      }).then(function() {
+        $scope.sortCommunityBy = sortType;
       });
     };
 
@@ -91,6 +108,7 @@
       }
 
       sortFeaturedAssets($scope.sortAssetsBy);
+      sortCommunityAssets($scope.sortCommunityBy);
     };
 
     loadProfile();

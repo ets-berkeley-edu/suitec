@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('dashboardFactory', function(utilService, $http) {
+  angular.module('collabosphere').factory('profileFactory', function(utilService, $http) {
 
     /**
      * Get activities for a user

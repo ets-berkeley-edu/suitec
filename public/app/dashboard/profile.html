@@ -1,0 +1,158 @@
+<div class="profile-container">
+
+  <div class="profile-summary-container">
+    <div class="profile-summary-column profile">
+      <div class="profile-summary-profile-column">
+        <img class="profile-summary-profile-avatar" data-ng-src="{{user.canvas_image}}" data-ng-if="user.canvas_image"/>
+        <a>Edit Profile</a>
+      </div>
+      <div class="profile-summary-profile-column">
+        <h2 data-ng-bind="user.canvas_full_name"></h2>
+        <div>Write4Change</div>
+        <div>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div>
+        <div>
+          <a>#photography</a> <a>#camping</a> <a>#travel</a>
+        </div>
+      </div>
+    </div>
+    <div class="profile-engagement-column">
+      <h2 data-ng-class="'profile-engagement-score': !user.share_points)">Engagement Index</h2>
+      <hr/>
+      <div>327 Points</div>
+      <div data-ng-if="user.share_points">4th out of 27</div>
+      <div data-ng-if="!user.share_points">Sharing off. <a>Turn on?</a></div>
+    </div>
+  </div>
+
+  <div data-ng-if="userActivity">
+    <h3 data-ng-bind="isMyProfile ? 'My Activity' : 'Activity'"></h3>
+    <div class="profile-activity-timeline"
+         data-activity-timeline="userActivity"
+         data-labels-width="200"></div>
+  </div>
+
+  <div data-ng-if="userAssetActivity">
+    <h3 data-ng-bind="isMyProfile ? 'My Classmates' : 'Classmates'"></h3>
+    <div class="profile-activity-timeline"
+         data-activity-timeline="userAssetActivity"
+         data-labels-width="200"></div>
+  </div>
+
+  <div class="profile-featured-assets-container" data-ng-if="isMyProfile || featuredAssets.length">
+    <h3>
+      <span data-ng-if="!featuredAssets.length">My Assets</span>
+
+      <div class="profile-featured-list-filters" data-ng-if="featuredAssets.length">
+        <span data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
+
+        <a data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
+        <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
+        |
+        <a data-ng-click="sortFeaturedAssets('likes')" data-ng-if="sortAssetsBy !== 'likes'">Most Impactful</a>
+        <span data-ng-if="sortAssetsBy === 'likes'">Most Impactful</span>
+      </div>
+    </h3>
+
+    <div class="col-list-container">
+      <div class="alert alert-info assetlibrary-list-noresults"  data-ng-if="!featuredAssets.length">
+        No matching assets were found.
+      </div>
+      <ul>
+        <!-- UPLOAD / ADD LINK -->
+        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !featuredAssets.length">
+          <div class="col-list-item-container col-list-add-tile">
+            <div class="col-list-item-tile">
+              <div class="assetlibrary-list-item-add-container">
+                <div class="assetlibrary-list-item-add-table">
+                  <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateUploadAsset" class="text-center col-pane">
+                    <i class="fa fa-laptop"></i>
+                    <div class="assetlibrary-list-item-add-action">Upload</div>
+                  </a>
+                  <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateAddLink" class="text-center col-pane">
+                    <i class="fa fa-link"></i>
+                    <div class="assetlibrary-list-item-add-action">Add Link</div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="col-list-item-actions">
+              <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateBookmarkletInfo" class="text-center col-pane">
+                Add assets more easily
+                <i class="fa fa-bookmark pull-left"></i>
+              </a>
+            </div>
+          </div>
+        </li>
+
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in featuredAssets">
+          <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
+            <div class="col-list-item-container">
+              <div class="col-list-item-tile">
+                <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
+                <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+                  <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link'), 'fa-calendar-o': (asset.type === 'whiteboard')}"></i>
+                </div>
+                <div class="col-list-item-metadata">
+                  <div class="col-threedots">{{asset.title}} </div>
+                  <div class="col-threedots">
+                    <small>by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="profile-featured-assets-container">
+    <h3>
+      <span data-ng-if="!communityAssets.length">Everyone's Assets</span>
+
+      <div class="profile-featured-list-filters" data-ng-if="communityAssets.length">
+        Everyone's Assets:
+
+        <a data-ng-click="sortCommunityAssets('recent')" data-ng-if="sortCommunityBy !== 'recent'">Recent</a>
+        <span data-ng-if="sortCommunityBy === 'recent'">Recent</span>
+        |
+        <a data-ng-click="sortCommunityAssets('comments')" data-ng-if="sortCommunityBy !== 'comments'">Most Discussed</a>
+        <span data-ng-if="sortCommunityBy === 'comments'">Most Discussed</span>
+        |
+        <a data-ng-click="sortCommunityAssets('likes')" data-ng-if="sortCommunityBy !== 'likes'">Most Impactful</a>
+        <span data-ng-if="sortCommunityBy === 'likes'">Most Impactful</span>
+      </div>
+    </h3>
+
+    <div class="col-list-container">
+      <div class="alert alert-info assetlibrary-list-noresults"  data-ng-if="!communityAssets.length">
+        No matching assets were found.
+      </div>
+      <ul>
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in communityAssets">
+          <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
+            <div class="col-list-item-container">
+              <div class="col-list-item-tile">
+                <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
+                <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+                  <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link'), 'fa-calendar-o': (asset.type === 'whiteboard')}"></i>
+                </div>
+                <div class="col-list-item-metadata">
+                  <div class="col-threedots">{{asset.title}} </div>
+                  <div class="col-threedots">
+                    <small>by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div data-ng-include="'/app/shared/copyright.html'"></div>
+</div>
