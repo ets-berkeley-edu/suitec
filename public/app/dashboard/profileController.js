@@ -97,12 +97,14 @@
         userFactory.getUser(deepLinkId).success(function(user) {
           $scope.isMyProfile = user.id === me.id;
           $scope.user = user;
+          $scope.showEngagementIndexBox = me.course.engagementindex_url && (me.is_admin || user.id === me.id || (user.share_points && me.share_points));
           if (me.is_admin || user.id === me.id) {
             getUserActivity(user.id);
           }
         });
       } else {
         $scope.isMyProfile = true;
+        $scope.showEngagementIndexBox = !!me.course.engagementindex_url;
         $scope.user = me;
         getUserActivity(me.id);
       }
