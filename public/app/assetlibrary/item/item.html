@@ -184,6 +184,14 @@
     </div>
   </div>
 
+  <h3 data-ng-if="assetActivity">Activity Timeline</h3>
+
+  <div data-ng-if="assetActivity">
+    <div class="profile-activity-timeline"
+         data-activity-timeline="assetActivity"
+         data-labels-width="100"></div>
+  </div>
+
   <h3><ng-pluralize count="asset.comment_count" when="{'0': 'No comments', 'one': '1 comment', 'other': '{} comments'}"></ng-pluralize></h3>
 
   <div class="sr-only" role="alert" aria-live="polite" data-ng-bind="commentAlertMessage"></div>
