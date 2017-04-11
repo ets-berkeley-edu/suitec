@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, profileFactory, deepLinkId, me, userFactory, $scope) {
+  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, profileFactory, deepLinkId, me, userFactory, utilService, $scope) {
 
     // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
     $scope.routerStateAddLink = 'assetlibraryaddlink';
@@ -92,12 +92,32 @@
       });
     };
 
+    /**
+     * Get user rank in course per engagement index
+     */
+    var determineRank = function(user) {
+      if (me.is_admin || user.share_points) {
+        userFactory.getLeaderboard().then(function(users) {
+          $scope.courseUserCount = users.length;
+
+          // Extract user's rank then break
+          for (var i = 0; i < $scope.courseUserCount; i++) {
+            if (users[i].id === user.id) {
+              $scope.userRank = utilService.appendOrdinalSuffix(users[i].rank);
+              break;
+            }
+          }
+        });
+      }
+    };
+
     var loadProfile = function() {
       if (deepLinkId) {
         userFactory.getUser(deepLinkId).success(function(user) {
           $scope.isMyProfile = user.id === me.id;
           $scope.user = user;
           $scope.showEngagementIndexBox = me.course.engagementindex_url && (me.is_admin || user.id === me.id || (user.share_points && me.share_points));
+          determineRank(user);
           if (me.is_admin || user.id === me.id) {
             getUserActivity(user.id);
           }
@@ -108,6 +128,7 @@
         $scope.isMyProfile = true;
         $scope.showEngagementIndexBox = !!me.course.engagementindex_url;
         $scope.user = me;
+        determineRank(me);
         getUserActivity(me.id);
         sortFeaturedAssets($scope.sortAssetsBy);
         sortCommunityAssets($scope.sortCommunityBy);
