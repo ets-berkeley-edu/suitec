@@ -78,13 +78,13 @@
       // Dashboard routes
       .state('dashboard', {
         'url': '/dashboard',
-        'templateUrl': '/app/dashboard/splash.html',
-        'controller': 'SplashController'
+        'templateUrl': '/app/dashboard/profile.html',
+        'controller': 'ProfileController'
       })
-      .state('profile', {
+      .state('dashboard.profile.user', {
         'url': '/profile/:userId',
-        'templateUrl': '/app/dashboard/splash.html',
-        'controller': 'SplashController'
+        'templateUrl': '/app/dashboard/profile.html',
+        'controller': 'ProfileController'
       })
 
       // Engagement Index routes
