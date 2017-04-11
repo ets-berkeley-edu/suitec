@@ -122,6 +122,21 @@
     };
 
     /**
+     * Get activities for the current asset ID
+     */
+    var getAssetActivities = function() {
+      assetLibraryFactory.getActivitiesForAsset(assetId).success(function(activities) {
+        $scope.assetActivity = {
+          'Creation': activities.add_asset,
+          'Views': activities.view_asset,
+          'Likes': activities.like,
+          'Comments': activities.asset_comment,
+          'Whiteboard uses': activities.whiteboard_add_asset
+        };
+      });
+    };
+
+    /**
      * Build the comment tree for an asset. The comment tree will hold a flat list of all comment
      * in the order in which they should be displayed. Replies should therefore come right after
      * their parent
@@ -406,6 +421,8 @@
 
     // Load the selected asset
     getCurrentAsset();
+    // Load activities for the selected asset
+    getAssetActivities();
     // If referringTool is not null then offer user a link to go back.
     getReferringTool();
     // Scroll to the top of the page as the current scroll position could be somewhere

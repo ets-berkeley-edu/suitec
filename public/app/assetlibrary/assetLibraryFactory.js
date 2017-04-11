@@ -45,6 +45,17 @@
     };
 
     /**
+     * Get activities for an asset
+     *
+     * @param  {Number}               assetId         The id of the asset
+     * @return {Promise<Object>}                      $http promise returning activities sorted by type
+     */
+    var getActivitiesForAsset = function(assetId) {
+      var path = '/activities/asset/' + assetId;
+      return $http.get(utilService.getApiUrl(path));
+    };
+
+    /**
      * Get the assets for the current course
      *
      * @param  {Number}               [page]                          The results page to retrieve
@@ -236,6 +247,7 @@
 
     return {
       'getAsset': getAsset,
+      'getActivitiesForAsset': getActivitiesForAsset,
       'getAssets': getAssets,
       'createFile': createFile,
       'createLink': createLink,
