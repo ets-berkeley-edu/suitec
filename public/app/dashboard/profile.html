@@ -60,10 +60,10 @@
       <div class="profile-featured-list-filters" data-ng-if="featuredAssets.length">
         <span data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
 
-        <a data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
+        <a href data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
         <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
         |
-        <a data-ng-click="sortFeaturedAssets('likes')" data-ng-if="sortAssetsBy !== 'likes'">Most Impactful</a>
+        <a href data-ng-click="sortFeaturedAssets('likes')" data-ng-if="sortAssetsBy !== 'likes'">Most Impactful</a>
         <span data-ng-if="sortAssetsBy === 'likes'">Most Impactful</span>
       </div>
     </h3>
@@ -128,14 +128,17 @@
       <div class="profile-featured-list-filters" data-ng-if="communityAssets.length">
         Everyone's Assets:
 
-        <a data-ng-click="sortCommunityAssets('recent')" data-ng-if="sortCommunityBy !== 'recent'">Recent</a>
-        <span data-ng-if="sortCommunityBy === 'recent'">Recent</span>
+        <a href data-ng-click="sortCommunityAssets('recent')" data-ng-if="sortCommunityBy !== 'recent'">Trending</a>
+        <span data-ng-if="sortCommunityBy === 'recent'">Trending</span>
         |
-        <a data-ng-click="sortCommunityAssets('comments')" data-ng-if="sortCommunityBy !== 'comments'">Most Discussed</a>
+        <a href data-ng-click="sortCommunityAssets('comments')" data-ng-if="sortCommunityBy !== 'comments'">Most Discussed</a>
         <span data-ng-if="sortCommunityBy === 'comments'">Most Discussed</span>
         |
-        <a data-ng-click="sortCommunityAssets('likes')" data-ng-if="sortCommunityBy !== 'likes'">Most Impactful</a>
-        <span data-ng-if="sortCommunityBy === 'likes'">Most Impactful</span>
+        <a href data-ng-click="sortCommunityAssets('likes')" data-ng-if="sortCommunityBy !== 'likes'">Most Liked</a>
+        <span data-ng-if="sortCommunityBy === 'likes'">Most Liked</span>
+        |
+        <a href data-ng-click="sortCommunityAssets('pinned')" data-ng-if="sortCommunityBy !== 'pinned'">Pinned</a>
+        <span data-ng-if="sortCommunityBy === 'pinned'">Pinned</span>
       </div>
     </h3>
 
