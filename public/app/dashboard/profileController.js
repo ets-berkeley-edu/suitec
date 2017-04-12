@@ -123,6 +123,7 @@
           }
           sortFeaturedAssets($scope.sortAssetsBy);
           sortCommunityAssets($scope.sortCommunityBy);
+          $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
         });
       } else {
         $scope.isMyProfile = true;
@@ -132,6 +133,7 @@
         getUserActivity(me.id);
         sortFeaturedAssets($scope.sortAssetsBy);
         sortCommunityAssets($scope.sortCommunityBy);
+        $scope.user.hashtags = ['#sleeping', '#dancing', '#more-sleeping'];
       }
 
     };

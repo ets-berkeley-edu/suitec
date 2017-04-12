@@ -37,7 +37,7 @@
      * @return {String}               The text in which the hashtags have been replaced with links
      */
     return function(input) {
-      return input.replace(/#(\w*[a-zA-Z_]+\w*)/gim, '<a href="/assetlibrary?keywords=$1">#$1</a>');
+      return input.replace(/#(\w*[a-zA-Z_\-\.]+\w*)/gim, '<a href="/assetlibrary?keywords=$1">#$1</a>');
     };
   });
 
