@@ -236,7 +236,7 @@ var getTools = function(course) {
 
     // Attempt to parse out Canvas tool ids from the URL values in the database.
     var toolId;
-    if ((toolId = course[toolName + '_url']) && (toolId = toolId.match(/\d+$/)) && (toolId = Number(toolId[0]))) {
+    if ((toolId = course[toolName + '_url']) && (toolId = toolId.match(/external_tools\/(\d+)/)) && (toolId = Number(toolId[1]))) {
       var toolProperties = {
         'id': toolId,
         'name': toolName
