@@ -30,9 +30,15 @@
   angular.module('collabosphere').service('assetLibraryService', function(analyticsService, deepLinkId, utilService, $state) {
 
     var assetViewRedirect = function(id) {
-      if (id.match(/^assetlibrary/)) {
+      var hashtag = id.match(/^#(.*)/);
+      if (hashtag) {
+        // Search by hashtag from, for example, user profile page.
+        $state.go('assetlibrarylist', {'keywords': hashtag[1]});
+
+      } else if (id.match(/^assetlibrary/)) {
         // Pattern match identifies id as a "router state name" (see app.states.js)
         $state.go(id);
+
       } else {
         // Track the asset deep link
         analyticsService.track('Deep link asset', {

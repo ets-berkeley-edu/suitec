@@ -1,39 +1,61 @@
 <div class="profile-container">
-
   <div class="profile-summary-container">
-    <div class="profile-summary-column profile">
-      <div>
-        <img class="profile-summary-avatar" data-ng-src="{{user.canvas_image}}" data-ng-if="user.canvas_image"/>
+    <div class="profile-summary-column">
+      <img class="profile-summary-avatar" data-ng-src="{{user.canvas_image}}" data-ng-if="user.canvas_image"/>
+      <div class="profile-engagement-avatar-caption">
         <a>Edit Profile</a>
       </div>
-      <div>
-        <h2 data-ng-bind="user.canvas_full_name"></h2>
-        <div>Write4Change</div>
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </div>
-        <div>
-          <a>#photography</a> <a>#camping</a> <a>#travel</a>
+    </div>
+    <div class="profile-summary-column">
+      <div class="profile-summary-banner">
+        <h1 data-ng-bind="user.canvas_full_name"></h1>
+        <div class="profile-summary-user-search">
+          <form class="form-inline search-form" name="userSearchForm" data-ng-submit="search()">
+            <label for="profile-user-search" class="sr-only">Search for users</label>
+            <div class="input-group search-container">
+              <input type="text" id="profile-user-search" class="form-control" placeholder="Search for other people" data-ng-model="userToSearch">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-default" title="Search">
+                  <i class="fa fa-search">
+                    <span class="sr-only">Search</span>
+                  </i>
+                </button>
+              </span>
+            </div>
+          </form>
         </div>
       </div>
+      <div class="profile-summary-location">
+        Write4Change (St. Paul, Minnesota, USA)
+      </div>
+      <div>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      </div>
+      <div>
+        <span data-ng-repeat="hashtag in user.hashtags">
+          <a tool-href data-tool="assetlibrary" data-id="hashtag" data-referring-tool="dashboard" data-referring-id="user.id" data-course="me.course" data-ng-bind="hashtag"></a>
+        </span>
+      </div>
     </div>
-    <div class="profile-engagement-column" data-ng-if="showEngagementIndexBox">
-      <div class="profile-engagement-box">
-        <h2>
-          <a tool-href data-tool="engagementindex" data-course="me.course">
-            Engagement Index
-          </a>
-        </h2>
-        <hr/>
-        <div class="profile-engagement-score" data-ng-class="{'profile-engagement-score-not-shared': me.id === user.id && !user.share_points}">
-          {{user.points}} {{user.points === 1 ? 'Point' : 'Points'}}
-        </div>
-        <div data-ng-if="userRank">
-          <span data-ng-bind="userRank"></span> out of <span data-ng-bind="courseUserCount"></span>
-        </div>
-        <div data-ng-if="(user.id === me.id) && !user.share_points">
-          Sharing off. <a tool-href data-tool="engagementindex" data-course="me.course">Turn on?</a>
+    <div class="profile-summary-column-with-border" data-ng-if="showEngagementIndexBox">
+      <div class="profile-summary-column-square">
+        <div class="profile-summary-column-square-content">
+          <h2>
+            <a tool-href data-tool="engagementindex" data-course="me.course">
+              Engagement Index
+            </a>
+          </h2>
+          <hr/>
+          <div class="profile-engagement-score" data-ng-class="{'profile-engagement-score-not-shared': me.id === user.id && !user.share_points}">
+            {{user.points}} {{user.points === 1 ? 'Point' : 'Points'}}
+          </div>
+          <div data-ng-if="userRank">
+            <span data-ng-bind="userRank"></span> out of <span data-ng-bind="courseUserCount"></span>
+          </div>
+          <div data-ng-if="(user.id === me.id) && !user.share_points">
+            Sharing off. <a tool-href data-tool="engagementindex" data-course="me.course">Turn on?</a>
+          </div>
         </div>
       </div>
     </div>
@@ -79,11 +101,11 @@
             <div class="col-list-item-tile">
               <div class="assetlibrary-list-item-add-container">
                 <div class="assetlibrary-list-item-add-table">
-                  <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateUploadAsset" class="text-center col-pane">
+                  <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id="user.id" data-course="me.course" data-id="routerStateUploadAsset" class="text-center col-pane">
                     <i class="fa fa-laptop"></i>
                     <div class="assetlibrary-list-item-add-action">Upload</div>
                   </a>
-                  <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateAddLink" class="text-center col-pane">
+                  <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id="user.id" data-course="me.course" data-id="routerStateAddLink" class="text-center col-pane">
                     <i class="fa fa-link"></i>
                     <div class="assetlibrary-list-item-add-action">Add Link</div>
                   </a>
@@ -91,7 +113,7 @@
               </div>
             </div>
             <div class="col-list-item-actions">
-              <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="routerStateBookmarkletInfo" class="text-center col-pane">
+              <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id="user.id" data-course="me.course" data-id="routerStateBookmarkletInfo" class="text-center col-pane">
                 Add assets more easily
                 <i class="fa fa-bookmark pull-left"></i>
               </a>
@@ -100,7 +122,7 @@
         </li>
 
         <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in featuredAssets">
-          <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
+          <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id="user.id" data-course="me.course" data-id="asset.id">
             <div class="col-list-item-container">
               <div class="col-list-item-tile">
                 <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
@@ -148,7 +170,7 @@
       </div>
       <ul>
         <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in communityAssets">
-          <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id='user.id' data-course="me.course" data-id="asset.id">
+          <a tool-href data-tool="assetlibrary" data-referring-tool="dashboard" data-referring-id="user.id" data-course="me.course" data-id="asset.id">
             <div class="col-list-item-container">
               <div class="col-list-item-tile">
                 <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">

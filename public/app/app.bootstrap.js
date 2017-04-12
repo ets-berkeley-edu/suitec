@@ -60,13 +60,17 @@
       return n = n.split('='), this[n[0]] = n[1], this;
     }.bind({}))[0];
 
-    // Extract '_id' from embedded toolUrl to support linking from one SuiteC tool to another.
+    // '_id' targets an asset or user when linking from one SuiteC tool to another.
     var m = queryArgs.match(/.*[\?&]_id=([0-9a-zA-Z]+).*/);
-    parameters.deep_link_id = (m && m.length > 0) ? m[1] : null;
-    // Optional arg '_referring_tool' indicates origin of link
+    // '_id' might otherwise carry hashtag for search
+    m = m || queryArgs.match(/.*[\?&]_id=%23(\w*[a-zA-Z_\-\.]+\w*)/);
+    parameters.deep_link_id = (m && m.length > 0) ? decodeURIComponent(m[1]) : null;
+
+    // '_referring_tool' (optional) is origin of the href.
     var tool = queryArgs.match(/.*[\?&]_referring_tool=([a-z]+).*/);
     parameters.referring_tool = (tool && tool.length > 0) ? tool[1] : null;
-    // Optional arg '_referring_id' describes state of the referring tool when exited.
+
+    // '_referring_id' (optional) describes state of the referring tool when exited.
     var id = queryArgs.match(/.*[\?&]_referring_id=([0-9a-zA-Z]+).*/);
     parameters.referring_id = (id && id.length > 0) ? id[1] : null;
 

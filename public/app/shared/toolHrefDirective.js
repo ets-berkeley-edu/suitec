@@ -66,12 +66,13 @@
           }
         };
         // Note: Value of '_id' arg can be router-state, asset id, etc.
-        var queryArgs = scope.id ? '?_id=' + scope.id : '';
+        var id = scope.id || attrs.id;
+        var queryArgs = id ? '?_id=' + encodeURIComponent(id) : '';
         if (attrs.referringTool) {
           queryArgs = queryArgs ? queryArgs + '&' : '?';
           queryArgs += '_referring_tool=' + attrs.referringTool;
           if (scope.referringId) {
-            queryArgs += '&_referring_id=' + scope.referringId;
+            queryArgs += '&_referring_id=' + encodeURIComponent(scope.referringId);
           }
         }
         elem.attr('href', getToolUrl(scope.course, attrs.tool) + queryArgs);

@@ -29,35 +29,89 @@
 
 .profile-summary-container {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
 .profile-summary-column {
-  border-radius: 4px;
-  margin: 5px;
-  padding: 10px 10px 10px 10px;
+  padding-right: 15px;
+}
+
+.profile-summary-column h1 {
+  -webkit-flex: 1 0 0;
+  flex: 1 0 0;
+  font-size: 19px;
+  padding-right: 20px;
+  padding-top: 10px;
 }
 
 .profile-summary-avatar {
   border-radius: 50%;
+  text-align: center;
   width: 100px;
 }
 
-.profile-engagement-column {
-  border-radius: 5px;
-  border: 1px solid lightgrey;
-  padding: 10px 10px 10px 10px;
+.profile-engagement-avatar-caption {
+  margin: 10px;
+  text-align: center;
 }
 
-.profile-engagement-column h2 {
+.profile-summary-banner {
+  display: flex;
+  overflow: hidden;
+  padding-bottom: 15px;
+  vertical-align: middle;
+}
+
+.profile-summary-user-search {
+  -webkit-flex: 2 0 0;
+  flex: 2 0 0;
+}
+
+.profile-summary-location {
+  padding-bottom: 15px;
+}
+
+.profile-summary-column-with-border {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  max-width: 180px;
+  padding: 10px 10px 10px 10px;
+  width: 40%;
+}
+
+.profile-summary-column-square {
+  position: relative;
+}
+
+.profile-summary-column-square:before {
+  content: "";
+  display: block;
+  padding-top: 100%; /* Square has initial ratio of 1:1 */
+}
+
+.profile-summary-column-square-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 25px 10px 0 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.profile-summary-column-square h2 {
   font-size: 15px;
-  font-weight: 400;
   line-height: 1.3;
+  margin-bottom: 5px;
   word-wrap: break-word;
 }
 
-.profile-engagement-box {
-  margin: 10px;
-  text-align: center;
+.profile-summary-column-square hr {
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 .profile-engagement-score {
