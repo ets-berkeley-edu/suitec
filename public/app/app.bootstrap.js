@@ -63,7 +63,7 @@
     // '_id' targets an asset or user when linking from one SuiteC tool to another.
     var m = queryArgs.match(/.*[\?&]_id=([0-9a-zA-Z]+).*/);
     // '_id' might otherwise carry hashtag for search
-    m = m || queryArgs.match(/.*[\?&]_id=%23(\w*[a-zA-Z_\-\.]+\w*)/);
+    m = m || queryArgs.match(/.*[\?&]_id=(%23\w*[a-zA-Z_\-\.]+\w*)/);
     parameters.deep_link_id = (m && m.length > 0) ? decodeURIComponent(m[1]) : null;
 
     // '_referring_tool' (optional) is origin of the href.
