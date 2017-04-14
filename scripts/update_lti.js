@@ -38,6 +38,7 @@ var argv = yargs
 var _ = require('lodash');
 var async = require('async');
 
+var CollabosphereConstants = require('col-core/lib/constants');
 var DB = require('col-core/lib/db');
 var log = require('col-core/lib/logger')('scripts/reset_lti');
 var CanvasAPI = require('col-canvas');
@@ -235,16 +236,27 @@ var getTools = function(course) {
   _.each(['assetlibrary', 'dashboard', 'engagementindex', 'whiteboards'], function(toolName) {
 
     // Attempt to parse out Canvas tool ids from the URL values in the database.
+    var toolUrl;
+    var toolMatch;
     var toolId;
-    if ((toolId = course[toolName + '_url']) && (toolId = toolId.match(/external_tools\/(\d+)/)) && (toolId = Number(toolId[1]))) {
-      var toolProperties = {
-        'id': toolId,
-        'name': toolName
-      };
+    if (toolUrl = course[toolName + '_url']) { 
+      if ((toolMatch = toolUrl.match(CollabosphereConstants.TOOL_URL_FORMAT)) && (toolId = Number(toolMatch[1]))) {
+        var toolProperties = {
+          'id': toolId,
+          'name': toolName
+        };
 
-      // If another course has already updated or errored on this tool configuration, don't retry.
-      if (!_.find(results.success, toolProperties) && !_.find(results.error, toolProperties)) {
-        tools.push(_.assign(toolProperties, {'courseId': course.id}));
+        // If another course has already updated or errored on this tool configuration, don't retry.
+        if (!_.find(results.success, toolProperties) && !_.find(results.error, toolProperties)) {
+          tools.push(_.assign(toolProperties, {'courseId': course.id}));
+        }
+      } else {
+        // If the URL value has an unexpected format, report the error.
+        results.error.push({
+          'courseId': course.id,
+          'name': toolName,
+          'toolUrl': toolUrl
+        });
       }
     }
   });
