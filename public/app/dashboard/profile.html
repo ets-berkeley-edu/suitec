@@ -25,8 +25,13 @@
           </form>
         </div>
       </div>
-      <div class="profile-summary-location">
+      <div>
         Write4Change (St. Paul, Minnesota, USA)
+      </div>
+      <div class="profile-summary-last-activity">
+        Last activity:
+        <span data-ng-if="user.last_activity">{{user.last_activity | formatDate}}</span>
+        <span data-ng-if="!user.last_activity">Never</span>
       </div>
       <div>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do

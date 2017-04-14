@@ -111,34 +111,30 @@
       }
     };
 
-    var loadProfile = function() {
-      if (deepLinkId) {
-        userFactory.getUser(deepLinkId).success(function(user) {
-          $scope.isMyProfile = user.id === me.id;
-          $scope.user = user;
-          $scope.showEngagementIndexBox = me.course.engagementindex_url && (me.is_admin || user.id === me.id || (user.share_points && me.share_points));
-          determineRank(user);
-          if (me.is_admin || user.id === me.id) {
-            getUserActivity(user.id);
-          }
-          sortFeaturedAssets($scope.sortAssetsBy);
-          sortCommunityAssets($scope.sortCommunityBy);
-          $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
-        });
-      } else {
-        $scope.isMyProfile = true;
-        $scope.showEngagementIndexBox = !!me.course.engagementindex_url;
-        $scope.user = me;
-        determineRank(me);
-        getUserActivity(me.id);
-        sortFeaturedAssets($scope.sortAssetsBy);
-        sortCommunityAssets($scope.sortCommunityBy);
-        $scope.user.hashtags = ['#sleeping', '#dancing', '#more-sleeping'];
+    var loadProfile = function(user) {
+      $scope.isMyProfile = user.id === me.id;
+      $scope.user = user;
+      $scope.showEngagementIndexBox = me.course.engagementindex_url && ($scope.isMyProfile || me.is_admin || (user.share_points && me.share_points));
+      determineRank(user);
+      if ($scope.isMyProfile || me.is_admin) {
+        getUserActivity(user.id);
       }
-
+      sortFeaturedAssets($scope.sortAssetsBy);
+      sortCommunityAssets($scope.sortCommunityBy);
+      $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
     };
 
-    loadProfile();
+    var init = function() {
+      if (deepLinkId) {
+        userFactory.getUser(deepLinkId).success(function(user) {
+          loadProfile(user);
+        });
+      } else {
+        loadProfile(me);
+      }
+    };
+
+    init();
   });
 
 }(window.angular));
