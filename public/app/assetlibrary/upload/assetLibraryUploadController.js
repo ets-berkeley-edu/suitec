@@ -68,6 +68,7 @@
      * or dropped into the file drop area
      *
      * @param  {File[]}         files           The file(s) that have been selected or dropped
+     * @return {void}
      */
     var filesSelected = $scope.filesSelected = function(files) {
       // Clear the previously selected files
@@ -105,6 +106,8 @@
 
     /**
      * Hide the alert message that indicates a problem with the selected files
+     *
+     * @return {void}
      */
     var hideFilesError = $scope.hideFilesError = function() {
       $scope.alertFilesError = false;
@@ -114,6 +117,7 @@
      * Remove a file from the list of selected files
      *
      * @param  {Number}         index           The index of the file that should be removed in the array of selected files
+     * @return {void}
      */
     var removeFile = $scope.removeFile = function(index) {
       $scope.files.splice(index, 1);
@@ -121,6 +125,8 @@
 
     /**
      * Cancel uploading the selected files
+     *
+     * @return {Object}                         Event targeting listeners
      */
     var cancelUpload = $scope.cancelUpload = function() {
       return $scope.$emit('assetLibraryUploadDone');
@@ -128,6 +134,8 @@
 
     /**
      * Upload the selected files and their metadata
+     *
+     * @return {void}
      */
     var createFiles = $scope.createFiles = function() {
       // Indicate that uploading is now in progress
@@ -143,6 +151,8 @@
 
     /**
      * Upload the next file from the list of selected files
+     *
+     * @return {Object}                         Event targeting listeners
      */
     var createFile = function() {
       // If no more files need to be uploaded, emit an event that
@@ -187,7 +197,7 @@
      * Calculate the file upload progress as a rounded percentage
      *
      * @param  {Number}         uploaded        The total file size that has been uploaded so far
-     * @return {Number}                         The calculated file upload progress as a rounded percentage based on total size of the files that need to be uploaded
+     * @return {void}
      */
     var calculateProgress = function(uploaded) {
       $scope.progress = Math.round((uploaded / totalSize) * 100);
@@ -195,6 +205,8 @@
 
     /**
      * Get the categories for the current course
+     *
+     * @return {void}
      */
     var getCategories = function() {
       assetLibraryCategoriesFactory.getCategories().success(function(categories) {

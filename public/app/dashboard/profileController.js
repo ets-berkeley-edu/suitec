@@ -61,6 +61,9 @@
 
     /**
      * Get custom type of asset list (e.g., 'Most Impactful') per user.
+     *
+     * @param  {String}         sortType              Name of field to sort by
+     * @return {void}
      */
     var sortFeaturedAssets = $scope.sortFeaturedAssets = function(sortType) {
       var searchOptions = {
@@ -78,6 +81,9 @@
 
     /**
      * "Community" represents all users of the course site.
+     *
+     * @param  {String}               sortType              Name of field to sort by
+     * @return {void}
      */
     var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType) {
       var searchOptions = {
@@ -94,6 +100,9 @@
 
     /**
      * Get user rank in course per engagement index
+     *
+     * @param  {Object}               user              User being rendered in profile
+     * @return {void}
      */
     var determineRank = function(user) {
       if (me.is_admin || user.share_points) {

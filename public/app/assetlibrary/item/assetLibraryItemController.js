@@ -69,6 +69,7 @@
      * Get the current asset
      *
      * @param  {Boolean}      [incrementViews]      Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
+     * @return {void}
      */
     var getCurrentAsset = function(incrementViews) {
       assetLibraryFactory.getAsset(assetId, incrementViews).success(function(asset) {
@@ -123,6 +124,8 @@
 
     /**
      * Get activities for the current asset ID
+     *
+     * @return {void}
      */
     var getAssetActivities = function() {
       assetLibraryFactory.getActivitiesForAsset(assetId).success(function(activities) {
@@ -142,6 +145,7 @@
      * their parent
      *
      * @param  {Asset}        asset           The asset to build the comment tree for. The comments will be replaced with the comment tree
+     * @return {void}
      */
     var buildCommentTree = function(asset) {
       // Order the comments from oldest to newest
@@ -186,6 +190,8 @@
 
     /**
      * Delete the current asset
+     *
+     * @return {void}
      */
     var deleteAsset = $scope.deleteAsset = function() {
       if (confirm('Are you sure you want to delete this asset?')) {
@@ -201,6 +207,8 @@
 
     /**
      * Create a new comment on the current asset
+     *
+     * @return {void}
      */
     var createComment = $scope.createComment = function() {
       assetLibraryFactory.createComment(assetId, $scope.newComment.body).success(function(comment) {
@@ -220,6 +228,7 @@
      * Show or hide the reply form for a comment
      *
      * @param  {Comment}      comment         The comment for which the reply form should be shown or hidden
+     * @return {void}
      */
     var toggleReplyComment = $scope.toggleReplyComment = function(comment) {
       comment.replying = !comment.replying;
@@ -230,6 +239,7 @@
      *
      * @param  {Comment}      comment         The comment to which this is a reply
      * @param  {String}       body            The body of the reply
+     * @return {void}
      */
     var replyComment = $scope.replyComment = function(comment, body) {
       assetLibraryFactory.createComment(assetId, body, comment.id).success(function(reply) {
@@ -256,6 +266,7 @@
      * Show or hide the edit form for a comment
      *
      * @param  {Comment}      comment         The comment for which the edit form should be shown or hidden
+     * @return {void}
      */
     var toggleEditComment = $scope.toggleEditComment = function(comment) {
       // When the comment is not being edited yet, the body is cached
@@ -272,6 +283,7 @@
      * Edit a comment on the current asset
      *
      * @param  {Comment}      comment         The comment that is being edited
+     * @return {void}
      */
     var editComment = $scope.editComment = function(comment) {
       assetLibraryFactory.editComment(assetId, comment.id, comment.newBody).success(function() {
@@ -285,13 +297,16 @@
      * Delete a comment on the current asset
      *
      * @param  {Comment}      comment         The comment that is being deleted
+     * @return {void}
      */
     var deleteComment = $scope.deleteComment = function(comment) {
       if (confirm('Are you sure you want to delete this comment?')) {
 
-        /*!
+        /**
          * Delete the comment from the comments in the current scope and indicate that the asset
          * has been updated
+         *
+         * @return {void}
          */
         var localDelete = function() {
           // Delete the comment from the comment list
@@ -365,8 +380,11 @@
      * Restore the asset library search options when navigating back to the asset library list. As navigating
      * back to the asset library list doesn't trigger a new search, the easiest solution is to restore the hash
      * value here
+     *
      * NOTE: This functionality requires our custom 'getParentUrlData' and 'setParentHash' cross-window events to be
      * supported in the hosting Canvas instance.
+     *
+     * @return {void}
      */
     var backToAssetLibrary = $scope.backToAssetLibrary = function() {
       utilService.setParentHash($scope.$parent.searchOptions);
@@ -374,6 +392,8 @@
 
     /**
      * Bundle the properties forwarded by toolHrefDirective. This allows user to link between LTI tools.
+     *
+     * @return {void}
      */
     var getReferringTool = function() {
       if (referringTool) {
@@ -388,13 +408,17 @@
      * Close the current browser window. This is used when an asset has been opened
      * in a separate tab and the user wants to be taken back to where the asset was
      * launched from
+     *
+     * @return {void}
      */
     var closeWindow = $scope.closeWindow = function() {
       window.close();
     };
 
     /**
-     * For layout purposes, calculate the number of buttons that will appear at the upper right
+     * Calculation for layout purposes
+     *
+     * @return {Number}                          Number of buttons to appear at the upper right
      */
     var getUpperRightButtonCount = function() {
       var count = 0;

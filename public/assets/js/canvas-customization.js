@@ -114,6 +114,7 @@
    *
    * @param  {Object}    ev         Event that is sent over from the iframe
    * @param  {String}    ev.data    The message sent with the event. Note that this is expected to be a stringified JSON object
+   * @return {void}
    */
   window.onmessage = function(ev) {
     // Parse the provided event message
@@ -175,4 +176,4 @@
     }
   };
 
-})(window, window.document, window.$);
+}(window, window.document, window.$));

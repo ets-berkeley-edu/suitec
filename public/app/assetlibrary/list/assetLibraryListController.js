@@ -67,6 +67,8 @@
 
     /**
      * If a search is being performed, initialize variables
+     *
+     * @return {void}
      */
     var initializeSearchContext = function() {
       $scope.isSearch = false;
@@ -79,7 +81,8 @@
     initializeSearchContext();
 
     /**
-     * Return a message based on search options
+     * @param  {Comment}      message            Current message, to which we might add
+     * @return {String}                          Message, based on search options
      */
     var buildResultsMessage = function(message) {
       var filters = [];
@@ -115,6 +118,8 @@
 
     /**
      * Get the assets for the current course through an infinite scroll
+     *
+     * @return {void}
      */
     var getAssets = $scope.getAssets = function() {
       // Keep track of the search options in the parent container's hash to allow

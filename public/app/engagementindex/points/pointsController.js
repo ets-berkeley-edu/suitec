@@ -45,6 +45,8 @@
 
     /**
      * Retrieve the activity type configuration for the current course
+     *
+     * @return {void}
      */
     var getActivityTypeConfiguration = function() {
       pointsFactory.getActivityTypeConfiguration().success(function(activityTypeConfiguration) {
@@ -75,6 +77,7 @@
      * generate activity points
      *
      * @param  {ActivityType}     activityType      The activity type to disable
+     * @return {void}
      */
     var disableActivityType = $scope.disableActivityType = function(activityType) {
       activityType.enabled = false;
@@ -86,6 +89,7 @@
      * activity points
      *
      * @param  {ActivityType}     activityType      The activity type to enable
+     * @return {void}
      */
     var enableActivityType = $scope.enableActivityType = function(activityType) {
       activityType.enabled = true;
@@ -94,6 +98,8 @@
 
     /**
      * Change the activity type configuration to edit mode
+     *
+     * @return {void}
      */
     var editActivityTypeConfiguration = $scope.editActivityTypeConfiguration = function() {
       // Cache the current activity type configuration. When changes are made and the
@@ -106,6 +112,8 @@
     /**
      * Cancel activity type configuration editing and revert back to the previous
      * activity type configuration
+     *
+     * @return {void}
      */
     var cancelActivityTypeConfiguration = $scope.cancelActivityTypeConfiguration = function() {
       // Revert back to the cached points configuration
@@ -116,6 +124,8 @@
 
     /**
      * Save the modified points configuration
+     *
+     * @return {void}
      */
     var saveActivityTypeConfiguration = $scope.saveActivityTypeConfiguration = function() {
       // Switch to view mode

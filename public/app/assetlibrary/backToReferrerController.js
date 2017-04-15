@@ -34,6 +34,8 @@
 
     /**
      * Bundle the properties forwarded by toolHrefDirective. This allows user to link between LTI tools.
+     *
+     * @return {void}
      */
     var bundle = function() {
       if (referringTool) {

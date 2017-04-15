@@ -38,6 +38,8 @@
     /**
      * Get the current whiteboard. This will include the number of online people, as well
      * as the content of the whiteboard
+     *
+     * @return {void}
      */
     var getWhiteboard = function() {
       whiteboardsFactory.getWhiteboard(whiteboardId).success(function(whiteboard) {

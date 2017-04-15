@@ -239,6 +239,7 @@
      * Create a new whiteboard from an exported whiteboard asset
      *
      * @param  {Number}               id                            The id of the whiteboard asset
+     * @param  {Object}               asset                         The asset from which we create a whiteboard
      * @return {Promise}                                            $http promise
      */
     var createWhiteboardFromAsset = function(id, asset) {

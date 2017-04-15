@@ -40,6 +40,8 @@
 
     /**
      * Create a new whiteboard
+     *
+     * @return {void}
      */
     var createWhiteboard = $scope.createWhiteboard = function() {
       whiteboardsFactory.createWhiteboard($scope.whiteboard).success(function() {
@@ -49,12 +51,14 @@
 
     /**
      * Get all users in the course
+     *
+     * @return {void}
      */
     var getAllUsers = function() {
       // Filter ourselves out of the set of users who can be invited into the whiteboard
       userFactory.getAllUsers().then(function(response) {
         $scope.users = response.data.filter(function(user) {
-          return (user.id != $scope.me.id);
+          return (user.id !== $scope.me.id);
         });
       });
     };

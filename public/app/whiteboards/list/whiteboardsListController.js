@@ -39,6 +39,8 @@
 
     /**
      * Initialize values when whiteboard list is launched or refreshed
+     *
+     * @return {void}
      */
     var initializeWhiteboardList = function() {
       // Variable that will keep track of whether the initial whiteboard list request has taken place
@@ -101,7 +103,10 @@
     }
 
     /**
-     * Get the whiteboards to which the current user has access in the current course through an infinite scroll
+     * Get the whiteboards to which the current user has access in the current
+     * course through an infinite scroll
+     *
+     * @return {void}
      */
     var getWhiteboards = $scope.getWhiteboards = function() {
       // Indicate that no further REST API requests should be made

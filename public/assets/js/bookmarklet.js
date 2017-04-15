@@ -43,6 +43,8 @@
    * Get the HTML for the Bookmarklet and add it to the current document.
    * As the current document was dynamically created in the parent document,
    * it still needs to be filled with the actual content
+   *
+   * @return {void}
    */
   var setUpModal = function() {
     $.ajax({
@@ -56,6 +58,8 @@
 
   /**
    * Render the Bookmarklet modal and show the overview pane
+   *
+   * @return {void}
    */
   var renderModal = function() {
     // Ensure that the iFrame in which the Bookmarklet is loaded is visible
@@ -68,6 +72,8 @@
   /**
    * Hide the iFrame in which the Bookmarklet is loaded. This iFrame is loaded
    * on top of the current page and will block the page content until it is hidden
+   *
+   * @return {void}
    */
   var hideBookmarkletIFrame = function() {
     // Only hide the iFrame if no success notification is on the screen
@@ -95,6 +101,7 @@
    * page have been successfully added to the Asset Library
    *
    * @param  {String}     message         The content that should be shown in the notification
+   * @return {void}
    */
   var showSuccessNotification = function(message) {
     // Hide the modal dialog
@@ -115,6 +122,7 @@
    * Show the correct step in the add workflow
    *
    * @param  {String}     pane            The id of the pane to show. Accepted values are `overview` and `items`
+   * @return {void}
    */
   var showPane = function(pane) {
     // Hide the currenty active pane
@@ -143,6 +151,8 @@
    * When the Bookmarklet is initiated, the user will be able to choose between
    * adding the entire page to the Asset Library or adding individual items from
    * the page to the Asset Library
+   *
+   * @return {void}
    */
   var handleOverviewNext = function() {
     var selected = $('input[name=collabosphere-overview-options]:checked').val();
@@ -159,6 +169,8 @@
 
   /**
    * Get the available categories in the course and cache them
+   *
+   * @return {void}
    */
   var getCategories = function() {
     $.ajax({
@@ -175,6 +187,8 @@
   /**
    * When he user has chosen to add the entire page as a bookmark to the Asset Library,
    * extract as much metadata as possible from the page and present the metadata options
+   *
+   * @return {void}
    */
   var renderPageBookmark = function() {
     // Extract the URL from the parent page
@@ -198,6 +212,8 @@
 
   /**
    * Add the entire page as a bookmark to the Asset Library
+   *
+   * @return {void}
    */
   var addPageBookmark = function() {
     // Extract the title and description from the metadata form
@@ -222,6 +238,8 @@
   /**
    * When the user has chosen to add individual items from the page to the Asset Library,
    * they are presented with a list of all of the images on the page
+   *
+   * @return {void}
    */
   var renderPageItems = function() {
     // Ensure that we start with a clean list
@@ -231,13 +249,14 @@
     // Disable the next button
     enableDisableItemsNext();
 
-    /*!
+    /**
      * Function called when an image on the page has been found. This can be either an image
      * from an `img` tag or a background-image
      *
      * @param  {Object}         img             The image that was found on the page
      * @param  {String}         img.url         The URL of the image
      * @param  {String}         [img.title]     The title of the image
+     * @return {void}
      */
     var imageCallback = function(img) {
       // Ensure that the same image is not re-added
@@ -280,6 +299,8 @@
   /**
    * When adding individual assets from the page, enable the next button when at least
    * 1 asset has been checked. Otherwise, the next button is disabled
+   *
+   * @return {void}
    */
   var enableDisableItemsNext = function() {
     $('#collabosphere-items-next').prop('disabled', (getSelectedPageItems().length === 0));
@@ -291,6 +312,7 @@
    *
    * @param  {Function}   callback        Standard callback function called every time an image has been found
    * @param  {String}     callback.img    URL of the image that has been found
+   * @return {void}
    */
   var collectImages = function(callback) {
     var $images = $('img', window.parent.document);
@@ -348,6 +370,7 @@
    *
    * @param  {Function}   callback        Standard callback function called every time a background image has been found
    * @param  {String}     callback.img    URL of the background image that has been found
+   * @return {void}
    */
   var collectBackgroundImages = function(callback) {
     // Extract all elements that have a background image
@@ -374,6 +397,8 @@
   /**
    * When one or more individual items from the page have been selected, render
    * them in a list to allow for metadata to be added to each of the selected items
+   *
+   * @return {void}
    */
   var renderPageItemsMetadata = function() {
     // Fetch the selected items
@@ -391,6 +416,8 @@
 
   /**
    * Add the selected individual items from the page to the asset library.
+   *
+   * @return {void}
    */
   var addPageItems = function() {
     // Fetch the selected items
@@ -470,6 +497,7 @@
    * @param  {Object}       asset           The asset that should be added to the asset library
    * @param  {Function}     callback        Standard callback function
    * @param  {Asset}        callback.asset  The created asset
+   * @return {void}
    */
   var addAsset = function(asset, callback) {
     // Indicate that a link is being created
@@ -498,7 +526,7 @@
   };
 
   /**
-   *
+   * @return {void}
    */
   var setSelectStyle = function() {
     var $select = $(this);
@@ -507,6 +535,8 @@
 
   /**
    * Add the event binding for the Bookmarklet
+   *
+   * @return {void}
    */
   var addBinding = function() {
     $(document).on('click', '#collabosphere-overview-next', handleOverviewNext);
@@ -527,4 +557,4 @@
   setUpModal();
   getCategories();
 
-})();
+}());

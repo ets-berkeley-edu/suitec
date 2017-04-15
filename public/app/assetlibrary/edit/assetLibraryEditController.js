@@ -43,6 +43,8 @@
 
     /**
      * Get the current asset
+     *
+     * @return {void}
      */
     var getCurrentAsset = function() {
       assetLibraryFactory.getAsset(assetId, false).success(function(asset) {
@@ -57,6 +59,8 @@
 
     /**
      * Get the categories for the current course
+     *
+     * @return {void}
      */
     var getCategories = function() {
       assetLibraryCategoriesFactory.getCategories().success(function(categories) {
@@ -66,6 +70,8 @@
 
     /**
      * Edit the current asset
+     *
+     * @return {void}
      */
     var editAsset = $scope.editAsset = function() {
       assetLibraryFactory.editAsset($scope.asset.id, $scope.asset).success(function(updatedAsset) {

@@ -35,6 +35,8 @@
 
     /**
      * Mark the current course as active if wrongly deactivated. This may be done by an admin in any of the SuiteC tools.
+     *
+     * @return {void}
      */
     var activateCourse = $scope.activateCourse = function() {
       $scope.activatingCourse = true;

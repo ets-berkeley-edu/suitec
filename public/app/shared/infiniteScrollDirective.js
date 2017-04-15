@@ -27,7 +27,7 @@
 
   'use strict';
 
-  /*!
+  /**
    * The infinite scroll directive can be used to add infinite scrolling functionality to
    * a container. The following attributes should be applied to the infinite scrolling container:
    *
@@ -78,7 +78,7 @@
           scope.$watch(function() {
             return infiniteScrollContainer.scrollHeight;
           }, function(newValue, oldValue) {
-            if (newValue != oldValue) {
+            if (newValue !== oldValue) {
               infiniteScrollContainer.scrollTop = infiniteScrollContainer.scrollHeight - oldOffsetToBottom;
             }
           });
@@ -86,6 +86,8 @@
 
         /**
          * Load the next set of results in the infinite scroll instance
+         *
+         * @return {void}
          */
         var handleInfiniteScrollLoad = function() {
           scope.infiniteScroll();
@@ -98,6 +100,7 @@
          *
          * @param  {Number}         scrollToBottom            When the browser window was supplied as the infiniteScrollContainer, the distance between the bottom of the browser and the bottom of the page. Otherwise, the distance between the bottom of the infinite scroll container and the current scroll position within that container
          * @param  {Number}         scrollPosition            When the browser window was supplied as the infiniteScrollContainer, the distance between the top of the browser and the top of the page. Otherwise, the distance between the top of the infinite scroll container and the current scroll position within that container
+         * @return {void}
          */
         var checkInfiniteScrollLoad = function(scrollToBottom, scrollPosition) {
           if (scope.infiniteScrollReady && (

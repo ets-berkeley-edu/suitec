@@ -46,6 +46,8 @@
 
     /**
      * Get any other courses using the Asset Library where user is an instructor
+     *
+     * @return {void}
      */
     var getAssetLibraryCourses = function() {
       var courseOptions = {
@@ -62,6 +64,8 @@
 
     /**
      * Get the categories for the current course
+     *
+     * @return {void}
      */
     var getCategories = function() {
       assetLibraryCategoriesFactory.getCategories(true).success(function(categories) {
@@ -71,6 +75,8 @@
 
     /**
      * Create a new category
+     *
+     * @return {void}
      */
     var createCategory = $scope.createCategory = function() {
       assetLibraryCategoriesFactory.createCategory($scope.newCategory).success(function(category) {
@@ -85,6 +91,7 @@
      * Show or hide the edit form for a category
      *
      * @param  {Category}       category          The category for which the edit form should be shown or hidden
+     * @return {void}
      */
     var toggleEditCategory = $scope.toggleEditCategory = function(category) {
       // When the category is not being edited yet, the title is cached
@@ -101,6 +108,7 @@
      * Edit a category
      *
      * @param  {Category}       category          The category that is being edited
+     * @return {void}
      */
     var editCategory = $scope.editCategory = function(category) {
       assetLibraryCategoriesFactory.editCategory(category.id, category.newTitle, category.visible).success(function() {
@@ -113,6 +121,7 @@
      * Edit an assignment category
      *
      * @param  {Category}       category          The assignment category that is being edited
+     * @return {void}
      */
     var editAssignmentCategory = $scope.editAssignmentCategory = function(category) {
       assetLibraryCategoriesFactory.editCategory(category.id, category.title, category.visible);
@@ -122,6 +131,7 @@
      * Delete a category
      *
      * @param  {Category}       category          The category that is being deleted
+     * @return {void}
      */
     var deleteCategory = $scope.deleteCategory = function(category) {
       if (confirm('Are you sure you want to delete this category?')) {
@@ -140,6 +150,7 @@
      * Copy all user assets to the Asset Library of another course
      *
      * @param  {Number}    destinationUserId    The course-specific SuiteC user id to be associated with migrated assets
+     * @return {void}
      */
     var migrateAssets = $scope.migrateAssets = function(destinationUserId) {
       assetLibraryFactory.migrateAssets(destinationUserId).then(function() {

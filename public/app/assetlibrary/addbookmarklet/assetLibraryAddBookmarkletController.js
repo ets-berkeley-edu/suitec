@@ -59,6 +59,8 @@
 
     /**
      * Go to the next step in the bookmarklet installation process
+     *
+     * @return {void}
      */
     var nextStep = $scope.nextStep = function() {
       $scope.step++;
@@ -68,6 +70,8 @@
     /**
      * Track an activity for each step in the bookmarklet installation
      * process
+     *
+     * @return {void}
      */
     var trackBookmarklet = function() {
       analyticsService.track('Install bookmarklet instructions', {
@@ -77,6 +81,8 @@
 
     /**
      * Track an activity when the bookmarklet is being dragged
+     *
+     * @return {void}
      */
     var trackBookmarkInstallation = $scope.trackBookmarkInstallation = function() {
       analyticsService.track('Install bookmarklet');
@@ -87,6 +93,7 @@
      * functionality
      *
      * @param  {Event}          $event            The click event
+     * @return {Boolean}                          False to short-circuit the event
      */
     var preventBookmarklet = $scope.preventBookmarklet = function($event) {
       $event.preventDefault();

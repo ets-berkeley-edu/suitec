@@ -32,6 +32,7 @@
     /**
      * Get activities for a user
      *
+     * @param  {Number}               userId      User id for which activities should be returned
      * @return {Promise}                          $http promise
      */
     var getActivitiesForUser = function(userId) {

@@ -37,6 +37,8 @@
 
     /**
      * Create a new link asset
+     *
+     * @return {void}
      */
     var createLink = $scope.createLink = function() {
       assetLibraryFactory.createLink($scope.link).success(function(asset) {
@@ -46,6 +48,8 @@
 
     /**
      * Cancel creating a new link asset
+     *
+     * @return {void}
      */
     var cancelCreateLink = $scope.cancelAddLink = function() {
       $scope.$emit('assetLibraryAddLinkDone');
@@ -53,6 +57,8 @@
 
     /**
      * Get the categories for the current course
+     *
+     * @return {void}
      */
     var getCategories = function() {
       assetLibraryCategoriesFactory.getCategories().success(function(categories) {

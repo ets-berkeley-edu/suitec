@@ -42,6 +42,8 @@
 
     /**
      * Edit the current whiteboard
+     *
+     * @return {void}
      */
     var editWhiteboard = $scope.editWhiteboard = function() {
       // Warn if the user has removed him/herself from the whiteboard, unless user is admin
@@ -66,6 +68,8 @@
 
     /**
      * Delete the current whiteboard
+     *
+     * @return {void}
      */
     var deleteWhiteboard = $scope.deleteWhiteboard = function() {
       if (confirm('Are you sure you want to delete this whiteboard?')) {
@@ -83,6 +87,8 @@
 
     /**
      * Get all users in the course
+     *
+     * @return {void}
      */
     var getAllUsers = function() {
       userFactory.getAllUsers().then(function(response) {

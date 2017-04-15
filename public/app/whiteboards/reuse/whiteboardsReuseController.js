@@ -44,6 +44,8 @@
 
     /**
      * Add the selected assets to the current whiteboard
+     *
+     * @return {void}
      */
     var addSelectedAssets = $scope.addSelectedAssets = function() {
       // The `closeModal` is added on the scope by the caller and allows
@@ -52,7 +54,7 @@
     };
 
     /**
-     * Get the selected assets from the asset list
+     * @return {Object}                        Selected assets from asset list
      */
     var getSelectedAssets = $scope.getSelectedAssets = function() {
       var selectedAssets = [];
@@ -69,6 +71,7 @@
      * Toggle the selection of an asset
      *
      * @param  {Asset}          asset           The asset that should be toggled
+     * @return {void}
      */
     var selectAsset = $scope.selectAsset = function(asset) {
       asset.selected = !asset.selected;
@@ -76,6 +79,8 @@
 
     /**
      * Get the assets for the current course through an infinite scroll
+     *
+     * @return {void}
      */
     var getAssets = $scope.getAssets = function() {
       // Indicate the no further REST API requests should be made
