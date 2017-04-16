@@ -27,7 +27,7 @@
 
   'use strict';
 
-  /*!
+  /**
    * Constructs URLs for linking from one SuiteC LTI tool to another.
    */
   angular.module('collabosphere').directive('toolHref', function() {

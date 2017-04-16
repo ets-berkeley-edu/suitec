@@ -55,7 +55,7 @@
    * @see https://css-tricks.com/snippets/jquery/get-query-params-object/
    */
   var getQueryParameters = function() {
-    var queryArgs = decodeURIComponent(document.location.search).replace(/(^\?)/,'');
+    var queryArgs = decodeURIComponent(document.location.search).replace(/(^\?)/, '');
     var parameters = queryArgs.split('&').map(function(n) {
       return n = n.split('='), this[n[0]] = n[1], this;
     }.bind({}))[0];
@@ -81,9 +81,11 @@
    * Get and cache the config feed and me data before bootstrapping
    * the Collabosphere angular app to remove the need for asynchronous
    * operations during the configuration phase
+   *
+   * @return {Promise}                      $q promise
    */
   var initData = function() {
-    var initInjector = angular.injector(['ng']);
+    var initInjector = angular.injector([ 'ng' ]);
     var $http = initInjector.get('$http');
     var $q = initInjector.get('$q');
 
@@ -104,14 +106,14 @@
   };
 
   /**
-   * Fire it up
+   * @return {Object}                       Function executed when DOM is done loading
    */
   var bootstrap = function() {
     angular.element(document).ready(function() {
-      angular.bootstrap(document, ['collabosphere']);
+      angular.bootstrap(document, [ 'collabosphere' ]);
     });
   };
 
   initData().then(bootstrap);
 
-})(window.angular);
+}(window.angular));

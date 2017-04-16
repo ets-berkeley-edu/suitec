@@ -54,6 +54,8 @@
 
         /**
          * Emit an event indicating that we want to search through the assets
+         *
+         * @return {void}
          */
         var search = $scope.search = function() {
           if ($scope.isAdvancedSearch) {
@@ -82,6 +84,8 @@
 
         /**
          * Show the simple search view
+         *
+         * @return {void}
          */
         var showSimpleView = $scope.showSimpleView = function() {
           $scope.isAdvancedSearch = false;
@@ -92,6 +96,8 @@
 
         /**
          * Show the advanced search view
+         *
+         * @return {void}
          */
         var showAdvancedView = $scope.showAdvancedView = function() {
           $scope.isAdvancedSearch = true;
@@ -100,6 +106,8 @@
 
         /**
          * Get all users and categories in the current course
+         *
+         * @return {void}
          */
         var getAdvancedViewData = function() {
           if (!$scope.users) {

@@ -41,6 +41,7 @@
     /**
      * Get user of current course by id
      *
+     * @param  {Number}            id             Id of desired user
      * @return {Promise<User[]>}                  $http promise returning user of the current course
      */
     var getUser = function(id) {

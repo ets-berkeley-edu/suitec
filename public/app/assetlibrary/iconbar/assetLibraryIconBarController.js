@@ -39,6 +39,7 @@
      * Like an asset. If the asset has been liked by the current user already, the like will be undone
      *
      * @param  {Asset}          asset                           The asset that should be liked or disliked
+     * @return {void}
      */
     $scope.like = function(asset) {
       var liked = (asset.liked === true) ? null : true;

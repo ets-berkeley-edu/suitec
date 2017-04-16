@@ -32,7 +32,7 @@ var filter = require('gulp-filter');
 var fs = require('fs');
 var gulp = require('gulp');
 var imagemin = require('gulp-imagemin');
-var jscs = require('gulp-jscs');
+var eslint = require('gulp-eslint');
 var minifyHtml = require('gulp-htmlmin');
 var mocha = require('gulp-mocha');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -47,7 +47,7 @@ var usemin = require('gulp-usemin');
  * Delete the build directory
  */
 gulp.task('clean', function(cb) {
-  del(['target/*']).then(function() {
+  del([ 'target/*' ]).then(function() {
     return cb();
   });
 });
@@ -87,7 +87,7 @@ gulp.task('copyCanvasCustomization', function() {
 /**
  * Copy the bookmarklet dependencies to the build directory
  */
-gulp.task('minifyBookmarkletFiles', ['copyBookmarkletFiles'], function() {
+gulp.task('minifyBookmarkletFiles', [ 'copyBookmarkletFiles' ], function() {
   // Parse the dependencies out of the bookmarklet init script
   var contents = fs.readFileSync('./public/assets/js/bookmarklet-init.js').toString('utf8');
   var re = new RegExp('baseUrl \\+ \'(.+?)"', 'g');
@@ -125,7 +125,7 @@ gulp.task('minifyBookmarkletFiles', ['copyBookmarkletFiles'], function() {
 /**
  * Replace the dependencies in the bookmarklet init file with their optimized versions
  */
-gulp.task('replaceBookmarkletDependencies', ['minifyBookmarkletFiles'], function() {
+gulp.task('replaceBookmarkletDependencies', [ 'minifyBookmarkletFiles' ], function() {
   var manifest = gulp.src('./target/bookmarklet-rev-manifest.json');
 
   return gulp.src('target/assets/js/*')
@@ -142,7 +142,7 @@ gulp.task('replaceBookmarkletDependencies', ['minifyBookmarkletFiles'], function
 gulp.task('minify', function() {
   var pipelines = {
     'css': [cssmin({'keepSpecialComments': 0}), rev()],
-    'html': [minifyHtml({'empty': true})],
+    'html': [ minifyHtml({'empty': true}) ],
 
     // We need to register 2 pipelines with usemin as it's not able to re-use a pipeline
     // for multiple result files
@@ -153,13 +153,13 @@ gulp.task('minify', function() {
     // We have to explicitly specify a matching glob here. All HTML partials matching the glob
     // will be returned and written to the templateCache.js
     'templateCache': [
-        addsrc('public/app/**/*.html'),
-        templateCache('/static/templateCache.js', {
-          'module': 'collabosphere.templates',
-          'root': '/app',
-          'standalone': true
-        }),
-        rev()
+      addsrc('public/app/**/*.html'),
+      templateCache('/static/templateCache.js', {
+        'module': 'collabosphere.templates',
+        'root': '/app',
+        'standalone': true
+      }),
+      rev()
     ]
   };
 
@@ -174,7 +174,7 @@ gulp.task('minify', function() {
 gulp.task('minifyViewer', function() {
   var pipelines = {
     'css': [cssmin({'keepSpecialComments': 0}), rev()],
-    'html': [minifyHtml({'empty': true})],
+    'html': [ minifyHtml({'empty': true}) ],
     'js': [uglify(), rev()]
   };
 
@@ -220,7 +220,7 @@ gulp.task('optimizeImages', function() {
 /**
  * Replace the images with their optimized versions
  */
-gulp.task('replaceImages', ['optimizeImages'], function() {
+gulp.task('replaceImages', [ 'optimizeImages' ], function() {
   var manifest = gulp.src('./target/images-rev-manifest.json');
 
   return gulp.src('target/static/*')
@@ -239,12 +239,17 @@ gulp.task('build', function() {
 });
 
 /**
- * Run the JSCS code style linter
+ * Run the ESLint code style linter
  */
-gulp.task('jscs', function() {
+gulp.task('eslint', function() {
   return gulp
     .src(['app.js', 'gulpfile.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js', '!public/viewer/**/*.js'])
-    .pipe(jscs());
+    .pipe(eslint())
+    // Output results to console. Alternatively, use eslint.formatEach().
+    .pipe(eslint.format())
+    // To have the process exit with an error code (1) on
+    // lint error, return the stream and pipe to failAfterError last.
+    .pipe(eslint.failAfterError());
 });
 
 /**
@@ -286,7 +291,7 @@ gulp.task('test', function() {
   // Set the environment to `test`
   process.env.NODE_ENV = 'test';
 
-  runSequence('jscs', 'csslint', 'mocha');
+  runSequence('eslint', 'csslint', 'mocha');
 });
 
 /**
@@ -296,6 +301,6 @@ gulp.task('test-travis', function() {
   // Set the environment to `travis`
   process.env.NODE_ENV = 'travis';
 
-  runSequence('jscs', 'csslint', 'mocha');
+  runSequence('eslint', 'csslint', 'mocha');
 });
 

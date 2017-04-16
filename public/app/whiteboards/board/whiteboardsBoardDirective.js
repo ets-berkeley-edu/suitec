@@ -27,7 +27,7 @@
 
   'use strict';
 
-  /*!
+  /**
    * The whiteboard directive can be used to render a whiteboard The following attributes should be
    * applied to the whoteboard container:
    *
@@ -129,6 +129,8 @@
 
         /**
          * Render the whiteboard and its elements
+         *
+         * @return {void}
          */
         var renderWhiteboard = function() {
           // Set the size of the whiteboard canvas once all layout changes
@@ -171,7 +173,7 @@
         }
 
         /**
-         * Get the whiteboard members that are currently online
+         * @return {Object}                         Whiteboard members currently online
          */
         var getOnlineUsers = $scope.getOnlineUsers = function() {
           if ($scope.whiteboard) {
@@ -181,6 +183,8 @@
 
         /**
          * Restore the whiteboard if deleted
+         *
+         * @return {void}
          */
         var restoreWhiteboard = $scope.restoreWhiteboard = function() {
           if ($scope.whiteboard && $scope.whiteboard.deleted_at) {
@@ -200,7 +204,7 @@
                 'type': 'success'
               });
             });
-          };
+          }
         };
 
         /* CANVAS */
@@ -221,11 +225,13 @@
               'height': this.height
             });
           };
-        })(fabric.Object.prototype.toObject);
+        }(fabric.Object.prototype.toObject));
 
         /**
          * Initialize the Fabric.js canvas and load the whiteboard content
          * and online users
+         *
+         * @return {void}
          */
         var initializeCanvas = function() {
           // Ensure that the horizontal and vertical origins of objects are set to center
@@ -243,6 +249,8 @@
         /**
          * Set the selection style of the Fabric.js canvas whiteboard elements, as well as
          * the style of the helper shown when selecting multiple elements at once
+         *
+         * @return {void}
          */
         var setSelectionStyle = function() {
           // Set the style of the multi-select helper
@@ -271,6 +279,8 @@
          * that width. By default, the size of the zoomed canvas will be the same as the size
          * of the viewport. When there are any elements on the canvas that are outside of the
          * viewport boundaries, the canvas will be enlarged to incorporate those
+         *
+         * @return {void}
          */
         var setCanvasDimensions = function() {
           // Zoom the canvas to accomodate the base width within the viewport
@@ -340,8 +350,9 @@
         window.addEventListener('resize', setCanvasDimensions);
 
         /**
-         * Get the current center point of the whiteboard canvas. This will
-         * exclude the toolbar and the chat/online sidebar (if expanded)
+         * This will exclude the toolbar and the chat/online sidebar (if expanded)
+         *
+         * @return {Object}                         Current center point of the whiteboard canvas
          */
         var getCanvasCenter = function() {
           // Calculate the center point of the whiteboard canvas
@@ -370,6 +381,7 @@
          * @param  {Object}         element           The serialized Fabric.js canvas element to deserialize
          * @param  {Function}       callback          Standard callback function
          * @param  {Object}         callback.element  The deserialized Fabric.js canvas element
+         * @return {Object}                           Fabric.js canvas element
          */
         var deserializeElement = function(element, callback) {
           element = angular.copy(element);
@@ -417,7 +429,7 @@
         };
 
         /**
-         * Check whether any elements on the whiteboard canvas are currently selected
+         * @return {Boolean}                          True if an element on the whiteboard canvas is currently selected
          */
         var isElementSelected = $scope.isElementSelected = function() {
           return canvas.getActiveObject() || canvas.getActiveGroup();
@@ -428,6 +440,7 @@
          * unique id assigned
          *
          * @param  {Object}         element           The Fabric.js canvas element for which to set a unique id
+         * @return {void}
          */
         var setCanvasElementId = function(element) {
           if (!element.get('uid')) {
@@ -440,6 +453,7 @@
          * to select, move or modify it
          *
          * @param  {Boolean}        enabled           Whether the elements on the whiteboard canvas should be enabled or disabled
+         * @return {void}
          */
         var enableCanvasElements = function(enabled) {
           canvas.selection = enabled;
@@ -454,6 +468,7 @@
          *
          * @param  {Number}         uid               The id of the element to update
          * @param  {Object}         update            The updated values to apply to the canvas element
+         * @return {void}
          */
         var updateCanvasElement = function(uid, update) {
           var element = getCanvasElement(uid);
@@ -517,6 +532,8 @@
         /**
          * Ensure that all elements are ordered as specified by the
          * element's index attribute
+         *
+         * @return {void}
          */
         var restoreLayers = function() {
           canvas.getObjects().sort(function(elementA, elementB) {
@@ -530,6 +547,8 @@
         /**
          * Update the index of all elements to reflect their order in the
          * current whiteboard
+         *
+         * @return {void}
          */
         var updateLayers = function() {
           var updates = [];
@@ -559,6 +578,7 @@
          * currently selected element(s) to the front
          *
          * @param  {String}         direction         `front` if the currently selected element(s) should be brought to the front, `back` if the currently selected element(s) should be sent to the back
+         * @return {void}
          */
         var moveLayer = $scope.moveLayer = function(direction) {
           // Get the selected element(s)
@@ -612,6 +632,7 @@
          * Persist element updates to the server
          *
          * @param  {Object[]}       elements          The updated elements to persist to the server
+         * @return {void}
          */
         var saveElementUpdates = function(elements) {
           // Notify the server about the updated elements
@@ -654,7 +675,7 @@
             // Only persist the delete to the server when the element
             // already existed
             if (element.get('uid')) {
-              saveDeleteElements([element]);
+              saveDeleteElements([ element ]);
             }
             canvas.remove(element);
 
@@ -664,7 +685,7 @@
 
           // The text element existed before. Notify the server that the element was updated
           } else {
-            saveElementUpdates([element]);
+            saveElementUpdates([ element ]);
             // TODO: Add the action to the undo/redo queue
             // addUndoAction('update', element.toObject(), element.originalState);
           }
@@ -684,6 +705,8 @@
         /**
          * Indicate that the currently selected elements are in the process of being
          * moved, scaled or rotated
+         *
+         * @return {void}
          */
         var setModifyingElement = function() {
           $scope.isModifyingElement = true;
@@ -750,6 +773,8 @@
         /**
          * Track an activity when one or multiple whiteboard elements
          * have been selected
+         *
+         * @return {void}
          */
         var elementsSelected = function() {
           setTimeout(function() {
@@ -811,6 +836,7 @@
          * the active group
          *
          * @param  {Object[]}       elements          The elements that should be checked for presence in the active group
+         * @return {void}
          */
         var deactiveActiveGroupIfOverlap = function(elements) {
           var group = canvas.getActiveGroup();
@@ -849,6 +875,7 @@
          * off screen
          *
          * @param  {Object}       ev                The event representing the active object or group
+         * @return {void}
          */
         var ensureWithinCanvas = function(ev) {
           var element = ev.target;
@@ -885,13 +912,14 @@
          * Persist a new element to the server
          *
          * @param  {Object}         element           The new element to persist to the server
+         * @return {void}
          */
         var saveNewElement = function(element) {
           // Add a unique id to the element
           setCanvasElementId(element);
 
           // Save the new element
-          socket.emit('addActivity', [element.toObject()]);
+          socket.emit('addActivity', [ element.toObject() ]);
 
           // Add the action to the undo/redo queue
           // TODO
@@ -944,6 +972,7 @@
          * Persist element deletions to the server
          *
          * @param  {Object[]}       elements          The deleted elements to persist to the server
+         * @return {void}
          */
         var saveDeleteElements = function(elements) {
           // Notify the server about the deleted elements
@@ -958,6 +987,8 @@
 
         /**
          * Delete the selected whiteboard element(s)
+         *
+         * @return {void}
          */
         var deleteActiveElements = $scope.deleteActiveElements = function() {
           // Get the selected items
@@ -1010,6 +1041,8 @@
         /**
          * Toggle between fitting the whiteboard content to the screen and showing the
          * whiteboard content at full size
+         *
+         * @return {void}
          */
         var toggleZoom = $scope.toggleZoom = function() {
           $scope.fitToScreen = !$scope.fitToScreen;
@@ -1031,6 +1064,7 @@
          * Set the mode of the whiteboard toolbar
          *
          * @param  {Boolean}        newMode           The mode the toolbar should be put in. Accepted values are `move`, `draw`, `shape`, `text` and `asset`
+         * @return {void}
          */
         var setMode = $scope.setMode = function(newMode) {
           // Deactivate the currently selected item
@@ -1061,6 +1095,8 @@
 
         /**
          * Close all popovers
+         *
+         * @return {void}
          */
         var closePopovers = function() {
           // Get all popovers
@@ -1092,6 +1128,8 @@
 
         /**
          * Copy the selected element(s)
+         *
+         * @return {void}
          */
         var copy = function() {
           clipboard = getActiveElements();
@@ -1107,6 +1145,8 @@
 
         /**
          * Paste the copied element(s)
+         *
+         * @return {void}
          */
         var paste = function() {
           var elements = [];
@@ -1305,6 +1345,7 @@
          * Enable or disable drawing mode for the whiteboard canvas
          *
          * @param  {Boolean}        drawMode          Whether drawing mode for the whiteboard canvas should be enabled
+         * @return {void}
          */
         var setDrawMode = $scope.setDrawMode = function(drawMode) {
           canvas.isDrawingMode = drawMode;
@@ -1542,6 +1583,8 @@
         /**
          * Launch the modal that allows for an existing asset to be added to
          * whiteboard canvas
+         *
+         * @return {void}
          */
         var reuseAsset = $scope.reuseAsset = function() {
           // Create a new scope for the modal dialog
@@ -1566,6 +1609,7 @@
          * Add an asset to the whiteboard canvas
          *
          * @param  {Asset}         asset                The asset that should be added to the whiteboard canvas
+         * @return {void}
          */
         var addAsset = $scope.addAsset = function(asset) {
           // Switch the toolbar back to move mode
@@ -1641,6 +1685,8 @@
 
         /**
          * Track an activity when an asset is opened from a whiteboard
+         *
+         * @return {void}
          */
         var trackOpenAsset = $scope.trackOpenAsset = function() {
           var assetId = getSelectedAsset();
@@ -1654,6 +1700,8 @@
 
         /**
          * Launch the modal that allows for a new link to be added
+         *
+         * @return {void}
          */
         var addLink = $scope.addLink = function() {
           // Create a new scope for the modal dialog
@@ -1678,6 +1726,8 @@
 
         /**
          * Launch the modal that allows for a new files to be uploaded
+         *
+         * @return {void}
          */
         var uploadFiles = $scope.uploadFiles = function() {
           // Create a new scope for the modal dialog
@@ -1718,6 +1768,7 @@
          * the requested mode. If the sidebar was shown in the requested mode, it will be hidden again.
          *
          * @param  {Boolean}        newMode           The mode in which the sidebar should be shown. Accepted values are `chat` and `online`
+         * @return {void}
          */
         var toggleSidebar = $scope.toggleSidebar = function(newMode) {
           if ($scope.sidebarExpanded && $scope.sidebarMode === newMode) {
@@ -1736,6 +1787,7 @@
          * Create a new chat message
          *
          * @param  {Event}          $event            The keypress event
+         * @return {void}
          */
         var createChatMessage = $scope.createChatMessage = function($event) {
           // Only submit the chat message when the enter button is pressed
@@ -1752,6 +1804,8 @@
 
         /**
          * Get the chat messages
+         *
+         * @return {void}
          */
         var getChatMessages = $scope.getChatMessages = function() {
           // Indicate the no further REST API requests should be made
@@ -1820,6 +1874,8 @@
 
         /**
          * Launch the modal that allows for a whiteboard to be edited
+         *
+         * @return {void}
          */
         var editWhiteboard = $scope.editWhiteboard = function() {
           // Create a new scope for the modal dialog
@@ -1870,6 +1926,8 @@
 
         /**
          * Generate the export to PNG url
+         *
+         * @return {void}
          */
         var generateExportPngUrl = function() {
           downloadId = Math.floor(Math.random() * 10000000);
@@ -1882,6 +1940,9 @@
 
         /**
          * Export the whiteboard to a PNG file
+         *
+         * @param  {Event}          $event            Click event
+         * @return {Boolean}                          True if whiteboard export is initiated
          */
         var exportAsPng = $scope.exportAsPng = function($event) {
           if ($scope.isExportingAsPng || getNumberOfElements() === 0) {
@@ -1916,6 +1977,8 @@
 
         /**
          * Launch the modal that allows the current user to export the current whiteboard to the asset library
+         *
+         * @return {void}
          */
         var exportAsAsset = $scope.exportAsAsset = function() {
           // Create a new scope for the modal dialog

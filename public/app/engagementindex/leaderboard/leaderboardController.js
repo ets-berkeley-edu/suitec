@@ -52,6 +52,8 @@
     /**
      * Get the users in the engagement index and their engagement
      * index points
+     *
+     * @return {void}
      */
     var getLeaderboard = function() {
       // The users in the engagement index can only be loaded by course admins
@@ -86,6 +88,8 @@
     /**
      * Render the box plot showing how the current user ranks
      * in the course
+     *
+     * @return {void}
      */
     var drawBoxPlot = function() {
       var points = [];
@@ -195,7 +199,7 @@
             'series': [
               // Box plot data serie
               {
-                'data': [boxplotData],
+                'data': [ boxplotData ],
                 'pointWidth': 40,
                 'tooltip': {
                   'headerFormat': '',
@@ -208,7 +212,7 @@
                 }
                 // Current user points
               }, {
-                'data': [[0, $scope.me.points]],
+                'data': [ [0, $scope.me.points] ],
                 'marker': {
                   'fillColor': '#3179BC',
                   'lineWidth': 5,
@@ -291,6 +295,7 @@
      * engagement list headers is clicked
      *
      * @param  {String}     sortBy          The name of the field to sort by
+     * @return {void}
      */
     var sort = $scope.sort = function(sortBy) {
       if ($scope.sortBy === sortBy) {
@@ -311,6 +316,7 @@
      * Track leaderboard searches
      *
      * @param  {String}     query           The leaderboard search query
+     * @return {void}
      */
     var search = $scope.search = function(query) {
       analyticsService.track('Search engagement index', {
@@ -323,6 +329,8 @@
      * Store whether the current user's engagement index points should be
      * shared with the entire course. This function will only be used for the
      * initial save
+     *
+     * @return {void}
      */
     var saveSharePoints = $scope.saveSharePoints = function() {
       userFactory.updateSharePoints($scope.me.new_share_points).then(function() {
@@ -336,6 +344,8 @@
      * Change whether the current user's engagement index points should be shared
      * with the entire class. This will be executed every time the corresponding
      * checkbox is changed following the initial save
+     *
+     * @return {void}
      */
     var changeSharePoints = $scope.changeSharePoints = function() {
       // Only save the new setting straight away when the initial
@@ -348,6 +358,8 @@
 
     /**
      * Change daily notification settings for the course.
+     *
+     * @return {void}
      */
     var changeDailyNotifications = $scope.changeDailyNotifications = function() {
       if ($scope.me.is_admin) {
@@ -359,6 +371,8 @@
 
     /**
      * Change weekly notification settings for the course.
+     *
+     * @return {void}
      */
     var changeWeeklyNotifications = $scope.changeWeeklyNotifications = function() {
       if ($scope.me.is_admin) {

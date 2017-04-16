@@ -45,6 +45,8 @@
 
     /**
      * Export the whiteboard as an asset
+     *
+     * @return {void}
      */
     var exportAsAsset = $scope.exportAsAsset = function() {
       $scope.isExporting = true;
@@ -61,6 +63,8 @@
 
     /**
      * Get the categories for the current course
+     *
+     * @return {void}
      */
     var getCategories = function() {
       assetLibraryCategoriesFactory.getCategories().success(function(categories) {
@@ -72,6 +76,8 @@
      * Get the latest whiteboard. Because a user might have made significant changes right before
      * exporting the whiteboard, the thumbnail url could be out of date. By fetching the latest
      * whiteboard data we get a newer thumbnail
+     *
+     * @return {void}
      */
     var getWhiteboard = function() {
       whiteboardsFactory.getWhiteboard($scope.whiteboard.id).success(function(whiteboard) {

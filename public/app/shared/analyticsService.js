@@ -36,6 +36,7 @@
      *
      * @param  {String}         event           The unique identifier of the event to track
      * @param  {Object}         [options]       Additional options to store against the specified event
+     * @return {void}
      */
     var track = function(event, options) {
       $mixpanel.track(event, options);

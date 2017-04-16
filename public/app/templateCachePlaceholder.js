@@ -32,4 +32,4 @@
   // revision this file, which means all HTML partials can be safely cached forever
   angular.module('collabosphere.templates', []);
 
-})(window.angular);
+}(window.angular));

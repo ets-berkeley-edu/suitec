@@ -66,7 +66,7 @@
     // as its content.
     // TODO: Whiteboards are currently excluded from this rule as there is an element below the whiteboard
     // that takes up space. This should be fixed and whiteboards should follow this rule
-    if (isCustomMessagingSupported && (top != self || $location.path().indexOf('/whiteboards/') !== -1)) {
+    if (isCustomMessagingSupported && (top !== self || $location.path().indexOf('/whiteboards/') !== -1)) {
       document.documentElement.classList.add('embedded');
     }
 
@@ -83,6 +83,8 @@
 
     /**
      * Get the external tool URL for the current LTI tool placement
+     *
+     * @return {String}                       URL used to launch tool in current iFrame
      */
     var getToolUrl = function() {
       return toolUrl;
@@ -92,6 +94,8 @@
      * Adjust the height of the current iFrame to the size of its content.
      * This will only happen when Collabosphere is embedded as an LTI tool in
      * a different application
+     *
+     * @return {Object}                       iFrame resizing summary
      */
     var resizeIFrame = function() {
       postIFrameMessage(function() {
@@ -114,6 +118,8 @@
      * Scroll to the top of the window. When Collabosphere is being run stand-alone,
      * it will scroll the current window to the top. When Collabosphere is being run
      * as a BasicLTI tool, it will scroll the parent window to the top
+     *
+     * @return {Object}                       Scroll summary
      */
     var scrollToTop = function() {
       // Always scroll the current window to the top
@@ -145,6 +151,7 @@
      * as a BasicLTI tool, it will scroll the parent window to the specified position
      *
      * @param  {Number}           position            The vertical scroll position to scroll to
+     * @return {Object}                               Scroll summary
      */
     var scrollTo = function(position) {
       // When running Collabosphere as a BasicLTI tool, scroll the parent window via our custom 'changeParent'
@@ -185,7 +192,7 @@
       // Otherwise, retrieve the scroll information of the current window
       } else {
         var scrollPosition = (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
-        var scrollToBottom =  document.body.offsetHeight - scrollPosition - document.documentElement.clientHeight;
+        var scrollToBottom = document.body.offsetHeight - scrollPosition - document.documentElement.clientHeight;
         deferred.resolve({
           'scrollPosition': scrollPosition,
           'scrollToBottom': scrollToBottom
@@ -214,6 +221,7 @@
      *
      * @param  {Function}   callback          Standard callback function
      * @param  {Object}     callback.data     The Collabosphere data that's present in the parent's URL
+     * @return {Object}                       Processed URL metadata
      */
     var getParentUrlData = function(callback) {
       // This functionality requires our custom 'getParent' cross-window event to be supported in the hosting Canvas instance.
@@ -250,6 +258,7 @@
      * Set the parent's container hash value
      *
      * @param  {Object}  data    The data for the parent's hash container. Each key will be prefixed with `col_`. For example, `{'user': 1, 'category': 42}` would be serialized to `col_user=1&col_category=42`
+     * @return {Object}          Updated hash of parent
      */
     var setParentHash = function(data) {
       // This functionality requires our custom 'setParentHash' cross-window event to be supported in the hosting Canvas instance.
@@ -285,6 +294,7 @@
      * @param  {Number}     [messageCallback.currentParentHeight]     The full height of the parent container
      * @param  {Number}     [messageCallback.currentScrollPosition]   The scroll position within the parent container
      * @param  {Number}     [messageCallback.scrollToBottom]          The distance between the bottom of the browser and the bottom of the page
+     * @return {void}
      * @api private
      */
     var postIFrameMessage = function(messageGenerator, messageCallback) {

@@ -27,7 +27,7 @@
 
   'use strict';
 
-  /*!
+  /**
    * Display an activity timeline for a given dataset.
    */
   angular.module('collabosphere').directive('activityTimeline', function(utilService, $interval) {

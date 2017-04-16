@@ -40,4 +40,4 @@
       return _.uniq(items, false, filterOn);
     };
   });
-})(window.angular);
+}(window.angular));

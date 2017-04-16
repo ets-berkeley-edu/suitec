@@ -32,4 +32,4 @@
       return $sce.trustAsHtml(htmlCode);
     };
   });
-})(window.angular);
+}(window.angular));
