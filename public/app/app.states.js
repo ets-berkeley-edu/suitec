@@ -75,7 +75,7 @@
         'controller': 'AssetLibraryEditController'
       })
 
-      // Dashboard routes
+      // Impact Studio routes
       .state('dashboard', {
         'url': '/dashboard',
         'templateUrl': '/app/dashboard/profile.html',
@@ -85,6 +85,11 @@
         'url': '/profile/:userId',
         'templateUrl': '/app/dashboard/profile.html',
         'controller': 'ProfileController'
+      })
+      .state('aggregatedsearch', {
+        'url': '/aggregatedsearch?category&user&keywords&type&sort',
+        'templateUrl': '/app/dashboard/search/results.html',
+        'controller': 'AggregatedSearchController'
       })
 
       // Engagement Index routes

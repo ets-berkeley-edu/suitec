@@ -134,6 +134,10 @@
     };
 
     var init = function() {
+      // Advanced search is not supported on profile page
+      $scope.supportsAdvancedSearch = false;
+
+      // Determine user
       if (deepLinkId) {
         userFactory.getUser(deepLinkId).success(function(user) {
           loadProfile(user);
