@@ -12,7 +12,7 @@ phases:
       - npm install
   pre_build:
     commands:
-      - ./node_modules/.bin/gulp jscs
+      - ./node_modules/.bin/gulp eslint
   build:
     commands:
       - echo "build phase"
