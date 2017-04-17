@@ -1,0 +1,76 @@
+<!-- SIMPLE SEARCH -->
+<form class="form-inline search-form" name="aggregatedSearchForm" data-ng-submit="search()">
+  <label for="aggregated-search" class="sr-only">Search for Users and Assets</label>
+  <div class="input-group search-container">
+    <input type="text" id="aggregated-search" class="form-control" placeholder="Search" data-ng-model="keywords">
+    <button class="btn btn-link" title="Advanced search" data-ng-click="showAdvancedView()" type="submit" data-ng-if="supportsAdvancedSearch">
+      <i class="fa fa-caret-down">
+        <span class="sr-only">Advanced search</span>
+      </i>
+    </button>
+    <span class="input-group-btn">
+      <button type="submit" class="btn btn-default" title="Search">
+        <i class="fa fa-search">
+          <span class="sr-only">Search</span>
+        </i>
+      </button>
+    </span>
+  </div>
+</form>
+
+<!-- ADVANCED SEARCH -->
+<div data-ng-show="isAdvancedSearch" class="col-pane" data-ng-if="supportsAdvancedSearch">
+  <form name="aggregatedSearchAdvancedForm" class="form-horizontal search-advancedform" data-ng-submit="search()" novalidate>
+    <!-- SEARCH -->
+    <div class="form-group">
+      <label for="aggregated-search-keywords" class="col-sm-1 control-label">Search</label>
+      <div class="col-sm-11">
+        <input type="text" id="aggregated-search-keywords" data-ng-model="keywords" name="aggregatedSearchKeywords" class="form-control" placeholder="Keyword" data-ng-maxlength="255">
+      </div>
+    </div>
+
+    <!-- FILTER BY -->
+    <div class="form-group">
+      <label for="aggregated-search-category" class="col-sm-1 control-label">Filter by</label>
+      <div class="col-sm-4">
+        <select id="aggregated-search-category" class="form-control" data-ng-model="category" data-value="{{category}}" data-ng-options="category.id as category.title for category in categories">
+          <option value="" selected>Category</option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <select id="aggregated-search-user" class="form-control" data-ng-model="user" data-value="{{user}}" data-ng-options="user.id as user.canvas_full_name for user in users">
+          <option value="" selected>Uploader</option>
+        </select>
+      </div>
+      <div class="col-sm-3">
+        <select id="aggregated-search-type" class="form-control" data-ng-model="type" data-value="{{type}}">
+          <option value="" selected>Asset type</option>
+          <option value="file">File</option>
+          <option value="link">Link</option>
+          <option value="whiteboard">Whiteboard</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SORT BY -->
+    <div class="form-group">
+      <label for="aggregated-sort-by" class="col-sm-1 control-label">Sort by</label>
+      <div class="col-sm-4">
+        <select id="aggregated-sort-by" class="form-control" data-ng-model="sort" data-value="{{sort}}">
+          <option value="" selected>Most recent</option>
+          <option value="likes">Most likes</option>
+          <option value="views">Most views</option>
+          <option value="comments">Most comments</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="form-group text-right">
+      <div class="col-sm-offset-1 col-sm-11">
+        <a class="btn btn-default" data-ng-click="showSimpleView()">Cancel</a>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -9,21 +9,7 @@
     <div class="profile-summary-column">
       <div class="profile-summary-banner">
         <h1 data-ng-bind="user.canvas_full_name"></h1>
-        <div class="profile-summary-user-search">
-          <form class="form-inline search-form" name="userSearchForm" data-ng-submit="search()">
-            <label for="profile-user-search" class="sr-only">Search for users</label>
-            <div class="input-group search-container">
-              <input type="text" id="profile-user-search" class="form-control" placeholder="Search for other people" data-ng-model="userToSearch">
-              <span class="input-group-btn">
-                <button type="submit" class="btn btn-default" title="Search">
-                  <i class="fa fa-search">
-                    <span class="sr-only">Search</span>
-                  </i>
-                </button>
-              </span>
-            </div>
-          </form>
-        </div>
+        <aggregated-search class="profile-summary-search" data-search-options-keywords="searchOptions.keywords" />
       </div>
       <div>
         Write4Change (St. Paul, Minnesota, USA)
