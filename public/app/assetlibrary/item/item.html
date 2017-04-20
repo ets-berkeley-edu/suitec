@@ -50,7 +50,7 @@
 
         <!-- Videos -->
         <div class="preview-video-wrapper" data-ng-if="asset.type === 'file' && asset.video_url">
-          <video class="preview-video" alt="{{asset.title}}" title="{{asset.title}}" poster="{{asset.image_url}}" width="{{asset.width}}" height="{{asset.height}}" controls>
+          <video class="preview-video" alt="{{asset.title}}" title="{{asset.title}}" data-ng-attr-poster="{{asset.image_url}}" width="{{asset.width}}" height="{{asset.height}}" controls>
             <source data-ng-src="{{asset.video_url}}" type="video/mp4">
           </video>
         </div>
