@@ -27,26 +27,13 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('BackToReferrerController', function(me, referringId, referringTool, $scope) {
+  angular.module('collabosphere').controller('BackToReferrerController', function(me, referringTool, $scope) {
 
     // Make the me object available to the scope
     $scope.me = me;
 
-    /**
-     * Bundle the properties forwarded by toolHrefDirective. This allows user to link between LTI tools.
-     *
-     * @return {void}
-     */
-    var bundle = function() {
-      if (referringTool) {
-        $scope.referringTool = {
-          'id': referringId,
-          'name': referringTool
-        };
-      }
-    };
-
-    bundle();
+    // The following allows user to link between LTI tools
+    $scope.referringTool = referringTool;
 
   });
 

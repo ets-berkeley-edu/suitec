@@ -64,7 +64,7 @@
     var m = queryArgs.match(/.*[\?&]_id=([0-9a-zA-Z]+).*/);
     // '_id' might otherwise carry hashtag for search
     m = m || queryArgs.match(/.*[\?&]_id=(%23\w*[a-zA-Z_\-\.]+\w*)/);
-    parameters.deep_link_id = (m && m.length > 0) ? decodeURIComponent(m[1]) : null;
+    parameters.requested_id = (m && m.length > 0) ? decodeURIComponent(m[1]) : null;
 
     // '_referring_tool' (optional) is origin of the href.
     var tool = queryArgs.match(/.*[\?&]_referring_tool=([a-z]+).*/);
@@ -99,9 +99,17 @@
     }).then(function(results) {
       collabosphere.constant('me', results.me.data);
       collabosphere.constant('config', results.config.data);
-      collabosphere.constant('deepLinkId', parameters.deep_link_id);
-      collabosphere.constant('referringTool', parameters.referring_tool);
-      collabosphere.constant('referringId', parameters.referring_id);
+
+      // Bundle info on referring tool
+      if (parameters.referring_tool) {
+        collabosphere.constant('referringTool', {
+          name: parameters.referring_tool,
+          referringId: parameters.referring_id,
+          requestedId: parameters.requested_id
+        });
+      } else {
+        collabosphere.constant('referringTool', null);
+      }
     });
   };
 

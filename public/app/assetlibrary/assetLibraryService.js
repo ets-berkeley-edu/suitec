@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('assetLibraryService', function(analyticsService, deepLinkId, utilService, $state) {
+  angular.module('collabosphere').service('assetLibraryService', function(analyticsService, referringTool, utilService, $state) {
 
     var assetViewRedirect = function(id) {
       var hashtag = id.match(/^#(.*)/);
@@ -50,9 +50,9 @@
       }
     };
 
-    if (deepLinkId) {
+    if (referringTool && referringTool.requestedId) {
       // Link to asset from tools other than assetlibrary (eg, user profile)
-      assetViewRedirect(deepLinkId);
+      assetViewRedirect(referringTool.requestedId);
 
     } else if (window.parent) {
       // Get the parent window's URL. In case any SuiteC data is present,

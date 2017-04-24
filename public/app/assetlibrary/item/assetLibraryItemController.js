@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, referringId, referringTool, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, referringTool, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -391,20 +391,6 @@
     };
 
     /**
-     * Bundle the properties forwarded by toolHrefDirective. This allows user to link between LTI tools.
-     *
-     * @return {void}
-     */
-    var getReferringTool = function() {
-      if (referringTool) {
-        $scope.referringTool = {
-          'id': referringId,
-          'name': referringTool
-        };
-      }
-    };
-
-    /**
      * Close the current browser window. This is used when an asset has been opened
      * in a separate tab and the user wants to be taken back to where the asset was
      * launched from
@@ -448,7 +434,7 @@
     // Load activities for the selected asset
     getAssetActivities();
     // If referringTool is not null then offer user a link to go back.
-    getReferringTool();
+    $scope.referringTool = referringTool;
     // Scroll to the top of the page as the current scroll position could be somewhere
     // deep in the asset library list
     utilService.scrollToTop();
