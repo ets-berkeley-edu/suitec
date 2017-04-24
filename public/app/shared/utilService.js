@@ -348,7 +348,45 @@
       return i + 'th';
     };
 
+    /**
+     * @param  {Comment}      message            Current message, to which we might add
+     * @param  {Object}       searchOptions      Parameters used in most recent search
+     * @return {String}                          Message, based on search options
+     */
+    var buildSearchResultsMessage = function(message, searchOptions) {
+      var filters = [];
+
+      if (searchOptions.keywords) {
+        filters.push('search term ' + searchOptions.keywords);
+      }
+      if (searchOptions.type) {
+        filters.push('asset type ' + searchOptions.type);
+      }
+
+      if (searchOptions.categoryObject) {
+        // If we have access to the selected category title, include it.
+        filters.push('category ' + searchOptions.categoryObject.title);
+      } else if (searchOptions.category) {
+        // Otherwise just indicate that a category is selected.
+        filters.push('selected category');
+      }
+
+      if (searchOptions.userObject) {
+        // If we have access to the selected user name, include it.
+        filters.push('user ' + searchOptions.userObject.canvas_full_name);
+      } else if (searchOptions.user) {
+        // Otherwise just indicate that a user is selected.
+        filters.push('selected user');
+      }
+
+      if (filters.length) {
+        message += ' for ' + filters.join(' and ');
+      }
+      return message;
+    };
+
     return {
+      'buildSearchResultsMessage': buildSearchResultsMessage,
       'getApiUrl': getApiUrl,
       'getLaunchParams': getLaunchParams,
       'getParentUrlData': getParentUrlData,

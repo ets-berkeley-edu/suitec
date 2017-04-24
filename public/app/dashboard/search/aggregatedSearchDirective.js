@@ -30,19 +30,19 @@
   angular.module('collabosphere').directive('aggregatedSearch', function() {
     return {
       // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
-      'restrict': 'E',
+      restrict: 'E',
 
       // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
-      'scope': {
-        'isAdvancedSearch': '=isAdvancedSearch',
-        'keywords': '=searchOptionsKeywords',
-        'category': '=searchOptionsCategory',
-        'user': '=searchOptionsUser',
-        'type': '=searchOptionsType',
-        'sort': '=searchOptionsSort'
+      scope: {
+        isAdvancedSearch: '=isAdvancedSearch',
+        keywords: '=searchByKeywords',
+        category: '=searchByCategory',
+        user: '=searchByUser',
+        type: '=searchByType',
+        sort: '=sortResults'
       },
-      'templateUrl': '/app/dashboard/search/searchform.html',
-      'controller': function(assetLibraryCategoriesFactory, userFactory, $scope, $state) {
+      templateUrl: '/app/dashboard/search/searchform.html',
+      controller: function(assetLibraryCategoriesFactory, userFactory, $scope, $state) {
 
         // Variable that keeps track of the categories in the current course
         $scope.categories = null;
@@ -102,6 +102,7 @@
          */
         var showAdvancedView = $scope.showAdvancedView = function() {
           $scope.isAdvancedSearch = true;
+
           getAdvancedViewData();
         };
 
