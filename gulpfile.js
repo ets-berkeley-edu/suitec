@@ -28,11 +28,13 @@ var csslint = require('gulp-csslint');
 var cssmin = require('gulp-cssmin');
 var del = require('del');
 var es = require('event-stream');
+var eslint = require('gulp-eslint');
+var exec = require('child_process').exec;
 var filter = require('gulp-filter');
 var fs = require('fs');
 var gulp = require('gulp');
 var imagemin = require('gulp-imagemin');
-var eslint = require('gulp-eslint');
+var install = require('gulp-install');
 var minifyHtml = require('gulp-htmlmin');
 var mocha = require('gulp-mocha');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -82,6 +84,13 @@ gulp.task('copyBookmarkletFiles', function() {
 gulp.task('copyCanvasCustomization', function() {
   return gulp.src('public/assets/js/canvas-customization.js', {'base': 'public'})
     .pipe(gulp.dest('target'));
+});
+
+/**
+ * Build event-drops, based on the webpack configs included with the library.
+ */
+gulp.task('buildEventDrops', function(callback) {
+  exec('cd public/lib/event-drops && make build', callback);
 });
 
 /**
@@ -235,7 +244,19 @@ gulp.task('replaceImages', [ 'optimizeImages' ], function() {
  * Create a build
  */
 gulp.task('build', function() {
-  return runSequence('clean', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'copyCanvasCustomization', 'replaceImages', 'minifyViewer', 'copyViewerAssets');
+  return runSequence('clean', 'buildEventDrops', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'copyCanvasCustomization', 'replaceImages', 'minifyViewer', 'copyViewerAssets');
+});
+
+/**
+ * Run additional tasks after bower install
+ */
+gulp.task('bowerPostInstall', function() {
+  // event-drops manages its dependencies with npm and needs explicit instructions to fetch them.
+  return gulp.src('public/lib/event-drops/package.json', {'base': 'public'})
+    .pipe(install({
+      // Turn off the production flag for this command to install devDependecies needed for the subsequent build.
+      args: '--production=false'
+    }));
 });
 
 /**

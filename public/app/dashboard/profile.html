@@ -56,13 +56,15 @@
     <h3 data-ng-bind="isMyProfile ? 'My Activity' : 'Activity'"></h3>
     <div class="profile-activity-timeline"
          data-activity-timeline="userActivity"
+         data-timeline-id="timeline-user-activity"
          data-labels-width="200"></div>
   </div>
 
   <div data-ng-if="userAssetActivity">
-    <h3 data-ng-bind="isMyProfile ? 'My Classmates' : 'Classmates'"></h3>
+    <h3 data-ng-bind="isMyProfile ? 'My Impacts' : 'Impacts'"></h3>
     <div class="profile-activity-timeline"
          data-activity-timeline="userAssetActivity"
+         data-timeline-id="timeline-user-impacts"
          data-labels-width="200"></div>
   </div>
 

@@ -30,7 +30,7 @@
   /**
    * Display an activity timeline for a given dataset.
    */
-  angular.module('collabosphere').directive('activityTimeline', function(utilService, $interval) {
+  angular.module('collabosphere').directive('activityTimeline', function(utilService, $interval, $timeout) {
     return {
       // The directive matches attribute name only and does not overwrite the declaration in markup.
       // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
@@ -40,13 +40,14 @@
       // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
         'activityTimeline': '=',
+        'timelineId': '@',
         'labelsWidth': '='
       },
+      'templateUrl': '/app/shared/activityTimeline.html',
       'link': function(scope, elem, attrs) {
         var start = Date.now();
         var end = Date.now();
         var eventsByCategory = [];
-
         _.forEach(scope.activityTimeline, function(eventSeries, category) {
           eventSeries = eventSeries || [];
           if (eventSeries.length) {
@@ -60,13 +61,11 @@
           });
         });
 
-        var chart = d3.select(elem[0]).datum(eventsByCategory);
+        var colors = d3.schemeCategory10;
 
-        var color = d3.scale.category20();
-
-        var drawTimeline = d3.chart.eventDrops()
+        var eventDropsChart = eventDrops.default()
           .eventLineColor(function(datum, index) {
-            return color(index);
+            return colors[index];
           })
           .start(start)
           .end(end)
@@ -79,11 +78,43 @@
             'bottom': 0,
             'right': 0
           })
+          // Disallow indefinite zoom-out.
+          .minScale(1)
           .labelsWidth(scope.labelsWidth || 0);
 
-        drawTimeline(chart);
+        var drawTimeline = function(element) {
+          element = d3.select(element);
+          element.datum(eventsByCategory);
+          element.call(eventDropsChart);
 
-        d3.selectAll('.label').classed('activity-timeline-label', true);
+          element.selectAll('.label').classed('activity-timeline-label', true);
+
+          var nodes = element.nodes();
+          var zoom = nodes[0].zoom;
+          // Disable zoom events triggered by the mouse wheel.
+          zoom.filter(function() { return !event.button && event.type !== 'wheel'; });
+          // Make programmatic zoom events available to the scope.
+          scope.zoom = function(scale) {
+            element.select('.event-drops-chart')
+              .transition()
+              .duration(300)
+              .call(zoom.scaleBy, scale);
+          };
+        };
+
+        // Do not start drawing the timeline until timelineId has been interpolated in markup. This will ensure that
+        // d3 events are bound to the right element.
+        var waitForTimelineElement = function() {
+          var timelineElement = document.getElementById(scope.timelineId);
+          if (!timelineElement) {
+            $timeout(waitForTimelineElement, 0, false);
+            return;
+          }
+
+          drawTimeline(timelineElement);
+        };
+
+        waitForTimelineElement();
       }
     };
   });
