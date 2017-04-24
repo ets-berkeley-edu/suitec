@@ -81,42 +81,6 @@
     initializeSearchContext();
 
     /**
-     * @param  {Comment}      message            Current message, to which we might add
-     * @return {String}                          Message, based on search options
-     */
-    var buildResultsMessage = function(message) {
-      var filters = [];
-
-      if ($scope.searchOptions.keywords) {
-        filters.push('search term ' + $scope.searchOptions.keywords);
-      }
-      if ($scope.searchOptions.type) {
-        filters.push('asset type ' + $scope.searchOptions.type);
-      }
-
-      if ($scope.searchOptions.categoryObject) {
-        // If we have access to the selected category title, include it.
-        filters.push('category ' + $scope.searchOptions.categoryObject.title);
-      } else if ($scope.searchOptions.category) {
-        // Otherwise just indicate that a category is selected.
-        filters.push('selected category');
-      }
-
-      if ($scope.searchOptions.userObject) {
-        // If we have access to the selected user name, include it.
-        filters.push('user ' + $scope.searchOptions.userObject.canvas_full_name);
-      } else if ($scope.searchOptions.user) {
-        // Otherwise just indicate that a user is selected.
-        filters.push('selected user');
-      }
-
-      if (filters.length) {
-        message += ' for ' + filters.join(' and ');
-      }
-      return message;
-    };
-
-    /**
      * Get the assets for the current course through an infinite scroll
      *
      * @return {void}
@@ -145,9 +109,9 @@
         if (isFirstResultSet) {
           // If this is the first result set, set an appropriate message.
           if ($scope.assets.length === 0) {
-            $scope.resultsMessage = buildResultsMessage('Found no assets');
+            $scope.resultsMessage = utilService.buildSearchResultsMessage('Found no assets', $scope.searchOptions);
           } else {
-            $scope.resultsMessage = buildResultsMessage('Displaying assets');
+            $scope.resultsMessage = utilService.buildSearchResultsMessage('Displaying assets', $scope.searchOptions);
           }
         }
       });

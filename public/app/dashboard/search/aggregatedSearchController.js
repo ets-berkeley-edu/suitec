@@ -27,16 +27,105 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AggregatedSearchController', function(me, $scope) {
+  angular.module('collabosphere').controller('AggregatedSearchController', function(assetLibraryFactory, me, utilService, $scope, $state) {
 
     $scope.me = me;
 
+    // Search type can be 'simple' or 'advanced'. If type is null then no search is active.
+    $scope.search = {
+      type: null,
+      offerAdvancedOptions: true,
+      options: {
+        keywords: $state.params.keywords || '',
+        category: parseInt($state.params.category, 10) || '',
+        user: parseInt($state.params.user, 10) || '',
+        type: $state.params.type || '',
+        sort: $state.params.sort || ''
+      },
+      assets: {
+        blockOtherSearches: false,
+        results: [],
+        page: 0,
+        message: ''
+      },
+      users: {
+        results: [],
+        message: ''
+      }
+    };
+
+    /**
+     * Users of current course
+     *
+     * @return {void}
+     */
+    var findUsers = $scope.findUsers = function() {
+      // TODO
+      return [];
+    };
+
+    /**
+     * Assets of current course with infinite scroll
+     *
+     * @return {void}
+     */
+    var findAssets = $scope.findAssets = function() {
+      // TODO: Is this how we want to support deep-linking?
+      utilService.setParentHash($scope.search.options);
+
+      // No further REST API requests until the following is set to false.
+      $scope.search.assets.blockOtherSearches = true;
+
+      var isFirstResultSet = ($scope.search.assets.page === 0);
+
+      assetLibraryFactory.getAssets($scope.search.assets.page, $scope.search.options).success(function(assets) {
+        $scope.search.assets.results = $scope.search.assets.results.concat(assets.results);
+
+        if (assets.results.length === 10) {
+          // We will request another page of results
+          $scope.search.assets.blockOtherSearches = false;
+        }
+        if (isFirstResultSet) {
+          // Put up appropriate message after the initial search
+          var isEmpty = $scope.search.assets.results.length === 0;
+          $scope.search.assets.message = isEmpty ? utilService.buildSearchResultsMessage('Found no assets', $scope.search.options) : utilService.buildSearchResultsMessage('Displaying assets', $scope.search.options);
+        }
+      });
+
+      $scope.search.assets.results.page++;
+    };
+
+    /**
+     * @return {void}
+     */
     var init = function() {
-      var advSearch = $scope.searchOptions;
-      $scope.isAdvancedSearch = advSearch && (advSearch.category || advSearch.user || advSearch.type || advSearch.sort);
+      var opts = $scope.search.options;
+      if (opts) {
+        if (opts.category || opts.user || opts.type || opts.sort) {
+          $scope.search.type = 'advanced';
+        } else if (opts.keywords) {
+          $scope.search.type = 'simple';
+        }
+      }
     };
 
     init();
+
+    /**
+     * Listen for events indicating aggregated search
+     */
+    $scope.$on('aggregatedSearch', function(ev, searchOptions) {
+      $scope.search.options = searchOptions;
+
+      init();
+
+      // Users per search options
+      findUsers();
+
+      // Assets per search options
+      findAssets();
+    });
+
   });
 
 }(window.angular));

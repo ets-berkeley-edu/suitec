@@ -1,15 +1,50 @@
 <div class="row search-list-top">
   <div>
     <aggregated-search
-      data-is-advanced-search="isAdvancedSearch"
-      data-search-options-keywords="searchOptions.keywords"
-      data-search-options-category="searchOptions.category"
-      data-search-options-user="searchOptions.user"
-      data-search-options-type="searchOptions.type"
-      data-search-options-sort="searchOptions.sort"
+      data-is-advanced-search="search.type === 'advanced'"
+      data-search-by-keywords="search.options.keywords"
+      data-search-by-category="search.options.category"
+      data-search-by-user="search.options.user"
+      data-search-by-type="search.options.type"
+      data-sort-results="search.options.sort"
       class="assetlibrary-list-search-container col-xs-{{ isAdvancedSearch ? 12 : 8 }}"></aggregated-search>
   </div>
   <div>
-    Results go here.
+    List o' users here.
+  </div>
+  <div>
+    <div class="sr-only" role="alert" aria-live="polite" data-ng-bind="search.assets.message"></div>
+
+    <div class="col-list-container"
+      data-infinite-scroll="findAssets()"
+      data-infinite-scroll-ready="!search.assets.blockOtherSearches"
+      data-infinite-scroll-distance="400"
+      data-infinite-scroll-container="window">
+
+      <ul>
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in search.assets.results | unique:'id'">
+          <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+            <div class="col-list-item-container">
+              <div class="col-list-item-tile">
+                <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
+                <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+                  <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link'), 'fa-calendar-o': (asset.type === 'whiteboard')}"></i>
+                </div>
+                <div class="col-list-item-metadata">
+                  <div class="col-threedots">{{asset.title}} </div>
+                  <div class="col-threedots">
+                    <small>by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+                  </div>
+                </div>
+              </div>
+              <div class="text-right col-list-item-actions" iconbar asset="asset" viewonly="true"></div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="search.type && search.assets.results.length === 0">
+      No matching assets were found.
+    </div>
   </div>
 </div>

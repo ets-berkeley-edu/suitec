@@ -3,7 +3,7 @@
   <label for="aggregated-search" class="sr-only">Search for Users and Assets</label>
   <div class="input-group search-container">
     <input type="text" id="aggregated-search" class="form-control" placeholder="Search" data-ng-model="keywords">
-    <button class="btn btn-link" title="Advanced search" data-ng-click="showAdvancedView()" type="submit" data-ng-if="supportsAdvancedSearch">
+    <button class="btn btn-link" title="Advanced search" data-ng-click="showAdvancedView()" type="submit" data-ng-if="search.offerAdvancedOptions">
       <i class="fa fa-caret-down">
         <span class="sr-only">Advanced search</span>
       </i>
@@ -19,7 +19,7 @@
 </form>
 
 <!-- ADVANCED SEARCH -->
-<div data-ng-show="isAdvancedSearch" class="col-pane" data-ng-if="supportsAdvancedSearch">
+<div data-ng-show="search.type === 'advanced'" class="col-pane" data-ng-if="search.offerAdvancedOptions">
   <form name="aggregatedSearchAdvancedForm" class="form-horizontal search-advancedform" data-ng-submit="search()" novalidate>
     <!-- SEARCH -->
     <div class="form-group">
