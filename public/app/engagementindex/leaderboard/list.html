@@ -51,7 +51,12 @@
           <div class="media-body media-middle">
             <i class="fa fa-graduation-cap" data-ng-if="user.is_admin"></i>
             <span data-ng-bind="user.canvas_full_name" data-ng-if="!me.course.dashboard_url"></span>
-            <a tool-href data-tool="dashboard" data-course="me.course" data-id="user.id" data-ng-if="me.course.dashboard_url">
+            <a tool-href
+              data-tool="dashboard"
+              data-referring-tool="engagementindex"
+              data-course="me.course"
+              data-id="user.id"
+              data-ng-if="me.course.dashboard_url">
               <span data-ng-bind="user.canvas_full_name"></span>
             </a>
           </div>

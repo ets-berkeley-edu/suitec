@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, profileFactory, deepLinkId, me, userFactory, utilService, $scope) {
+  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, me, profileFactory, referringTool, userFactory, utilService, $scope) {
 
     // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
     $scope.routerStateAddLink = 'assetlibraryaddlink';
@@ -135,8 +135,8 @@
 
     var init = function() {
       // Determine user
-      if (deepLinkId) {
-        userFactory.getUser(deepLinkId).success(function(user) {
+      if (referringTool && referringTool.requestedId) {
+        userFactory.getUser(referringTool.requestedId).success(function(user) {
           loadProfile(user);
         });
       } else {
