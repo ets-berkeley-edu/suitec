@@ -127,6 +127,10 @@
   width: 570px;
 }
 
+.profile-activity-timeline-footer {
+  margin-top: 70px;
+}
+
 .profile-activity-timeline-label {
   font-size: 13px;
   font-weight: 300;
