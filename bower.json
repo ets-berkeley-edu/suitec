@@ -22,7 +22,7 @@
     "angular-ui-router": "0.2.18",
     "bootstrap": "3.3.7",
     "d3": "4.8.0",
-    "event-drops": "kwesterfeld/eventDrops#e39b5fd108ec5d182003ea4bc5f063926e30e310",
+    "event-drops": "ets-berkeley-edu/eventDrops#master",
     "fontawesome": "4.4.0",
     "highcharts-release": "4.1.10",
     "lodash": "3.10.1",
