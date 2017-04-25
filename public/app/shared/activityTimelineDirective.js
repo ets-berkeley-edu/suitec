@@ -63,6 +63,27 @@
 
         var colors = d3.schemeCategory10;
 
+        // Determine precision of x-axis tick values and format appropriately.
+        var tickFormat = function(date) {
+          var formatter;
+          if (d3.timeSecond(date) < date) {
+            formatter = d3.timeFormat('.%L');
+          } else if (d3.timeMinute(date) < date) {
+            formatter = d3.timeFormat(':%S');
+          } else if (d3.timeHour(date) < date) {
+            formatter = d3.timeFormat('%H:%M');
+          } else if (d3.timeDay(date) < date) {
+            formatter = d3.timeFormat('%H:00');
+          } else if (d3.timeMonth(date) < date) {
+            formatter = (d3.timeWeek(date) < date) ? d3.timeFormat('%a %d') : d3.timeFormat('%b %d');
+          } else if (d3.timeYear(date) < date) {
+            formatter = d3.timeFormat('%B');
+          } else {
+            formatter = d3.timeFormat('%Y');
+          }
+          return formatter(date);
+        };
+
         var eventDropsChart = eventDrops.default()
           .eventLineColor(function(datum, index) {
             return colors[index];
@@ -72,6 +93,7 @@
           .date(function(event) {
             return new Date(event.date);
           })
+          .tickFormat(tickFormat)
           .margin({
             'top': 0,
             'left': 0,
