@@ -139,24 +139,26 @@
       $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
     };
 
+    var loadOtherUsers = function(user) {
+      // The dropdown of 'search for other users' needs the following
+      // list of otherUsers. We exclude user.id of current profile view.
+      userFactory.getAllUsers().then(function(response) {
+        $scope.otherUsers = _.reject(response.data, {'id': user.id});
+      });
+    };
+
     var init = function() {
       // Determine user
       var otherUserId = $stateParams.userId || (referringTool && referringTool.requestedId);
       if (otherUserId) {
         userFactory.getUser(otherUserId).success(function(user) {
           loadProfile(user);
+          loadOtherUsers(user);
         });
       } else {
         loadProfile(me);
+        loadOtherUsers(me);
       }
-
-      // The dropdown of 'search for other users' needs the following
-      // list of otherUsers. We exclude user.id of current profile view.
-      userFactory.getAllUsers().then(function(response) {
-        $scope.otherUsers = _.reject(response.data, function(otherUser) {
-          return $scope.user.id === otherUser.id;
-        });
-      });
     };
 
     init();

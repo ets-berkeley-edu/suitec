@@ -69,6 +69,10 @@
   flex: 2 0 0;
 }
 
+oi-select:not([multiple]) .select-search:after {
+  display: none;
+}
+
 .profile-summary-last-activity {
   padding-bottom: 15px;
 }
