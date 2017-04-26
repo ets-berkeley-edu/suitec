@@ -9,7 +9,14 @@
     <div class="profile-summary-column">
       <div class="profile-summary-banner">
         <h1 data-ng-bind="user.canvas_full_name"></h1>
-        <aggregated-search class="profile-summary-search" data-search-options-keywords="searchOptions.keywords" />
+        <label for="findUser" class="sr-only">Search for users</label>
+        <oi-select name="findUser" class="profile-summary-search"
+          autofocus
+          oi-options="user.id as user.canvas_full_name for user in otherUsers track by user.id | orderBy: 'canvas_full_name.toLowerCase()'"
+          oi-select-options="{'dropdownFilter': 'userProfileSearchDropdown'}"
+          ng-model="nextUserId"
+          placeholder="Search for other people"
+          tabindex="-1"></oi-select>
       </div>
       <div>
         Write4Change (St. Paul, Minnesota, USA)

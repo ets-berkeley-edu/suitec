@@ -81,7 +81,7 @@
         'templateUrl': '/app/dashboard/profile.html',
         'controller': 'ProfileController'
       })
-      .state('dashboard.profile.user', {
+      .state('userprofile', {
         'url': '/profile/:userId',
         'templateUrl': '/app/dashboard/profile.html',
         'controller': 'ProfileController'

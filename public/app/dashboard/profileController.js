@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, me, profileFactory, referringTool, userFactory, utilService, $scope) {
+  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, me, profileFactory, referringTool, userFactory, utilService, $scope, $state, $stateParams) {
 
     // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
     $scope.routerStateAddLink = 'assetlibraryaddlink';
@@ -37,6 +37,12 @@
     $scope.me = me;
     $scope.sortAssetsBy = 'recent';
     $scope.sortCommunityBy = 'recent';
+
+    $scope.$watch('nextUserId', function() {
+      if ($scope.nextUserId) {
+        $state.go('userprofile', {'userId': $scope.nextUserId});
+      }
+    }, true);
 
     var getUserActivity = function(userId) {
       profileFactory.getActivitiesForUser(userId).success(function(activities) {
@@ -135,13 +141,22 @@
 
     var init = function() {
       // Determine user
-      if (referringTool && referringTool.requestedId) {
-        userFactory.getUser(referringTool.requestedId).success(function(user) {
+      var otherUserId = $stateParams.userId || (referringTool && referringTool.requestedId);
+      if (otherUserId) {
+        userFactory.getUser(otherUserId).success(function(user) {
           loadProfile(user);
         });
       } else {
         loadProfile(me);
       }
+
+      // The dropdown of 'search for other users' needs the following
+      // list of otherUsers. We exclude user.id of current profile view.
+      userFactory.getAllUsers().then(function(response) {
+        $scope.otherUsers = _.reject(response.data, function(otherUser) {
+          return $scope.user.id === otherUser.id;
+        });
+      });
     };
 
     init();
