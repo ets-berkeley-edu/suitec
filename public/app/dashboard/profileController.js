@@ -129,6 +129,7 @@
     var loadProfile = function(user) {
       $scope.isMyProfile = user.id === me.id;
       $scope.user = user;
+      $scope.canvasCourseSections = user.canvas_course_sections && user.canvas_course_sections.sort();
       $scope.showEngagementIndexBox = me.course.engagementindex_url && ($scope.isMyProfile || me.is_admin || (user.share_points && me.share_points));
       determineRank(user);
       if ($scope.isMyProfile || me.is_admin) {
