@@ -19,7 +19,7 @@
           tabindex="-1"></oi-select>
       </div>
       <div>
-        Write4Change (St. Paul, Minnesota, USA)
+        <span data-ng-repeat="section in canvasCourseSections"><span data-ng-if="canvasCourseSections.length > 1"><span data-ng-if="!$first && !$last">, </span><span data-ng-if="$last"> and </span></span>{{section}}</span>
       </div>
       <div class="profile-summary-last-activity">
         Last activity:
