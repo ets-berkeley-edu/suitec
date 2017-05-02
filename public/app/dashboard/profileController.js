@@ -135,8 +135,14 @@
       if ($scope.isMyProfile || me.is_admin) {
         getUserActivity(user.id);
       }
+      // Featured assets of user (current profile)
       sortFeaturedAssets($scope.sortAssetsBy);
-      sortCommunityAssets($scope.sortCommunityBy);
+
+      // Only show 'Everyone's Assets' swimlane when user is on his/her own profile
+      if ($scope.isMyProfile) {
+        sortCommunityAssets($scope.sortCommunityBy);
+      }
+
       $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
     };
 

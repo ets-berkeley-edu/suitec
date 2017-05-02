@@ -104,7 +104,7 @@
     </h3>
 
     <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults"  data-ng-if="!featuredAssets.length">
+      <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!featuredAssets.length">
         No matching assets were found.
       </div>
       <ul>
@@ -181,7 +181,7 @@
     </div>
   </div>
 
-  <div class="profile-featured-assets-container">
+  <div class="profile-featured-assets-container" data-ng-if="me.id === user.id">
     <h3>
       <span data-ng-if="!communityAssets.length">Everyone's Assets</span>
 
