@@ -69,10 +69,6 @@
   flex: 2 0 0;
 }
 
-oi-select:not([multiple]) .select-search:after {
-  display: none;
-}
-
 .profile-summary-last-activity {
   padding-bottom: 15px;
 }
@@ -140,11 +136,17 @@ oi-select:not([multiple]) .select-search:after {
   font-weight: 300;
 }
 
-.profile-featured-assets-container {
+.profile-assets-container {
   margin-bottom: 30px;
 }
 
-.profile-featured-list-filters {
+.profile-swimlane-filters {
   display: inline-block;
   white-space: nowrap;
+}
+
+/* Override oi.select */
+
+oi-select:not([multiple]) .select-search:after {
+  display: none;
 }

@@ -35,8 +35,22 @@
     $scope.routerStateUploadAsset = 'assetlibraryupload';
 
     $scope.me = me;
-    $scope.sortAssetsBy = 'recent';
-    $scope.sortCommunityBy = 'recent';
+
+    $scope.user = {
+      assets: {
+        items: null,
+        isLoading: true,
+        sortBy: 'recent'
+      }
+    };
+
+    $scope.community = {
+      assets: {
+        items: null,
+        isLoading: true,
+        sortBy: 'recent'
+      }
+    };
 
     $scope.$watch('nextUserId', function() {
       if ($scope.nextUserId) {
@@ -46,7 +60,7 @@
 
     var getUserActivity = function(userId) {
       profileFactory.getActivitiesForUser(userId).success(function(activities) {
-        $scope.userActivity = {
+        $scope.user.activity = {
           'Added an asset': activities.add_asset,
           'Liked an asset': activities.like,
           'Viewed an asset': activities.view_asset,
@@ -55,7 +69,7 @@
           'Exported a whiteboard': activities.export_whiteboard
         };
 
-        $scope.userAssetActivity = {
+        $scope.user.assetActivity = {
           'Viewed my assets': activities.get_view_asset,
           'Liked my assets': activities.get_like,
           'Commented on my assets': activities.get_asset_comment,
@@ -71,7 +85,9 @@
      * @param  {String}         sortType              Name of field to sort by
      * @return {void}
      */
-    var sortFeaturedAssets = $scope.sortFeaturedAssets = function(sortType) {
+    var sortUserAssets = $scope.sortUserAssets = function(sortType) {
+      $scope.user.assets.isLoading = true;
+
       var searchOptions = {
         'sort': sortType,
         'user': $scope.user.id,
@@ -79,9 +95,10 @@
       };
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
-        $scope.featuredAssets = assets.results;
+        $scope.user.assets.items = assets.results;
       }).then(function() {
-        $scope.sortAssetsBy = sortType;
+        $scope.user.assets.sortBy = sortType;
+        $scope.user.assets.isLoading = false;
       });
     };
 
@@ -92,15 +109,18 @@
      * @return {void}
      */
     var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType) {
+      $scope.community.assets.isLoading = true;
+
       var searchOptions = {
         'sort': sortType,
         'limit': 4
       };
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
-        $scope.communityAssets = assets.results;
+        $scope.community.assets.items = assets.results;
       }).then(function() {
-        $scope.sortCommunityBy = sortType;
+        $scope.community.assets.sortBy = sortType;
+        $scope.community.assets.isLoading = false;
       });
     };
 
@@ -128,19 +148,23 @@
 
     var loadProfile = function(user) {
       $scope.isMyProfile = user.id === me.id;
-      $scope.user = user;
-      $scope.canvasCourseSections = user.canvas_course_sections && user.canvas_course_sections.sort();
+
+      // Combine activity metadata and standard user data
+      angular.extend($scope.user, user);
+      $scope.user.canvasCourseSections = user.canvas_course_sections && user.canvas_course_sections.sort();
+
       $scope.showEngagementIndexBox = me.course.engagementindex_url && ($scope.isMyProfile || me.is_admin || (user.share_points && me.share_points));
       determineRank(user);
+
       if ($scope.isMyProfile || me.is_admin) {
         getUserActivity(user.id);
       }
       // Featured assets of user (current profile)
-      sortFeaturedAssets($scope.sortAssetsBy);
+      sortUserAssets($scope.user.assets.sortBy);
 
       // Only show 'Everyone's Assets' swimlane when user is on his/her own profile
       if ($scope.isMyProfile) {
-        sortCommunityAssets($scope.sortCommunityBy);
+        sortCommunityAssets($scope.community.assets.sortBy);
       }
 
       $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
