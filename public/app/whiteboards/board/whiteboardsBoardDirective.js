@@ -151,8 +151,8 @@
 
           // Restore the layout of the whiteboard canvas
           _.each($scope.whiteboard.whiteboard_elements, function(element) {
-            deserializeElement(element, function(element) {
-              canvas.add(element);
+            deserializeElement(element, function(e) {
+              canvas.add(e);
               restore();
             });
           });
@@ -400,9 +400,9 @@
             // the element has been created
             element.realSrc = element.src;
             element.src = '';
-            fabric[type].fromObject(element, function(element) {
-              element.setSrc(element.get('realSrc'), function() {
-                return callback(element);
+            fabric[type].fromObject(element, function(e) {
+              e.setSrc(e.get('realSrc'), function() {
+                return callback(e);
               });
             });
           } else if (fabric[type].async) {
@@ -953,11 +953,11 @@
         if (socket) {
           socket.on('addActivity', function(elements) {
             _.each(elements, function(element) {
-              deserializeElement(element, function(element) {
+              deserializeElement(element, function(e) {
                 // Add the element to the whiteboard canvas and
                 // move it to its appropriate index
-                canvas.add(element);
-                element.moveTo(element.get('index'));
+                canvas.add(e);
+                element.moveTo(e.get('index'));
                 canvas.renderAll();
                 // Recalculate the size of the whiteboard canvas
                 setCanvasDimensions();
@@ -1195,11 +1195,11 @@
               element.left += 25;
               element.top += 25;
               // Add the element to the whiteboard canvas
-              deserializeElement(element, function(element) {
-                canvas.add(element);
+              deserializeElement(element, function(e) {
+                canvas.add(e);
                 canvas.renderAll();
                 // Keep track of the added elements to allow them to be selected
-                elements.push(element);
+                elements.push(e);
                 selectPasted();
               });
             });

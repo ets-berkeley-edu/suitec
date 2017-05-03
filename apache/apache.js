@@ -45,8 +45,8 @@ fs.readFile(__dirname + '/suitec.template', 'utf8', function(err, template) {
   var templateOutput = _.template(template)(templateData);
 
   // Store the generated Apache config file
-  fs.writeFile(__dirname + '/suitec.conf', templateOutput, function(err) {
-    if (err) {
+  fs.writeFile(__dirname + '/suitec.conf', templateOutput, function(writeErr) {
+    if (writeErr) {
       return console.log('An error occurred when writing the generated Apache config file');
     }
 
