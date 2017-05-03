@@ -224,8 +224,8 @@
       'description': $('#collabosphere-bookmark-description').val()
     };
 
-    addAsset(asset, function(asset) {
-      showSuccessNotification('The URL <strong>' + asset.title + '</strong> has been successfully added to the <strong>Asset Library</strong>');
+    addAsset(asset, function(item) {
+      showSuccessNotification('The URL <strong>' + item.title + '</strong> has been successfully added to the <strong>Asset Library</strong>');
     });
   };
 

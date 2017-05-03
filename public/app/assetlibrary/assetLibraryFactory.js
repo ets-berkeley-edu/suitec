@@ -228,11 +228,11 @@
      * Like or unlike an asset
      *
      * @param  {Number}               id                              The id of the asset that is liked or unliked
-     * @param  {Boolean}              like                            `true` when the asset should be liked, `false` when the asset should be disliked. When `null` is provided, the previous like or dislike will be undone
+     * @param  {Boolean}              value                           `true` when the asset should be liked, `false` when the asset should be disliked. When `null` is provided, the previous like or dislike will be undone
      * @return {Promise}                                              $http promise
      */
-    var like = function(id, like) {
-      return $http.post(utilService.getApiUrl('/assets/' + id + '/like'), {'like': like});
+    var like = function(id, value) {
+      return $http.post(utilService.getApiUrl('/assets/' + id + '/like'), {'like': value});
     };
 
     /**
