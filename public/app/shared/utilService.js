@@ -91,6 +91,18 @@
     };
 
     /**
+     * Get color constants
+     *
+     * @return {Object}                       Color constants by key
+     */
+    var getColorConstants = function() {
+      return {
+        'ACTIVITY_TIMELINE_RED': '#fea5a0',
+        'ACTIVITY_TIMELINE_BLUE': '#8dcffd'
+      };
+    };
+
+    /**
      * Adjust the height of the current iFrame to the size of its content.
      * This will only happen when Collabosphere is embedded as an LTI tool in
      * a different application
@@ -388,6 +400,7 @@
     return {
       'buildSearchResultsMessage': buildSearchResultsMessage,
       'getApiUrl': getApiUrl,
+      'getColorConstants': getColorConstants,
       'getLaunchParams': getLaunchParams,
       'getParentUrlData': getParentUrlData,
       'getScrollInformation': getScrollInformation,

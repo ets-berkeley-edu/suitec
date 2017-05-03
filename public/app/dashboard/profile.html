@@ -74,18 +74,24 @@
 
   <div data-ng-if="user.activity">
     <h3 data-ng-bind="isMyProfile ? 'My Activity' : 'Activity'"></h3>
-    <div class="profile-activity-timeline"
-         data-activity-timeline="user.activity"
-         data-timeline-id="timeline-user-activity"
-         data-labels-width="200"></div>
-  </div>
-
-  <div data-ng-if="user.assetActivity">
-    <h3 data-ng-bind="isMyProfile ? 'My Impacts' : 'Impacts'"></h3>
-    <div class="profile-activity-timeline"
-         data-activity-timeline="user.assetActivity"
-         data-timeline-id="timeline-user-impacts"
-         data-labels-width="200"></div>
+    <div class="col-flex">
+      <div class="profile-activity-timeline-legend-container">
+        <div class="profile-activity-timeline-legend-row">
+          <div class="profile-activity-timeline-legend-label">My Actions</div>
+          <div class="profile-activity-timeline-legend-bar" 
+               data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_BLUE}"></div>
+        </div>
+        <div class="profile-activity-timeline-legend-row">
+          <div class="profile-activity-timeline-legend-label">My Impacts</div>
+          <div class="profile-activity-timeline-legend-bar" 
+               data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_RED}"></div>
+        </div>
+      </div>
+      <div class="profile-activity-timeline"
+           data-activity-timeline="user.activity"
+           data-timeline-id="timeline-user-activity"
+           data-labels-width="120"></div>
+    </div>
   </div>
 
   <div class="profile-assets-container" data-ng-if="isMyProfile || user.assets.items.length">
