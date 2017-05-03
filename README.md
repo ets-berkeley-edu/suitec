@@ -97,7 +97,11 @@ Download and run [the install script](https://github.com/ets-berkeley-edu/suitec
 node_modules/.bin/gulp csslint
 node_modules/.bin/gulp eslint
 NODE_ENV=test npm test
+```
 
+**NOTE:** To run a subset of tests (i.e., test summary matches `<pattern>`) use:
+```
+NODE_ENV=test npm test -- --grep "<pattern>"
 ```
 
 ### Start the application
