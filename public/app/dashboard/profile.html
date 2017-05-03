@@ -19,7 +19,7 @@
           tabindex="-1"></oi-select>
       </div>
       <div>
-        <span data-ng-repeat="section in canvasCourseSections"><span data-ng-if="canvasCourseSections.length > 1"><span data-ng-if="!$first && !$last">, </span><span data-ng-if="$last"> and </span></span>{{section}}</span>
+        <span data-ng-repeat="section in user.canvasCourseSections"><span data-ng-if="user.canvasCourseSections.length > 1"><span data-ng-if="!$first && !$last">, </span><span data-ng-if="$last"> and </span></span>{{section}}</span>
       </div>
       <div class="profile-summary-last-activity">
         Last activity:
@@ -72,44 +72,44 @@
     </div>
   </div>
 
-  <div data-ng-if="userActivity">
+  <div data-ng-if="user.activity">
     <h3 data-ng-bind="isMyProfile ? 'My Activity' : 'Activity'"></h3>
     <div class="profile-activity-timeline"
-         data-activity-timeline="userActivity"
+         data-activity-timeline="user.activity"
          data-timeline-id="timeline-user-activity"
          data-labels-width="200"></div>
   </div>
 
-  <div data-ng-if="userAssetActivity">
+  <div data-ng-if="user.assetActivity">
     <h3 data-ng-bind="isMyProfile ? 'My Impacts' : 'Impacts'"></h3>
     <div class="profile-activity-timeline"
-         data-activity-timeline="userAssetActivity"
+         data-activity-timeline="user.assetActivity"
          data-timeline-id="timeline-user-impacts"
          data-labels-width="200"></div>
   </div>
 
-  <div class="profile-featured-assets-container" data-ng-if="isMyProfile || featuredAssets.length">
+  <div class="profile-assets-container" data-ng-if="!user.assets.isLoading && (isMyProfile || user.assets.items.length)">
     <h3>
-      <span data-ng-if="!featuredAssets.length">My Assets</span>
+      <span data-ng-if="!user.assets.items.length">My Assets</span>
 
-      <div class="profile-featured-list-filters" data-ng-if="featuredAssets.length">
+      <div class="profile-swimlane-filters" data-ng-if="user.assets.items.length">
         <span data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
 
-        <a href data-ng-click="sortFeaturedAssets('recent')" data-ng-if="sortAssetsBy !== 'recent'">Recent</a>
-        <span data-ng-if="sortAssetsBy === 'recent'">Recent</span>
+        <a href data-ng-click="sortUserAssets('recent')" data-ng-if="user.assets.sortBy !== 'recent'">Recent</a>
+        <span data-ng-if="user.assets.sortBy === 'recent'">Recent</span>
         |
-        <a href data-ng-click="sortFeaturedAssets('impact')" data-ng-if="sortAssetsBy !== 'impact'">Most Impactful</a>
-        <span data-ng-if="sortAssetsBy === 'impact'">Most Impactful</span>
+        <a href data-ng-click="sortUserAssets('impact')" data-ng-if="user.assets.sortBy !== 'impact'">Most Impactful</a>
+        <span data-ng-if="user.assets.sortBy === 'impact'">Most Impactful</span>
       </div>
     </h3>
 
     <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!featuredAssets.length">
+      <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!user.assets.items.length">
         No matching assets were found.
       </div>
       <ul>
         <!-- UPLOAD / ADD LINK -->
-        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !featuredAssets.length">
+        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !user.assets.items.length">
           <div class="col-list-item-container col-list-add-tile">
             <div class="col-list-item-tile">
               <div class="assetlibrary-list-item-add-container">
@@ -152,7 +152,7 @@
           </div>
         </li>
 
-        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in featuredAssets">
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in user.assets.items">
           <a tool-href
             data-tool="assetlibrary"
             data-referring-tool="dashboard"
@@ -181,33 +181,33 @@
     </div>
   </div>
 
-  <div class="profile-featured-assets-container" data-ng-if="me.id === user.id">
+  <div class="profile-assets-container" data-ng-if="(me.id === user.id) && !community.assets.isLoading">
     <h3>
-      <span data-ng-if="!communityAssets.length">Everyone's Assets</span>
+      <span data-ng-if="!community.assets.items.length">Everyone's Assets</span>
 
-      <div class="profile-featured-list-filters" data-ng-if="communityAssets.length">
+      <div class="profile-swimlane-filters" data-ng-if="community.assets.items.length">
         Everyone's Assets:
 
-        <a href data-ng-click="sortCommunityAssets('recent')" data-ng-if="sortCommunityBy !== 'recent'">Trending</a>
-        <span data-ng-if="sortCommunityBy === 'recent'">Trending</span>
+        <a href data-ng-click="sortCommunityAssets('recent')" data-ng-if="community.assets.sortBy !== 'recent'">Trending</a>
+        <span data-ng-if="community.assets.sortBy === 'recent'">Trending</span>
         |
-        <a href data-ng-click="sortCommunityAssets('comments')" data-ng-if="sortCommunityBy !== 'comments'">Most Discussed</a>
-        <span data-ng-if="sortCommunityBy === 'comments'">Most Discussed</span>
+        <a href data-ng-click="sortCommunityAssets('comments')" data-ng-if="community.assets.sortBy !== 'comments'">Most Discussed</a>
+        <span data-ng-if="community.assets.sortBy === 'comments'">Most Discussed</span>
         |
-        <a href data-ng-click="sortCommunityAssets('likes')" data-ng-if="sortCommunityBy !== 'likes'">Most Liked</a>
-        <span data-ng-if="sortCommunityBy === 'likes'">Most Liked</span>
+        <a href data-ng-click="sortCommunityAssets('likes')" data-ng-if="community.assets.sortBy !== 'likes'">Most Liked</a>
+        <span data-ng-if="community.assets.sortBy === 'likes'">Most Liked</span>
         |
-        <a href data-ng-click="sortCommunityAssets('pinned')" data-ng-if="sortCommunityBy !== 'pinned'">Pinned</a>
-        <span data-ng-if="sortCommunityBy === 'pinned'">Pinned</span>
+        <a href data-ng-click="sortCommunityAssets('pinned')" data-ng-if="community.assets.sortBy !== 'pinned'">Pinned</a>
+        <span data-ng-if="community.assets.sortBy === 'pinned'">Pinned</span>
       </div>
     </h3>
 
     <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults"  data-ng-if="!communityAssets.length">
+      <div class="alert alert-info assetlibrary-list-noresults"  data-ng-if="!community.assets.items.length">
         No matching assets were found.
       </div>
       <ul>
-        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in communityAssets">
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in community.assets.items">
           <a tool-href
             data-tool="assetlibrary"
             data-referring-tool="dashboard"
