@@ -89,20 +89,8 @@ export PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
 
 ## In your development environment
 
-Download and run [the install script](https://github.com/ets-berkeley-edu/suitec-ops/blob/master/scripts/install-locally.sh).
-
-### Perform tests
-
 ```
-node_modules/.bin/gulp csslint
-node_modules/.bin/gulp eslint
-NODE_ENV=test npm test
-
-```
-
-### Start the application
-
-```
+npm install
 node app
 ```
 

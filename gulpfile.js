@@ -36,6 +36,7 @@ var gulp = require('gulp');
 var imagemin = require('gulp-imagemin');
 var install = require('gulp-install');
 var minifyHtml = require('gulp-htmlmin');
+var mocha = require('gulp-mocha');
 var ngAnnotate = require('gulp-ng-annotate');
 var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
@@ -287,3 +288,40 @@ gulp.task('csslint', function() {
     }))
     .pipe(csslint.formatter());
 });
+
+/**
+ * Run the Mocha test suite
+ */
+gulp.task('mocha', function() {
+  return gulp
+    .src(['node_modules/col-tests/lib/beforeTests.js', 'node_modules/col-*/tests/**/*.js'])
+    .pipe(mocha({
+      'fullStackTrace': true,
+      'grep': process.env.MOCHA_GREP,
+      'timeout': 10000
+    }))
+    .once('end', function() {
+      process.exit();
+    });
+});
+
+/**
+ * Run the full Collabosphere test suite
+ */
+gulp.task('test', function() {
+  // Set the environment to `test`
+  process.env.NODE_ENV = 'test';
+
+  runSequence('eslint', 'csslint', 'mocha');
+});
+
+/**
+ * Run the full Collabosphere TravisCI test suite (including code coverage)
+ */
+gulp.task('test-travis', function() {
+  // Set the environment to `travis`
+  process.env.NODE_ENV = 'travis';
+
+  runSequence('eslint', 'csslint', 'mocha');
+});
+
