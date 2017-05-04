@@ -88,7 +88,7 @@
          data-labels-width="200"></div>
   </div>
 
-  <div class="profile-assets-container" data-ng-if="!user.assets.isLoading && (isMyProfile || user.assets.items.length)">
+  <div class="profile-assets-container" data-ng-if="isMyProfile || user.assets.items.length">
     <h3>
       <span data-ng-if="!user.assets.items.length">My Assets</span>
 
@@ -104,7 +104,7 @@
     </h3>
 
     <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!user.assets.items.length">
+      <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!user.assets.items.length && !user.loading">
         No matching assets were found.
       </div>
       <ul>
@@ -181,7 +181,7 @@
     </div>
   </div>
 
-  <div class="profile-assets-container" data-ng-if="(me.id === user.id) && !community.assets.isLoading">
+  <div class="profile-assets-container" data-ng-if="me.id === user.id">
     <h3>
       <span data-ng-if="!community.assets.items.length">Everyone's Assets</span>
 
@@ -196,14 +196,17 @@
         |
         <a href data-ng-click="sortCommunityAssets('likes')" data-ng-if="community.assets.sortBy !== 'likes'">Most Liked</a>
         <span data-ng-if="community.assets.sortBy === 'likes'">Most Liked</span>
+        <!--
+        TODO: Pinning is not (yet) supported.
         |
         <a href data-ng-click="sortCommunityAssets('pinned')" data-ng-if="community.assets.sortBy !== 'pinned'">Pinned</a>
         <span data-ng-if="community.assets.sortBy === 'pinned'">Pinned</span>
+        -->
       </div>
     </h3>
 
     <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults"  data-ng-if="!community.assets.items.length">
+      <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!community.assets.items.length && !community.assets.isLoading">
         No matching assets were found.
       </div>
       <ul>
