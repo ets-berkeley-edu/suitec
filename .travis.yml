@@ -25,6 +25,4 @@ before_install:
   - psql collabospheretravis -c 'create extension pg_trgm;' -U postgres
 
 script:
-  - node_modules/.bin/gulp csslint
-  - node_modules/.bin/gulp eslint
-  - NODE_ENV=travis npm test
+  - node_modules/.bin/gulp test-travis
