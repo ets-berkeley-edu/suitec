@@ -391,6 +391,10 @@
         filters.push('selected user');
       }
 
+      if (searchOptions.section) {
+        filters.push('section ' + searchOptions.section);
+      }
+
       if (filters.length) {
         message += ' for ' + filters.join(' and ');
       }

@@ -63,6 +63,7 @@
      * @param  {String}               [searchOptions.keywords]        A string to filter the assets by
      * @param  {Number}               [searchOptions.category]        The id of the category to filter the assets by
      * @param  {Number}               [searchOptions.user]            The id of the user who created the assets
+     * @param  {String}               [searchOptions.section]         The name of section (i.e., subset of users) to filter assets by
      * @param  {String}               [searchOptions.type]            The type of assets
      * @return {Promise<Object>}                                      $http promise returning the total number of assets for the current course and the assets in the current page
      */
@@ -80,6 +81,9 @@
       }
       if (searchOptions.user) {
         url += '&user=' + searchOptions.user;
+      }
+      if (searchOptions.section) {
+        url += '&section=' + encodeURIComponent(searchOptions.section);
       }
       if (searchOptions.type) {
         url += '&type=' + searchOptions.type;

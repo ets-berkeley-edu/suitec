@@ -52,6 +52,7 @@
       'keywords': $state.params.keywords || '',
       'category': parseInt($state.params.category, 10) || '',
       'user': parseInt($state.params.user, 10) || '',
+      'section': $state.params.section || '',
       'type': $state.params.type || '',
       'sort': $state.params.sort || ''
     };
@@ -60,10 +61,8 @@
     // initial value gets derived from the state parameters that are passed into this controller.
     // The value will be bound to the search directive which will update it when a user switches
     // between simple and advanced search mode
-    $scope.isAdvancedSearch = false;
-    if ($scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type || $scope.searchOptions.sort) {
-      $scope.isAdvancedSearch = true;
-    }
+    var search = $scope.searchOptions;
+    $scope.isAdvancedSearch = search.category || search.user || search.section || search.type || search.sort;
 
     /**
      * If a search is being performed, initialize variables
@@ -71,11 +70,10 @@
      * @return {void}
      */
     var initializeSearchContext = function() {
-      $scope.isSearch = false;
+      var opts = $scope.searchOptions;
+      $scope.isSearch = opts.keywords || opts.category || opts.user || opts.section || opts.type || opts.sort;
+
       $scope.resultsMessage = null;
-      if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type || $scope.searchOptions.sort) {
-        $scope.isSearch = true;
-      }
     };
 
     initializeSearchContext();

@@ -87,9 +87,12 @@
       // until the current request has completed
       $scope.list.ready = false;
       $scope.isSearch = false;
-      assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
+
+      var opts = $scope.searchOptions;
+
+      assetLibraryFactory.getAssets($scope.list.page, opts).success(function(assets) {
         // Indicate whether a search was performed
-        if ($scope.searchOptions.keywords || $scope.searchOptions.category || $scope.searchOptions.user || $scope.searchOptions.type) {
+        if (opts.keywords || opts.category || opts.user || opts.section || opts.type) {
           $scope.isSearch = true;
         }
 
