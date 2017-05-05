@@ -136,6 +136,29 @@
   font-weight: 300;
 }
 
+.profile-activity-timeline-legend-bar {
+  display: table-cell;
+  width: 4px;
+}
+
+.profile-activity-timeline-legend-container {
+  padding-top: 60px;
+}
+
+.profile-activity-timeline-legend-label {
+  display: table-cell;
+  font-size: 13px;
+  font-weight: 600;
+  vertical-align: middle;
+  width: 80px;
+}
+
+.profile-activity-timeline-legend-row {
+  display: table;
+  height: 120px;
+  padding: 8px 0;
+}
+
 .profile-assets-container {
   margin-bottom: 30px;
 }

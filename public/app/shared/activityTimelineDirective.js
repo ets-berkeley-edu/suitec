@@ -47,21 +47,13 @@
       'link': function(scope, elem, attrs) {
         var start = Date.now();
         var end = Date.now();
-        var eventsByCategory = [];
-        _.forEach(scope.activityTimeline, function(eventSeries, category) {
-          eventSeries = eventSeries || [];
-          if (eventSeries.length) {
-            var firstEventDate = new Date(eventSeries[0].date);
+        _.forEach(scope.activityTimeline, function(eventSeries) {
+          eventSeries.data = eventSeries.data || [];
+          if (eventSeries.data.length) {
+            var firstEventDate = new Date(eventSeries.data[0].date);
             start = _.min([start, firstEventDate]);
-            console.log(start);
           }
-          eventsByCategory.push({
-            'name': category,
-            'data': eventSeries
-          });
         });
-
-        var colors = d3.schemeCategory10;
 
         // Determine precision of x-axis tick values and format appropriately.
         var tickFormat = function(date) {
@@ -86,7 +78,7 @@
 
         var eventDropsChart = eventDrops.default()
           .eventLineColor(function(datum, index) {
-            return colors[index];
+            return scope.activityTimeline[index].color;
           })
           .start(start)
           .end(end)
@@ -106,10 +98,10 @@
 
         var drawTimeline = function(element) {
           element = d3.select(element);
-          element.datum(eventsByCategory);
+          element.datum(scope.activityTimeline);
           element.call(eventDropsChart);
 
-          element.selectAll('.label').classed('activity-timeline-label', true);
+          element.selectAll('.label').classed('profile-activity-timeline-label', true);
 
           var nodes = element.nodes();
           var zoom = nodes[0].zoom;

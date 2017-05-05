@@ -58,24 +58,45 @@
       }
     }, true);
 
+    $scope.color = utilService.getColorConstants();
+
     var getUserActivity = function(userId) {
       profileFactory.getActivitiesForUser(userId).success(function(activities) {
-        $scope.user.activity = {
-          'Added an asset': activities.add_asset,
-          'Liked an asset': activities.like,
-          'Viewed an asset': activities.view_asset,
-          'Commented on an asset': activities.asset_comment,
-          'Added an asset to a whiteboard': activities.whiteboard_add_asset,
-          'Exported a whiteboard': activities.export_whiteboard
-        };
-
-        $scope.user.assetActivity = {
-          'Viewed my assets': activities.get_view_asset,
-          'Liked my assets': activities.get_like,
-          'Commented on my assets': activities.get_asset_comment,
-          'Replied to my comments': activities.get_asset_comment_reply,
-          'Added my assets to a whiteboard': activities.get_whiteboard_add_asset
-        };
+        $scope.user.activity = [
+          // "My Actions" swimlanes.
+          {
+            'name': 'Engagements',
+            'data': activities.actions.engagements,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          {
+            'name': 'Interactions',
+            'data': activities.actions.interactions,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          {
+            'name': 'Creations',
+            'data': activities.actions.creations,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          // "My Impacts" swimlanes. For the moment these get leading spaces under 'name' because duplicate names
+          // seem to confuse EventDrops. This is not a great long-term solution.
+          {
+            'name': ' Engagements',
+            'data': activities.impacts.engagements,
+            'color': $scope.color.ACTIVITY_TIMELINE_RED
+          },
+          {
+            'name': ' Interactions',
+            'data': activities.impacts.interactions,
+            'color': $scope.color.ACTIVITY_TIMELINE_RED
+          },
+          {
+            'name': ' Creations',
+            'data': activities.impacts.creations,
+            'color': $scope.color.ACTIVITY_TIMELINE_RED
+          }
+        ];
       });
     };
 

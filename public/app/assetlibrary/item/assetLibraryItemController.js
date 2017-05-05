@@ -122,6 +122,8 @@
       });
     };
 
+    $scope.color = utilService.getColorConstants();
+
     /**
      * Get activities for the current asset ID
      *
@@ -129,13 +131,38 @@
      */
     var getAssetActivities = function() {
       assetLibraryFactory.getActivitiesForAsset(assetId).success(function(activities) {
-        $scope.assetActivity = {
-          'Creation': activities.add_asset,
-          'Views': activities.view_asset,
-          'Likes': activities.like,
-          'Comments': activities.asset_comment,
-          'Whiteboard uses': activities.whiteboard_add_asset
-        };
+        $scope.assetActivity = [
+          {
+            'name': 'Created',
+            'data': activities.add_asset,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          {
+            'name': 'Viewed',
+            'data': activities.view_asset,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          {
+            'name': 'Liked',
+            'data': activities.like,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          {
+            'name': 'Commented',
+            'data': activities.asset_comment,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          {
+            'name': 'Used in whiteboard',
+            'data': activities.whiteboard_add_asset,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          {
+            'name': 'Remixed',
+            'data': activities.remix_whiteboard,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          }
+        ];
       });
     };
 
