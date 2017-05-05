@@ -34,25 +34,50 @@
       </div>
 
       <!-- FILTER BY -->
-      <div class="form-group">
-        <label for="assetlibrary-search-category" class="col-sm-1 control-label">Filter by</label>
-        <div class="col-sm-4">
-          <select id="assetlibrary-search-category" class="form-control" data-ng-model="category" data-value="{{category}}" data-ng-options="category.id as category.title for category in categories">
-            <option value="" selected>Category</option>
-          </select>
+      <div class="search-filters">
+        <div class="form-group">
+          <label for="assetlibrary-search-category" class="col-sm-1 control-label">Filter by</label>
+          <div class="col-sm-4">
+            <select id="assetlibrary-search-category" class="form-control"
+              data-ng-model="category"
+              data-value="{{category}}"
+              data-ng-options="category.id as category.title for category in categories">
+
+              <option value="" selected>Category</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <select id="assetlibrary-search-type" class="form-control"
+              data-ng-model="type"
+              data-value="{{type}}">
+
+              <option value="" selected>Asset type</option>
+              <option value="file">File</option>
+              <option value="link">Link</option>
+              <option value="whiteboard">Whiteboard</option>
+            </select>
+          </div>
         </div>
-        <div class="col-sm-4">
-          <select id="assetlibrary-search-user" class="form-control" data-ng-model="user" data-value="{{user}}" data-ng-options="user.id as user.canvas_full_name for user in users">
-            <option value="" selected>Uploader</option>
-          </select>
-        </div>
-        <div class="col-sm-3">
-          <select id="assetlibrary-search-type" class="form-control" data-ng-model="type" data-value="{{type}}">
-            <option value="" selected>Asset type</option>
-            <option value="file">File</option>
-            <option value="link">Link</option>
-            <option value="whiteboard">Whiteboard</option>
-          </select>
+        <div class="form-group">
+          <div class="col-sm-1"></div>
+          <div class="col-sm-4">
+            <select id="assetlibrary-search-user" class="form-control"
+              data-ng-model="user"
+              data-value="{{user}}"
+              data-ng-options="user.id as user.canvas_full_name for user in users">
+
+              <option value="" selected>Uploader</option>
+            </select>
+          </div>
+          <div class="col-sm-4" data-ng-if="sections.length">
+            <select id="assetlibrary-search-section" class="form-control"
+              data-ng-model="section"
+              data-value="{{section}}"
+              data-ng-options="section as section for section in sections">
+
+              <option value="" selected>Section</option>
+            </select>
+          </div>
         </div>
       </div>
 
