@@ -1,0 +1,59 @@
+<div class="event-details-container">
+  <div>
+    <img class="event-details-thumbnail" 
+         data-ng-src="{{activity.asset.thumbnail_url}}"
+         alt="{{activity.asset.title}}"
+         title="{{activity.asset.title}}"/>
+    <div class="event-details-avatar">
+      <img data-ng-src="{{activity.user.canvas_image}}"
+           alt="{{activity.user.canvas_full_name}}"
+           title="{{activity.user.canvas_full_name}}"/>
+    </div>
+  </div>
+
+  <div>
+    <h3 class="event-details-title">
+      <a tool-href
+         data-tool="assetlibrary"
+         data-course="pageContext.course"
+         data-id="activity.asset.id"
+         data-referring-tool="pageContext.tool"
+         data-referring-id="pageContext.id"
+         data-ng-bind="display.title"></a>
+    </h3>
+
+    <p class="event-details-description">
+      <i class="fa fa-comment" data-ng-if="display.comment"></i>
+      <i class="fa fa-thumbs-up" data-ng-if="display.like"></i>
+      <i class="fa fa-eye" data-ng-if="display.view"></i>
+      <strong data-ng-bind="display.description"></strong>
+
+      <span data-ng-if="display.comment">
+        <span data-ng-if="!display.snippet"
+              class="event-details-comment"
+              data-ng-bind-template="&ldquo;{{activity.comment.body}}&rdquo;"></span>
+        <span data-ng-if="display.snippet">
+          <span class="event-details-comment"
+                data-ng-bind-template="&ldquo;{{display.snippet}}&hellip;&rdquo;"></span>
+          <a tool-href
+             data-tool="assetlibrary"
+             data-course="pageContext.course"
+             data-id="activity.asset.id"
+             data-referring-tool="pageContext.tool"
+             data-referring-id="pageContext.id">Read more &raquo;</a>
+        </span>
+      </span>
+    </p>
+
+    <p class="event-details-timestamp">
+      <a tool-href
+         data-tool="dashboard"
+         data-course="pageContext.course"
+         data-id="activity.user.id"
+         data-referring-tool="pageContext.tool"
+         data-referring-id="pageContext.id"
+         data-ng-bind="activity.user.canvas_full_name"></a>
+      on <span data-ng-bind="display.date"></span>
+    </p>
+  </div>
+</div>

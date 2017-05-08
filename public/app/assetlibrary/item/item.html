@@ -200,8 +200,9 @@
   <div data-ng-if="assetActivity">
     <div class="profile-activity-timeline"
          data-activity-timeline="assetActivity"
-         data-timeline-id="timeline-asset-activity"
-         data-labels-width="100"></div>
+         data-labels-width="100"
+         data-page-context="pageContext"
+         data-timeline-id="timeline-asset-activity"></div>
   </div>
 
   <h3><ng-pluralize count="asset.comment_count" when="{'0': 'No comments', 'one': '1 comment', 'other': '{} comments'}"></ng-pluralize></h3>

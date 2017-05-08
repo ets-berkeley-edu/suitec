@@ -189,6 +189,13 @@
       }
 
       $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
+
+      // Set page context information for activity timeline directive
+      $scope.pageContext = {
+        'course': me.course,
+        'tool': 'dashboard',
+        'id': user.id
+      };
     };
 
     var loadOtherUsers = function(user) {
