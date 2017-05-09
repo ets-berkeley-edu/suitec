@@ -109,6 +109,13 @@
 
         $scope.asset = asset;
 
+        // Set page context information for activity timeline directive
+        $scope.pageContext = {
+          'course': me.course,
+          'tool': 'assetlibrary',
+          'id': asset.id
+        };
+
         // Make the latest metadata of the asset available
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
 

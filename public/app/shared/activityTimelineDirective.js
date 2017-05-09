@@ -30,7 +30,7 @@
   /**
    * Display an activity timeline for a given dataset.
    */
-  angular.module('collabosphere').directive('activityTimeline', function(utilService, $interval, $timeout) {
+  angular.module('collabosphere').directive('activityTimeline', function(utilService, $compile, $interval, $templateCache, $timeout) {
     return {
       // The directive matches attribute name only and does not overwrite the declaration in markup.
       // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
@@ -40,8 +40,9 @@
       // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
         'activityTimeline': '=',
-        'timelineId': '@',
-        'labelsWidth': '='
+        'labelsWidth': '=',
+        'pageContext': '=',
+        'timelineId': '@'
       },
       'templateUrl': '/app/shared/activityTimeline.html',
       'link': function(scope, elem, attrs) {
@@ -76,6 +77,104 @@
           return formatter(date);
         };
 
+        var ARROW_OFFSET = 25;
+        var TOOLTIP_WIDTH = 480;
+
+        var FRIENDLY_DESCRIPTIONS = {
+          'add_asset': 'Added Asset to Library',
+          'asset_comment': 'Comment:',
+          'discussion_entry': 'Posted Discussion',
+          'discussion_topic': 'Posted Discussion',
+          'export_whiteboard': 'Exported Whiteboard',
+          'get_asset_comment': 'Comment:',
+          'get_asset_comment_reply': 'Comment:',
+          'get_discussion_entry_reply': 'Posted Discussion',
+          'get_like': 'Liked Asset',
+          'get_remix_whiteboard': 'Remixed Whiteboard',
+          'get_view_asset': 'Viewed Asset',
+          'get_whiteboard_add_asset': 'Added Asset to Whiteboard',
+          'like': 'Liked Asset',
+          'remix_whiteboard': 'Remixed Whiteboard',
+          'view_asset': 'Viewed Asset',
+          'whiteboard_add_asset': 'Added Asset to Whiteboard'
+        };
+
+        var showEventDetails = function(activity) {
+          // Hide any existing event details.
+          d3.select('.profile-timeline').selectAll('.event-details').remove();
+
+          // Make activity available to the scope.
+          scope.activity = activity;
+
+          // Format properties for display.
+          scope.display = {
+            'date': d3.timeFormat('%B %d, %Y @ %H:%M')(new Date(activity.date)),
+            'description': FRIENDLY_DESCRIPTIONS[activity.type]
+          };
+
+          if (activity.asset) {
+            scope.display.title = activity.asset.title;
+          } else {
+            scope.display.title = scope.description;
+          }
+
+          if (activity.comment && activity.comment.body) {
+            scope.display.comment = true;
+            if (activity.comment.body.length > 100) {
+              scope.display.snippet = activity.comment.body.substring(0, 100);
+            }
+          } else if (activity.type === 'get_like' || activity.type === 'like') {
+            scope.display.like = true;
+          } else if (activity.type === 'get_view_asset' || activity.type === 'view_asset') {
+            scope.display.view = true;
+          }
+
+          // The details window starts out hidden...
+          var eventDetails = d3
+            .select('.profile-timeline')
+            .append('div')
+            .attr('class', 'event-details')
+            .style('opacity', 0);
+
+          // ...and transitions to visible.
+          eventDetails
+            .transition(d3.transition().duration(250).ease(d3.easeLinear))
+            .on('start', function() {
+              d3.select('.event-details').style('display', 'block');
+            })
+            .style('opacity', 1);
+
+          // The location of the arrow element depends on which side of the chart we're on.
+          var pageX = d3.event.pageX;
+          var pageY = d3.event.pageY;
+          var direction = pageX > TOOLTIP_WIDTH ? 'right' : 'left';
+          var left = direction === 'right' ?
+            pageX - TOOLTIP_WIDTH + ARROW_OFFSET :
+            pageX - ARROW_OFFSET;
+
+          eventDetails
+            .style('left', (left + 'px'))
+            .style('top', (pageY + 16 + 'px'))
+            .classed(direction, true);
+
+          // Add template HTML and compile in the scope.
+          eventDetails.append(function() {
+            var detailsDiv = document.createElement('div');
+            detailsDiv.innerHTML = $templateCache.get('/app/shared/activityTimelineEventDetails.html');
+            $compile(detailsDiv)(scope);
+            return detailsDiv;
+          });
+        };
+
+        var hideEventDetails = function() {
+          d3.select('.event-details')
+            .transition(d3.transition().duration(2000).ease(d3.easeExpIn))
+            .on('end', function() {
+              this.remove();
+            })
+            .style('opacity', 0);
+        };
+
         var eventDropsChart = eventDrops.default()
           .eventLineColor(function(datum, index) {
             return scope.activityTimeline[index].color;
@@ -94,7 +193,9 @@
           })
           // Disallow indefinite zoom-out.
           .minScale(1)
-          .labelsWidth(scope.labelsWidth || 0);
+          .labelsWidth(scope.labelsWidth || 0)
+          .mouseover(showEventDetails)
+          .mouseout(hideEventDetails);
 
         var drawTimeline = function(element) {
           element = d3.select(element);

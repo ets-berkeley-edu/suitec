@@ -65,12 +65,16 @@
             }
           }
         };
-        // Note: Value of '_id' arg can be router-state, asset id, etc.
+        // Both 'id' and 'referring-tool' attributes may specify either a variable name (the evaluated value
+        // of which appears under 'scope'), or a string literal (which appears under 'attrs'). 'Id' may refer
+        // to router-state, asset id, etc.
         var id = scope.id || attrs.id;
+        var referringTool = scope.referringTool || attrs.referringTool;
+
         var queryArgs = id ? '?_id=' + encodeURIComponent(id) : '';
         if (attrs.referringTool) {
           queryArgs = queryArgs ? queryArgs + '&' : '?';
-          queryArgs += '_referring_tool=' + attrs.referringTool;
+          queryArgs += '_referring_tool=' + referringTool;
           if (scope.referringId) {
             queryArgs += '&_referring_id=' + encodeURIComponent(scope.referringId);
           }
