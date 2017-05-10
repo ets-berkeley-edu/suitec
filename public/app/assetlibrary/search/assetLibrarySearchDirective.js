@@ -40,17 +40,21 @@
         'keywords': '=searchOptionsKeywords',
         'category': '=searchOptionsCategory',
         'user': '=searchOptionsUser',
+        'section': '=searchOptionsSection',
         'type': '=searchOptionsType',
         'sort': '=searchOptionsSort'
       },
       'templateUrl': '/app/assetlibrary/search/search.html',
       'controller': function($scope, assetLibraryCategoriesFactory, userFactory) {
 
-        // Variable that keeps track of the categories in the current course
+        // Categories of the current course
         $scope.categories = null;
 
-        // Variable that keeps track of the users in the current course
+        // Users of the current course
         $scope.users = null;
+
+        // Sections of the current course
+        $scope.sections = null;
 
         /**
          * Emit an event indicating that we want to search through the assets
@@ -59,24 +63,21 @@
          */
         var search = $scope.search = function() {
           if ($scope.isAdvancedSearch) {
-            var categoryObject = null;
-            var userObject = null;
-            if ($scope.category) {
-              categoryObject = _.find($scope.categories, {'id': $scope.category});
-            }
-            if ($scope.user) {
-              userObject = _.find($scope.users, {'id': $scope.user});
-            }
+            var categoryObject = $scope.category ? _.find($scope.categories, {'id': $scope.category}) : null;
+            var userObject = $scope.user ? _.find($scope.users, {'id': $scope.user}) : null;
+
             var searchOptions = {
               'keywords': $scope.keywords,
               'category': $scope.category,
               'user': $scope.user,
+              'section': $scope.section,
               'type': $scope.type,
               'sort': $scope.sort,
               'categoryObject': categoryObject,
               'userObject': userObject
             };
             $scope.$emit('assetLibrarySearchSearch', searchOptions);
+
           } else {
             $scope.$emit('assetLibrarySearchSearch', {'keywords': $scope.keywords});
           }
@@ -113,6 +114,18 @@
           if (!$scope.users) {
             userFactory.getAllUsers().success(function(users) {
               $scope.users = users;
+
+              // User can have zero or more sections
+              var sections = _(users)
+                .map('canvas_course_sections')
+                .flatten()
+                .uniq()
+                .compact()
+                .sort()
+                .value();
+
+              // Section filter requires two or more sections
+              $scope.sections = sections.length > 1 ? sections : null;
             });
           }
 

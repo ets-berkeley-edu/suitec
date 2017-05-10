@@ -69,6 +69,7 @@
             'asset_search_keywords': data.keywords,
             'asset_search_category': data.category,
             'asset_search_user': data.user,
+            'asset_search_section': data.section,
             'asset_search_types': data.type,
             'referer': document.referrer
           });
@@ -77,6 +78,7 @@
             'keywords': (data.keywords ? data.keywords : ''),
             'category': (data.category ? data.category : ''),
             'user': (data.user ? data.user : ''),
+            'section': (data.section ? data.section : ''),
             'type': (data.type ? data.type : ''),
             'sort': (data.sort ? data.sort : '')
           };

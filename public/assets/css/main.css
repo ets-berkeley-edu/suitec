@@ -73,6 +73,10 @@ a {
   margin-bottom: 20px;
 }
 
+.form-horizontal .search-filters .form-group:not(:last-child) {
+  margin-bottom: 0 !important;
+}
+
 .form-group:not(.has-error) div[data-ng-messages] {
   display: none;
 }
