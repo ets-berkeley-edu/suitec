@@ -1,18 +1,23 @@
 <div class="event-details-container">
-  <div>
+  <div data-ng-if="pageContext.tool === 'dashboard'">
     <img class="event-details-thumbnail" 
          data-ng-src="{{activity.asset.thumbnail_url}}"
          alt="{{activity.asset.title}}"
          title="{{activity.asset.title}}"/>
-    <div class="event-details-avatar">
+    <div class="event-details-avatar event-details-avatar-small">
       <img data-ng-src="{{activity.user.canvas_image}}"
            alt="{{activity.user.canvas_full_name}}"
            title="{{activity.user.canvas_full_name}}"/>
     </div>
   </div>
+  <div class="event-details-avatar event-details-avatar-large" data-ng-if="pageContext.tool === 'assetlibrary'">
+    <img data-ng-src="{{activity.user.canvas_image}}"
+         alt="{{activity.user.canvas_full_name}}"
+         title="{{activity.user.canvas_full_name}}"/>
+  </div>
 
   <div>
-    <h3 class="event-details-title">
+    <h3 class="event-details-title" data-ng-if="pageContext.tool === 'dashboard'">
       <a tool-href
          data-tool="assetlibrary"
          data-course="pageContext.course"
@@ -23,10 +28,30 @@
     </h3>
 
     <p class="event-details-description">
-      <i class="fa fa-comment" data-ng-if="display.comment"></i>
-      <i class="fa fa-thumbs-up" data-ng-if="display.like"></i>
-      <i class="fa fa-eye" data-ng-if="display.view"></i>
-      <strong data-ng-bind="display.description"></strong>
+      <span data-ng-if="pageContext.tool === 'dashboard'"> 
+        <i class="fa fa-comment" data-ng-if="display.comment"></i>
+        <i class="fa fa-thumbs-up" data-ng-if="display.like"></i>
+        <i class="fa fa-eye" data-ng-if="display.view"></i>
+        <strong data-ng-bind="display.description"></strong>
+      </span>
+
+      <span data-ng-if="pageContext.tool === 'assetlibrary'"> 
+        <a tool-href
+           data-tool="dashboard"
+           data-course="pageContext.course"
+           data-id="activity.user.id"
+           data-referring-tool="pageContext.tool"
+           data-referring-id="pageContext.id"
+           class="event-details-strong"
+           data-ng-bind="activity.user.canvas_full_name"></a>
+        <span data-ng-switch="activity.type">
+          <span data-ng-switch-when="view_asset">viewed this asset.</span>
+          <span data-ng-switch-when="like">liked this asset.</span>
+          <span data-ng-switch-when="asset_comment">commented on this asset, </span>
+          <span data-ng-switch-when="whiteboard_add_asset">used this asset in a whiteboard.</span>
+          <span data-ng-switch-when="remix_whiteboard">remixed this asset in a whiteboard.</span>
+        </span>
+      </span>
 
       <span data-ng-if="display.comment">
         <span data-ng-if="!display.snippet"
@@ -40,20 +65,24 @@
              data-course="pageContext.course"
              data-id="activity.asset.id"
              data-referring-tool="pageContext.tool"
-             data-referring-id="pageContext.id">Read more &raquo;</a>
+             data-referring-id="pageContext.id"
+             data-ng-if="pageContext.tool === 'dashboard'">Read more &raquo;</a>
         </span>
       </span>
     </p>
 
     <p class="event-details-timestamp">
-      <a tool-href
-         data-tool="dashboard"
-         data-course="pageContext.course"
-         data-id="activity.user.id"
-         data-referring-tool="pageContext.tool"
-         data-referring-id="pageContext.id"
-         data-ng-bind="activity.user.canvas_full_name"></a>
-      on <span data-ng-bind="display.date"></span>
+      <span data-ng-if="pageContext.tool === 'dashboard'">
+        <a tool-href
+           data-tool="dashboard"
+           data-course="pageContext.course"
+           data-id="activity.user.id"
+           data-referring-tool="pageContext.tool"
+           data-referring-id="pageContext.id"
+           data-ng-bind="activity.user.canvas_full_name"></a>
+        on
+      </span>
+      <span data-ng-bind="display.date"></span>
     </p>
   </div>
 </div>

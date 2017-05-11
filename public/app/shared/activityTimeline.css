@@ -30,19 +30,30 @@
 }
 
 .event-details .event-details-avatar {
+  background: #fff;
   border: 1px solid #c2c8d0;
   border-radius: 100%;
-  height: 50px;
-  left: 65px;
   overflow: hidden;
-  position: absolute;
-  top: 65px;
-  width: 50px;
 }
 
 .event-details .event-details-avatar img {
   height: 100%;
   width: 100%;
+}
+
+.event-details .event-details-avatar-large {
+  flex: 0 0 100px;
+  height: 100px;
+  margin-right: 15px;
+  width: 100px;
+}
+
+.event-details .event-details-avatar-small {
+  height: 50px;
+  left: 65px;
+  position: absolute;
+  top: 65px;
+  width: 50px;
 }
 
 .event-details .event-details-comment {
@@ -59,6 +70,11 @@
 .event-details .event-details-description {
   color: #777;
   font-size: 13px;
+}
+
+.event-details .event-details-strong {
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .event-details .event-details-thumbnail {
