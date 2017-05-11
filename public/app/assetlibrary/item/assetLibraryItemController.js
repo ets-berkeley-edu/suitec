@@ -140,11 +140,6 @@
       assetLibraryFactory.getActivitiesForAsset(assetId).success(function(activities) {
         $scope.assetActivity = [
           {
-            'name': 'Created',
-            'data': activities.add_asset,
-            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
-          },
-          {
             'name': 'Viewed',
             'data': activities.view_asset,
             'color': $scope.color.ACTIVITY_TIMELINE_BLUE
@@ -163,13 +158,17 @@
             'name': 'Used in whiteboard',
             'data': activities.whiteboard_add_asset,
             'color': $scope.color.ACTIVITY_TIMELINE_BLUE
-          },
-          {
+          }
+        ];
+
+        // Only whiteboard assets will include a 'remix_whiteboard' key in the activity series.
+        if (activities.remix_whiteboard) {
+          $scope.assetActivity.push({
             'name': 'Remixed',
             'data': activities.remix_whiteboard,
             'color': $scope.color.ACTIVITY_TIMELINE_BLUE
-          }
-        ];
+          });
+        }
       });
     };
 
