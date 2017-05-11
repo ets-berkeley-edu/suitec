@@ -23,7 +23,7 @@
           <div class="form-group" data-ng-class="{'has-error': whiteboardsEditForm.whiteboardsEditMembers.$invalid}">
             <label for="whiteboards-edit-collaborators" class="col-sm-3 control-label">Collaborators</label>
             <div class="col-sm-9">
-              <oi-select name="whiteboardsEditMembers"
+              <oi-select name="whiteboardsEditMembers" class="cleanMode"
                 oi-options="user.id as user.canvas_full_name for user in users track by user.id | orderBy: 'canvas_full_name.toLowerCase()'"
                 oi-select-options="{'searchFilter': 'usersSearch', 'dropdownFilter': 'usersDropdown'}"
                 ng-model="updatedWhiteboard.members" multiple placeholder="Enter the names of the people you want to add to this whiteboard" tabindex="-1" required>

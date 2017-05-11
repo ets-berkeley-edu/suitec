@@ -59,7 +59,6 @@
 
 .profile-summary-banner {
   display: flex;
-  overflow: hidden;
   padding-bottom: 15px;
   vertical-align: middle;
 }
@@ -166,10 +165,4 @@
 .profile-swimlane-filters {
   display: inline-block;
   white-space: nowrap;
-}
-
-/* Override oi.select */
-
-oi-select:not([multiple]) .select-search:after {
-  display: none;
 }

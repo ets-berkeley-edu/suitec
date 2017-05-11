@@ -10,10 +10,13 @@
       <div class="profile-summary-banner">
         <h1 data-ng-bind="user.canvas_full_name"></h1>
         <label for="findUser" class="sr-only">Search for users</label>
-        <oi-select name="findUser" class="profile-summary-search"
+        <oi-select name="findUser" class="profile-summary-search cleanMode"
           autofocus
-          oi-options="user.id as user.canvas_full_name for user in otherUsers track by user.id | orderBy: 'canvas_full_name.toLowerCase()'"
-          oi-select-options="{'dropdownFilter': 'userProfileSearchDropdown'}"
+          oi-options="user.id as user.canvas_full_name for user in otherUsers track by user.id | orderBy: canvas_full_name.toLowerCase()"
+          oi-select-options="{
+            dropdownFilter: 'userProfileSearchDropdown',
+            maxlength: 70
+          }"
           ng-model="nextUserId"
           placeholder="Search for other people"
           tabindex="-1"></oi-select>
@@ -78,12 +81,12 @@
       <div class="profile-activity-timeline-legend-container">
         <div class="profile-activity-timeline-legend-row">
           <div class="profile-activity-timeline-legend-label">My Actions</div>
-          <div class="profile-activity-timeline-legend-bar" 
+          <div class="profile-activity-timeline-legend-bar"
                data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_BLUE}"></div>
         </div>
         <div class="profile-activity-timeline-legend-row">
           <div class="profile-activity-timeline-legend-label">My Impacts</div>
-          <div class="profile-activity-timeline-legend-bar" 
+          <div class="profile-activity-timeline-legend-bar"
                data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_RED}"></div>
         </div>
       </div>
