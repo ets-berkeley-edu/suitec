@@ -401,7 +401,22 @@
       return message;
     };
 
+    /**
+     * As an example, if sortBy='likes' then exclude assets with zero likes.
+     * Put reserved searchOption key/value, as recognized by Assets API, if appropriate.
+     *
+     * @param  {String}     searchOptions        Type of sort selected in search/swimlane
+     * @return {void}
+     */
+    var addAssetInclusionFilter = function(searchOptions) {
+      if (searchOptions && searchOptions.sort && searchOptions.sort !== 'recent') {
+        searchOptions['has' + _.startCase(searchOptions.sort)] = true;
+      }
+    };
+
     return {
+      'addAssetInclusionFilter': addAssetInclusionFilter,
+      'appendOrdinalSuffix': appendOrdinalSuffix,
       'buildSearchResultsMessage': buildSearchResultsMessage,
       'getApiUrl': getApiUrl,
       'getColorConstants': getColorConstants,
@@ -409,7 +424,6 @@
       'getParentUrlData': getParentUrlData,
       'getScrollInformation': getScrollInformation,
       'getToolUrl': getToolUrl,
-      'appendOrdinalSuffix': appendOrdinalSuffix,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
       'scrollToTop': scrollToTop,

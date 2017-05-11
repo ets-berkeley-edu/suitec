@@ -65,11 +65,18 @@
      * @param  {Number}               [searchOptions.user]            The id of the user who created the assets
      * @param  {String}               [searchOptions.section]         The name of section (i.e., subset of users) to filter assets by
      * @param  {String}               [searchOptions.type]            The type of assets
+     * @param  {Boolean}              [filters.hasComments]           If true then exclude zero comment_count; if false then zero comment_count only; if null do nothing
+     * @param  {Boolean}              [filters.hasImpact]             If true then exclude zero impact; if false then zero impact only; if null do nothing
+     * @param  {Boolean}              [filters.hasLikes]              If true then exclude zero likes; if false then zero likes only; if null do nothing
+     * @param  {Boolean}              [filters.hasViews]              If true then exclude zero views; if false then zero views only; if null do nothing
      * @return {Promise<Object>}                                      $http promise returning the total number of assets for the current course and the assets in the current page
      */
     var getAssets = function(page, searchOptions) {
       page = page || 0;
       searchOptions = searchOptions || {};
+
+      // Additional filter per sort criteria
+      utilService.addAssetInclusionFilter(searchOptions);
 
       var url = '/assets';
       url += '?offset=' + (page * 10);
@@ -90,6 +97,18 @@
       }
       if (searchOptions.sort) {
         url += '&sort=' + searchOptions.sort;
+      }
+      if (searchOptions.hasComments !== undefined) {
+        url += '&hasComments=' + searchOptions.hasComments;
+      }
+      if (searchOptions.hasImpact !== undefined) {
+        url += '&hasImpact=' + searchOptions.hasImpact;
+      }
+      if (searchOptions.hasLikes !== undefined) {
+        url += '&hasLikes=' + searchOptions.hasLikes;
+      }
+      if (searchOptions.hasViews !== undefined) {
+        url += '&hasViews=' + searchOptions.hasViews;
       }
       if (searchOptions.limit) {
         url += '&limit=' + searchOptions.limit;
