@@ -80,12 +80,12 @@
     <div class="col-flex">
       <div class="profile-activity-timeline-legend-container">
         <div class="profile-activity-timeline-legend-row">
-          <div class="profile-activity-timeline-legend-label">My Actions</div>
+          <div class="profile-activity-timeline-legend-label">{{isMyProfile ? 'My Actions' : 'Actions'}}</div>
           <div class="profile-activity-timeline-legend-bar"
                data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_BLUE}"></div>
         </div>
         <div class="profile-activity-timeline-legend-row">
-          <div class="profile-activity-timeline-legend-label">My Impacts</div>
+          <div class="profile-activity-timeline-legend-label">{{isMyProfile ? 'My Impacts' : 'Impacts'}}</div>
           <div class="profile-activity-timeline-legend-bar"
                data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_RED}"></div>
         </div>
@@ -98,9 +98,9 @@
     </div>
   </div>
 
-  <div class="profile-assets-container" data-ng-if="isMyProfile || user.assets.items.length">
+  <div class="profile-assets-container">
     <h3>
-      <span data-ng-if="!user.assets.items.length">My Assets</span>
+      <span data-ng-if="!user.assets.items.length">{{isMyProfile ? 'My Assets' : 'Assets'}}</span>
 
       <div class="profile-swimlane-filters" data-ng-if="user.assets.items.length">
         <span data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
