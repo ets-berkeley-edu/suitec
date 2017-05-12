@@ -28,7 +28,7 @@
 var argv = require('yargs')
     .usage('Usage: $0 --course [course]')
     .demand(['course'])
-    .describe('course', 'The SuiteC id of the course for which to recalculate impact scores')
+    .describe('course', 'The SuiteC id of the course for which to recalculate impact scores; or \'all\' to recalculate all scores.')
     .argv;
 
 var ActivitiesAPI = require('col-activities');
@@ -36,34 +36,55 @@ var CourseAPI = require('col-course');
 var DB = require('col-core/lib/db');
 var log = require('col-core/lib/logger')('scripts/recalculate_impact');
 
-var init = function() {
+var recalculate = function(callback) {
   // Apply global utilities
   require('col-core/lib/globals');
 
   // Connect to the database
   DB.init(function(err) {
     if (err) {
-      return log.error({'err': err}, 'Unable to set up a connection to the database');
+      log.error('Unable to set up a connection to the database');
+      return callback(err);
     }
 
-    log.info('Connected to the database');
-
-    // Get the course from the database
-    CourseAPI.getCourse(argv.course, function(err, course) {
-      if (err) {
-        return log.error({'courseId': argv.course}, 'Could not retrieve course for provided id');
-      }
-
-      // Recalculate impact scores
-      ActivitiesAPI.recalculateImpactScores(course, function(err) {
+    if (argv.course === 'all') {
+      // Recalculate impact scores for all courses
+      ActivitiesAPI.recalculateImpactScores(null, function(err) {
         if (err) {
-          return log.error({'courseId': argv.course}, 'Could not recalculate impact scores for course');
+          log.error('Could not recalculate impact scores for all courses');
+          return callback(err);
         }
 
-        log.info('Recalculation complete.');            
+        return callback();
       });
-    });
+    } else {
+      // Get the course from the database
+      CourseAPI.getCourse(argv.course, function(err, course) {
+        if (err) {
+          log.error({'courseId': argv.course}, 'Could not retrieve course for provided id');
+          return callback(err);
+        }
+
+        // Recalculate impact scores
+        ActivitiesAPI.recalculateImpactScores(course, function(err) {
+          if (err) {
+            log.error({'courseId': argv.course}, 'Could not recalculate impact scores for course');
+            return callback(err);
+          }
+
+          return callback();
+        });
+      });
+    }
   });
 };
 
-init();
+recalculate(function(err) {
+  if (err) {
+    log.error({'err': err}, 'Recalculation failed.');
+  } else {
+    log.info('Recalculation complete.');
+  }
+
+  DB.getSequelize().close();
+});
