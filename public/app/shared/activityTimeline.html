@@ -1,5 +1,22 @@
-<div class="profile-timeline" ng-attr-id="{{timelineId}}"></div>
-<div class="profile-activity-timeline-footer" data-ng-style="{'padding-left': (10 + labelsWidth + 'px')}">
-  <input type="button" value="+" data-ng-click="zoom(2)"></input>
-  <input type="button" value="-" data-ng-click="zoom(0.5)"></input>
+<div class="profile-timeline" data-ng-attr-id="{{timelineId}}"></div>
+<div class="profile-activity-timeline-footer" data-ng-style="{'margin-left': (10 + labelsWidth + 'px')}">
+  <div>
+    <button type="button" data-ng-click="zoomRelative(2)">+</button>
+    <button type="button" data-ng-click="zoomRelative(0.5)">-</button>
+  </div>
+  <div>
+    <strong>View by:</strong>
+    <button type="button" class="btn btn-link"
+            data-ng-class="{'btn-link-disabled': currentZoomPreset === 'week'}"
+            data-ng-disabled="currentZoomPreset === 'week'"
+            data-ng-click="zoomPreset('week')">Week</button> |
+    <button type="button" class="btn btn-link"
+            data-ng-class="{'btn-link-disabled': currentZoomPreset === 'month'}"
+            data-ng-disabled="currentZoomPreset === 'month'"
+            data-ng-click="zoomPreset('month')">Month</button> |
+    <button type="button" class="btn btn-link"
+            data-ng-class="{'btn-link-disabled': currentZoomPreset === 'all'}"
+            data-ng-disabled="currentZoomPreset === 'all'"
+            data-ng-click="zoomPreset('all')">All</button>
+  </div>
 </div>

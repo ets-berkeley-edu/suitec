@@ -93,3 +93,12 @@
   font-size: 15px;
   margin-bottom: 10px;
 }
+
+.profile-activity-timeline .btn-link {
+  padding: 0;
+}
+
+.profile-activity-timeline .btn-link-disabled {
+  color: #777;
+  cursor: default;
+}
