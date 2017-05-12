@@ -46,8 +46,12 @@
       },
       'templateUrl': '/app/shared/activityTimeline.html',
       'link': function(scope, elem, attrs) {
-        var start = Date.now();
+        var MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+
+        // Default to showing at least one day of activity, even if no events go back that far.
+        var start = Date.now() - MILLISECONDS_PER_DAY;
         var end = Date.now();
+
         _.forEach(scope.activityTimeline, function(eventSeries) {
           eventSeries.data = eventSeries.data || [];
           if (eventSeries.data.length) {
@@ -55,6 +59,8 @@
             start = _.min([start, firstEventDate]);
           }
         });
+
+        var totalDays = parseFloat(end - start) / MILLISECONDS_PER_DAY;
 
         // Determine precision of x-axis tick values and format appropriately.
         var tickFormat = function(date) {
@@ -78,7 +84,6 @@
         };
 
         var ARROW_OFFSET = 25;
-        var TOOLTIP_WIDTH = 480;
 
         var FRIENDLY_DESCRIPTIONS = {
           'add_asset': 'Added Asset to Library',
@@ -147,9 +152,12 @@
           // The location of the arrow element depends on which side of the chart we're on.
           var pageX = d3.event.pageX;
           var pageY = d3.event.pageY;
-          var direction = pageX > TOOLTIP_WIDTH ? 'right' : 'left';
+
+          var eventDetailsWidth = eventDetails.node().getBoundingClientRect().width;
+          var direction = pageX > eventDetailsWidth ? 'right' : 'left';
+
           var left = direction === 'right' ?
-            pageX - TOOLTIP_WIDTH + ARROW_OFFSET :
+            pageX - eventDetailsWidth + ARROW_OFFSET :
             pageX - ARROW_OFFSET;
 
           eventDetails
@@ -202,19 +210,61 @@
           element.datum(scope.activityTimeline);
           element.call(eventDropsChart);
 
+          var timelineWidth = element.node().getBoundingClientRect().width;
+
           element.selectAll('.label').classed('profile-activity-timeline-label', true);
 
           var nodes = element.nodes();
           var zoom = nodes[0].zoom;
           // Disable zoom events triggered by the mouse wheel.
           zoom.filter(function() { return !event.button && event.type !== 'wheel'; });
+
           // Make programmatic zoom events available to the scope.
-          scope.zoom = function(scale) {
-            element.select('.event-drops-chart')
-              .transition()
-              .duration(300)
-              .call(zoom.scaleBy, scale);
+          var zoomTransition = function() {
+            return element.select('.event-drops-chart').transition().duration(300);
           };
+
+          scope.zoomRelative = function(scale) {
+            zoomTransition().call(zoom.scaleBy, scale);
+          };
+
+          var zoomDays = function(days) {
+            var scaleFactor = totalDays / days;
+            var translateX = (1 - scaleFactor) * timelineWidth;
+            var transform = d3.zoomIdentity.translate(translateX, 0).scale(scaleFactor);
+            zoomTransition().call(zoom.transform, transform);
+          };
+
+          var isZoomingToPreset = false;
+
+          scope.zoomPreset = function(preset) {
+            isZoomingToPreset = true;
+            switch (preset) {
+              case 'week':
+                zoomDays(7);
+                break;
+              case 'month':
+                zoomDays(30);
+                break;
+              case 'all':
+                zoomTransition().call(zoom.transform, d3.zoomIdentity);
+                break;
+              default:
+            }
+            // Disable whichever zoom preset button was just clicked.
+            scope.currentZoomPreset = preset;
+          };
+
+          // All zoom presets should be re-enabled on the next user zoom.
+          zoom.on('end', function() {
+            if (!isZoomingToPreset) {
+              scope.currentZoomPreset = null;
+            } else {
+              isZoomingToPreset = false;
+            }
+          });
+
+          scope.zoomPreset('all');
         };
 
         // Do not start drawing the timeline until timelineId has been interpolated in markup. This will ensure that
