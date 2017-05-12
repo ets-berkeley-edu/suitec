@@ -45,6 +45,8 @@
         filterLabels: {
           recent: 'Recent',
           impact: 'Most Impactful'
+          // TODO:
+          // pinned: 'Pinned'
         }
       }
     };
@@ -57,9 +59,9 @@
         sortBy: 'recent',
         filterLabels: {
           recent: 'Trending',
-          comments: 'Most Discussed',
-          likes: 'Most Liked'
-          // TODO: Pinning is not (yet) supported.
+          impact: 'Most Impactful'
+          // TODO:
+          // trendingHashtag: 'Trending Hashtag'
           // pinned: 'Pinned'
         }
       }
