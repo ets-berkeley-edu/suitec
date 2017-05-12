@@ -37,18 +37,31 @@
     $scope.me = me;
 
     $scope.user = {
+      assetsTotalCount: null,
       assets: {
         items: null,
         isLoading: true,
-        sortBy: 'recent'
+        sortBy: 'recent',
+        filterLabels: {
+          recent: 'Recent',
+          impact: 'Most Impactful'
+        }
       }
     };
 
     $scope.community = {
+      assetsTotalCount: null,
       assets: {
         items: null,
         isLoading: true,
-        sortBy: 'recent'
+        sortBy: 'recent',
+        filterLabels: {
+          recent: 'Trending',
+          comments: 'Most Discussed',
+          likes: 'Most Liked'
+          // TODO: Pinning is not (yet) supported.
+          // pinned: 'Pinned'
+        }
       }
     };
 
@@ -118,6 +131,10 @@
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
         $scope.user.assets.items = assets.results;
       }).then(function() {
+        if (sortType === 'recent') {
+          // We need this count available when `assets.items.length` varies per swimlane filters.
+          $scope.user.assetsTotalCount = $scope.user.assets.items.length;
+        }
         $scope.user.assets.sortBy = sortType;
         $scope.user.assets.isLoading = false;
       });
@@ -140,6 +157,10 @@
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
         $scope.community.assets.items = assets.results;
       }).then(function() {
+        if (sortType === 'recent') {
+          // We need this count available when `assets.items.length` varies per swimlane filters.
+          $scope.community.assetsTotalCount = $scope.community.assets.items.length;
+        }
         $scope.community.assets.sortBy = sortType;
         $scope.community.assets.isLoading = false;
       });
