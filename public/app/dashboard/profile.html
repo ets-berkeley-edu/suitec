@@ -100,26 +100,28 @@
 
   <div class="profile-assets-container">
     <h3>
-      <span data-ng-if="!user.assets.items.length">{{isMyProfile ? 'My Assets' : 'Assets'}}</span>
+      <span data-ng-if="!user.assetsTotalCount">{{isMyProfile ? 'My Assets' : 'Assets'}}</span>
 
-      <div class="profile-swimlane-filters" data-ng-if="user.assets.items.length">
+      <div class="profile-swimlane-filters" data-ng-if="user.assetsTotalCount">
         <span data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
 
-        <a href data-ng-click="sortUserAssets('recent')" data-ng-if="user.assets.sortBy !== 'recent'">Recent</a>
-        <span data-ng-if="user.assets.sortBy === 'recent'">Recent</span>
-        |
-        <a href data-ng-click="sortUserAssets('impact')" data-ng-if="user.assets.sortBy !== 'impact'">Most Impactful</a>
-        <span data-ng-if="user.assets.sortBy === 'impact'">Most Impactful</span>
+        <span data-ng-repeat="(filter, label) in user.assets.filterLabels">
+          <a href data-ng-click="sortUserAssets(filter)" data-ng-if="user.assets.sortBy !== filter"><span data-ng-bind="label"></span></a>
+          <span data-ng-if="user.assets.sortBy === filter" data-ng-bind="label"></span>
+          <span data-ng-if="!$last">|</span>
+        </span>
       </div>
     </h3>
 
     <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!user.assets.items.length && !user.loading">
+      <div class="alert alert-info assetlibrary-list-noresults"
+        data-ng-if="!user.assets.isLoading && (!user.assetsTotalCount || !user.assets.items.length)">
+
         No matching assets were found.
       </div>
       <ul>
         <!-- UPLOAD / ADD LINK -->
-        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !user.assets.items.length">
+        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !user.assetsTotalCount">
           <div class="col-list-item-container col-list-add-tile">
             <div class="col-list-item-tile">
               <div class="assetlibrary-list-item-add-container">
@@ -193,30 +195,23 @@
 
   <div class="profile-assets-container" data-ng-if="me.id === user.id">
     <h3>
-      <span data-ng-if="!community.assets.items.length">Everyone's Assets</span>
+      <span data-ng-if="!community.assetsTotalCount">Everyone's Assets</span>
 
-      <div class="profile-swimlane-filters" data-ng-if="community.assets.items.length">
+      <div class="profile-swimlane-filters" data-ng-if="community.assetsTotalCount">
         Everyone's Assets:
 
-        <a href data-ng-click="sortCommunityAssets('recent')" data-ng-if="community.assets.sortBy !== 'recent'">Trending</a>
-        <span data-ng-if="community.assets.sortBy === 'recent'">Trending</span>
-        |
-        <a href data-ng-click="sortCommunityAssets('comments')" data-ng-if="community.assets.sortBy !== 'comments'">Most Discussed</a>
-        <span data-ng-if="community.assets.sortBy === 'comments'">Most Discussed</span>
-        |
-        <a href data-ng-click="sortCommunityAssets('likes')" data-ng-if="community.assets.sortBy !== 'likes'">Most Liked</a>
-        <span data-ng-if="community.assets.sortBy === 'likes'">Most Liked</span>
-        <!--
-        TODO: Pinning is not (yet) supported.
-        |
-        <a href data-ng-click="sortCommunityAssets('pinned')" data-ng-if="community.assets.sortBy !== 'pinned'">Pinned</a>
-        <span data-ng-if="community.assets.sortBy === 'pinned'">Pinned</span>
-        -->
+        <span data-ng-repeat="(filter, label) in community.assets.filterLabels">
+          <a href data-ng-click="sortCommunityAssets(filter)" data-ng-if="community.assets.sortBy !== filter"><span data-ng-bind="label"></span></a>
+          <span data-ng-if="community.assets.sortBy === filter" data-ng-bind="label"></span>
+          <span data-ng-if="!$last">|</span>
+        </span>
       </div>
     </h3>
 
     <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!community.assets.items.length && !community.assets.isLoading">
+      <div class="alert alert-info assetlibrary-list-noresults"
+        data-ng-if="!community.assets.isLoading && (!community.assetsTotalCount || !community.assets.items.length)">
+
         No matching assets were found.
       </div>
       <ul>
