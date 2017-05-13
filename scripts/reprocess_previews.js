@@ -43,6 +43,7 @@ var log = require('col-core/lib/logger')('scripts/reprocess_previews');
 
 /**
  * Connect to the Collabosphere database
+ * @return {void}
  */
 var init = function() {
   // Apply global utilities
@@ -67,6 +68,7 @@ var init = function() {
 
 /**
  * Get the assets that need to be reprocessed
+ * @return {void}
  */
 var getAssets = function() {
   var options = {};
@@ -79,9 +81,9 @@ var getAssets = function() {
     };
   }
 
-  DB.Asset.findAll(options).complete(function(err, assets) {
-    if (err) {
-      return log.error({'err': err}, 'Failed to get the available assets');
+  DB.Asset.findAll(options).complete(function(dbErr, assets) {
+    if (dbErr) {
+      return log.error({'err': dbErr}, 'Failed to get the available assets');
     }
 
     log.info('Starting preview reprocessing for ' + assets.length + ' assets');

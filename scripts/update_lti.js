@@ -56,13 +56,14 @@ var courseCount = null;
 
 /**
  * Connect to the database and kick off.
+ * @return {void}
  */
 var init = function() {
   require('col-core/lib/globals');
 
-  DB.init(function(err) {
-    if (err) {
-      return log.error({'err': err}, 'Unable to establish a database connection');
+  DB.init(function(dbErr) {
+    if (dbErr) {
+      return log.error({'err': dbErr}, 'Unable to establish a database connection');
     }
 
     log.info('Connected to the database');
@@ -78,10 +79,10 @@ var init = function() {
       async.eachOfSeries(courses, updateToolsForCourse, function() {
         log.info('Finished. ' + results.success.length + ' tools were successfully updated.');
         if (results.notfound.length) {
-          log.info({'Not found': results.notfound}, + results.notfound.length + ' tools were not found.');
+          log.info({'Not found': results.notfound}, results.notfound.length + ' tools were not found.');
         }
         if (results.error.length) {
-          log.info({'Errors': results.error}, + results.error.length + ' tools had errors.');
+          log.info({'Errors': results.error}, results.error.length + ' tools had errors.');
         }
 
         DB.getSequelize().close();
@@ -96,6 +97,7 @@ var init = function() {
  * @param  {Course}           course              The course to update
  * @param  {Number}           index               Index in the list of courses, used to show progress
  * @param  {Function}         callback            Standard callback function
+ * @return {Object}                               Return per callback
  */
 var updateToolsForCourse = function(course, index, callback) {
   log.info({'course': course.id}, 'Updating course ' + (index + 1) + ' of ' + courseCount);
@@ -106,14 +108,14 @@ var updateToolsForCourse = function(course, index, callback) {
     return callback();
   }
 
-  CanvasAPI.getExternalToolsForCourse(course, function(err, courseTools) {
-    if (err) {
-      log.error({'err': err, 'course': course.id}, 'Failed to get external tool configurations for course');
+  CanvasAPI.getExternalToolsForCourse(course, function(apiErr, courseTools) {
+    if (apiErr) {
+      log.error({'err': apiErr, 'course': course.id}, 'Failed to get external tool configurations for course');
       results.error = results.error.concat(toolsToUpdate);
       return callback();
     }
 
-    async.eachOfSeries(toolsToUpdate, function(tool, index, done) {
+    async.eachOfSeries(toolsToUpdate, function(tool, toolIndex, done) {
       // If the tool doesn't show under the course, it may be configured under a higher-level account. Move on to
       // the next tool.
       if (!_.find(courseTools, {'id': tool.id})) {
@@ -121,17 +123,17 @@ var updateToolsForCourse = function(course, index, callback) {
       }
 
       // If we've found the tool configuration, attempt to update.
-      CanvasAPI.updateExternalToolForCourse(course, tool.id, tool.name, argv.suitec, function(err, data) {
-        if (err) {
-          log.error({'err': err, 'course': course.id, 'tool': tool}, 'Failed to update tool');
+      CanvasAPI.updateExternalToolForCourse(course, tool.id, tool.name, argv.suitec, function(updateErr, data) {
+        if (updateErr) {
+          log.error({'err': updateErr, 'course': course.id, 'tool': tool}, 'Failed to update tool');
           results.error.push(tool);
         } else {
           log.info({'tool': tool, 'course': course.id}, 'Updated tool at the course level');
           results.success.push(tool);
         }
 
-        // Whether we've succeeded or errored, we shouldn't try this tool again. Null out the array at this index.
-        toolsToUpdate[index] = null;
+        // Whether we've succeeded or errored, we shouldn't try this tool again. Null out the array at this toolIndex.
+        toolsToUpdate[toolIndex] = null;
         return done();
       });
 
@@ -166,18 +168,19 @@ var updateToolsForCourse = function(course, index, callback) {
  *
  * @param  {Canvas}           canvas              The Canvas object to update
  * @param  {Number}           accountId           The id of the account to update
- * @param  {Object[]}         toolsToUpdate       Tools to be updated 
+ * @param  {Object[]}         toolsToUpdate       Tools to be updated
  * @param  {Function}         callback            Standard callback function
+ * @return {Object}                               Return per callback
  */
 var updateToolsForAccount = function(canvas, accountId, toolsToUpdate, callback) {
-  CanvasAPI.getExternalToolsForAccount(canvas, accountId, function(err, accountTools) {
-    if (err) {
-      log.error({'err': err, 'accountId': accountId}, 'Failed to get external tool configurations');
+  CanvasAPI.getExternalToolsForAccount(canvas, accountId, function(apiErr, accountTools) {
+    if (apiErr) {
+      log.error({'err': apiErr, 'accountId': accountId}, 'Failed to get external tool configurations');
       results.error = results.error.concat(toolsToUpdate);
       return callback();
     }
 
-    async.eachOfSeries(toolsToUpdate, function(tool, index, done) {
+    async.eachOfSeries(toolsToUpdate, function(tool, toolIndex, done) {
       // If the tool doesn't show under this account, it may be configured under a higher-level account. Move on to
       // the next tool.
       if (!_.find(accountTools, {'id': tool.id})) {
@@ -194,8 +197,8 @@ var updateToolsForAccount = function(canvas, accountId, toolsToUpdate, callback)
           results.success.push(tool);
         }
 
-        // Whether we've succeeded or errored, we shouldn't try this tool again. Null out the array at this index.
-        toolsToUpdate[index] = null;
+        // Whether we've succeeded or errored, we shouldn't try this tool again. Null out the array at this toolIndex.
+        toolsToUpdate[toolIndex] = null;
         return done();
       });
 
@@ -236,10 +239,10 @@ var getTools = function(course) {
   _.each(['assetlibrary', 'dashboard', 'engagementindex', 'whiteboards'], function(toolName) {
 
     // Attempt to parse out Canvas tool ids from the URL values in the database.
-    var toolUrl;
+    var toolUrl = course[toolName + '_url'];
     var toolMatch;
     var toolId;
-    if (toolUrl = course[toolName + '_url']) { 
+    if (toolUrl) {
       if ((toolMatch = toolUrl.match(CollabosphereConstants.TOOL_URL_FORMAT)) && (toolId = Number(toolMatch[1]))) {
         var toolProperties = {
           'id': toolId,

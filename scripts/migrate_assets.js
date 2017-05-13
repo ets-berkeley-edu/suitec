@@ -43,23 +43,24 @@ var UserAPI = require('col-users');
 
 /**
  * Connect to the Collabosphere database and kick off asset migration
+ * @return {void}
  */
 var init = function() {
   // Apply global utilities
   require('col-core/lib/globals');
 
   // Connect to the database
-  DB.init(function(err) {
-    if (err) {
-      return log.error({'err': err}, 'Unable to set up a connection to the database');
+  DB.init(function(dbErr) {
+    if (dbErr) {
+      return log.error({'err': dbErr}, 'Unable to set up a connection to the database');
     }
 
     log.info('Connected to the database');
 
     // Create the context for interaction with the API
-    createSourceContext(argv.fromuser, function(err, fromCtx) {
-      if (err) {
-        return log.error({'err': err}, 'Could not create context for source user');
+    createSourceContext(argv.fromuser, function(ctxErr, fromCtx) {
+      if (ctxErr) {
+        return log.error({'err': ctxErr}, 'Could not create context for source user');
       }
 
       var opts = {
@@ -67,11 +68,11 @@ var init = function() {
         'destinationUserId': argv.touser,
         // When running shell script, user accounts are not required to match or be admins.
         'validateUserAccounts': false
-      }
+      };
 
-      MigrateAssetsAPI.getMigrationContexts(fromCtx, opts, function(err, toCtx, adminCtx) {
-        if (err) {
-          return log.error({'err': err}, 'Migration failed');
+      MigrateAssetsAPI.getMigrationContexts(fromCtx, opts, function(initErr, toCtx, adminCtx) {
+        if (initErr) {
+          return log.error({'err': initErr}, 'Migration failed in creation of target context');
         }
 
         MigrateAssetsAPI.migrate(fromCtx, toCtx, adminCtx, opts, function(err, results) {
@@ -79,7 +80,7 @@ var init = function() {
             return log.error({'err': err}, 'Migration failed');
           }
 
-          log.info('Migration succeeded.');            
+          log.info('Migration succeeded.');
         });
       });
     });
@@ -93,6 +94,7 @@ var init = function() {
  * @param  {Function}         callback            Standard callback function
  * @param  {Context}          callback.err        Error if any
  * @param  {Context}          callback.fromCtx    Context for source user
+ * @return {Object}                               Processed context
  */
 var createSourceContext = function(userId, callback) {
   UserAPI.getUser(userId, function(err, userObj) {

@@ -34,6 +34,7 @@ console.log('Loading Collabosphere environment...');
  * Load Collabosphere environment and start an instance of Node's REPL (read-eval-print loop),
  * an interactive interpreter that evaluates input line by line and displays evaluation results.
  * @see https://nodejs.org/api/repl.html
+ * @return {void}
  */
 var init = function() {
   // Apply global utilities

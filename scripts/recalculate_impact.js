@@ -27,7 +27,7 @@
 
 var argv = require('yargs')
     .usage('Usage: $0 --course [course]')
-    .demand(['course'])
+    .demand([ 'course' ])
     .describe('course', 'The SuiteC id of the course for which to recalculate impact scores; or \'all\' to recalculate all scores.')
     .argv;
 
@@ -41,10 +41,10 @@ var recalculate = function(callback) {
   require('col-core/lib/globals');
 
   // Connect to the database
-  DB.init(function(err) {
-    if (err) {
+  DB.init(function(dbErr) {
+    if (dbErr) {
       log.error('Unable to set up a connection to the database');
-      return callback(err);
+      return callback(dbErr);
     }
 
     if (argv.course === 'all') {
@@ -59,10 +59,10 @@ var recalculate = function(callback) {
       });
     } else {
       // Get the course from the database
-      CourseAPI.getCourse(argv.course, function(err, course) {
-        if (err) {
+      CourseAPI.getCourse(argv.course, function(courseErr, course) {
+        if (courseErr) {
           log.error({'courseId': argv.course}, 'Could not retrieve course for provided id');
-          return callback(err);
+          return callback(courseErr);
         }
 
         // Recalculate impact scores

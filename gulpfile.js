@@ -264,7 +264,31 @@ gulp.task('bowerPostInstall', function() {
  */
 gulp.task('eslint', function() {
   return gulp
-    .src(['app.js', 'gulpfile.js', 'apache/**/*.js', 'node_modules/col-*/**/*.js', 'public/**/*.js', '!public/lib/**/*.js', '!public/viewer/**/*.js'])
+    .src([
+      'apache/**/*.js',
+      'app.js',
+      'config/**/*.js',
+      'gulpfile.js',
+      // 'node_modules/col-activities/**/*.js',
+      'node_modules/col-analytics/**/*.js',
+      // 'node_modules/col-assets/**/*.js',
+      // 'node_modules/col-canvas/**/*.js',
+      // 'node_modules/col-categories/**/*.js',
+      'node_modules/col-config/**/*.js',
+      // 'node_modules/col-core/**/*.js',
+      // 'node_modules/col-course/**/*.js',
+      // 'node_modules/col-lti/**/*.js',
+      // 'node_modules/col-rest/**/*.js',
+      'node_modules/col-tests/**/*.js',
+      // 'node_modules/col-users/**/*.js',
+      // 'node_modules/col-whiteboards/**/*.js',
+      'public/**/*.js',
+      'scripts/**/*.js',
+      '!public/lib/**/*.js',
+      '!public/viewer/**/*.js',
+      '!scripts/2016**/*.js',
+      '!scripts/201701**/*.js'
+    ])
     .pipe(eslint())
     // Output results to console. Alternatively, use eslint.formatEach().
     .pipe(eslint.format())
