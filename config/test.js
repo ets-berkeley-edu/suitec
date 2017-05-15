@@ -24,27 +24,27 @@
  */
 
 module.exports = {
-  "analytics": {
-    "enabled": false
+  'analytics': {
+    'enabled': false
   },
-  "db": {
-    "database": "collabospheretest",
-    "dropOnStartup": true
+  'db': {
+    'database': 'collabospheretest',
+    'dropOnStartup': true
   },
-  "log": {
-    "level": "error",
-    "stream": "logs/test.log"
+  'log': {
+    'level': 'error',
+    'stream': 'logs/test.log'
   },
-  "canvasPoller": {
-    "enabled": false
+  'canvasPoller': {
+    'enabled': false
   },
-  "previews": {
-    "enabled": false
+  'previews': {
+    'enabled': false
   },
-  "email": {
-    "enabled": false,
+  'email': {
+    'enabled': false,
     // We set these values two hours in the future so that the integration tests will pick up just-created activities.
-    "dailyHour": ((new Date().getHours() + 2) % 34),
-    "weeklyHour": ((new Date().getHours() + 2) % 34)
+    'dailyHour': ((new Date().getHours() + 2) % 34),
+    'weeklyHour': ((new Date().getHours() + 2) % 34)
   }
-}
+};

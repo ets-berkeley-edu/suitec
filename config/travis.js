@@ -24,30 +24,30 @@
  */
 
 module.exports = {
-  "analytics": {
-    "enabled": false
+  'analytics': {
+    'enabled': false
   },
-  "db": {
-    "database": "collabospheretravis",
-    "username": "postgres",
-    "version": "9.4.1",
-    "password": "",
-    "dropOnStartup": true
+  'db': {
+    'database': 'collabospheretravis',
+    'username': 'postgres',
+    'version': '9.4.1',
+    'password': '',
+    'dropOnStartup': true
   },
-  "log": {
-    "level": "trace",
-    "stream": "logs/test.log"
+  'log': {
+    'level': 'trace',
+    'stream': 'logs/test.log'
   },
-  "canvasPoller": {
-    "enabled": false
+  'canvasPoller': {
+    'enabled': false
   },
-  "previews": {
-    "enabled": false
+  'previews': {
+    'enabled': false
   },
-  "email": {
-    "enabled": false,
+  'email': {
+    'enabled': false,
     // We set these values two hours in the future so that the integration tests will pick up just-created activities.
-    "dailyHour": ((new Date().getHours() + 2) % 34),
-    "weeklyHour": ((new Date().getHours() + 2) % 34)
+    'dailyHour': ((new Date().getHours() + 2) % 34),
+    'weeklyHour': ((new Date().getHours() + 2) % 34)
   }
-}
+};
