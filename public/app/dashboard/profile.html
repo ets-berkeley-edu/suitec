@@ -33,17 +33,6 @@
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua.
       </div>
-      <div>
-        <span data-ng-repeat="hashtag in user.hashtags">
-          <a tool-href
-            data-tool="assetlibrary"
-            data-referring-tool="dashboard"
-            data-id="hashtag"
-            data-referring-id="user.id"
-            data-course="me.course"
-            data-ng-bind="hashtag"></a>
-        </span>
-      </div>
     </div>
     <div class="profile-summary-column-with-border" data-ng-if="showEngagementIndexBox">
       <div class="profile-summary-column-square">
@@ -100,9 +89,9 @@
 
   <div class="profile-assets-container">
     <h3>
-      <span data-ng-if="!user.assetsTotalCount">{{isMyProfile ? 'My Assets' : 'Assets'}}</span>
+      <span data-ng-if="!user.totalAssetsInCourse">{{isMyProfile ? 'My Assets' : 'Assets'}}</span>
 
-      <div class="profile-swimlane-filters" data-ng-if="user.assetsTotalCount">
+      <div class="profile-swimlane-filters" data-ng-if="user.totalAssetsInCourse">
         <span data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
 
         <span data-ng-repeat="(filter, label) in user.assets.filterLabels">
@@ -111,17 +100,26 @@
           <span data-ng-if="!$last">|</span>
         </span>
       </div>
+      <span data-ng-if="user.assets.total > maxPerSwimlane">({{maxPerSwimlane}} of
+        <a tool-href
+          data-tool="assetlibrary"
+          data-referring-tool="dashboard"
+          data-referring-id="user.id"
+          data-course="me.course"
+          data-id="user.assets.advancedSearchId"
+          data-ng-bind="user.assets.total"></a>)
+      </span>
     </h3>
 
     <div class="col-list-container">
       <div class="alert alert-info assetlibrary-list-noresults"
-        data-ng-if="!user.assets.isLoading && (!user.assetsTotalCount || !user.assets.items.length)">
+        data-ng-if="!user.assets.isLoading && (!user.totalAssetsInCourse || !user.assets.results.length)">
 
         No matching assets were found.
       </div>
       <ul>
         <!-- UPLOAD / ADD LINK -->
-        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !user.assetsTotalCount">
+        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !user.totalAssetsInCourse">
           <div class="col-list-item-container col-list-add-tile">
             <div class="col-list-item-tile">
               <div class="assetlibrary-list-item-add-container">
@@ -164,7 +162,7 @@
           </div>
         </li>
 
-        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in user.assets.items">
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in user.assets.results">
           <a tool-href
             data-tool="assetlibrary"
             data-referring-tool="dashboard"
@@ -195,9 +193,9 @@
 
   <div class="profile-assets-container" data-ng-if="me.id === user.id">
     <h3>
-      <span data-ng-if="!community.assetsTotalCount">Everyone's Assets</span>
+      <span data-ng-if="!community.totalAssetsInCourse">Everyone's Assets</span>
 
-      <div class="profile-swimlane-filters" data-ng-if="community.assetsTotalCount">
+      <div class="profile-swimlane-filters" data-ng-if="community.totalAssetsInCourse">
         Everyone's Assets:
 
         <span data-ng-repeat="(filter, label) in community.assets.filterLabels">
@@ -205,17 +203,26 @@
           <span data-ng-if="community.assets.sortBy === filter" data-ng-bind="label"></span>
           <span data-ng-if="!$last">|</span>
         </span>
+        <span data-ng-if="community.assets.total > maxPerSwimlane">({{maxPerSwimlane}} of
+          <a tool-href
+            data-tool="assetlibrary"
+            data-referring-tool="dashboard"
+            data-referring-id="user.id"
+            data-course="me.course"
+            data-id="community.assets.advancedSearchId"
+            data-ng-bind="community.assets.total"></a>)
+        </span>
       </div>
     </h3>
 
     <div class="col-list-container">
       <div class="alert alert-info assetlibrary-list-noresults"
-        data-ng-if="!community.assets.isLoading && (!community.assetsTotalCount || !community.assets.items.length)">
+        data-ng-if="!community.assets.isLoading && (!community.totalAssetsInCourse || !community.assets.results.length)">
 
         No matching assets were found.
       </div>
       <ul>
-        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in community.assets.items">
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in community.assets.results">
           <a tool-href
             data-tool="assetlibrary"
             data-referring-tool="dashboard"

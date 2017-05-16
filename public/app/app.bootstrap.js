@@ -60,19 +60,17 @@
       return n = n.split('='), this[n[0]] = n[1], this;
     }.bind({}))[0];
 
-    // '_id' targets an asset or user when linking from one SuiteC tool to another.
-    var m = queryArgs.match(/.*[\?&]_id=([0-9a-zA-Z]+).*/);
-    // '_id' might otherwise carry hashtag for search
-    m = m || queryArgs.match(/.*[\?&]_id=(%23\w*[a-zA-Z_\-\.]+\w*)/);
-    parameters.requested_id = (m && m.length > 0) ? decodeURIComponent(m[1]) : null;
+    // '_id' represents an asset, user or view requested via link action.
+    var m = queryArgs.match(/.*[\?&]_id=([%0-9a-zA-Z]+).*/);
+    parameters.requestedId = (m && m.length > 0) ? decodeURIComponent(m[1]) : null;
 
-    // '_referring_tool' (optional) is origin of the href.
+    // '_referring_tool' is the SuiteC tool in which user initiated the action.
     var tool = queryArgs.match(/.*[\?&]_referring_tool=([a-z]+).*/);
-    parameters.referring_tool = (tool && tool.length > 0) ? tool[1] : null;
+    parameters.referringTool = (tool && tool.length > 0) ? tool[1] : null;
 
-    // '_referring_id' (optional) describes state of the referring tool when exited.
+    // '_referring_id' represents the state of the referring tool, at the time of exit.
     var id = queryArgs.match(/.*[\?&]_referring_id=([0-9a-zA-Z]+).*/);
-    parameters.referring_id = (id && id.length > 0) ? id[1] : null;
+    parameters.referringId = (id && id.length > 0) ? id[1] : null;
 
     return parameters;
   };
@@ -101,11 +99,11 @@
       collabosphere.constant('config', results.config.data);
 
       // Bundle info on referring tool
-      if (parameters.referring_tool) {
+      if (parameters.referringTool) {
         collabosphere.constant('referringTool', {
-          name: parameters.referring_tool,
-          referringId: parameters.referring_id,
-          requestedId: parameters.requested_id
+          name: parameters.referringTool,
+          referringId: parameters.referringId,
+          requestedId: parameters.requestedId
         });
       } else {
         collabosphere.constant('referringTool', null);
