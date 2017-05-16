@@ -29,16 +29,40 @@
 
   angular.module('collabosphere').service('assetLibraryService', function(analyticsService, referringTool, utilService, $state) {
 
+    var goAdvancedSearch = function(data) {
+      // Track the asset library search deep link
+      analyticsService.track('Deep link Asset Library search', {
+        'asset_search_keywords': data.keywords,
+        'asset_search_category': data.category,
+        'asset_search_user': data.user,
+        'asset_search_section': data.section,
+        'asset_search_types': data.type,
+        'referer': document.referrer
+      });
+
+      var searchOptions = {
+        'keywords': (data.keywords ? data.keywords : ''),
+        'category': (data.category ? data.category : ''),
+        'user': (data.user ? data.user : ''),
+        'section': (data.section ? data.section : ''),
+        'type': (data.type ? data.type : ''),
+        'sort': (data.sort ? data.sort : '')
+      };
+      $state.go('assetlibrarylist', searchOptions);
+    };
+
     var assetViewRedirect = function(id) {
-      var hashtag = id.match(/^#(.*)/);
-      if (hashtag) {
-        // Search by hashtag from, for example, user profile page.
-        $state.go('assetlibrarylist', {'keywords': hashtag[1]});
+      if (id.match(/^assetlibrary/)) {
+        // The `id` param is an Asset Library state name with
+        // optional search criteria appended after colon
+        var searchOptions = id.split(/:(.*)/)[1];
+        if (searchOptions) {
+          goAdvancedSearch(JSON.parse(searchOptions));
 
-      } else if (id.match(/^assetlibrary/)) {
-        // Pattern match identifies id as a "router state name" (see app.states.js)
-        $state.go(id);
+        } else {
+          $state.go(id);
 
+        }
       } else {
         // Track the asset deep link
         analyticsService.track('Deep link asset', {
@@ -63,26 +87,8 @@
 
         // Check if an asset library search was deep linked
         } else if (data.keywords || data.category || data.user || data.type || data.sort) {
+          goAdvancedSearch(data);
 
-          // Track the asset library search deep link
-          analyticsService.track('Deep link Asset Library search', {
-            'asset_search_keywords': data.keywords,
-            'asset_search_category': data.category,
-            'asset_search_user': data.user,
-            'asset_search_section': data.section,
-            'asset_search_types': data.type,
-            'referer': document.referrer
-          });
-
-          var searchOptions = {
-            'keywords': (data.keywords ? data.keywords : ''),
-            'category': (data.category ? data.category : ''),
-            'user': (data.user ? data.user : ''),
-            'section': (data.section ? data.section : ''),
-            'type': (data.type ? data.type : ''),
-            'sort': (data.sort ? data.sort : '')
-          };
-          $state.go('assetlibrarylist', searchOptions);
         }
       });
     }

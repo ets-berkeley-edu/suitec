@@ -36,12 +36,15 @@
 
     $scope.me = me;
 
+    // If total asset count exceeds the following limit then we'll offer a link to 'Show all'.
+    $scope.maxPerSwimlane = 4;
+
     $scope.user = {
-      assetsTotalCount: null,
+      totalAssetsInCourse: null,
       assets: {
-        items: null,
         isLoading: true,
         sortBy: 'recent',
+        advancedSearchId: null,
         filterLabels: {
           recent: 'Recent',
           impact: 'Most Impactful'
@@ -52,11 +55,11 @@
     };
 
     $scope.community = {
-      assetsTotalCount: null,
+      totalAssetsInCourse: null,
       assets: {
-        items: null,
         isLoading: true,
         sortBy: 'recent',
+        advancedSearchId: null,
         filterLabels: {
           recent: 'Trending',
           impact: 'Most Impactful'
@@ -116,6 +119,16 @@
     };
 
     /**
+     * Get encoded instructions to pre-populate Asset Library's advanced search.
+     *
+     * @param  {Object}         searchOptions             Properties associated with dropdowns of Advanced Search
+     * @return {String}                                   Search options, stringified
+     */
+    var getAdvancedSearchId = function(searchOptions) {
+      return 'assetlibrarylist:' + JSON.stringify(searchOptions);
+    };
+
+    /**
      * Get custom type of asset list (e.g., 'Most Impactful') per user.
      *
      * @param  {String}         sortType              Name of field to sort by
@@ -127,17 +140,23 @@
       var searchOptions = {
         'sort': sortType,
         'user': $scope.user.id,
-        'limit': 4
+        'limit': $scope.maxPerSwimlane
       };
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
-        $scope.user.assets.items = assets.results;
+        angular.extend($scope.user.assets, assets);
+
       }).then(function() {
-        if (sortType === 'recent') {
-          // We need this count available when `assets.items.length` varies per swimlane filters.
-          $scope.user.assetsTotalCount = $scope.user.assets.items.length;
+        var isShowAllFilter = sortType === 'recent';
+        if (isShowAllFilter) {
+          // We need this count available when `assets.results.length` varies per swimlane filters.
+          $scope.user.totalAssetsInCourse = $scope.user.assets.results.length;
         }
         $scope.user.assets.sortBy = sortType;
+        $scope.user.assets.advancedSearchId = getAdvancedSearchId({
+          sort: isShowAllFilter ? '' : sortType,
+          user: $scope.user.id
+        });
         $scope.user.assets.isLoading = false;
       });
     };
@@ -153,17 +172,22 @@
 
       var searchOptions = {
         'sort': sortType,
-        'limit': 4
+        'limit': $scope.maxPerSwimlane
       };
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
-        $scope.community.assets.items = assets.results;
+        angular.extend($scope.community.assets, assets);
+
       }).then(function() {
-        if (sortType === 'recent') {
-          // We need this count available when `assets.items.length` varies per swimlane filters.
-          $scope.community.assetsTotalCount = $scope.community.assets.items.length;
+        var isShowAllFilter = sortType === 'recent';
+        if (isShowAllFilter) {
+          // We need this count available when `assets.results.length` varies per swimlane filters.
+          $scope.community.totalAssetsInCourse = $scope.community.assets.results.length;
         }
         $scope.community.assets.sortBy = sortType;
+        $scope.community.assets.advancedSearchId = getAdvancedSearchId({
+          sort: isShowAllFilter ? '' : sortType
+        });
         $scope.community.assets.isLoading = false;
       });
     };
