@@ -1,3 +1,32 @@
+.activity-timeline {
+  flex: 1;
+  margin-bottom: 75px;
+}
+
+.activity-timeline .btn-link {
+  padding: 0;
+}
+
+.activity-timeline .btn-link-disabled {
+  color: #777;
+  cursor: default;
+}
+
+.activity-timeline-chart {
+  flex: 1;
+}
+
+.activity-timeline-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 70px;
+}
+
+.activity-timeline-label {
+  font-size: 13px;
+  font-weight: 300;
+}
+
 .event-details {
   background: #fff;
   border: 3px solid #e7e7e7;
@@ -92,13 +121,4 @@
 .event-details .event-details-title {
   font-size: 15px;
   margin-bottom: 10px;
-}
-
-.profile-activity-timeline .btn-link {
-  padding: 0;
-}
-
-.profile-activity-timeline .btn-link-disabled {
-  color: #777;
-  cursor: default;
 }
