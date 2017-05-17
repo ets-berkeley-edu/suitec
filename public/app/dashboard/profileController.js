@@ -230,9 +230,8 @@
       $scope.showEngagementIndexBox = me.course.engagementindex_url && ($scope.isMyProfile || me.is_admin || (user.share_points && me.share_points));
       determineRank(user);
 
-      if ($scope.isMyProfile || me.is_admin) {
-        getUserActivity(user.id);
-      }
+      getUserActivity(user.id);
+
       // Featured assets of user (current profile)
       sortUserAssets($scope.user.assets.sortBy);
 
