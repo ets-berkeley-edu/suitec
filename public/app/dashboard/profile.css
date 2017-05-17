@@ -121,6 +121,109 @@
   color: #666666;
 }
 
+.profile-activity-breakdown {
+  display: flex;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.profile-activity-breakdown-container {
+  margin-bottom: 50px;
+}
+
+.profile-activity-breakdown-empty {
+  background-color: #e8e8e8;
+  width: 100%;
+}
+
+.profile-activity-breakdown-header {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profile-activity-breakdown-popover-details {
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.profile-activity-breakdown-popover-divider {
+  color: #999;
+}
+
+.profile-activity-breakdown-popover-outer {
+  padding: 5px;
+}
+
+.profile-activity-breakdown-segment {
+  border: 1px solid #fff;
+  box-sizing: border-box;
+  font-size: 13px;
+  height: 2.2em;
+  line-height: 2em;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* In conjunction with the 'nowrap' inner text element below, this pseudo-element suppresses
+   text in elements too small to fit by bumping it down to a hidden second line. */
+.profile-activity-breakdown-segment::before {
+  content: '';
+  display: inline-block;
+}
+
+.profile-activity-breakdown-segment-text {
+  display: inline-block;
+  margin: 0;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+.profile-activity-breakdown-segment-views {
+  background-color: #135470;
+  color: #fff;
+}
+
+.profile-activity-breakdown-segment-likes {
+  background-color: #1e7095;
+  color: #fff;
+}
+
+.profile-activity-breakdown-segment-comments {
+  background-color: #288ab8;
+  color: #fff;
+}
+
+.profile-activity-breakdown-segment-posts {
+  background-color: #4aa1ce;
+  color: #fff;
+}
+
+.profile-activity-breakdown-segment-replies {
+  background-color: #4aa1ce;
+  color: #fff;
+}
+
+.profile-activity-breakdown-segment-add-assets {
+  background-color: #7ab6da;
+  color: #000;
+}
+
+.profile-activity-breakdown-segment-asset-usage {
+  background-color: #7ab6da;
+  color: #000;
+}
+
+.profile-activity-breakdown-segment-exports {
+  background-color: #a4cbe5;
+  color: #000;
+}
+
+.profile-activity-breakdown-segment-remixes {
+  background-color: #cbdff1;
+  color: #000;
+}
+
 .profile-activity-timeline {
   margin-bottom: 75px;
   width: 570px;
@@ -151,8 +254,10 @@
   display: table-cell;
   font-size: 13px;
   font-weight: 600;
+  padding-right: 10px;
+  text-align: right;
   vertical-align: middle;
-  width: 80px;
+  width: 120px;
 }
 
 .profile-activity-timeline-legend-row {

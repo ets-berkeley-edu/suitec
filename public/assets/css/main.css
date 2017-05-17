@@ -157,6 +157,10 @@ textarea {
   margin: 0 5px;
 }
 
+.popover {
+  outline: 0;
+}
+
 .popover-content {
   padding: 5px;
 }
