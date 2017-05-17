@@ -1,0 +1,63 @@
+<div class="profile-activity-breakdown">
+  <div data-ng-if="segments.length"
+       data-ng-repeat="segment in segments" 
+       class="profile-activity-breakdown-segment"
+       data-ng-class="segment.cssClass"
+       data-ng-style="{'flex': (segment.percentage || 0.2)}"
+       data-content-template="activityBreakdownPopoverTemplate" 
+       data-placement="top"
+       data-trigger="hover"
+       data-container=".profile-activity-breakdown"
+       bs-popover>
+    <div class="profile-activity-breakdown-segment-text" data-ng-bind="segment.displayName"></div>
+   </div>
+   <div data-ng-if="!segments.length" class="profile-activity-breakdown-segment profile-activity-breakdown-empty">
+     <div class="profile-activity-breakdown-segment-text">
+       Currently no <span data-ng-bind="breakdownSelected"></span>.
+     </div>
+   </div>
+</div>
+
+<script type="text/ng-template" id="activityBreakdownPopoverTemplate">
+  <div class="profile-activity-breakdown-popover-outer">
+    <h4 class="profile-activity-breakdown-header">
+    	<span data-ng-bind="segment.displayName"></span>:
+      <span data-ng-pluralize count="segment.count" when="{'one': '1 time', 'other': '{} times'}"></span> 
+    	<span class="profile-activity-breakdown-popover-divider">|</span> 
+    	<span data-ng-bind="segment.percentage"></span>%
+    </h4>
+    <div data-ng-switch="segment.displayName" class="profile-activity-breakdown-popover-details">
+      <div data-ng-switch-when="Views">
+         <span data-ng-if="breakdownSelected === 'contributions'">Viewed asset.</span>
+         <span data-ng-if="breakdownSelected === 'impacts'">Received a view.</span>
+       </div>
+      <div data-ng-switch-when="Likes">
+         <span data-ng-if="breakdownSelected === 'contributions'">Reacted to asset.</span>
+         <span data-ng-if="breakdownSelected === 'impacts'">Received a reaction.</span>
+      </div>
+      <div data-ng-switch-when="Comments">
+        <span data-ng-if="breakdownSelected === 'contributions'">Commented on asset or replied to asset comment.</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Received a comment or reply on a comment.</span>
+       </div>     
+      <div data-ng-switch-when="Posts">
+        <span data-ng-if="breakdownSelected === 'contributions'">Posted to discussion.</span>
+      </div>
+      <div data-ng-switch-when="Replies">
+        <span data-ng-if="breakdownSelected === 'impacts'">Received a reply in discussion thread.</span>
+       </div>
+      <div data-ng-switch-when="Remixes">
+        <span data-ng-if="breakdownSelected === 'contributions'">Remixed whiteboard.</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Whiteboard remixed.</span>
+      </div>
+      <div data-ng-switch-when="Add Assets">
+        <span data-ng-if="breakdownSelected === 'contributions'">Added asset or added asset to whiteboard.</span>
+      </div>
+      <div data-ng-switch-when="Asset Usage">
+        <span data-ng-if="breakdownSelected === 'impacts'">Asset used in a whiteboard.</span>
+      </div>
+      <div data-ng-switch-when="Exports">
+        <span data-ng-if="breakdownSelected === 'contributions'">Exported whiteboard to the Asset Library.</span>
+      </div>
+    </div>
+  </div>
+</script>

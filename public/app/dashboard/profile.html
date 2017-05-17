@@ -69,7 +69,7 @@
     <div class="col-flex">
       <div class="profile-activity-timeline-legend-container">
         <div class="profile-activity-timeline-legend-row">
-          <div class="profile-activity-timeline-legend-label">{{isMyProfile ? 'My Actions' : 'Actions'}}</div>
+          <div class="profile-activity-timeline-legend-label">{{isMyProfile ? 'My Contributions' : 'Contributions'}}</div>
           <div class="profile-activity-timeline-legend-bar"
                data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_BLUE}"></div>
         </div>
@@ -84,6 +84,43 @@
            data-labels-width="120"
            data-page-context="pageContext"
            data-timeline-id="timeline-user-activity"></div>
+    </div>
+  </div>
+
+  <div class="profile-activity-breakdown-container">
+    <h3>
+      Total Activities:
+      <a href data-ng-click="breakdown.selected='contributions'" data-ng-if="breakdown.selected !== 'contributions'">Contributions</a>
+      <span data-ng-if="breakdown.selected === 'contributions'">Contributions</span>
+      |
+      <a href data-ng-click="breakdown.selected='impacts'" data-ng-if="breakdown.selected !== 'impacts'">Impacts</a>
+      <span data-ng-if="breakdown.selected === 'impacts'">Impacts</span>
+    </h3>
+
+    <div data-ng-if="breakdown.selected === 'contributions'">
+      <h4 class="profile-activity-breakdown-header" data-ng-if="isMyProfile">My Contributions</h4>
+      <h4 class="profile-activity-breakdown-header" data-ng-if="!isMyProfile">{{user.canvas_full_name}}'s Contributions</h4>
+      <div data-activity-breakdown="breakdown.contributions.counts.user" 
+           data-activity-total="breakdown.contributions.totals.user"
+           data-breakdown-selected="contributions"></div>
+
+      <h4 class="profile-activity-breakdown-header">Community Contributions</h4>
+      <div data-activity-breakdown="breakdown.contributions.counts.course" 
+           data-activity-total="breakdown.contributions.totals.course"
+           data-breakdown-selected="contributions"></div>
+    </div>
+
+    <div data-ng-if="breakdown.selected === 'impacts'">
+      <h4 class="profile-activity-breakdown-header" data-ng-if="isMyProfile">My Impacts</h4>
+      <h4 class="profile-activity-breakdown-header" data-ng-if="!isMyProfile">{{user.canvas_full_name}}'s Impacts</h4>
+      <div data-activity-breakdown="breakdown.impacts.counts.user" 
+           data-activity-total="breakdown.impacts.totals.user"
+           data-breakdown-selected="impacts"></div>
+      
+      <h4 class="profile-activity-breakdown-header">Community Impacts</h4>
+      <div data-activity-breakdown="breakdown.impacts.counts.course" 
+           data-activity-total="breakdown.impacts.totals.course"
+           data-breakdown-selected="impacts"></div>
     </div>
   </div>
 

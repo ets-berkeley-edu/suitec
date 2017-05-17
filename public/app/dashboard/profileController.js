@@ -115,6 +115,12 @@
             'color': $scope.color.ACTIVITY_TIMELINE_RED
           }
         ];
+
+        $scope.breakdown = {
+          'contributions': _.pick(activities.actions, ['counts', 'totals']),
+          'impacts': _.pick(activities.impacts, ['counts', 'totals']),
+          'selected': 'contributions'
+        };
       });
     };
 
