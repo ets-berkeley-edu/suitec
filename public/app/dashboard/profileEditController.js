@@ -27,33 +27,26 @@
 
   'use strict';
 
-  angular.module('collabosphere').factory('profileFactory', function(utilService, $http) {
+  angular.module('collabosphere').controller('ProfileEditController', function(me, profileFactory, $state, $scope) {
+
+    // Only current user can edit his/her profile
+    $scope.user = me;
+    angular.extend($scope.user, {
+      canvasCourseSections: me.canvas_course_sections && me.canvas_course_sections.sort()
+    });
 
     /**
-     * Edit user profile
+     * Edit my profile
      *
-     * @param  {Object}          user      The user properties
-     * @return {Promise}                   $http promise
+     * @return {void}
      */
-    var editProfile = function(user) {
-      return $http.post(utilService.getApiUrl('/users/me/personal_bio'), {'personalBio': user.personal_bio});
+    var editProfile = $scope.editProfile = function() {
+      profileFactory.editProfile($scope.user).success(function() {
+        // Redirect to profile view
+        $state.go('dashboard');
+      });
     };
 
-    /**
-     * Get activities for a user
-     *
-     * @param  {Number}               userId      User id for which activities should be returned
-     * @return {Promise}                          $http promise
-     */
-    var getActivitiesForUser = function(userId) {
-      var path = '/activities/user/' + userId;
-      return $http.get(utilService.getApiUrl(path));
-    };
-
-    return {
-      'editProfile': editProfile,
-      'getActivitiesForUser': getActivitiesForUser
-    };
   });
 
 }(window.angular));

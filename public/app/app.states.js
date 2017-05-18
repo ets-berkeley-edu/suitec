@@ -81,6 +81,11 @@
         'templateUrl': '/app/dashboard/profile.html',
         'controller': 'ProfileController'
       })
+      .state('profileedit', {
+        'url': '/profile/edit',
+        'templateUrl': '/app/dashboard/editProfile.html',
+        'controller': 'ProfileEditController'
+      })
       .state('userprofile', {
         'url': '/profile/:userId',
         'templateUrl': '/app/dashboard/profile.html',

@@ -3,10 +3,12 @@
     <div class="profile-summary-column">
       <img class="profile-summary-avatar" data-ng-src="{{user.canvas_image}}" data-ng-if="user.canvas_image"/>
       <div class="profile-engagement-avatar-caption">
-        <a>Edit Profile</a>
+        <a data-ng-href="/profile/edit" data-ng-if="isMyProfile">
+          Edit details
+        </a>
       </div>
     </div>
-    <div class="profile-summary-column">
+    <div class="profile-summary-column col-sm-6">
       <div class="profile-summary-banner">
         <h1 data-ng-bind="user.canvas_full_name"></h1>
         <label for="findUser" class="sr-only">Search for users</label>
@@ -29,10 +31,7 @@
         <span data-ng-if="user.last_activity">{{user.last_activity | formatDate}}</span>
         <span data-ng-if="!user.last_activity">Never</span>
       </div>
-      <div>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      </div>
+      <div data-ng-bind="user.personal_bio"></div>
     </div>
     <div class="profile-summary-column-with-border" data-ng-if="showEngagementIndexBox">
       <div class="profile-summary-column-square">
@@ -46,13 +45,13 @@
             </a>
           </h2>
           <hr/>
-          <div class="profile-engagement-score" data-ng-class="{'profile-engagement-score-not-shared': me.id === user.id && !user.share_points}">
+          <div class="profile-engagement-score" data-ng-class="{'profile-engagement-score-not-shared': isMyProfile && !user.share_points}">
             {{user.points}} {{user.points === 1 ? 'Point' : 'Points'}}
           </div>
           <div data-ng-if="userRank">
             <span data-ng-bind="userRank"></span> out of <span data-ng-bind="courseUserCount"></span>
           </div>
-          <div data-ng-if="(user.id === me.id) && !user.share_points">
+          <div data-ng-if="isMyProfile && !user.share_points">
             Sharing off.
             <a tool-href
               data-tool="engagementindex"
@@ -228,7 +227,7 @@
     </div>
   </div>
 
-  <div class="profile-assets-container" data-ng-if="me.id === user.id">
+  <div class="profile-assets-container" data-ng-if="isMyProfile">
     <h3>
       <span data-ng-if="!community.totalAssetsInCourse">Everyone's Assets</span>
 
