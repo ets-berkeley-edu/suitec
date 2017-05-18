@@ -29,9 +29,10 @@
 
   angular.module('collabosphere').controller('ProfileEditController', function(me, profileFactory, $state, $scope) {
 
+    $scope.bio = me.personal_bio;
+
     // Only current user can edit his/her profile
-    $scope.user = me;
-    angular.extend($scope.user, {
+    $scope.user = angular.extend(me, {
       canvasCourseSections: me.canvas_course_sections && me.canvas_course_sections.sort()
     });
 
@@ -41,6 +42,8 @@
      * @return {void}
      */
     var editProfile = $scope.editProfile = function() {
+      $scope.user.personal_bio = $scope.bio;
+
       profileFactory.editProfile($scope.user).success(function() {
         // Redirect to profile view
         $state.go('dashboard');
