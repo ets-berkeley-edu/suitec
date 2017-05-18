@@ -106,7 +106,7 @@
 
         var showEventDetails = function(activity) {
           // Hide any existing event details.
-          d3.select('.profile-timeline').selectAll('.event-details').remove();
+          d3.select('.activity-timeline-chart').selectAll('.event-details').remove();
 
           // Make activity available to the scope.
           scope.activity = activity;
@@ -136,7 +136,7 @@
 
           // The details window starts out hidden...
           var eventDetails = d3
-            .select('.profile-timeline')
+            .select('.activity-timeline-chart')
             .append('div')
             .attr('class', 'event-details')
             .style('opacity', 0);
@@ -212,7 +212,7 @@
 
           var timelineWidth = element.node().getBoundingClientRect().width;
 
-          element.selectAll('.label').classed('profile-activity-timeline-label', true);
+          element.selectAll('.label').classed('activity-timeline-label', true);
 
           var nodes = element.nodes();
           var zoom = nodes[0].zoom;
@@ -269,17 +269,22 @@
 
         // Do not start drawing the timeline until timelineId has been interpolated in markup. This will ensure that
         // d3 events are bound to the right element.
-        var waitForTimelineElement = function() {
+        var drawTimelineWhenAvailable = function() {
           var timelineElement = document.getElementById(scope.timelineId);
           if (!timelineElement) {
-            $timeout(waitForTimelineElement, 0, false);
+            $timeout(drawTimelineWhenAvailable, 0, false);
             return;
           }
 
           drawTimeline(timelineElement);
         };
 
-        waitForTimelineElement();
+        drawTimelineWhenAvailable();
+
+        // Redraw the timeline when the window is resized.
+        d3.select(window).on('resize', function() {
+          drawTimelineWhenAvailable();
+        });
       }
     };
   });

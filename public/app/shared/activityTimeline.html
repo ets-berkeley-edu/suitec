@@ -1,5 +1,8 @@
-<div class="profile-timeline" data-ng-attr-id="{{timelineId}}"></div>
-<div class="profile-activity-timeline-footer" data-ng-style="{'margin-left': (10 + labelsWidth + 'px')}">
+<div class="col-flex">
+  <div class="activity-timeline-chart" data-ng-attr-id="{{timelineId}}"></div>
+  <div data-ng-style="{'flex': ('0 0 ' + (10 + labelsWidth) + 'px')}"></div>
+</div>
+<div class="activity-timeline-footer" data-ng-style="{'padding-left': (10 + labelsWidth + 'px')}">
   <div>
     <button type="button" data-ng-click="zoomRelative(2)">+</button>
     <button type="button" data-ng-click="zoomRelative(0.5)">-</button>
