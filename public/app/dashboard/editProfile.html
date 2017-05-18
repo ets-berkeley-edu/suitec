@@ -1,0 +1,42 @@
+<a ui-sref="dashboard" class="col-back"><i class="fa fa-angle-left"></i> Back to Impact Studio</a>
+
+<div class="profile-edit-container">
+  <div class="profile-summary-container">
+    <div class="profile-summary-column">
+      <img class="profile-summary-avatar"
+        data-ng-src="{{user.canvas_image}}"
+        data-ng-if="user.canvas_image"/>
+    </div>
+    <div class="profile-summary-column">
+      <div class="profile-summary-banner">
+        <h1>{{user.canvas_full_name}}'s Settings</h1>
+      </div>
+      <div>
+        <span data-ng-repeat="section in user.canvasCourseSections"><span data-ng-if="user.canvasCourseSections.length > 1"><span data-ng-if="!$first && !$last">, </span><span data-ng-if="$last"> and </span></span>{{section}}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr/>
+
+<form name="editProfileEditForm"
+  class="profile-edit-form"
+  data-ng-submit="editProfileEditForm.$valid && editProfile()">
+
+  <div class="clearfix profile-edit-container">
+    <!-- DESCRIPTION -->
+    <div class="form-group">
+      <label for="profile-edit-description" class="control-label">Short Personal Description</label>
+      <textarea id="profile-edit-description" class="form-control" placeholder="" rows="3" data-ng-model="user.personal_bio"></textarea>
+    </div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="form-group btn-row-reversed">
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    <a data-ng-href="/dashboard" class="btn btn-default">Cancel</a>
+  </div>
+</form>
+
+<div data-ng-include="'/app/shared/copyright.html'"></div>

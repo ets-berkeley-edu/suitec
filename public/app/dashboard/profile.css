@@ -274,3 +274,7 @@
   display: inline-block;
   white-space: nowrap;
 }
+
+.profile-edit-container {
+  padding-top: 20px;
+}
