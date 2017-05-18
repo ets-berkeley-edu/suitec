@@ -4,7 +4,7 @@
       <img class="profile-summary-avatar" data-ng-src="{{user.canvas_image}}" data-ng-if="user.canvas_image"/>
       <div class="profile-engagement-avatar-caption">
         <a data-ng-href="/profile/edit" data-ng-if="isMyProfile">
-          Edit details
+          Edit Profile
         </a>
       </div>
     </div>
@@ -99,12 +99,12 @@
     <div data-ng-if="breakdown.selected === 'contributions'">
       <h4 class="profile-activity-breakdown-header" data-ng-if="isMyProfile">My Contributions</h4>
       <h4 class="profile-activity-breakdown-header" data-ng-if="!isMyProfile">{{user.canvas_full_name}}'s Contributions</h4>
-      <div data-activity-breakdown="breakdown.contributions.counts.user" 
+      <div data-activity-breakdown="breakdown.contributions.counts.user"
            data-activity-total="breakdown.contributions.totals.user"
            data-breakdown-selected="contributions"></div>
 
       <h4 class="profile-activity-breakdown-header">Community Contributions</h4>
-      <div data-activity-breakdown="breakdown.contributions.counts.course" 
+      <div data-activity-breakdown="breakdown.contributions.counts.course"
            data-activity-total="breakdown.contributions.totals.course"
            data-breakdown-selected="contributions"></div>
     </div>
@@ -112,12 +112,12 @@
     <div data-ng-if="breakdown.selected === 'impacts'">
       <h4 class="profile-activity-breakdown-header" data-ng-if="isMyProfile">My Impacts</h4>
       <h4 class="profile-activity-breakdown-header" data-ng-if="!isMyProfile">{{user.canvas_full_name}}'s Impacts</h4>
-      <div data-activity-breakdown="breakdown.impacts.counts.user" 
+      <div data-activity-breakdown="breakdown.impacts.counts.user"
            data-activity-total="breakdown.impacts.totals.user"
            data-breakdown-selected="impacts"></div>
-      
+
       <h4 class="profile-activity-breakdown-header">Community Impacts</h4>
-      <div data-activity-breakdown="breakdown.impacts.counts.course" 
+      <div data-activity-breakdown="breakdown.impacts.counts.course"
            data-activity-total="breakdown.impacts.totals.course"
            data-breakdown-selected="impacts"></div>
     </div>
