@@ -45,7 +45,10 @@
         'sort': '=searchOptionsSort'
       },
       'templateUrl': '/app/assetlibrary/search/search.html',
-      'controller': function($scope, assetLibraryCategoriesFactory, userFactory) {
+      'controller': function($scope, assetLibraryCategoriesFactory, me, userFactory) {
+
+        // Make the me object available to the scope
+        $scope.me = me;
 
         // Categories of the current course
         $scope.categories = null;
