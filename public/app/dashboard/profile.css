@@ -171,7 +171,13 @@
 }
 
 .profile-edit-container {
+  border-radius: 4px;
   padding-top: 20px;
+}
+
+.profile-edit-container hr {
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
 .profile-engagement-score {
@@ -180,6 +186,10 @@
 
 .profile-engagement-score-not-shared {
   color: #666666;
+}
+
+.profile-input-invalid {
+  color: #A94442;
 }
 
 .profile-summary-container {

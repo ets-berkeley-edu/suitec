@@ -1,5 +1,3 @@
-<a ui-sref="dashboard" class="col-back"><i class="fa fa-angle-left"></i> Back to Impact Studio</a>
-
 <div class="profile-edit-container">
   <div class="profile-summary-container">
     <div class="profile-summary-column">
@@ -9,34 +7,48 @@
     </div>
     <div class="profile-summary-column">
       <div class="profile-summary-banner">
-        <h1>{{user.canvas_full_name}}'s Settings</h1>
+        <h1>{{user.canvas_full_name}}'s Profile</h1>
       </div>
       <div>
         <span data-ng-repeat="section in user.canvasCourseSections"><span data-ng-if="user.canvasCourseSections.length > 1"><span data-ng-if="!$first && !$last">, </span><span data-ng-if="$last"> and </span></span>{{section}}</span>
       </div>
     </div>
   </div>
-</div>
 
-<hr/>
+  <hr/>
 
-<form name="editProfileEditForm"
-  class="profile-edit-form"
-  data-ng-submit="editProfileEditForm.$valid && editProfile()">
+  <form name="editProfileForm"
+    data-ng-class="{'has-error': editProfileForm.$submitted && editProfileForm.bio.$invalid}"
+    data-ng-submit="editProfileForm.$valid && editProfile()"
+    novalidate>
 
-  <div class="clearfix profile-edit-container">
-    <!-- DESCRIPTION -->
-    <div class="form-group">
-      <label for="profile-edit-description" class="control-label">Short Personal Description</label>
-      <textarea id="profile-edit-description" class="form-control" placeholder="" rows="3" data-ng-model="user.personal_bio"></textarea>
+    <div class="clearfix profile-edit-container">
+      <!-- DESCRIPTION -->
+      <div class="form-group"
+        data-ng-class="{'has-error': editProfileForm.$submitted && editProfileForm.bio.$invalid}">
+
+        <label for="profile-edit-description" class="control-label">Short Personal Description</label>
+
+        <textarea id="profile-edit-description" name="bio" class="form-control" placeholder="" rows="3" data-ng-model="bio" data-ng-maxlength="140"></textarea>
+        <div data-ng-if="!editProfileForm.$submitted || !editProfileForm.bio.$invalid">
+          <span class="control-label">140 character limit <span data-ng-if="!editProfileForm.bio.$error.maxlength">({{140 - editProfileForm.bio.$viewValue.length}} left)</span><span data-ng-if="editProfileForm.bio.$error.maxlength" class="profile-input-invalid">({{editProfileForm.bio.$viewValue.length - 140}} over)</span>
+        </div>
+        <div class="help-block" data-ng-messages="editProfileForm.bio.$error">
+          <span data-ng-message="maxlength">
+            Description must be 140 characters or less.
+            ({{editProfileForm.bio.$viewValue.length - 140}} over)
+          </span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- BUTTONS -->
-  <div class="form-group btn-row-reversed">
-    <button type="submit" class="btn btn-primary">Save changes</button>
-    <a data-ng-href="/dashboard" class="btn btn-default">Cancel</a>
-  </div>
-</form>
+    <!-- BUTTONS -->
+    <div class="form-group btn-row-reversed">
+      <button type="submit" class="btn btn-primary">Update Profile</button>
+      <a data-ng-href="/dashboard" class="btn btn-default">Cancel</a>
+    </div>
+  </form>
 
-<div data-ng-include="'/app/shared/copyright.html'"></div>
+  <div data-ng-include="'/app/shared/copyright.html'"></div>
+
+</div>
