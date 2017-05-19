@@ -29,14 +29,14 @@
 
         <label for="profile-edit-description" class="control-label">Short Personal Description</label>
 
-        <textarea id="profile-edit-description" name="bio" class="form-control" placeholder="" rows="3" data-ng-model="bio" data-ng-maxlength="140"></textarea>
+        <textarea id="profile-edit-description" name="bio" class="form-control" placeholder="" rows="3" data-ng-model="bio" data-ng-maxlength="255"></textarea>
         <div data-ng-if="!editProfileForm.$submitted || !editProfileForm.bio.$invalid">
-          <span class="control-label">140 character limit <span data-ng-if="!editProfileForm.bio.$error.maxlength">({{140 - editProfileForm.bio.$viewValue.length}} left)</span><span data-ng-if="editProfileForm.bio.$error.maxlength" class="profile-input-invalid">({{editProfileForm.bio.$viewValue.length - 140}} over)</span>
+          <span class="control-label">255 character limit <span data-ng-if="!editProfileForm.bio.$error.maxlength">({{255 - editProfileForm.bio.$viewValue.length}} left)</span><span data-ng-if="editProfileForm.bio.$error.maxlength" class="profile-input-invalid">({{editProfileForm.bio.$viewValue.length - 255}} over)</span>
         </div>
         <div class="help-block" data-ng-messages="editProfileForm.bio.$error">
           <span data-ng-message="maxlength">
-            Description must be 140 characters or less.
-            ({{editProfileForm.bio.$viewValue.length - 140}} over)
+            Description must be 255 characters or less.
+            ({{editProfileForm.bio.$viewValue.length - 255}} over)
           </span>
         </div>
       </div>
