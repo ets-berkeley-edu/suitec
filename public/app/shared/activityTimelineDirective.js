@@ -216,8 +216,6 @@
 
           var nodes = element.nodes();
           var zoom = nodes[0].zoom;
-          // Disable zoom events triggered by the mouse wheel.
-          zoom.filter(function() { return !event.button && event.type !== 'wheel'; });
 
           // Make programmatic zoom events available to the scope.
           var zoomTransition = function() {
