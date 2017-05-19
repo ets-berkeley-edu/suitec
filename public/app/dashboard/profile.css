@@ -180,6 +180,11 @@
   margin-top: 0;
 }
 
+.profile-engagement-avatar-caption {
+  margin: 10px;
+  text-align: center;
+}
+
 .profile-engagement-score {
   font-size: 23px;
 }
@@ -190,6 +195,20 @@
 
 .profile-input-invalid {
   color: #A94442;
+}
+
+.profile-summary-avatar {
+  border-radius: 50%;
+  text-align: center;
+  width: 100px;
+}
+
+.profile-summary-banner {
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+  padding-bottom: 15px;
+  vertical-align: middle;
 }
 
 .profile-summary-container {
@@ -204,65 +223,8 @@
   padding-right: 15px;
 }
 
-.profile-summary-column-variable {
-  flex: 1;
-  padding-right: 15px;
-}
-
-.profile-summary-column-variable h1 {
-  -webkit-flex: 1 0 100px;
-  flex: 1 0 100px;
-  font-size: 19px;
-  padding-right: 20px;
-  padding-top: 10px;
-  white-space: nowrap;
-}
-
-.profile-summary-avatar {
-  border-radius: 50%;
-  text-align: center;
-  width: 100px;
-}
-
-.profile-engagement-avatar-caption {
-  margin: 10px;
-  text-align: center;
-}
-
-.profile-summary-banner {
-  display: flex;
-  -webkit-flex-flow: row wrap;
-  flex-flow: row wrap;
-  padding-bottom: 15px;
-  vertical-align: middle;
-}
-
-.profile-summary-search {
-  -webkit-flex: 1 1 100px;
-  flex: 1 1 100px;
-}
-
-.profile-summary-last-activity {
-  padding-bottom: 15px;
-}
-
-.profile-summary-column-with-border {
-  align-self: flex-start;
-  border: 1px solid lightgrey;
-  border-radius: 5px;
-  max-width: 180px;
-  padding: 10px 10px 10px 10px;
-  width: 40%;
-}
-
 .profile-summary-column-square {
   position: relative;
-}
-
-.profile-summary-column-square-content {
-  padding: 0 10px;
-  text-align: center;
-  vertical-align: middle;
 }
 
 .profile-summary-column-square h2 {
@@ -275,6 +237,44 @@
 .profile-summary-column-square hr {
   margin-bottom: 5px;
   margin-top: 5px;
+}
+
+.profile-summary-column-square-content {
+  padding: 0 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.profile-summary-column-variable {
+  flex: 1;
+  padding-right: 15px;
+}
+
+.profile-summary-column-with-border {
+  align-self: flex-start;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  max-width: 180px;
+  padding: 10px 10px 10px 10px;
+  width: 40%;
+}
+
+.profile-summary-header {
+  -webkit-flex: 1 0 100px;
+  flex: 1 0 100px;
+  font-size: 19px;
+  padding-right: 20px;
+  padding-top: 10px;
+  white-space: nowrap;
+}
+
+.profile-summary-last-activity {
+  padding-bottom: 15px;
+}
+
+.profile-summary-search {
+  -webkit-flex: 1 1 100px;
+  flex: 1 1 100px;
 }
 
 .profile-swimlane-filters {
