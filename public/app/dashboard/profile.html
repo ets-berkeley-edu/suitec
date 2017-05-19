@@ -31,7 +31,7 @@
         <span data-ng-if="user.last_activity">{{user.last_activity | formatDate}}</span>
         <span data-ng-if="!user.last_activity">Never</span>
       </div>
-      <div data-ng-bind="user.personal_bio"></div>
+      <div class="profile-user-description" data-ng-if="user.personal_bio" data-ng-bind-html="user.personal_bio | linky:'_blank' | hashtags"></div>
     </div>
     <div class="profile-summary-column-with-border" data-ng-if="showEngagementIndexBox">
       <div class="profile-summary-column-square">

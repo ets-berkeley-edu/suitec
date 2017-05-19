@@ -281,3 +281,7 @@
   display: inline-block;
   white-space: nowrap;
 }
+
+.profile-user-description {
+  white-space: pre-wrap;
+}
