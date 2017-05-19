@@ -221,7 +221,7 @@
 
           // Make programmatic zoom events available to the scope.
           var zoomTransition = function() {
-            return element.select('.event-drops-chart').transition().duration(300);
+            return element.select('.chart-wrapper').transition().duration(300);
           };
 
           scope.zoomRelative = function(scale) {
