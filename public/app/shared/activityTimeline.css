@@ -28,7 +28,10 @@
 }
 
 .chart-wrapper {
-  cursor: pointer;
+  cursor: pointer; /* fallback if grab cursor is unsupported */
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  cursor: grab;
 }
 
 .event-details {
