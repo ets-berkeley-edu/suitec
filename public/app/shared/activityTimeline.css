@@ -27,6 +27,10 @@
   font-weight: 300;
 }
 
+.chart-wrapper {
+  cursor: pointer;
+}
+
 .event-details {
   background: #fff;
   border: 3px solid #e7e7e7;
