@@ -1,6 +1,6 @@
 <div class="event-details-container">
   <div data-ng-if="pageContext.tool === 'dashboard'">
-    <img class="event-details-thumbnail" 
+    <img class="event-details-thumbnail"
          data-ng-src="{{activity.asset.thumbnail_url}}"
          alt="{{activity.asset.title}}"
          title="{{activity.asset.title}}"/>
@@ -20,7 +20,6 @@
     <h3 class="event-details-title" data-ng-if="pageContext.tool === 'dashboard'">
       <a tool-href
          data-tool="assetlibrary"
-         data-course="pageContext.course"
          data-id="activity.asset.id"
          data-referring-tool="pageContext.tool"
          data-referring-id="pageContext.id"
@@ -28,17 +27,16 @@
     </h3>
 
     <p class="event-details-description">
-      <span data-ng-if="pageContext.tool === 'dashboard'"> 
+      <span data-ng-if="pageContext.tool === 'dashboard'">
         <i class="fa fa-comment" data-ng-if="display.comment"></i>
         <i class="fa fa-thumbs-up" data-ng-if="display.like"></i>
         <i class="fa fa-eye" data-ng-if="display.view"></i>
         <strong data-ng-bind="display.description"></strong>
       </span>
 
-      <span data-ng-if="pageContext.tool === 'assetlibrary'"> 
+      <span data-ng-if="pageContext.tool === 'assetlibrary'">
         <a tool-href
            data-tool="dashboard"
-           data-course="pageContext.course"
            data-id="activity.user.id"
            data-referring-tool="pageContext.tool"
            data-referring-id="pageContext.id"
@@ -62,7 +60,6 @@
                 data-ng-bind-template="&ldquo;{{display.snippet}}&hellip;&rdquo;"></span>
           <a tool-href
              data-tool="assetlibrary"
-             data-course="pageContext.course"
              data-id="activity.asset.id"
              data-referring-tool="pageContext.tool"
              data-referring-id="pageContext.id"
@@ -75,7 +72,6 @@
       <span data-ng-if="pageContext.tool === 'dashboard'">
         <a tool-href
            data-tool="dashboard"
-           data-course="pageContext.course"
            data-id="activity.user.id"
            data-referring-tool="pageContext.tool"
            data-referring-id="pageContext.id"

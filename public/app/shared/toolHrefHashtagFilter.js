@@ -27,34 +27,25 @@
 
   'use strict';
 
-  /**
-   * Constructs URLs for linking from one SuiteC LTI tool to another.
-   */
-  angular.module('collabosphere').directive('toolHref', function(utilService) {
-    return {
-      // Directive matches on attribute name.
-      // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
-      restrict: 'A',
+  angular.module('collabosphere').filter('toolHrefHashtag', function(utilService) {
 
-      // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
-      scope: {
-        tool: '=',
-        id: '=',
-        referringTool: '=',
-        referringId: '='
-      },
-
-      'link': function(scope, elem, attrs) {
-        scope.$watch('id', function() {
-          // 'id' and 'referring-tool' attributes may specify either a variable name (the evaluated value
-          // of which appears under 'scope'), or a string literal (which appears under 'attrs').
-          var id = scope.id || attrs.id;
-          var referringTool = scope.referringTool || attrs.referringTool;
-
-          elem.attr('href', utilService.getToolHref(attrs.tool, id, referringTool, scope.referringId));
-          elem.attr('target', '_parent');
-        });
-      }
+    /**
+     * Replace each hashtag with a link to the asset library that will search through the asset library
+     * for that keyword.
+     *
+     * @param  {String}     input             Text containing hashtags. Hashtags will be replaced with proper hrefs.
+     * @param  {String}     referringTool     SuiteC tool in which user initiated the action
+     * @param  {String}     referringId       State of the referring tool, at time of exit
+     * @return {String}                       The processed text, in which hashtags were replaced with links
+     */
+    return function(input, referringTool, referringId) {
+      return input.replace(/#(\w*[a-zA-Z_\-\.]+\w*)/gim, function(match, hashtag) {
+        // Remove trailing punctuation, as it might have been picked up by regex above
+        var trimmed = hashtag.replace(/[\.\-]+$/g, '');
+        var id = utilService.getAdvancedSearchId({'keywords': trimmed});
+        var url = utilService.getToolHref('assetlibrary', id, referringTool, referringId);
+        return '<a href="' + url + '" target="_parent">#' + hashtag + '</a>';
+      });
     };
   });
 

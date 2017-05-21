@@ -125,16 +125,6 @@
     };
 
     /**
-     * Get encoded instructions to pre-populate Asset Library's advanced search.
-     *
-     * @param  {Object}         searchOptions             Properties associated with dropdowns of Advanced Search
-     * @return {String}                                   Search options, stringified
-     */
-    var getAdvancedSearchId = function(searchOptions) {
-      return 'assetlibrarylist:' + JSON.stringify(searchOptions);
-    };
-
-    /**
      * Get custom type of asset list (e.g., 'Most Impactful') per user.
      *
      * @param  {String}         sortType              Name of field to sort by
@@ -159,7 +149,7 @@
           $scope.user.totalAssetsInCourse = $scope.user.assets.results.length;
         }
         $scope.user.assets.sortBy = sortType;
-        $scope.user.assets.advancedSearchId = getAdvancedSearchId({
+        $scope.user.assets.advancedSearchId = utilService.getAdvancedSearchId({
           sort: isShowAllFilter ? '' : sortType,
           user: $scope.user.id
         });
@@ -191,7 +181,7 @@
           $scope.community.totalAssetsInCourse = $scope.community.assets.results.length;
         }
         $scope.community.assets.sortBy = sortType;
-        $scope.community.assets.advancedSearchId = getAdvancedSearchId({
+        $scope.community.assets.advancedSearchId = utilService.getAdvancedSearchId({
           sort: isShowAllFilter ? '' : sortType
         });
         $scope.community.assets.isLoading = false;
