@@ -31,7 +31,7 @@
         <span data-ng-if="user.last_activity">{{user.last_activity | formatDate}}</span>
         <span data-ng-if="!user.last_activity">Never</span>
       </div>
-      <div class="profile-user-description" data-ng-if="user.personal_bio" data-ng-bind-html="user.personal_bio | linky:'_blank' | hashtags"></div>
+      <div class="profile-user-description" data-ng-if="user.personal_bio" data-ng-bind-html="user.personal_bio | linky:'_blank' | toolHrefHashtag:'dashboard':user.id"></div>
     </div>
     <div class="profile-summary-column-with-border" data-ng-if="showEngagementIndexBox">
       <div class="profile-summary-column-square">
@@ -39,8 +39,7 @@
           <h2>
             <a tool-href
               data-tool="engagementindex"
-              data-referring-tool="dashboard"
-              data-course="me.course">
+              data-referring-tool="dashboard">
               Engagement Index
             </a>
           </h2>
@@ -55,8 +54,7 @@
             Sharing off.
             <a tool-href
               data-tool="engagementindex"
-              data-referring-tool="dashboard"
-              data-course="me.course">Turn on?</a>
+              data-referring-tool="dashboard">Turn on?</a>
           </div>
         </div>
       </div>
@@ -156,7 +154,6 @@
           data-tool="assetlibrary"
           data-referring-tool="dashboard"
           data-referring-id="user.id"
-          data-course="me.course"
           data-id="user.assets.advancedSearchId"
           data-ng-bind="user.assets.total"></a>)
       </span>
@@ -180,7 +177,6 @@
                     data-tool="assetlibrary"
                     data-referring-tool="dashboard"
                     data-referring-id="user.id"
-                    data-course="me.course"
                     data-id="routerStateUploadAsset">
                     <i class="fa fa-laptop"></i>
                     <div class="assetlibrary-list-item-add-action">Upload</div>
@@ -190,7 +186,6 @@
                     data-tool="assetlibrary"
                     data-referring-tool="dashboard"
                     data-referring-id="user.id"
-                    data-course="me.course"
                     data-id="routerStateAddLink">
                     <i class="fa fa-link"></i>
                     <div class="assetlibrary-list-item-add-action">Add Link</div>
@@ -204,7 +199,6 @@
                 data-tool="assetlibrary"
                 data-referring-tool="dashboard"
                 data-referring-id="user.id"
-                data-course="me.course"
                 data-id="routerStateBookmarkletInfo">
                 Add assets more easily
                 <i class="fa fa-bookmark pull-left"></i>
@@ -218,7 +212,6 @@
             data-tool="assetlibrary"
             data-referring-tool="dashboard"
             data-referring-id="user.id"
-            data-course="me.course"
             data-id="asset.id">
 
             <div class="col-list-item-container">
@@ -259,7 +252,6 @@
             data-tool="assetlibrary"
             data-referring-tool="dashboard"
             data-referring-id="user.id"
-            data-course="me.course"
             data-id="community.assets.advancedSearchId"
             data-ng-bind="community.assets.total"></a>)
         </span>
@@ -278,7 +270,6 @@
             data-tool="assetlibrary"
             data-referring-tool="dashboard"
             data-referring-id="user.id"
-            data-course="me.course"
             data-id="asset.id">
 
             <div class="col-list-item-container">

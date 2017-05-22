@@ -61,7 +61,7 @@
     }.bind({}))[0];
 
     // '_id' represents an asset, user or view requested via link action.
-    var m = queryArgs.match(/.*[\?&]_id=([%0-9a-zA-Z]+).*/);
+    var m = queryArgs.match(/.*[\?&]_id=([%0-9a-zA-Z\-\.]+).*/);
     parameters.requestedId = (m && m.length > 0) ? decodeURIComponent(m[1]) : null;
 
     // '_referring_tool' is the SuiteC tool in which user initiated the action.

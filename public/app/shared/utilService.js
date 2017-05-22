@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function(analyticsService, $cookies, $location, $q, $timeout) {
+  angular.module('collabosphere').service('utilService', function(analyticsService, me, $cookies, $location, $q, $timeout) {
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
@@ -48,6 +48,16 @@
         'toolUrl': toolUrl
       };
       return launchParams;
+    };
+
+    /**
+     * Get encoded instructions to pre-populate Asset Library's advanced search.
+     *
+     * @param  {Object}         searchOptions             Properties associated with dropdowns of Advanced Search
+     * @return {String}                                   Search options, stringified
+     */
+    var getAdvancedSearchId = function(searchOptions) {
+      return 'assetlibrarylist:' + JSON.stringify(searchOptions);
     };
 
     /**
@@ -88,6 +98,44 @@
      */
     var getToolUrl = function() {
       return toolUrl;
+    };
+
+    /**
+     * Get URL to link from one SuiteC LTI tool to another
+     *
+     * @param  {String}       tool            Name of SuiteC LTI tool targeted in URL
+     * @param  {String}       id              Represents an asset, user or view requested via link action
+     * @param  {String}       referringTool   SuiteC tool in which user initiated the action
+     * @param  {String}       referringId     State of the referring tool, at time of exit
+     * @return {String}                       URL used to reload page, not simply the iFrame
+     */
+    var getToolHref = function(tool, id, referringTool, referringId) {
+      // 'id' may refer to router-state, asset id, user id or similar.
+      var queryArgs = id ? '?_id=' + encodeURIComponent(id) : '';
+      if (referringTool) {
+        queryArgs = queryArgs ? queryArgs + '&' : '?';
+        queryArgs += '_referring_tool=' + referringTool;
+        if (referringId) {
+          queryArgs += '&_referring_id=' + encodeURIComponent(referringId);
+        }
+      }
+      switch (tool) {
+        case 'assetlibrary': {
+          return me.course.assetlibrary_url + queryArgs;
+        }
+        case 'dashboard': {
+          return me.course.dashboard_url + queryArgs;
+        }
+        case 'engagementindex': {
+          return me.course.engagementindex_url + queryArgs;
+        }
+        case 'whiteboards': {
+          return me.course.whiteboards_url + queryArgs;
+        }
+        default: {
+          return null;
+        }
+      }
     };
 
     /**
@@ -418,11 +466,13 @@
       'addAssetInclusionFilter': addAssetInclusionFilter,
       'appendOrdinalSuffix': appendOrdinalSuffix,
       'buildSearchResultsMessage': buildSearchResultsMessage,
+      'getAdvancedSearchId': getAdvancedSearchId,
       'getApiUrl': getApiUrl,
       'getColorConstants': getColorConstants,
       'getLaunchParams': getLaunchParams,
       'getParentUrlData': getParentUrlData,
       'getScrollInformation': getScrollInformation,
+      'getToolHref': getToolHref,
       'getToolUrl': getToolUrl,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
