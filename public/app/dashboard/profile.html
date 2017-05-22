@@ -100,14 +100,19 @@
   </div>
 
   <div class="profile-activity-breakdown-container">
-    <h3>
-      Total Activities:
-      <a href data-ng-click="breakdown.selected='contributions'" data-ng-if="breakdown.selected !== 'contributions'">Contributions</a>
-      <span data-ng-if="breakdown.selected === 'contributions'">Contributions</span>
-      |
-      <a href data-ng-click="breakdown.selected='impacts'" data-ng-if="breakdown.selected !== 'impacts'">Impacts</a>
-      <span data-ng-if="breakdown.selected === 'impacts'">Impacts</span>
-    </h3>
+    <div class="profile-swimlane-filters">
+      <h3>Total Activities:</h3>
+
+      <div data-ng-repeat="(filter, label) in {contributions: 'Contributions', impacts: 'Impacts'}">
+        <button type="button"
+          class="btn btn-link profile-swimlane-filters-label"
+          id="total-activities-by-{{filter}}"
+          data-ng-click="breakdown.selected=filter"
+          data-ng-disabled="breakdown.selected === filter"
+          data-ng-bind="label"></button>
+        <span data-ng-if="!$last">|</span>
+      </div>
+    </div>
 
     <div data-ng-if="breakdown.selected === 'contributions'">
       <h4 class="profile-activity-breakdown-header" data-ng-if="isMyProfile">My Contributions</h4>
@@ -137,27 +142,29 @@
   </div>
 
   <div class="profile-assets-container">
-    <h3>
-      <span data-ng-if="!user.totalAssetsInCourse">{{isMyProfile ? 'My Assets' : 'Assets'}}</span>
+    <div class="profile-swimlane-filters">
+      <h3 data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></h3>
 
-      <div class="profile-swimlane-filters" data-ng-if="user.totalAssetsInCourse">
-        <span data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></span>
-
-        <span data-ng-repeat="(filter, label) in user.assets.filterLabels">
-          <a href data-ng-click="sortUserAssets(filter)" data-ng-if="user.assets.sortBy !== filter"><span data-ng-bind="label"></span></a>
-          <span data-ng-if="user.assets.sortBy === filter" data-ng-bind="label"></span>
-          <span data-ng-if="!$last">|</span>
-        </span>
+      <div data-ng-repeat="(filter, label) in user.assets.filterLabels" data-ng-if="user.totalAssetsInCourse">
+        <button type="button"
+          class="btn btn-link profile-swimlane-filters-label"
+          id="user-assets-filter-by-{{filter}}"
+          data-ng-click="sortUserAssets(filter)"
+          data-ng-disabled="user.assets.sortBy === filter"
+          data-ng-bind="label"></button>
+        <span data-ng-if="!$last">|</span>
       </div>
-      <span data-ng-if="user.assets.total > maxPerSwimlane">({{maxPerSwimlane}} of
+      <div class="profile-swimlane-filters-label"
+        id="user-assets-filter-see-all"
+        data-ng-if="user.totalAssetsInCourse && (user.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
         <a tool-href
           data-tool="assetlibrary"
           data-referring-tool="dashboard"
           data-referring-id="user.id"
           data-id="user.assets.advancedSearchId"
           data-ng-bind="user.assets.total"></a>)
-      </span>
-    </h3>
+      </div>
+    </div>
 
     <div class="col-list-container">
       <div class="alert alert-info assetlibrary-list-noresults"
@@ -236,27 +243,29 @@
   </div>
 
   <div class="profile-assets-container" data-ng-if="isMyProfile">
-    <h3>
-      <span data-ng-if="!community.totalAssetsInCourse">Everyone's Assets</span>
+    <div class="profile-swimlane-filters">
+      <h3>Everyone's Assets</h3>
 
-      <div class="profile-swimlane-filters" data-ng-if="community.totalAssetsInCourse">
-        Everyone's Assets:
-
-        <span data-ng-repeat="(filter, label) in community.assets.filterLabels">
-          <a href data-ng-click="sortCommunityAssets(filter)" data-ng-if="community.assets.sortBy !== filter"><span data-ng-bind="label"></span></a>
-          <span data-ng-if="community.assets.sortBy === filter" data-ng-bind="label"></span>
-          <span data-ng-if="!$last">|</span>
-        </span>
-        <span data-ng-if="community.assets.total > maxPerSwimlane">({{maxPerSwimlane}} of
-          <a tool-href
-            data-tool="assetlibrary"
-            data-referring-tool="dashboard"
-            data-referring-id="user.id"
-            data-id="community.assets.advancedSearchId"
-            data-ng-bind="community.assets.total"></a>)
-        </span>
+      <div data-ng-repeat="(filter, label) in community.assets.filterLabels" data-ng-if="community.totalAssetsInCourse">
+        <button type="button"
+          class="btn btn-link profile-swimlane-filters-label"
+          id="community-assets-filter-by-{{filter}}"
+          data-ng-click="sortCommunityAssets(filter)"
+          data-ng-disabled="community.assets.sortBy === filter"
+          data-ng-bind="label"></button>
+        <span data-ng-if="!$last">|</span>
       </div>
-    </h3>
+      <div class="profile-swimlane-filters-label"
+        id="community-assets-see-all"
+        data-ng-if="community.totalAssetsInCourse && (community.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
+        <a tool-href
+          data-tool="assetlibrary"
+          data-referring-tool="dashboard"
+          data-referring-id="user.id"
+          data-id="community.assets.advancedSearchId"
+          data-ng-bind="community.assets.total"></a>)
+      </div>
+    </div>
 
     <div class="col-list-container">
       <div class="alert alert-info assetlibrary-list-noresults"
