@@ -143,7 +143,7 @@
 
   <div class="profile-assets-container">
     <div class="profile-swimlane-filters">
-      <h3 data-ng-bind="isMyProfile ? 'My Assets:' : 'Assets:'"></h3>
+      <h3>{{isMyProfile ? 'My Assets' : 'Assets'}}{{user.totalAssetsInCourse ? ':' : ''}}</h3>
 
       <div data-ng-repeat="(filter, label) in user.assets.filterLabels" data-ng-if="user.totalAssetsInCourse">
         <button type="button"
@@ -244,7 +244,7 @@
 
   <div class="profile-assets-container" data-ng-if="isMyProfile">
     <div class="profile-swimlane-filters">
-      <h3>Everyone's Assets</h3>
+      <h3>Everyone's Assets{{community.totalAssetsInCourse ? ':' : ''}}</h3>
 
       <div data-ng-repeat="(filter, label) in community.assets.filterLabels" data-ng-if="community.totalAssetsInCourse">
         <button type="button"
