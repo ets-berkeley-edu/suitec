@@ -49,6 +49,10 @@
     "apiKey": "some shared secret"
   },
   "timezone": "America/Los_Angeles",
+  "trendingScores": {
+    "activityWindow": 168,
+    "recalculationInterval": 60
+  },
   "whiteboardThumbnails": {
     "timeout": 300
   }
