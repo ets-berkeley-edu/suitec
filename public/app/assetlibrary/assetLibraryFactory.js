@@ -103,6 +103,9 @@
       if (searchOptions.hasLikes !== undefined) {
         url += '&hasLikes=' + searchOptions.hasLikes;
       }
+      if (searchOptions.hasTrending !== undefined) {
+        url += '&hasTrending=' + searchOptions.hasTrending;
+      }
       if (searchOptions.hasViews !== undefined) {
         url += '&hasViews=' + searchOptions.hasViews;
       }
