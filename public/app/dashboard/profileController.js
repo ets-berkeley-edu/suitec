@@ -61,7 +61,8 @@
         sortBy: 'recent',
         advancedSearchId: null,
         filterLabels: {
-          recent: 'Trending',
+          recent: 'Recent',
+          trending: 'Trending',
           impact: 'Most Impactful'
           // TODO:
           // trendingHashtag: 'Trending Hashtag'
