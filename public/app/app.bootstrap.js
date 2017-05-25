@@ -97,6 +97,7 @@
     }).then(function(results) {
       collabosphere.constant('me', results.me.data);
       collabosphere.constant('config', results.config.data);
+      collabosphere.constant('apiError', null);
 
       // Bundle info on referring tool
       if (parameters.referringTool) {
@@ -108,6 +109,13 @@
       } else {
         collabosphere.constant('referringTool', null);
       }
+    }, function(error) {
+      // Store the error to be handled after bootstrapping.
+      collabosphere.constant('apiError', error);
+
+      collabosphere.constant('me', null);
+      collabosphere.constant('config', null);
+      collabosphere.constant('referringTool', null);
     });
   };
 

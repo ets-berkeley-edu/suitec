@@ -27,29 +27,24 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('analyticsService', function(me, $mixpanel) {
-    // Do not attempt to set up analytics if initial feed retrieval failed.
-    if (!me) {
-      return;
-    }
+  angular.module('collabosphere').controller('ApiErrorController', function(apiError, deviceDetector, $scope) {
+    // Instructions specific to Safari LTI tools should only be displayed if 1) the browser is Safari and 2) SuiteC
+    // is being run in an iframe.
+    $scope.safariLti = (window.top !== window.self) && (deviceDetector.browser === 'safari');
 
-    $mixpanel.identify(me.id);
+    $scope.errorStatus = apiError.status;
+
+    // If we are showing multistep instructions, keep track of the current instruction step.
+    $scope.step = 1;
 
     /**
-     * Track a new event
+     * Go to the next instruction step.
      *
-     * @param  {String}         event           The unique identifier of the event to track
-     * @param  {Object}         [options]       Additional options to store against the specified event
      * @return {void}
      */
-    var track = function(event, options) {
-      $mixpanel.track(event, options);
+    var nextStep = $scope.nextStep = function() {
+      $scope.step++;
     };
-
-    return {
-      'track': track
-    };
-
   });
 
 }(window.angular));

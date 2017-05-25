@@ -1,0 +1,58 @@
+<div class="text-center">
+  <div id="apierror-container" class="text-left" data-ng-if="errorStatus === 401 && !safariLti">
+    <div id="apierror-title">
+      <h2>Launch failure</h2>
+    </div>
+    <div>
+      SuiteC was unable to launch the tool you requested. You may need to relaunch the tool from within your
+      course site, or adjust your browser settings to allow SuiteC to set cookies.
+    </div>
+  </div>
+
+  <div id="apierror-container" class="text-left" data-ng-if="errorStatus === 401 && safariLti">
+    <div class="row">
+      <div id="apierror-title" class="col-xs-12">
+        <h2 data-ng-if="step === 1">Notice to Safari browser users</h2>
+        <h2 data-ng-if="step === 2">Open the Safari browser preferences</h2>
+        <h2 data-ng-if="step === 3">Change the cookies preferences</h2>
+        <h2 data-ng-if="step === 4">Begin using the SuiteC tools</h2>
+      </div>
+    </div>
+    <div id="apierror-content">
+      <div>
+        <img data-ng-src="/assets/img/safari-cookie-instructions-step-1.png" data-ng-if="step === 1">
+        <img data-ng-src="/assets/img/safari-cookie-instructions-step-2.png" data-ng-if="step === 2">
+        <img data-ng-src="/assets/img/safari-cookie-instructions-step-3.png" data-ng-if="step === 3">
+        <img data-ng-src="/assets/img/safari-cookie-instructions-step-4.png" data-ng-if="step === 4">
+      </div>
+      <div id="apierror-text" class="text-center">
+        <div data-ng-if="step === 1">
+          SuiteC needs to set its cookies in the Safari web browser before the SuiteC tools can be used. (Note: other browsers do not require these permissions.)
+        </div>
+        <div data-ng-if="step === 2">
+          Under the Safari browser menu bar, select the <strong>"Preferences..."</strong> option.
+        </div>
+        <div data-ng-if="step === 3">
+          Select <strong>"Privacy"</strong> and choose <strong>"Always Allow"</strong> in the <strong>"Cookies and website data"</strong> section.
+        </div>
+        <div data-ng-if="step === 4">
+          You're all set to start exploring the Asset Library, Engagement Index, and Whiteboards. Optional: return your Privacy preferences back to their original settings after using the SuiteC tools.
+        </div>
+        <button class="btn btn-primary" data-ng-click="nextStep()" data-ng-if="step !== 4">
+          <span data-ng-if="step === 1">Get started</span>
+          <span data-ng-if="step !== 1">Next</span>
+          <i class="fa fa-arrow-circle-o-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="apierror-container" class="text-left" data-ng-if="errorStatus !== 401">
+    <div id="apierror-title">
+      <h2>Request failed</h2>
+    </div>
+    <div>
+      SuiteC was unable to complete your request.
+    </div>
+  </div>
+</div>
