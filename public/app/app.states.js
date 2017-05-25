@@ -124,8 +124,28 @@
         'url': '/whiteboards/:whiteboardId',
         'templateUrl': '/app/whiteboards/boardcontainer/boardcontainer.html',
         'controller': 'WhiteboardsBoardContainerController'
-      });
+      })
 
+      // Handle API errors
+      .state('error', {
+        'url': '/error',
+        'templateUrl': '/app/shared/apiError.html',
+        'controller': 'ApiErrorController'
+      });
+  })
+
+  .run(function(apiError, $location, $rootScope, $state) {
+    // Display error state if the API returned an error.
+    if (apiError) {
+      $state.go('error');
+    }
+
+    // Also override state changes (e.g. via back button) while the error persists.
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      if (apiError && toState.name !== 'error') {
+        $state.go('error');
+      }
+    });
   });
 
 }(window.angular));

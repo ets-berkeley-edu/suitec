@@ -29,6 +29,10 @@
 
   var collabosphere = angular.module('collabosphere');
   collabosphere.config(function(config, me, $compileProvider, $mixpanelProvider) {
+    // Abort further configuration if information from LTI launch is missing.
+    if (!config || !me) {
+      return;
+    }
 
     // Add `javascript:` to the list of accepted href protocols. This will be used for the Bookmarklet
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
