@@ -103,6 +103,9 @@
       if (searchOptions.hasLikes !== undefined) {
         url += '&hasLikes=' + searchOptions.hasLikes;
       }
+      if (searchOptions.hasPins !== undefined) {
+        url += '&hasPins=' + searchOptions.hasPins;
+      }
       if (searchOptions.hasTrending !== undefined) {
         url += '&hasTrending=' + searchOptions.hasTrending;
       }
@@ -258,6 +261,17 @@
     };
 
     /**
+     * Pin or unpin an asset
+     *
+     * @param  {Number}               id                              The id of the asset that is pinned or unpinned
+     * @param  {Boolean}              value                           `true` when the asset should be pinned, `false` when the asset should be unpinned
+     * @return {Promise}                                              $http promise
+     */
+    var pin = function(id, value) {
+      return $http.post(utilService.getApiUrl('/assets/' + id + (value ? '/pin' : '/unpin')));
+    };
+
+    /**
      * Create a new whiteboard from an exported whiteboard asset
      *
      * @param  {Number}               id                            The id of the whiteboard asset
@@ -269,19 +283,20 @@
     };
 
     return {
-      'getAsset': getAsset,
-      'getActivitiesForAsset': getActivitiesForAsset,
-      'getAssets': getAssets,
+      'createComment': createComment,
       'createFile': createFile,
       'createLink': createLink,
-      'editAsset': editAsset,
+      'createWhiteboardFromAsset': createWhiteboardFromAsset,
       'deleteAsset': deleteAsset,
-      'migrateAssets': migrateAssets,
-      'createComment': createComment,
-      'editComment': editComment,
       'deleteComment': deleteComment,
+      'editAsset': editAsset,
+      'editComment': editComment,
+      'getActivitiesForAsset': getActivitiesForAsset,
+      'getAsset': getAsset,
+      'getAssets': getAssets,
       'like': like,
-      'createWhiteboardFromAsset': createWhiteboardFromAsset
+      'migrateAssets': migrateAssets,
+      'pin': pin
     };
 
   });
