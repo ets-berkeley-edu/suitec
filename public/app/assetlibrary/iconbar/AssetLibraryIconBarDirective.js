@@ -29,12 +29,19 @@
 
   angular.module('collabosphere').directive('iconbar', function() {
     return {
+      // The directive matches attribute name only and does not overwrite the declaration in markup.
+      // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
       'restrict': 'A',
-      'templateUrl': '/app/assetlibrary/iconbar/iconbar.html',
+
+      // Define how the directive's scope is separated from the caller's scope.
+      // @see https://docs.angularjs.org/guide/directive#isolating-the-scope-of-a-directive
       'scope': {
-        'asset': '=asset',
-        'viewonly': '@viewonly'
-      }
+        'asset': '=',
+        'showPin': '=',
+        'viewonly': '@'
+      },
+
+      'templateUrl': '/app/assetlibrary/iconbar/iconbar.html'
     };
   });
 

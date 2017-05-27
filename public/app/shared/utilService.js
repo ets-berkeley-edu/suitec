@@ -456,14 +456,32 @@
      * @param  {String}     searchOptions        Type of sort selected in search/swimlane
      * @return {void}
      */
-    var addAssetInclusionFilter = function(searchOptions) {
-      if (searchOptions && searchOptions.sort && searchOptions.sort !== 'recent') {
-        searchOptions['has' + _.startCase(searchOptions.sort)] = true;
+    var narrowSearchPerSort = function(searchOptions) {
+      var sort = searchOptions && searchOptions.sort;
+      if (sort && sort !== 'recent') {
+        searchOptions['has' + _.startCase(sort)] = true;
+        if (sort === 'pins') {
+          // Sort-by-pinned gives pinned assets sorted by date.
+          searchOptions.sort = 'recent';
+        }
       }
     };
 
+    /**
+     * Each asset gets a boolean property based on what `me` has pinned.
+     *
+     * @param  {Object}     assets        Zero or more assets of the course
+     * @return {void}
+     */
+    var setPinnedByMe = function(assets) {
+      _.each(assets, function(asset) {
+        asset.isPinnedByMe = !!_.find(asset.pins, function(p) {
+          return p.user_id === me.id;
+        });
+      });
+    };
+
     return {
-      'addAssetInclusionFilter': addAssetInclusionFilter,
       'appendOrdinalSuffix': appendOrdinalSuffix,
       'buildSearchResultsMessage': buildSearchResultsMessage,
       'getAdvancedSearchId': getAdvancedSearchId,
@@ -474,10 +492,12 @@
       'getScrollInformation': getScrollInformation,
       'getToolHref': getToolHref,
       'getToolUrl': getToolUrl,
+      'narrowSearchPerSort': narrowSearchPerSort,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
       'scrollToTop': scrollToTop,
-      'setParentHash': setParentHash
+      'setParentHash': setParentHash,
+      'setPinnedByMe': setPinnedByMe
     };
 
   });

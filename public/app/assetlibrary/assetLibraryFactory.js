@@ -71,8 +71,8 @@
       page = page || 0;
       searchOptions = searchOptions || {};
 
-      // Additional filter per sort criteria
-      utilService.addAssetInclusionFilter(searchOptions);
+      // Certain types of sort will narrow the search
+      utilService.narrowSearchPerSort(searchOptions);
 
       var url = '/assets';
       url += '?offset=' + (page * 10);

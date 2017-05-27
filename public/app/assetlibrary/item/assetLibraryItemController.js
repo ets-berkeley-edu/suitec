@@ -75,6 +75,7 @@
       assetLibraryFactory.getAsset(assetId, incrementViews).success(function(asset) {
         // Build the asset comment tree
         buildCommentTree(asset);
+        utilService.setPinnedByMe([asset]);
 
         // Augment the asset object with data that the view can use to show the correct preview layer
         if (asset.preview_status === 'done') {
@@ -130,6 +131,22 @@
     };
 
     $scope.color = utilService.getColorConstants();
+
+    /**
+     * Pin an asset. If the asset has been pinned by the current user already, the pin will be undone
+     *
+     * @return {void}
+     */
+    $scope.pin = function() {
+      var pin = !$scope.asset.isPinnedByMe;
+
+      assetLibraryFactory.pin($scope.asset.id, pin).success(function() {
+        $scope.asset.isPinnedByMe = pin;
+
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+      });
+    };
 
     /**
      * Get activities for the current asset ID
@@ -442,6 +459,9 @@
     var getUpperRightButtonCount = function() {
       var count = 0;
       if ($scope.asset) {
+        // 'Pin[ned]' button is always present.
+        count++;
+
         // Edit details
         if (canManageAsset()) {
           count++;

@@ -25,6 +25,11 @@
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
       </a>
+      <a class="assetlibrary-item-pin btn btn-default" data-ng-click="pin()" class="btn btn-default">
+        <i data-ng-class="{'active': asset.isPinnedByMe}" class="fa fa-thumb-tack"></i>
+        <span data-ng-if="!asset.isPinnedByMe">Pin</span>
+        <span data-ng-if="asset.isPinnedByMe">Pinned</span>
+      </a>
       <button class="btn btn-default" data-ng-click="remixWhiteboard()" data-ng-if="asset.type === 'whiteboard'">
         <i class="fa fa-refresh"></i>
         <span>Remix</span>
@@ -146,7 +151,7 @@
           </div>
         </div>
         <div class="col-sm-3 assetlibrary-item-metadata-column assetlibrary-item-metadata-icons">
-          <div iconbar asset="asset"></div>
+          <div iconbar asset="asset" show-pin="false"></div>
         </div>
       </div>
       <div class="row">
