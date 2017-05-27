@@ -7,6 +7,7 @@ apache/suitec.conf
 config/*
 !config/default.json
 !config/production.json
+!config/schema.sql
 !config/test.js
 !config/travis.js
 
