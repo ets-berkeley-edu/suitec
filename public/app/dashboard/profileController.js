@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('ProfileController', function(assetLibraryFactory, me, profileFactory, referringTool, userFactory, utilService, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('ProfileController', function(analyticsService, assetLibraryFactory, me, profileFactory, referringTool, userFactory, utilService, $scope, $state, $stateParams) {
 
     // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
     $scope.routerStateAddLink = 'assetlibraryaddlink';
@@ -121,6 +121,22 @@
           'impacts': _.pick(activities.impacts, ['counts', 'totals']),
           'selected': 'contributions'
         };
+      });
+    };
+
+    /**
+     * Toggle activity breakdown selection (contributions or impacts).
+     *
+     * @param  {String}         filter          Which portion of the breakdown to display
+     * @return {void}
+     */
+    var toggleBreakdown = $scope.toggleBreakdown = function(filter) {
+      $scope.breakdown.selected = filter;
+
+      // Track toggle.
+      analyticsService.track('Toggle breakdown filter', {
+        'profile_user': $scope.user.id,
+        'profile_breakdown': filter
       });
     };
 
@@ -240,6 +256,14 @@
         'tool': 'dashboard',
         'id': user.id
       };
+
+      // Track view of another user's profile
+      if (!$scope.isMyProfile) {
+        analyticsService.track('View user profile', {
+          'profile_user': user.id,
+          'referer': document.referrer
+        });
+      }
     };
 
     var loadOtherUsers = function(user) {

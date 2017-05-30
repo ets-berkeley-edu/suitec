@@ -107,7 +107,7 @@
         <button type="button"
           class="btn btn-link profile-swimlane-filters-label"
           id="total-activities-by-{{filter}}"
-          data-ng-click="breakdown.selected=filter"
+          data-ng-click="toggleBreakdown(filter)"
           data-ng-disabled="breakdown.selected === filter"
           data-ng-bind="label"></button>
         <span data-ng-if="!$last">|</span>
