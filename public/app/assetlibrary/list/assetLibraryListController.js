@@ -101,6 +101,8 @@
       var isFirstResultSet = ($scope.list.page === 0);
 
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
+        utilService.setPinnedByMe(assets.results);
+
         $scope.assets = $scope.assets.concat(assets.results);
         // Only request another page of results if the number of items in the
         // current result set is the same as the maximum number of items in a

@@ -27,6 +27,12 @@
   margin-top: 25px;
 }
 
+.assetlibrary-item-pin i.active,
+.assetlibrary-item-pin .btn.active:not(:disabled),
+.assetlibrary-item-pin .btn:hover:not(:disabled) {
+  color: #4172B4;
+}
+
 /* PREVIEW */
 
 .assetlibrary-item-preview {

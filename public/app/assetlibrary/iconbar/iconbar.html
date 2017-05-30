@@ -1,27 +1,46 @@
 <div class="assetlibrary-iconbar" data-ng-controller="AssetLibraryIconBarController">
-  <!-- LIKES -->
-  <button class="btn btn-link" data-ng-if="!viewonly" data-ng-class="{'active': asset.liked}" data-ng-click="like(asset)" data-ng-disabled="isAssetCollaborator()">
-    <i class="fa fa-thumbs-up">
-      <span class="sr-only">Like</span>
-    </i>
-  </button>
-  <span data-ng-class="{'active': asset.liked}" data-ng-if="viewonly">
-    <i class="fa fa-thumbs-up">
-      <span class="sr-only">Like</span>
-    </i>
-  </span>
-  <div role="alert" class="sr-only" aria-live="polite" data-ng-bind="likeAlertMessage"></div>
-  <span data-ng-bind="asset.likes | number"></span>
+  <div class="assetlibrary-iconbar-left" data-ng-if="showPin">
+    <!-- PINS -->
+    <button class="btn btn-link" data-ng-if="!viewonly" data-ng-class="{'active': asset.isPinnedByMe}" data-ng-click="pin(asset)">
+      <i class="fa fa-thumb-tack">
+        <span class="sr-only" data-ng-if="!asset.isPinnedByMe">Pin</span>
+        <span class="sr-only" data-ng-if="asset.isPinnedByMe">Pinned</span>
+      </i>
+    </button>
+    <span data-ng-class="{'active': asset.isPinnedByMe}" data-ng-if="viewonly">
+      <i class="fa fa-thumb-tack">
+        <span class="sr-only" data-ng-if="!asset.isPinnedByMe">Pin</span>
+        <span class="sr-only" data-ng-if="asset.isPinnedByMe">Pinned</span>
+      </i>
+    </span>
+    <div role="alert" class="sr-only" aria-live="polite" data-ng-bind="pinAlertMessage"></div>
+  </div>
 
-  <!-- VIEWS -->
-  <i class="fa fa-eye">
-    <span class="sr-only">Views</span>
-  </i>
-  <span data-ng-bind="asset.views | number"></span>
+  <div class="assetlibrary-iconbar-right">
+    <!-- LIKES -->
+    <button class="btn btn-link" data-ng-if="!viewonly" data-ng-class="{'active': asset.liked}" data-ng-click="like(asset)" data-ng-disabled="isAssetCollaborator()">
+      <i class="fa fa-thumbs-up">
+        <span class="sr-only">Like</span>
+      </i>
+    </button>
+    <span data-ng-class="{'active': asset.liked}" data-ng-if="viewonly">
+      <i class="fa fa-thumbs-up">
+        <span class="sr-only">Like</span>
+      </i>
+    </span>
+    <div role="alert" class="sr-only" aria-live="polite" data-ng-bind="likeAlertMessage"></div>
+    <span data-ng-bind="asset.likes | number"></span>
 
-  <!-- COMMENTS -->
-  <i class="fa fa-comment">
-    <span class="sr-only">Comments</span>
-  </i>
-  <span data-ng-bind="asset.comment_count | number"></span>
+    <!-- VIEWS -->
+    <i class="fa fa-eye">
+      <span class="sr-only">Views</span>
+    </i>
+    <span data-ng-bind="asset.views | number"></span>
+
+    <!-- COMMENTS -->
+    <i class="fa fa-comment">
+      <span class="sr-only">Comments</span>
+    </i>
+    <span data-ng-bind="asset.comment_count | number"></span>
+  </div>
 </div>

@@ -23,6 +23,19 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
+.assetlibrary-iconbar {
+  display: flex;
+}
+
+.assetlibrary-iconbar-left {
+  -webkit-align-self: flex-start;
+  align-self: flex-start;
+}
+
+.assetlibrary-iconbar-right {
+  margin-left: auto;
+}
+
 .assetlibrary-iconbar .btn {
   margin-top: -2px;
   padding: 0;

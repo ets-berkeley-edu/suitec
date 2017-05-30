@@ -58,6 +58,24 @@
     };
 
     /**
+     * Pin an asset. If the asset has been pinned by the current user already, the pin will be undone
+     *
+     * @param  {Asset}          asset                           The asset that should be pinned or unpinned
+     * @return {void}
+     */
+    $scope.pin = function(asset) {
+      var pin = !asset.isPinnedByMe;
+
+      assetLibraryFactory.pin(asset.id, pin).success(function() {
+        asset.isPinnedByMe = pin;
+        $scope.pinAlertMessage = pin ? 'Pinned asset' : 'Unpinned asset';
+
+        // Indicate that the asset has been updated
+        $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+      });
+    };
+
+    /**
      * Whether the current user is a collaborator of the asset
      *
      * @return {Boolean}        `true` if the user is a collaborator, `false` otherwise

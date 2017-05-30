@@ -47,9 +47,8 @@
         advancedSearchId: null,
         filterLabels: {
           recent: 'Recent',
-          impact: 'Most Impactful'
-          // TODO:
-          // pinned: 'Pinned'
+          impact: 'Most Impactful',
+          pins: 'Pinned'
         }
       }
     };
@@ -142,6 +141,7 @@
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
         angular.extend($scope.user.assets, assets);
+        utilService.setPinnedByMe($scope.user.assets.results);
 
       }).then(function() {
         var isShowAllFilter = sortType === 'recent';
@@ -174,6 +174,7 @@
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
         angular.extend($scope.community.assets, assets);
+        utilService.setPinnedByMe($scope.community.assets.results);
 
       }).then(function() {
         var isShowAllFilter = sortType === 'recent';
