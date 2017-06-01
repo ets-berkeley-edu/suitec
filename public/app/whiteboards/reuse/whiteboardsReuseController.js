@@ -86,16 +86,19 @@
       // Indicate the no further REST API requests should be made
       // until the current request has completed
       $scope.list.ready = false;
-      $scope.isSearch = false;
 
+      // Indicate whether a search was performed
       var opts = $scope.searchOptions;
+      $scope.isSearch = opts.keywords || opts.category || opts.user || opts.section || opts.type;
+
+      // Default view has 'pins' assets listed first.
+      if (!$scope.isSearch) {
+        opts = {
+          'sort': 'pins'
+        };
+      }
 
       assetLibraryFactory.getAssets($scope.list.page, opts).success(function(assets) {
-        // Indicate whether a search was performed
-        if (opts.keywords || opts.category || opts.user || opts.section || opts.type) {
-          $scope.isSearch = true;
-        }
-
         // Add the new assets
         $scope.assets = $scope.assets.concat(assets.results);
 
@@ -108,6 +111,18 @@
       });
       // Ensure that the next page is requested the next time
       $scope.list.page++;
+    };
+
+    /**
+     * Get the assets for the current course through an infinite scroll
+     *
+     * @param  {Asset[]}          assets           All assets from AssetsAPI, including pinned_by_me
+     * @return {Asset[]}                           Filtered set of assets (pinned_by_me are excluded). If user performs search then list is unfiltered.
+     */
+    var notPinnedByMe = $scope.notPinnedByMe = function(assets) {
+      return $scope.isSearch ? assets : _.filter(assets, function(asset) {
+        return !asset.pinned_by_me;
+      });
     };
 
     /**

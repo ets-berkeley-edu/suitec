@@ -460,10 +460,6 @@
       var sort = searchOptions && searchOptions.sort;
       if (sort && sort !== 'recent') {
         searchOptions['has' + _.startCase(sort)] = true;
-        if (sort === 'pins') {
-          // Sort-by-pinned gives pinned assets sorted by date.
-          searchOptions.sort = 'recent';
-        }
       }
     };
 

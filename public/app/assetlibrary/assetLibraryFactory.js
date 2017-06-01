@@ -71,9 +71,6 @@
       page = page || 0;
       searchOptions = searchOptions || {};
 
-      // Certain types of sort will narrow the search
-      utilService.narrowSearchPerSort(searchOptions);
-
       var url = '/assets';
       url += '?offset=' + (page * 10);
       if (searchOptions.keywords) {
