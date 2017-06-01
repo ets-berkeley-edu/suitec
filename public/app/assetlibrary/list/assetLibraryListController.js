@@ -100,6 +100,9 @@
 
       var isFirstResultSet = ($scope.list.page === 0);
 
+      // Narrow the search, if appropriate
+      utilService.narrowSearchPerSort($scope.searchOptions);
+
       assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
         utilService.setPinnedByMe(assets.results);
 

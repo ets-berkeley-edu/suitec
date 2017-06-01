@@ -155,6 +155,9 @@
         'limit': $scope.maxPerSwimlane
       };
 
+      // Narrow the search, if appropriate
+      utilService.narrowSearchPerSort(searchOptions);
+
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
         angular.extend($scope.user.assets, assets);
         utilService.setPinnedByMe($scope.user.assets.results);
@@ -187,6 +190,9 @@
         'sort': sortType,
         'limit': $scope.maxPerSwimlane
       };
+
+      // Narrow the search, if appropriate
+      utilService.narrowSearchPerSort(searchOptions);
 
       assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
         angular.extend($scope.community.assets, assets);
