@@ -171,14 +171,34 @@
     });
 
     /**
+     * Listen for pinning/unpinning events by 'me'
+     */
+    $scope.$on('assetPinEventByMe', function(ev, updatedAsset) {
+      var userId = $scope.searchOptions.user;
+
+      // Proceed if search is on my pinned assets
+      if ($scope.searchOptions.sort === 'pins' && (!userId || userId === me.id)) {
+        _.each($scope.assets, function(asset) {
+          if (asset.id === updatedAsset.id) {
+
+            // Next action depends on new value of isPinnedByMe
+            $scope.assets = updatedAsset.isPinnedByMe ?
+              _.union($scope.assets, [updatedAsset]) :
+              _.reject($scope.assets, {'id': updatedAsset.id});
+          }
+        });
+      }
+    });
+
+    /**
      * Listen for events indicating that an asset has been updated
      */
     $scope.$on('assetLibraryAssetUpdated', function(ev, updatedAsset) {
-      for (var i = 0; i < $scope.assets.length; i++) {
-        if ($scope.assets[i].id === updatedAsset.id) {
-          $scope.assets[i] = updatedAsset;
+      _.each($scope.assets, function(asset, index) {
+        if (asset.id === updatedAsset.id) {
+          $scope.assets[index] = updatedAsset;
         }
-      }
+      });
     });
 
     /**

@@ -280,6 +280,26 @@
       });
     };
 
+    /**
+     * Listen for pinning/unpinning events by 'me'
+     */
+    $scope.$on('assetPinEventByMe', function(ev, updatedAsset) {
+      if ($scope.isMyProfile && $scope.user.assets.sortBy === 'pins') {
+        var reloadUserAssets = false;
+        _.each([$scope.user.assets.results, $scope.community.assets.results], function(assets) {
+          _.each(assets, function(asset, index) {
+            if (asset.id === updatedAsset.id) {
+              assets[index] = updatedAsset;
+              reloadUserAssets = true;
+            }
+          });
+        });
+        if (reloadUserAssets) {
+          sortUserAssets($scope.user.assets.sortBy);
+        }
+      }
+    });
+
     var init = function() {
       // Determine user
       var otherUserId = $stateParams.userId || (referringTool && referringTool.requestedId);

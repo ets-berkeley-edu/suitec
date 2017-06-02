@@ -72,6 +72,7 @@
 
         // Indicate that the asset has been updated
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
+        $scope.$emit('assetPinEventByMe', $scope.asset);
       });
     };
 
