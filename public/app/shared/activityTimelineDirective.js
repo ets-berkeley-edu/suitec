@@ -210,7 +210,7 @@
           element.datum(scope.activityTimeline);
           element.call(eventDropsChart);
 
-          var timelineWidth = element.node().getBoundingClientRect().width;
+          var timelineWidth = element.select('.line-separator').node().getBoundingClientRect().width;
 
           element.selectAll('.label').classed('activity-timeline-label', true);
 
