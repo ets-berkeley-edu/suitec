@@ -214,14 +214,15 @@
           </div>
         </li>
 
-        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in user.assets.results">
-          <a tool-href
-            data-tool="assetlibrary"
-            data-referring-tool="dashboard"
-            data-referring-id="user.id"
-            data-id="asset.id">
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3"
+            data-ng-repeat="asset in user.assets.results">
+          <div class="col-list-item-container">
+            <a tool-href
+                data-tool="assetlibrary"
+                data-referring-tool="dashboard"
+                data-referring-id="user.id"
+                data-id="asset.id">
 
-            <div class="col-list-item-container">
               <div class="col-list-item-tile">
                 <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
                 <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
@@ -234,9 +235,9 @@
                   </div>
                 </div>
               </div>
-              <div class="text-right col-list-item-actions" iconbar asset="asset" show-pin="true" viewonly="true"></div>
-            </div>
-          </a>
+            </a>
+            <div class="text-right col-list-item-actions" iconbar asset="asset" show-pin="true" viewonly="true"></div>
+          </div>
         </li>
       </ul>
     </div>
@@ -274,14 +275,15 @@
         No matching assets were found.
       </div>
       <ul>
-        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in community.assets.results">
-          <a tool-href
-            data-tool="assetlibrary"
-            data-referring-tool="dashboard"
-            data-referring-id="user.id"
-            data-id="asset.id">
+        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3"
+            data-ng-repeat="asset in community.assets.results">
+          <div class="col-list-item-container">
+            <a tool-href
+              data-tool="assetlibrary"
+              data-referring-tool="dashboard"
+              data-referring-id="user.id"
+              data-id="asset.id">
 
-            <div class="col-list-item-container">
               <div class="col-list-item-tile">
                 <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
                 <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
@@ -295,8 +297,8 @@
                 </div>
               </div>
             </div>
-            <div class="text-right col-list-item-actions" iconbar asset="asset" show-pin="true" viewonly="true"></div>
           </a>
+          <div class="text-right col-list-item-actions" iconbar asset="asset" show-pin="true" viewonly="true"></div>
         </li>
       </ul>
     </div>
