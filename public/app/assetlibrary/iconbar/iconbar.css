@@ -42,12 +42,16 @@
 }
 
 .assetlibrary-iconbar span.active,
-.assetlibrary-iconbar .btn.active:not(:disabled),
-.assetlibrary-iconbar .btn:hover:not(:disabled) {
+.assetlibrary-iconbar .btn.active:not(:disabled) {
   color: #4172B4;
 }
 
+.assetlibrary-iconbar .btn:hover:not(:disabled) {
+  color: #719FDD;
+}
+
 .assetlibrary-iconbar .btn:disabled {
+  color: #999999;
   opacity: 0.5;
 }
 
