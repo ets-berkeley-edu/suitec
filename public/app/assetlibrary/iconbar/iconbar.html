@@ -1,7 +1,11 @@
 <div class="assetlibrary-iconbar" data-ng-controller="AssetLibraryIconBarController">
   <div class="assetlibrary-iconbar-left" data-ng-if="showPin">
     <!-- PINS -->
-    <button class="btn btn-link" data-ng-class="{'active': asset.isPinnedByMe}" data-ng-click="pin(asset)">
+    <button id="iconbar-pin-{{asset.id}}"
+      class="btn btn-link"
+      data-ng-class="{'active': asset.isPinnedByMe}"
+      data-ng-click="pin(asset)">
+
       <i class="fa fa-thumb-tack">
         <span class="sr-only" data-ng-if="!asset.isPinnedByMe">Pin</span>
         <span class="sr-only" data-ng-if="asset.isPinnedByMe">Pinned</span>
@@ -12,7 +16,13 @@
 
   <div class="assetlibrary-iconbar-right">
     <!-- LIKES -->
-    <button class="btn btn-link" data-ng-if="!viewonly" data-ng-class="{'active': asset.liked}" data-ng-click="like(asset)" data-ng-disabled="isAssetCollaborator()">
+    <button id="iconbar-like-{{asset.id}}"
+      class="btn btn-link"
+      data-ng-if="!viewonly"
+      data-ng-class="{'active': asset.liked}"
+      data-ng-click="like(asset)"
+      data-ng-disabled="isAssetCollaborator()">
+
       <i class="fa fa-thumbs-up">
         <span class="sr-only">Like</span>
       </i>
