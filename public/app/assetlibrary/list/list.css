@@ -85,6 +85,33 @@
   top: 2px;
 }
 
+.assetlibrary-list-top-asset-overlay {
+  position: absolute;
+  right: 20px;
+  text-align: center;
+  top: -8px;
+  width: 100px;
+  z-index: 1;
+}
+
+.assetlibrary-list-top-asset-label {
+  border-bottom: solid 1px #fff;
+  color: #fff;
+  font-size: 10px;
+  margin: 15px 20px 5px 20px;
+  padding-bottom: 2px;
+}
+
+.assetlibrary-list-top-asset-ribbon {
+  color: #008ee2;
+  font-size: 100px;
+}
+
+.assetlibrary-list-top-asset-star {
+  color: #fff;
+  font-size: 22px;
+}
+
 /* LIST ITEMS */
 
 .assetlibrary-list-item a:hover {
