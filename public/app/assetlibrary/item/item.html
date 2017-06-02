@@ -21,24 +21,33 @@
 
     <!-- EDIT DETAILS -->
     <div class="col-xs-{{ (2 * upperRightButtonCount) + 1 }} col-sm-{{ (2 * upperRightButtonCount) + 1 }} text-right">
-      <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default" data-ng-if="canManageAsset()">
+      <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default"
+        data-ng-if="canManageAsset()">
         <i class="fa fa-pencil"></i>
         <span>Edit details</span>
       </a>
-      <a class="assetlibrary-item-pin btn btn-default" data-ng-click="pin()" class="btn btn-default">
+      <button id="pin-asset" class="assetlibrary-item-pin btn btn-default"
+        data-ng-click="pin()">
         <i data-ng-class="{'active': asset.isPinnedByMe}" class="fa fa-thumb-tack"></i>
         <span data-ng-if="!asset.isPinnedByMe">Pin</span>
         <span data-ng-if="asset.isPinnedByMe">Pinned</span>
-      </a>
-      <button class="btn btn-default" data-ng-click="remixWhiteboard()" data-ng-if="asset.type === 'whiteboard'">
+      </button>
+      <button id="remix-whiteboard" class="btn btn-default"
+        data-ng-click="remixWhiteboard()"
+        data-ng-if="asset.type === 'whiteboard'">
         <i class="fa fa-refresh"></i>
         <span>Remix</span>
       </button>
-      <a class="btn btn-default" data-ng-href="{{asset.download_url}}" target="_blank" data-ng-if="asset.type !== 'link' && asset.download_url">
+      <a id="download-asset" class="btn btn-default"
+        data-ng-href="{{asset.download_url}}"
+        target="_blank"
+        data-ng-if="asset.type !== 'link' && asset.download_url">
         <i class="fa fa-download"></i>
         <span>Download</span>
       </a>
-      <button class="btn btn-default" data-ng-click="deleteAsset()" data-ng-if="asset.can_delete">
+      <button id="delete-asset" class="btn btn-default"
+        data-ng-click="deleteAsset()"
+        data-ng-if="asset.can_delete">
         <i class="fa fa-trash"></i>
         <span>Delete</span>
       </button>

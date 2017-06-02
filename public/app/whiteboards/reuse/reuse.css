@@ -29,6 +29,13 @@
   overflow-y: auto;
 }
 
+.whiteboards-reuse-list-container h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 0;
+  margin-top: 15px;
+}
+
 @media only screen and (min-height : 768px) {
   .whiteboards-reuse-list-container {
     max-height: 500px;
