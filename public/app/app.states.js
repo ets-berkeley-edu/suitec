@@ -91,11 +91,6 @@
         'templateUrl': '/app/dashboard/profile.html',
         'controller': 'ProfileController'
       })
-      .state('aggregatedsearch', {
-        'url': '/aggregatedsearch?category&user&keywords&type&sort',
-        'templateUrl': '/app/dashboard/search/results.html',
-        'controller': 'AggregatedSearchController'
-      })
 
       // Engagement Index routes
       .state('engagementindex', {
