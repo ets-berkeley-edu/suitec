@@ -12,21 +12,35 @@
           data-search-options-user="searchOptions.user"
           data-search-options-section="searchOptions.section"
           data-search-options-type="searchOptions.type"></search>
-        <div class="col-list-container" data-infinite-scroll="getAssets()" data-infinite-scroll-ready="list.ready" data-infinite-scroll-distance="400" data-infinite-scroll-container="whiteboards-reuse-list-container">
+
+        <div class="col-list-container"
+          data-infinite-scroll="getAssets()"
+          data-infinite-scroll-ready="list.ready"
+          data-infinite-scroll-distance="400"
+          data-infinite-scroll-container="whiteboards-reuse-list-container">
+
+          <div data-ng-if="!isSearch">
+            <h3 data-ng-if="!isSearch">Pinned Assets</h3>
+            <ul>
+              <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | filter:{pinned_by_me: true} | unique:'id'">
+                <div class="col-list-item-container">
+                  <a data-ng-click="selectAsset(asset)">
+                    <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
+                  </a>
+                  <div class="col-list-item-actions">
+                    <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <h3 data-ng-if="!isSearch">All Assets</h3>
           <ul>
-            <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | unique:'id'">
+            <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in notPinnedByMe(assets) | unique:'id'">
               <div class="col-list-item-container">
                 <a data-ng-click="selectAsset(asset)">
-                  <div class="col-list-item-tile">
-                    <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
-                    <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
-                      <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link')}"></i>
-                    </div>
-                    <div class="col-list-item-metadata">
-                      <span class="col-threedots">{{asset.title}}</span>
-                      <small class="col-threedots">by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
-                    </div>
-                  </div>
+                  <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
                 </a>
                 <div class="col-list-item-actions">
                   <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
