@@ -3,7 +3,9 @@
     <div class="profile-summary-column">
       <img class="profile-summary-avatar" data-ng-src="{{user.canvas_image}}" data-ng-if="user.canvas_image"/>
       <div class="profile-engagement-avatar-caption">
-        <a data-ng-href="/profile/edit" data-ng-if="isMyProfile">
+        <a id="edit-profile"
+          data-ng-href="/profile/edit"
+          data-ng-if="isMyProfile">
           Edit Profile
         </a>
       </div>
@@ -12,7 +14,9 @@
       <div class="profile-summary-banner">
         <h1 class="profile-summary-header" data-ng-bind="user.canvas_full_name"></h1>
         <label for="findUser" class="sr-only">Search for users</label>
-        <oi-select name="findUser" class="profile-summary-search cleanMode"
+        <oi-select id="find-user"
+          class="profile-summary-search cleanMode"
+          name="findUser"
           autofocus
           oi-options="user.id as user.canvas_full_name for user in otherUsers track by user.id | orderBy: canvas_full_name.toLowerCase()"
           oi-select-options="{
@@ -37,7 +41,8 @@
       <div class="profile-summary-column-square">
         <div class="profile-summary-column-square-content">
           <h2>
-            <a tool-href
+            <a id="engagement-index"
+              tool-href
               data-tool="engagementindex"
               data-referring-tool="dashboard">
               Engagement Index
@@ -52,7 +57,8 @@
           </div>
           <div data-ng-if="isMyProfile && !user.share_points">
             Sharing off.
-            <a tool-href
+            <a id="turn-on-sharing"
+              tool-href
               data-tool="engagementindex"
               data-referring-tool="dashboard">Turn on?</a>
           </div>
@@ -105,8 +111,8 @@
 
       <div data-ng-repeat="(filter, label) in {contributions: 'Contributions', impacts: 'Impacts'}">
         <button type="button"
-          class="btn btn-link profile-swimlane-filters-label"
           id="total-activities-by-{{filter}}"
+          class="btn btn-link profile-swimlane-filters-label"
           data-ng-click="toggleBreakdown(filter)"
           data-ng-disabled="breakdown.selected === filter"
           data-ng-bind="label"></button>
@@ -147,8 +153,8 @@
 
       <div data-ng-repeat="(filter, label) in user.assets.filterLabels" data-ng-if="user.totalAssetsInCourse">
         <button type="button"
+          id="user-assets-by-{{filter}}"
           class="btn btn-link profile-swimlane-filters-label"
-          id="user-assets-filter-by-{{filter}}"
           data-ng-click="sortUserAssets(filter)"
           data-ng-disabled="user.assets.sortBy === filter"
           data-ng-bind="label"></button>
@@ -157,7 +163,8 @@
       <div class="profile-swimlane-filters-label"
         id="user-assets-filter-see-all"
         data-ng-if="user.totalAssetsInCourse && (user.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
-        <a tool-href
+        <a id="user-assets-show-all"
+          tool-href
           data-tool="assetlibrary"
           data-referring-tool="dashboard"
           data-referring-id="user.id"
@@ -179,7 +186,8 @@
             <div class="col-list-item-tile">
               <div class="assetlibrary-list-item-add-container">
                 <div class="assetlibrary-list-item-add-table">
-                  <a class="text-center col-pane"
+                  <a id="upload-asset"
+                    class="text-center col-pane"
                     tool-href
                     data-tool="assetlibrary"
                     data-referring-tool="dashboard"
@@ -188,7 +196,8 @@
                     <i class="fa fa-laptop"></i>
                     <div class="assetlibrary-list-item-add-action">Upload</div>
                   </a>
-                  <a class="text-center col-pane"
+                  <a id="add-link-asset"
+                    class="text-center col-pane"
                     tool-href
                     data-tool="assetlibrary"
                     data-referring-tool="dashboard"
@@ -201,7 +210,7 @@
               </div>
             </div>
             <div class="col-list-item-actions">
-              <a class="text-center col-pane"
+              <a id="bookmarklet-info" class="text-center col-pane"
                 tool-href
                 data-tool="assetlibrary"
                 data-referring-tool="dashboard"
@@ -217,11 +226,12 @@
         <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3"
             data-ng-repeat="asset in user.assets.results">
           <div class="col-list-item-container">
-            <a tool-href
-                data-tool="assetlibrary"
-                data-referring-tool="dashboard"
-                data-referring-id="user.id"
-                data-id="asset.id">
+            <a id="user-asset-{{asset.id}}"
+              tool-href
+              data-tool="assetlibrary"
+              data-referring-tool="dashboard"
+              data-referring-id="user.id"
+              data-id="asset.id">
               <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
             </a>
             <div class="text-right col-list-item-actions" iconbar asset="asset" show-pin="true" viewonly="true"></div>
@@ -237,8 +247,8 @@
 
       <div data-ng-repeat="(filter, label) in community.assets.filterLabels" data-ng-if="community.totalAssetsInCourse">
         <button type="button"
+          id="community-assets-by-{{filter}}"
           class="btn btn-link profile-swimlane-filters-label"
-          id="community-assets-filter-by-{{filter}}"
           data-ng-click="sortCommunityAssets(filter)"
           data-ng-disabled="community.assets.sortBy === filter"
           data-ng-bind="label"></button>
@@ -247,7 +257,8 @@
       <div class="profile-swimlane-filters-label"
         id="community-assets-see-all"
         data-ng-if="community.totalAssetsInCourse && (community.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
-        <a tool-href
+        <a id="community-assets-show-all"
+          tool-href
           data-tool="assetlibrary"
           data-referring-tool="dashboard"
           data-referring-id="user.id"
@@ -266,7 +277,8 @@
         <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3"
             data-ng-repeat="asset in community.assets.results">
           <div class="col-list-item-container">
-            <a tool-href
+            <a id="community-asset-{{asset.id}}"
+              tool-href
               data-tool="assetlibrary"
               data-referring-tool="dashboard"
               data-referring-id="user.id"
