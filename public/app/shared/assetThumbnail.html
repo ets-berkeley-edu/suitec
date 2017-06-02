@@ -1,0 +1,21 @@
+<div data-ng-if="asset.badged">
+  <div class="assetlibrary-list-top-asset-overlay">
+    <i class="fa fa-bookmark assetlibrary-list-top-asset-ribbon"></i>
+  </div>
+  <div class="assetlibrary-list-top-asset-overlay">
+    <div class="assetlibrary-list-top-asset-label">TOP ASSET</div>
+    <i class="fa fa-star assetlibrary-list-top-asset-star"></i>
+  </div>
+</div>
+<div class="col-list-item-tile">
+  <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
+  <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
+    <i class="fa" data-ng-class="{'fa-file': (asset.type === 'file'), 'fa-link': (asset.type === 'link'), 'fa-calendar-o': (asset.type === 'whiteboard')}"></i>
+  </div>
+  <div class="col-list-item-metadata">
+    <div class="col-threedots">{{asset.title}} </div>
+    <div class="col-threedots">
+      <small>by {{asset.users.length > 1 ? asset.users.length + " collaborators" : asset.users[0].canvas_full_name}}</small>
+    </div>
+  </div>
+</div>
