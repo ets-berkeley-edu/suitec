@@ -62,6 +62,15 @@
       <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | unique:'id'">
         <div class="col-list-item-container">
           <a ui-sref="assetlibrarylist.item({assetId: asset.id})">
+            <div data-ng-if="asset.badged">
+              <div class="assetlibrary-list-top-asset-overlay">
+                <i class="fa fa-bookmark assetlibrary-list-top-asset-ribbon"></i>
+              </div>
+              <div class="assetlibrary-list-top-asset-overlay">
+                <div class="assetlibrary-list-top-asset-label">TOP ASSET</div>
+                <i class="fa fa-star assetlibrary-list-top-asset-star"></i>
+              </div>
+            </div>
             <div class="col-list-item-tile">
               <img class="img-responsive" data-ng-src="{{asset.thumbnail_url}}" data-ng-if="asset.thumbnail_url">
               <div class="text-center col-list-item-thumbnail-default" data-ng-if="!asset.thumbnail_url">
