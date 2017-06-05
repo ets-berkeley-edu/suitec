@@ -69,6 +69,9 @@
 
     $scope.$watch('nextUserId', function() {
       if ($scope.nextUserId) {
+        analyticsService.track('Search for user profile', {
+          'search_for_user': $scope.nextUserId
+        });
         $state.go('userprofile', {'userId': $scope.nextUserId});
       }
     }, true);
@@ -131,9 +134,9 @@
       $scope.breakdown.selected = filter;
 
       // Track toggle.
-      analyticsService.track('Toggle breakdown filter', {
+      analyticsService.track('Change profile page total activities filter', {
         'profile_user': $scope.user.id,
-        'profile_breakdown': filter
+        'activities_filter': filter
       });
     };
 
@@ -141,9 +144,10 @@
      * Get custom type of asset list (e.g., 'Most Impactful') per user.
      *
      * @param  {String}         sortType              Name of field to sort by
+     * @param  {Boolean}        track                 Whether to track sort in analytics
      * @return {void}
      */
-    var sortUserAssets = $scope.sortUserAssets = function(sortType) {
+    var sortUserAssets = $scope.sortUserAssets = function(sortType, track) {
       $scope.user.assets.isLoading = true;
 
       var searchOptions = {
@@ -151,6 +155,13 @@
         'user': $scope.user.id,
         'limit': $scope.maxPerSwimlane
       };
+
+      if (track) {
+        analyticsService.track('Change profile page user assets filter', {
+          'profile_user': $scope.user.id,
+          'user_assets_filter': sortType
+        });
+      }
 
       // Narrow the search, if appropriate
       utilService.narrowSearchPerSort(searchOptions);
@@ -178,15 +189,23 @@
      * "Community" represents all users of the course site.
      *
      * @param  {String}               sortType              Name of field to sort by
+     * @param  {Boolean}              track                 Whether to track sort in analytics
      * @return {void}
      */
-    var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType) {
+    var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType, track) {
       $scope.community.assets.isLoading = true;
 
       var searchOptions = {
         'sort': sortType,
         'limit': $scope.maxPerSwimlane
       };
+
+      if (track) {
+        analyticsService.track('Change profile page community assets filter', {
+          'profile_user': $scope.user.id,
+          'community_assets_filter': sortType
+        });
+      }
 
       // Narrow the search, if appropriate
       utilService.narrowSearchPerSort(searchOptions);
@@ -244,11 +263,11 @@
       getUserActivity(user.id);
 
       // Featured assets of user (current profile)
-      sortUserAssets($scope.user.assets.sortBy);
+      sortUserAssets($scope.user.assets.sortBy, false);
 
       // Only show 'Everyone's Assets' swimlane when user is on his/her own profile
       if ($scope.isMyProfile) {
-        sortCommunityAssets($scope.community.assets.sortBy);
+        sortCommunityAssets($scope.community.assets.sortBy, false);
       }
 
       $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
@@ -292,7 +311,7 @@
           });
         });
         if (reloadUserAssets) {
-          sortUserAssets($scope.user.assets.sortBy);
+          sortUserAssets($scope.user.assets.sortBy, false);
         }
       }
     });
