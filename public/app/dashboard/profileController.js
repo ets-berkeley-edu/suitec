@@ -281,7 +281,7 @@
      * Listen for pinning/unpinning events by 'me'
      */
     $scope.$on('assetPinEventByMe', function(ev, updatedAsset) {
-      if ($scope.isMyProfile && $scope.user.assets.sortBy === 'pins') {
+      if ($scope.isMyProfile) {
         var reloadUserAssets = false;
         _.each([$scope.user.assets.results, $scope.community.assets.results], function(assets) {
           _.each(assets, function(asset, index) {
