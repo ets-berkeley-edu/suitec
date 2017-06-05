@@ -75,7 +75,7 @@
       assetLibraryFactory.getAsset(assetId, incrementViews).success(function(asset) {
         // Build the asset comment tree
         buildCommentTree(asset);
-        utilService.setPinnedByMe([asset]);
+        utilService.setPinnedByMe([ asset ]);
 
         // Augment the asset object with data that the view can use to show the correct preview layer
         if (asset.preview_status === 'done') {
@@ -234,7 +234,7 @@
      */
     var canManageAsset = $scope.canManageAsset = function() {
       if ($scope.asset && $scope.me) {
-        return ($scope.me.is_admin || _.findWhere($scope.asset.users, {'id': $scope.me.id}));
+        return ($scope.me.is_admin || _.find($scope.asset.users, {'id': $scope.me.id}));
       }
     };
 

@@ -260,7 +260,7 @@
      */
     var imageCallback = function(img) {
       // Ensure that the same image is not re-added
-      if (_.findWhere(pageItems, {'url': img.url}) === undefined) {
+      if (_.find(pageItems, {'url': img.url}) === undefined) {
         // If no title for the image could be extracted, default the
         // title to the name of the image
         if (!img.title) {
@@ -290,7 +290,7 @@
   var getSelectedPageItems = function() {
     var selected = [];
     $('#collabosphere-items-list input[type=checkbox]:checked').each(function() {
-      var item = _.findWhere(pageItems, {'url': $(this).attr('data-collabosphere-url')});
+      var item = _.find(pageItems, {'url': $(this).attr('data-collabosphere-url')});
       selected.push(item);
     });
     return selected;
