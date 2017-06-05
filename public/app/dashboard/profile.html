@@ -158,7 +158,7 @@
         <button type="button"
           id="user-assets-by-{{filter}}"
           class="btn btn-link profile-filter-label"
-          data-ng-click="sortUserAssets(filter)"
+          data-ng-click="sortUserAssets(filter, true)"
           data-ng-disabled="user.assets.sortBy === filter"
           data-ng-bind="label"></button>
         <span data-ng-if="(user.assets.sortBy === filter) && (user.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
@@ -248,7 +248,7 @@
         <button type="button"
           id="community-assets-by-{{filter}}"
           class="btn btn-link profile-filter-label"
-          data-ng-click="sortCommunityAssets(filter)"
+          data-ng-click="sortCommunityAssets(filter, true)"
           data-ng-disabled="community.assets.sortBy === filter"
           data-ng-bind="label"></button>
         <span data-ng-if="(community.assets.sortBy === filter) && (community.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
