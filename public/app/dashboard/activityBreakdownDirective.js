@@ -41,6 +41,7 @@
       'scope': {
         'activityBreakdown': '=',
         'activityTotal': '=',
+        'breakdownLabel': '=',
         'breakdownSelected': '@'
       },
       'templateUrl': '/app/dashboard/activityBreakdown.html',
