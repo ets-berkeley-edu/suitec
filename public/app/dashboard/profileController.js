@@ -155,7 +155,7 @@
       // Narrow the search, if appropriate
       utilService.narrowSearchPerSort(searchOptions);
 
-      assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
+      assetLibraryFactory.getAssets(0, searchOptions, false).success(function(assets) {
         angular.extend($scope.user.assets, assets);
         utilService.setPinnedByMe($scope.user.assets.results);
 
@@ -191,7 +191,7 @@
       // Narrow the search, if appropriate
       utilService.narrowSearchPerSort(searchOptions);
 
-      assetLibraryFactory.getAssets(0, searchOptions).success(function(assets) {
+      assetLibraryFactory.getAssets(0, searchOptions, false).success(function(assets) {
         angular.extend($scope.community.assets, assets);
         utilService.setPinnedByMe($scope.community.assets.results);
 
