@@ -1,29 +1,32 @@
-<div class="profile-activity-breakdown">
-  <div data-ng-if="segments.length"
-       data-ng-repeat="segment in segments" 
-       class="profile-activity-breakdown-segment"
-       data-ng-class="segment.cssClass"
-       data-ng-style="{'flex': (segment.percentage || 0.2)}"
-       data-content-template="activityBreakdownPopoverTemplate" 
-       data-placement="top"
-       data-trigger="hover"
-       data-container=".profile-activity-breakdown"
-       bs-popover>
-    <div class="profile-activity-breakdown-segment-text" data-ng-bind="segment.displayName"></div>
-   </div>
-   <div data-ng-if="!segments.length" class="profile-activity-breakdown-segment profile-activity-breakdown-empty">
-     <div class="profile-activity-breakdown-segment-text">
-       Currently no <span data-ng-bind="breakdownSelected"></span>
+<div class="profile-activity-breakdown-wrapper">
+  <div class="profile-activity-breakdown-bar-chart profile-activity-breakdown-label" data-ng-bind="breakdownLabel"></div>
+  <div class="profile-activity-breakdown">
+    <div data-ng-if="segments.length"
+         data-ng-repeat="segment in segments"
+         class="profile-activity-breakdown-bar-chart profile-activity-breakdown-segment"
+         data-ng-class="segment.cssClass"
+         data-ng-style="{'flex': (segment.percentage || 0.2)}"
+         data-content-template="activityBreakdownPopoverTemplate"
+         data-placement="top"
+         data-trigger="hover"
+         data-container=".profile-activity-breakdown"
+         bs-popover>
+      <div class="profile-activity-breakdown-segment-text" data-ng-bind="segment.displayName"></div>
      </div>
-   </div>
+     <div data-ng-if="!segments.length" class="profile-activity-breakdown-segment profile-activity-breakdown-empty">
+       <div class="profile-activity-breakdown-segment-text">
+         Currently no <span data-ng-bind="breakdownSelected"></span>
+       </div>
+     </div>
+  </div>
 </div>
 
 <script type="text/ng-template" id="activityBreakdownPopoverTemplate">
   <div class="profile-activity-breakdown-popover-outer">
     <h4 class="profile-activity-breakdown-header">
     	<span data-ng-bind="segment.displayName"></span>:
-      <span data-ng-pluralize count="segment.count" when="{'one': '1 time', 'other': '{} times'}"></span> 
-    	<span class="profile-activity-breakdown-popover-divider">|</span> 
+      <span data-ng-pluralize count="segment.count" when="{'one': '1 time', 'other': '{} times'}"></span>
+    	<span class="profile-activity-breakdown-popover-divider">|</span>
     	<span data-ng-bind="segment.percentage"></span>%
     </h4>
     <div data-ng-switch="segment.displayName" class="profile-activity-breakdown-popover-details">
@@ -38,7 +41,7 @@
       <div data-ng-switch-when="Comments">
         <span data-ng-if="breakdownSelected === 'contributions'">Commented on asset or replied to asset comment.</span>
         <span data-ng-if="breakdownSelected === 'impacts'">Received a comment or reply on a comment.</span>
-       </div>     
+       </div>
       <div data-ng-switch-when="Posts">
         <span data-ng-if="breakdownSelected === 'contributions'">Posted to discussion.</span>
       </div>

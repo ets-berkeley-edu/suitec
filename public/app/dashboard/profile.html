@@ -106,10 +106,11 @@
   </div>
 
   <div class="profile-activity-breakdown-container">
-    <div class="profile-filters">
+    <div class="profile-filters profile-activity-breakdown-filters">
       <h3>Total Activities:</h3>
 
-      <div data-ng-repeat="(filter, label) in {contributions: 'Contributions', impacts: 'Impacts'}">
+      <div class="profile-filter-label"
+           data-ng-repeat="(filter, label) in {contributions: 'Contributions', impacts: 'Impacts'}">
         <button type="button"
           id="total-activities-by-{{filter}}"
           class="btn btn-link profile-filter-label"
@@ -121,28 +122,30 @@
     </div>
 
     <div data-ng-if="breakdown.selected === 'contributions'">
-      <h4 class="profile-activity-breakdown-header" data-ng-if="isMyProfile">My Contributions</h4>
-      <h4 class="profile-activity-breakdown-header" data-ng-if="!isMyProfile">{{user.canvas_full_name}}'s Contributions</h4>
+      <div class="profile-activity-breakdown-explanatory">Contributions are activities you do.</div>
+
       <div data-activity-breakdown="breakdown.contributions.counts.user"
            data-activity-total="breakdown.contributions.totals.user"
+           data-breakdown-label="isMyProfile ? 'My Contributions' : user.canvas_full_name + '\'s Contributions'"
            data-breakdown-selected="contributions"></div>
 
-      <h4 class="profile-activity-breakdown-header">Community Contributions</h4>
       <div data-activity-breakdown="breakdown.contributions.counts.course"
            data-activity-total="breakdown.contributions.totals.course"
+           data-breakdown-label="'Compared to Everyone'"
            data-breakdown-selected="contributions"></div>
     </div>
 
     <div data-ng-if="breakdown.selected === 'impacts'">
-      <h4 class="profile-activity-breakdown-header" data-ng-if="isMyProfile">My Impacts</h4>
-      <h4 class="profile-activity-breakdown-header" data-ng-if="!isMyProfile">{{user.canvas_full_name}}'s Impacts</h4>
+      <div class="profile-activity-breakdown-explanatory">Impacts are interactions received from others.</div>
+
       <div data-activity-breakdown="breakdown.impacts.counts.user"
            data-activity-total="breakdown.impacts.totals.user"
+           data-breakdown-label="isMyProfile ? 'My Impacts' : user.canvas_full_name + '\'s Impacts'"
            data-breakdown-selected="impacts"></div>
 
-      <h4 class="profile-activity-breakdown-header">Community Impacts</h4>
       <div data-activity-breakdown="breakdown.impacts.counts.course"
            data-activity-total="breakdown.impacts.totals.course"
+           data-breakdown-label="'Compared to Everyone'"
            data-breakdown-selected="impacts"></div>
     </div>
   </div>
