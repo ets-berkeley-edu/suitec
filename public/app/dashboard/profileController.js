@@ -270,8 +270,6 @@
         sortCommunityAssets($scope.community.assets.sortBy, false);
       }
 
-      $scope.user.hashtags = ['#badminton', '#bridge', '#break-dancing'];
-
       // Set page context information for activity timeline directive
       $scope.pageContext = {
         'course': me.course,
