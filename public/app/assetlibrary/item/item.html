@@ -1,12 +1,12 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist.item'">
   <a ui-sref="assetlibrarylist($parent.searchOptions)" class="col-back" data-ng-click="backToAssetLibrary()" data-ng-if="!whiteboardReferral && !referringTool"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
 
-  <a class="col-back"
-    tool-href
-    data-tool="dashboard"
-    data-referring-tool="assetlibrary"
-    data-id="referringTool.referringId"
-    data-ng-if="referringTool.name === 'dashboard'"><i class="fa fa-angle-left"></i> Back to Impact Studio</a>
+  <a tool-href
+     class="col-back"
+     data-tool="dashboard"
+     data-referring-tool="assetlibrary"
+     data-id="referringTool.referringId"
+     data-ng-if="referringTool.name === 'dashboard'"><i class="fa fa-angle-left"></i> Back to Impact Studio</a>
 
   <button type="button" class="btn btn-link col-back" data-ng-if="whiteboardReferral" data-ng-click="closeWindow()"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
 
@@ -139,10 +139,10 @@
                 </div>
                 <div class="media-left media-middle assetlibrary-item-metadata-authors-name">
                   <a tool-href
-                    data-tool="dashboard"
-                    data-referring-tool="assetlibrary"
-                    data-id="user.id"
-                    data-ng-if="me.course.dashboard_url">
+                     data-tool="dashboard"
+                     data-referring-tool="assetlibrary"
+                     data-id="user.id"
+                     data-ng-if="me.course.dashboard_url">
                     <i class="fa fa-graduation-cap" data-ng-if="user.is_admin"></i> {{user.canvas_full_name}}
                   </a>
                   <a ui-sref="assetlibrarylist({'user': user.id})" ui-sref-opts="{'inherit': false}" data-ng-if="!me.course.dashboard_url">
@@ -233,10 +233,10 @@
         <form name="assetlibraryNewCommentForm" class="assetlibrary-item-newcomment-form" data-ng-submit="assetlibraryNewCommentForm.$valid && createComment()" novalidate>
           <div class="assetlibrary-item-addcomment-commenter">
             <a tool-href
-              data-tool="dashboard"
-              data-referring-tool="assetlibrary"
-              data-id="me.id"
-              data-ng-if="me.course.dashboard_url">
+               data-tool="dashboard"
+               data-referring-tool="assetlibrary"
+               data-id="me.id"
+               data-ng-if="me.course.dashboard_url">
               <i class="fa fa-graduation-cap" data-ng-if="me.is_admin"></i> {{me.canvas_full_name}}
             </a>
             <a ui-sref="assetlibrarylist({'user': me.id})" ui-sref-opts="{'inherit': false}" data-ng-if="!me.course.dashboard_url">
@@ -267,10 +267,10 @@
       <div class="media-body media-top">
         <div class="assetlibrary-item-addcomment-commenter">
           <a tool-href
-            data-tool="dashboard"
-            data-referring-tool="assetlibrary"
-            data-id="comment.user.id"
-            data-ng-if="me.course.dashboard_url">
+             data-tool="dashboard"
+             data-referring-tool="assetlibrary"
+             data-id="comment.user.id"
+             data-ng-if="me.course.dashboard_url">
             <i class="fa fa-graduation-cap" data-ng-if="comment.user.is_admin"></i> {{comment.user.canvas_full_name}}
             <span data-ng-if="me.id === comment.user.id">(me)</span>
           </a>

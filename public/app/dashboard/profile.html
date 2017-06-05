@@ -41,10 +41,9 @@
       <div class="profile-summary-column-square">
         <div class="profile-summary-column-square-content">
           <h2>
-            <a id="engagement-index"
-              tool-href
-              data-tool="engagementindex"
-              data-referring-tool="dashboard">
+            <a tool-href
+               data-tool="engagementindex"
+               data-referring-tool="dashboard">
               Engagement Index
             </a>
           </h2>
@@ -57,10 +56,9 @@
           </div>
           <div data-ng-if="isMyProfile && !user.share_points">
             Sharing off.
-            <a id="turn-on-sharing"
-              tool-href
-              data-tool="engagementindex"
-              data-referring-tool="dashboard">Turn on?</a>
+            <a tool-href
+               data-tool="engagementindex"
+               data-referring-tool="dashboard">Turn on?</a>
           </div>
         </div>
       </div>
@@ -163,11 +161,11 @@
           data-ng-bind="label"></button>
         <span data-ng-if="(user.assets.sortBy === filter) && (user.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
           <a tool-href
-            data-tool="assetlibrary"
-            data-referring-tool="dashboard"
-            data-referring-id="user.id"
-            data-id="user.assets.advancedSearchId"
-            data-ng-bind="user.assets.total"></a>)
+             data-tool="assetlibrary"
+             data-referring-tool="dashboard"
+             data-referring-id="user.id"
+             data-id="user.assets.advancedSearchId"
+             data-ng-bind="user.assets.total"></a>)
         </span>
         <span data-ng-if="!$last">|</span>
       </div>
@@ -186,23 +184,21 @@
             <div class="col-list-item-tile">
               <div class="assetlibrary-list-item-add-container">
                 <div class="assetlibrary-list-item-add-table">
-                  <a id="upload-asset"
-                    class="text-center col-pane"
-                    tool-href
-                    data-tool="assetlibrary"
-                    data-referring-tool="dashboard"
-                    data-referring-id="user.id"
-                    data-id="routerStateUploadAsset">
+                  <a tool-href
+                     class="text-center col-pane"
+                     data-tool="assetlibrary"
+                     data-referring-tool="dashboard"
+                     data-referring-id="user.id"
+                     data-id="routerStateUploadAsset">
                     <i class="fa fa-laptop"></i>
                     <div class="assetlibrary-list-item-add-action">Upload</div>
                   </a>
-                  <a id="add-link-asset"
-                    class="text-center col-pane"
-                    tool-href
-                    data-tool="assetlibrary"
-                    data-referring-tool="dashboard"
-                    data-referring-id="user.id"
-                    data-id="routerStateAddLink">
+                  <a tool-href
+                     class="text-center col-pane"
+                     data-tool="assetlibrary"
+                     data-referring-tool="dashboard"
+                     data-referring-id="user.id"
+                     data-id="routerStateAddLink">
                     <i class="fa fa-link"></i>
                     <div class="assetlibrary-list-item-add-action">Add Link</div>
                   </a>
@@ -210,12 +206,12 @@
               </div>
             </div>
             <div class="col-list-item-actions">
-              <a id="bookmarklet-info" class="text-center col-pane"
-                tool-href
-                data-tool="assetlibrary"
-                data-referring-tool="dashboard"
-                data-referring-id="user.id"
-                data-id="routerStateBookmarkletInfo">
+              <a tool-href
+                 class="text-center col-pane"
+                 data-tool="assetlibrary"
+                 data-referring-tool="dashboard"
+                 data-referring-id="user.id"
+                 data-id="routerStateBookmarkletInfo">
                 Add assets more easily
                 <i class="fa fa-bookmark pull-left"></i>
               </a>
@@ -227,10 +223,10 @@
             data-ng-repeat="asset in user.assets.results">
           <div class="col-list-item-container">
             <a tool-href
-              data-tool="assetlibrary"
-              data-referring-tool="dashboard"
-              data-referring-id="user.id"
-              data-id="asset.id">
+               data-tool="assetlibrary"
+               data-referring-tool="dashboard"
+               data-referring-id="user.id"
+               data-id="asset.id">
               <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
             </a>
             <div class="text-right col-list-item-actions" iconbar asset="asset" show-pin="true" viewonly="true"></div>
@@ -253,11 +249,11 @@
           data-ng-bind="label"></button>
         <span data-ng-if="(community.assets.sortBy === filter) && (community.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
           <a tool-href
-            data-tool="assetlibrary"
-            data-referring-tool="dashboard"
-            data-referring-id="user.id"
-            data-id="community.assets.advancedSearchId"
-            data-ng-bind="community.assets.total"></a>)
+             data-tool="assetlibrary"
+             data-referring-tool="dashboard"
+             data-referring-id="user.id"
+             data-id="community.assets.advancedSearchId"
+             data-ng-bind="community.assets.total"></a>)
         </span>
         <span data-ng-if="!$last">|</span>
       </div>
@@ -274,10 +270,10 @@
             data-ng-repeat="asset in community.assets.results">
           <div class="col-list-item-container">
             <a tool-href
-              data-tool="assetlibrary"
-              data-referring-tool="dashboard"
-              data-referring-id="user.id"
-              data-id="asset.id">
+               data-tool="assetlibrary"
+               data-referring-tool="dashboard"
+               data-referring-id="user.id"
+               data-id="asset.id">
               <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
             </a>
           </div>
