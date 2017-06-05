@@ -183,7 +183,7 @@
 
             // Next action depends on new value of isPinnedByMe
             $scope.assets = updatedAsset.isPinnedByMe ?
-              _.union($scope.assets, [updatedAsset]) :
+              _.union($scope.assets, [ updatedAsset ]) :
               _.reject($scope.assets, {'id': updatedAsset.id});
           }
         });

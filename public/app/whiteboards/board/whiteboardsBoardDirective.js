@@ -166,7 +166,7 @@
             if ($scope.whiteboard) {
               for (var i = 0; i < $scope.whiteboard.members.length; i++) {
                 var member = $scope.whiteboard.members[i];
-                member.online = _.findWhere(onlineUsers, {'user_id': member.id}) ? true : false;
+                member.online = _.find(onlineUsers, {'user_id': member.id}) ? true : false;
               }
             }
           });
@@ -177,7 +177,7 @@
          */
         var getOnlineUsers = $scope.getOnlineUsers = function() {
           if ($scope.whiteboard) {
-            return _.where($scope.whiteboard.members, {'online': true});
+            return _.filter($scope.whiteboard.members, {'online': true});
           }
         };
 
@@ -620,9 +620,9 @@
           analyticsService.track('Change whiteboard layer order', {
             'whiteboard_id': $scope.whiteboard.id,
             'whiteboard_direction': direction,
-            'whiteboard_elements': _.pluck(elements, 'uid'),
+            'whiteboard_elements': _.map(elements, 'uid'),
             'whiteboard_elements_length': elements.length,
-            'whiteboard_elements_types': _.pluck(elements, 'type')
+            'whiteboard_elements_types': _.map(elements, 'type')
           });
         };
 
@@ -781,9 +781,9 @@
             var elements = getActiveElements();
             analyticsService.track('Select whiteboard elements', {
               'whiteboard_id': $scope.whiteboard.id,
-              'whiteboard_elements': _.pluck(elements, 'uid'),
+              'whiteboard_elements': _.map(elements, 'uid'),
               'whiteboard_elements_length': elements.length,
-              'whiteboard_elements_types': _.pluck(elements, 'type')
+              'whiteboard_elements_types': _.map(elements, 'type')
             });
           });
         };
@@ -841,7 +841,7 @@
         var deactiveActiveGroupIfOverlap = function(elements) {
           var group = canvas.getActiveGroup();
           if (group) {
-            var intersection = _.intersection(_.pluck(group.objects, 'uid'), _.pluck(elements, 'uid'));
+            var intersection = _.intersection(_.map(group.objects, 'uid'), _.map(elements, 'uid'));
             if (intersection.length > 0) {
               canvas.discardActiveGroup().renderAll();
             }
@@ -1137,9 +1137,9 @@
           // Track the whiteboard copy
           analyticsService.track('Whiteboard copy', {
             'whiteboard_id': $scope.whiteboard.id,
-            'whiteboard_elements': _.pluck(clipboard, 'uid'),
+            'whiteboard_elements': _.map(clipboard, 'uid'),
             'whiteboard_elements_length': clipboard.length,
-            'whiteboard_elements_types': _.pluck(clipboard, 'type')
+            'whiteboard_elements_types': _.map(clipboard, 'type')
           });
         };
 
@@ -1175,7 +1175,7 @@
             analyticsService.track('Whiteboard paste', {
               'whiteboard_id': $scope.whiteboard.id,
               'whiteboard_elements': clipboard.length,
-              'whiteboard_elements_types': _.pluck(clipboard, 'type')
+              'whiteboard_elements_types': _.map(clipboard, 'type')
             });
           });
 
