@@ -23,6 +23,36 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
+.other-users-container {
+  display: flex;
+  padding-bottom: 20px;
+  vertical-align: top;
+}
+
+.other-users-container .other-users-browse {
+  line-height: 1.1;
+  padding: 0 0 4px 0;
+}
+
+.other-users-container div:first-child {
+  -webkit-align-self: flex-start;
+  align-self: flex-start;
+  width: 300px;
+}
+
+.other-users-container div:last-child {
+  margin-left: auto;
+  overflow: hidden;
+}
+
+.other-users-container .fa-caret-left {
+  padding-right: 5px;
+}
+
+.other-users-container .fa-caret-right {
+  padding-left: 5px;
+}
+
 .profile-activity-breakdown {
   display: flex;
   margin-bottom: 15px;
@@ -327,11 +357,6 @@
 
 .profile-summary-last-activity {
   padding-bottom: 15px;
-}
-
-.profile-summary-search {
-  -webkit-flex: 1 1 100px;
-  flex: 1 1 100px;
 }
 
 .profile-user-description {

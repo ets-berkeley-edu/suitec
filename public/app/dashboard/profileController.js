@@ -53,6 +53,11 @@
       }
     };
 
+    $scope.browse = {
+      searchedUserId: null,
+      otherUsers: []
+    };
+
     $scope.community = {
       totalAssetsInCourse: null,
       assets: {
@@ -67,12 +72,12 @@
       }
     };
 
-    $scope.$watch('nextUserId', function() {
-      if ($scope.nextUserId) {
+    $scope.$watch('browse.searchedUserId', function() {
+      if ($scope.browse.searchedUserId) {
         analyticsService.track('Search for user profile', {
-          'search_for_user': $scope.nextUserId
+          'search_for_user': $scope.browse.searchedUserId
         });
-        $state.go('userprofile', {'userId': $scope.nextUserId});
+        $state.go('userprofile', {'userId': $scope.browse.searchedUserId});
       }
     }, true);
 
@@ -250,7 +255,7 @@
       }
     };
 
-    var loadProfile = function(user) {
+    var loadProfile = $scope.loadProfile = function(user) {
       $scope.isMyProfile = user.id === me.id;
 
       // Combine activity metadata and standard user data
@@ -284,13 +289,26 @@
           'referer': document.referrer
         });
       }
-    };
 
-    var loadOtherUsers = function(user) {
-      // The dropdown of 'search for other users' needs the following
-      // list of otherUsers. We exclude user.id of current profile view.
+      // Allow for searching and browsing of other users
       userFactory.getAllUsers().then(function(response) {
-        $scope.otherUsers = _.reject(response.data, {'id': user.id});
+        // Sort alphabetically
+        var otherUsers = response.data;
+        _.sortBy(otherUsers, [ 'canvas_full_name' ]);
+
+        // Remove user of current profile
+        var count = otherUsers.length;
+        otherUsers = _.reject(otherUsers, function(other, index) {
+          var rejectUser = (other.id === $scope.user.id);
+          // Browse feature is disabled if total user count is less than three
+          if (rejectUser && count > 2) {
+            // Browse users by clicking previous or next
+            $scope.browse.previous = otherUsers[index > 0 ? index - 1 : count - 1];
+            $scope.browse.next = otherUsers[index === count - 1 ? 0 : index + 1];
+          }
+          return rejectUser;
+        });
+        $scope.browse.otherUsers = otherUsers;
       });
     };
 
@@ -320,11 +338,9 @@
       if (otherUserId) {
         userFactory.getUser(otherUserId).success(function(user) {
           loadProfile(user);
-          loadOtherUsers(user);
         });
       } else {
         loadProfile(me);
-        loadOtherUsers(me);
       }
     };
 
