@@ -48,41 +48,6 @@
       'link': function(scope, elem, attrs) {
         var MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
-        // Default to showing at least one day of activity, even if no events go back that far.
-        var start = Date.now() - MILLISECONDS_PER_DAY;
-        var end = Date.now();
-
-        _.forEach(scope.activityTimeline, function(eventSeries) {
-          eventSeries.data = eventSeries.data || [];
-          if (eventSeries.data.length) {
-            var firstEventDate = new Date(eventSeries.data[0].date);
-            start = _.min([start, firstEventDate]);
-          }
-        });
-
-        var totalDays = parseFloat(end - start) / MILLISECONDS_PER_DAY;
-
-        // Determine precision of x-axis tick values and format appropriately.
-        var tickFormat = function(date) {
-          var formatter;
-          if (d3.timeSecond(date) < date) {
-            formatter = d3.timeFormat('.%L');
-          } else if (d3.timeMinute(date) < date) {
-            formatter = d3.timeFormat(':%S');
-          } else if (d3.timeHour(date) < date) {
-            formatter = d3.timeFormat('%H:%M');
-          } else if (d3.timeDay(date) < date) {
-            formatter = d3.timeFormat('%H:00');
-          } else if (d3.timeMonth(date) < date) {
-            formatter = (d3.timeWeek(date) < date) ? d3.timeFormat('%a %d') : d3.timeFormat('%b %d');
-          } else if (d3.timeYear(date) < date) {
-            formatter = d3.timeFormat('%B');
-          } else {
-            formatter = d3.timeFormat('%Y');
-          }
-          return formatter(date);
-        };
-
         var ARROW_OFFSET = 25;
 
         var FRIENDLY_DESCRIPTIONS = {
@@ -104,192 +69,229 @@
           'whiteboard_add_asset': 'Added Asset to Whiteboard'
         };
 
-        var showEventDetails = function(activity) {
-          // Hide any existing event details.
-          d3.select('.activity-timeline-chart').selectAll('.event-details').remove();
+        // Default to showing at least one day of activity, even if no events go back that far.
+        var start = Date.now() - MILLISECONDS_PER_DAY;
+        var end = Date.now();
 
-          // Make activity available to the scope.
-          scope.activity = activity;
-
-          // Format properties for display.
-          scope.display = {
-            'date': d3.timeFormat('%B %d, %Y @ %H:%M')(new Date(activity.date)),
-            'description': FRIENDLY_DESCRIPTIONS[activity.type]
-          };
-
-          if (activity.asset) {
-            scope.display.title = activity.asset.title;
-          } else {
-            scope.display.title = scope.description;
-          }
-
-          if (activity.comment && activity.comment.body) {
-            scope.display.comment = true;
-            if (activity.comment.body.length > 100) {
-              scope.display.snippet = activity.comment.body.substring(0, 100);
+        scope.$watch('activityTimeline', function() {
+          _.forEach(scope.activityTimeline, function(eventSeries) {
+            eventSeries.data = eventSeries.data || [];
+            if (eventSeries.data.length) {
+              var firstEventDate = new Date(eventSeries.data[0].date);
+              start = _.min([start, firstEventDate]);
             }
-          } else if (activity.type === 'get_like' || activity.type === 'like') {
-            scope.display.like = true;
-          } else if (activity.type === 'get_view_asset' || activity.type === 'view_asset') {
-            scope.display.view = true;
-          }
-
-          // The details window starts out hidden...
-          var eventDetails = d3
-            .select('.activity-timeline-chart')
-            .append('div')
-            .attr('class', 'event-details')
-            .style('opacity', 0);
-
-          // ...and transitions to visible.
-          eventDetails
-            .transition(d3.transition().duration(250).ease(d3.easeLinear))
-            .on('start', function() {
-              d3.select('.event-details').style('display', 'block');
-            })
-            .style('opacity', 1);
-
-          // The location of the arrow element depends on which side of the chart we're on.
-          var pageX = d3.event.pageX;
-          var pageY = d3.event.pageY;
-
-          var eventDetailsWidth = eventDetails.node().getBoundingClientRect().width;
-          var direction = pageX > eventDetailsWidth ? 'right' : 'left';
-
-          var left = direction === 'right' ?
-            pageX - eventDetailsWidth + ARROW_OFFSET :
-            pageX - ARROW_OFFSET;
-
-          eventDetails
-            .style('left', (left + 'px'))
-            .style('top', (pageY + 16 + 'px'))
-            .classed(direction, true);
-
-          // Add template HTML and compile in the scope.
-          eventDetails.append(function() {
-            var detailsDiv = document.createElement('div');
-            detailsDiv.innerHTML = $templateCache.get('/app/shared/activityTimelineEventDetails.html');
-            $compile(detailsDiv)(scope);
-            return detailsDiv;
           });
-        };
 
-        var hideEventDetails = function() {
-          d3.select('.event-details')
-            .transition(d3.transition().duration(2000).ease(d3.easeExpIn))
-            .on('end', function() {
-              this.remove();
-            })
-            .style('opacity', 0);
-        };
+          var totalDays = parseFloat(end - start) / MILLISECONDS_PER_DAY;
 
-        var eventDropsChart = eventDrops.default()
-          .eventLineColor(function(datum, index) {
-            return scope.activityTimeline[index].color;
-          })
-          .start(start)
-          .end(end)
-          .date(function(event) {
-            return new Date(event.date);
-          })
-          .tickFormat(tickFormat)
-          .margin({
-            'top': 0,
-            'left': 0,
-            'bottom': 0,
-            'right': 0
-          })
-          // Disallow indefinite zoom-out.
-          .minScale(1)
-          .labelsWidth(scope.labelsWidth || 0)
-          .mouseover(showEventDetails)
-          .mouseout(hideEventDetails);
-
-        var drawTimeline = function(element) {
-          element = d3.select(element);
-          element.datum(scope.activityTimeline);
-          element.call(eventDropsChart);
-
-          var timelineWidth = element.select('.line-separator').node().getBoundingClientRect().width;
-
-          element.selectAll('.label').classed('activity-timeline-label', true);
-
-          var nodes = element.nodes();
-          var zoom = nodes[0].zoom;
-
-          // Make programmatic zoom events available to the scope.
-          var zoomTransition = function() {
-            return element.select('.chart-wrapper').transition().duration(300);
-          };
-
-          scope.zoomRelative = function(scale) {
-            zoomTransition().call(zoom.scaleBy, scale);
-          };
-
-          var zoomDays = function(days) {
-            var scaleFactor = totalDays / days;
-            var translateX = (1 - scaleFactor) * timelineWidth;
-            var transform = d3.zoomIdentity.translate(translateX, 0).scale(scaleFactor);
-            zoomTransition().call(zoom.transform, transform);
-          };
-
-          var isZoomingToPreset = false;
-
-          scope.zoomPreset = function(preset, track) {
-            isZoomingToPreset = true;
-
-            // Track zoom unless explicitly told not to.
-            if (track !== false) {
-              analyticsService.track('Zoom activity timeline', {
-                'zoom_level': preset
-              });
-            }
-
-            switch (preset) {
-              case 'week':
-                zoomDays(7);
-                break;
-              case 'month':
-                zoomDays(30);
-                break;
-              case 'all':
-                zoomTransition().call(zoom.transform, d3.zoomIdentity);
-                break;
-              default:
-            }
-            // Disable whichever zoom preset button was just clicked.
-            scope.currentZoomPreset = preset;
-          };
-
-          // All zoom presets should be re-enabled on the next user zoom.
-          zoom.on('end', function() {
-            if (!isZoomingToPreset) {
-              scope.currentZoomPreset = null;
+          // Determine precision of x-axis tick values and format appropriately.
+          var tickFormat = function(date) {
+            var formatter;
+            if (d3.timeSecond(date) < date) {
+              formatter = d3.timeFormat('.%L');
+            } else if (d3.timeMinute(date) < date) {
+              formatter = d3.timeFormat(':%S');
+            } else if (d3.timeHour(date) < date) {
+              formatter = d3.timeFormat('%H:%M');
+            } else if (d3.timeDay(date) < date) {
+              formatter = d3.timeFormat('%H:00');
+            } else if (d3.timeMonth(date) < date) {
+              formatter = (d3.timeWeek(date) < date) ? d3.timeFormat('%a %d') : d3.timeFormat('%b %d');
+            } else if (d3.timeYear(date) < date) {
+              formatter = d3.timeFormat('%B');
             } else {
-              isZoomingToPreset = false;
+              formatter = d3.timeFormat('%Y');
             }
-          });
+            return formatter(date);
+          };
 
-          scope.zoomPreset('all', false);
-        };
+          var showEventDetails = function(activity) {
+            // Hide any existing event details.
+            d3.select('.activity-timeline-chart').selectAll('.event-details').remove();
 
-        // Do not start drawing the timeline until timelineId has been interpolated in markup. This will ensure that
-        // d3 events are bound to the right element.
-        var drawTimelineWhenAvailable = function() {
-          var timelineElement = document.getElementById(scope.timelineId);
-          if (!timelineElement) {
-            $timeout(drawTimelineWhenAvailable, 0, false);
-            return;
-          }
+            // Make activity available to the scope.
+            scope.activity = activity;
 
-          drawTimeline(timelineElement);
-        };
+            // Format properties for display.
+            scope.display = {
+              'date': d3.timeFormat('%B %d, %Y @ %H:%M')(new Date(activity.date)),
+              'description': FRIENDLY_DESCRIPTIONS[activity.type]
+            };
 
-        drawTimelineWhenAvailable();
+            if (activity.asset) {
+              scope.display.title = activity.asset.title;
+            } else {
+              scope.display.title = scope.description;
+            }
 
-        // Redraw the timeline when the window is resized.
-        d3.select(window).on('resize', function() {
+            if (activity.comment && activity.comment.body) {
+              scope.display.comment = true;
+              if (activity.comment.body.length > 100) {
+                scope.display.snippet = activity.comment.body.substring(0, 100);
+              }
+            } else if (activity.type === 'get_like' || activity.type === 'like') {
+              scope.display.like = true;
+            } else if (activity.type === 'get_view_asset' || activity.type === 'view_asset') {
+              scope.display.view = true;
+            }
+
+            // The details window starts out hidden...
+            var eventDetails = d3
+              .select('.activity-timeline-chart')
+              .append('div')
+              .attr('class', 'event-details')
+              .style('opacity', 0);
+
+            // ...and transitions to visible.
+            eventDetails
+              .transition(d3.transition().duration(250).ease(d3.easeLinear))
+              .on('start', function() {
+                d3.select('.event-details').style('display', 'block');
+              })
+              .style('opacity', 1);
+
+            // The location of the arrow element depends on which side of the chart we're on.
+            var pageX = d3.event.pageX;
+            var pageY = d3.event.pageY;
+
+            var eventDetailsWidth = eventDetails.node().getBoundingClientRect().width;
+            var direction = pageX > eventDetailsWidth ? 'right' : 'left';
+
+            var left = direction === 'right' ?
+              pageX - eventDetailsWidth + ARROW_OFFSET :
+              pageX - ARROW_OFFSET;
+
+            eventDetails
+              .style('left', (left + 'px'))
+              .style('top', (pageY + 16 + 'px'))
+              .classed(direction, true);
+
+            // Add template HTML and compile in the scope.
+            eventDetails.append(function() {
+              var detailsDiv = document.createElement('div');
+              detailsDiv.innerHTML = $templateCache.get('/app/shared/activityTimelineEventDetails.html');
+              $compile(detailsDiv)(scope);
+              return detailsDiv;
+            });
+          };
+
+          var hideEventDetails = function() {
+            d3.select('.event-details')
+              .transition(d3.transition().duration(2000).ease(d3.easeExpIn))
+              .on('end', function() {
+                this.remove();
+              })
+              .style('opacity', 0);
+          };
+
+          var eventDropsChart = eventDrops.default()
+            .eventLineColor(function(datum, index) {
+              return scope.activityTimeline[index].color;
+            })
+            .start(start)
+            .end(end)
+            .date(function(event) {
+              return new Date(event.date);
+            })
+            .tickFormat(tickFormat)
+            .margin({
+              'top': 0,
+              'left': 0,
+              'bottom': 0,
+              'right': 0
+            })
+            // Disallow indefinite zoom-out.
+            .minScale(1)
+            .labelsWidth(scope.labelsWidth || 0)
+            .mouseover(showEventDetails)
+            .mouseout(hideEventDetails);
+
+          var drawTimeline = function(element) {
+            element = d3.select(element);
+            element.datum(scope.activityTimeline);
+            element.call(eventDropsChart);
+
+            var timelineWidth = element.select('.line-separator').node().getBoundingClientRect().width;
+
+            element.selectAll('.label').classed('activity-timeline-label', true);
+
+            var nodes = element.nodes();
+            var zoom = nodes[0].zoom;
+
+            // Make programmatic zoom events available to the scope.
+            var zoomTransition = function() {
+              return element.select('.chart-wrapper').transition().duration(300);
+            };
+
+            scope.zoomRelative = function(scale) {
+              zoomTransition().call(zoom.scaleBy, scale);
+            };
+
+            var zoomDays = function(days) {
+              var scaleFactor = totalDays / days;
+              var translateX = (1 - scaleFactor) * timelineWidth;
+              var transform = d3.zoomIdentity.translate(translateX, 0).scale(scaleFactor);
+              zoomTransition().call(zoom.transform, transform);
+            };
+
+            var isZoomingToPreset = false;
+
+            scope.zoomPreset = function(preset, track) {
+              isZoomingToPreset = true;
+
+              // Track zoom unless explicitly told not to.
+              if (track !== false) {
+                analyticsService.track('Zoom activity timeline', {
+                  'zoom_level': preset
+                });
+              }
+
+              switch (preset) {
+                case 'week':
+                  zoomDays(7);
+                  break;
+                case 'month':
+                  zoomDays(30);
+                  break;
+                case 'all':
+                  zoomTransition().call(zoom.transform, d3.zoomIdentity);
+                  break;
+                default:
+              }
+              // Disable whichever zoom preset button was just clicked.
+              scope.currentZoomPreset = preset;
+            };
+
+            // All zoom presets should be re-enabled on the next user zoom.
+            zoom.on('end', function() {
+              if (!isZoomingToPreset) {
+                scope.currentZoomPreset = null;
+              } else {
+                isZoomingToPreset = false;
+              }
+            });
+
+            scope.zoomPreset('all', false);
+          };
+
+          // Do not start drawing the timeline until timelineId has been interpolated in markup. This will ensure that
+          // d3 events are bound to the right element.
+          var drawTimelineWhenAvailable = function() {
+            var timelineElement = document.getElementById(scope.timelineId);
+            if (!timelineElement) {
+              $timeout(drawTimelineWhenAvailable, 0, false);
+              return;
+            }
+
+            drawTimeline(timelineElement);
+          };
+
           drawTimelineWhenAvailable();
+
+          // Redraw the timeline when the window is resized.
+          d3.select(window).on('resize', function() {
+            drawTimelineWhenAvailable();
+          });
         });
       }
     };
