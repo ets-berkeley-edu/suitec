@@ -89,7 +89,7 @@
 
       // Indicate whether a search was performed
       var opts = $scope.searchOptions;
-      $scope.isSearch = opts.keywords || opts.category || opts.user || opts.section || opts.type;
+      $scope.isSearch = opts.keywords || opts.category || opts.user || opts.section || opts.type || opts.sort;
 
       // Default view has 'pins' assets listed first.
       if (!$scope.isSearch) {
