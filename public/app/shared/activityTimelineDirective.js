@@ -30,7 +30,7 @@
   /**
    * Display an activity timeline for a given dataset.
    */
-  angular.module('collabosphere').directive('activityTimeline', function(analyticsService, utilService, $compile, $interval, $templateCache, $timeout) {
+  angular.module('collabosphere').directive('activityTimeline', function(analyticsService, deviceDetector, utilService, $compile, $interval, $templateCache, $timeout) {
     return {
       // The directive matches attribute name only and does not overwrite the declaration in markup.
       // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
@@ -205,6 +205,11 @@
             .labelsWidth(scope.labelsWidth || 0)
             .mouseover(showEventDetails)
             .mouseout(hideEventDetails);
+
+          // Metaballs do not render well on Safari.
+          if (deviceDetector.browser === 'safari') {
+            eventDropsChart.metaballs(false);
+          }
 
           var drawTimeline = function(element) {
             element = d3.select(element);
