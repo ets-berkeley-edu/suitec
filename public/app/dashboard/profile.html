@@ -1,4 +1,35 @@
 <div class="profile-container">
+  <div class="other-users-container">
+    <div>
+      <label for="findUser" class="sr-only">Search for users</label>
+      <oi-select id="find-user"
+        class="cleanMode"
+        name="findUser"
+        autofocus
+        oi-options="user.id as user.canvas_full_name for user in browse.otherUsers track by user.id | orderBy: canvas_full_name.toLowerCase()"
+        oi-select-options="{
+          dropdownFilter: 'userProfileSearchDropdown',
+          maxlength: 70
+        }"
+        ng-model="browse.searchedUserId"
+        placeholder="Search for other people"
+        tabindex="-1"></oi-select>
+    </div>
+    <div data-ng-if="browse.previous && browse.next">
+      <i data-ng-click="loadProfile(browse.previous)" class="fa fa-caret-left"></i>
+      <button type="button"
+        class="btn btn-link other-users-browse"
+        data-ng-click="loadProfile(browse.previous)">
+        <span data-ng-bind="browse.previous.canvas_full_name"></span>
+      </button> |
+      <button type="button"
+        class="btn btn-link other-users-browse"
+        data-ng-click="loadProfile(browse.next)">
+        <span data-ng-bind="browse.next.canvas_full_name"></span>
+      </button>
+      <i data-ng-click="loadProfile(browse.next)" class="fa fa-caret-right" ></i>
+    </div>
+  </div>
   <div class="profile-summary-container">
     <div class="profile-summary-column">
       <img class="profile-summary-avatar" data-ng-src="{{user.canvas_image}}" data-ng-if="user.canvas_image"/>
@@ -13,19 +44,6 @@
     <div class="profile-summary-column-variable">
       <div class="profile-summary-banner">
         <h1 class="profile-summary-header" data-ng-bind="user.canvas_full_name"></h1>
-        <label for="findUser" class="sr-only">Search for users</label>
-        <oi-select id="find-user"
-          class="profile-summary-search cleanMode"
-          name="findUser"
-          autofocus
-          oi-options="user.id as user.canvas_full_name for user in otherUsers track by user.id | orderBy: canvas_full_name.toLowerCase()"
-          oi-select-options="{
-            dropdownFilter: 'userProfileSearchDropdown',
-            maxlength: 70
-          }"
-          ng-model="nextUserId"
-          placeholder="Search for other people"
-          tabindex="-1"></oi-select>
       </div>
       <div>
         <span data-ng-repeat="section in user.canvasCourseSections"><span data-ng-if="user.canvasCourseSections.length > 1"><span data-ng-if="!$first && !$last">, </span><span data-ng-if="$last"> and </span></span>{{section}}</span>
