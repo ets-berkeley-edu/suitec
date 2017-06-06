@@ -22,7 +22,7 @@
           <div data-ng-if="!isSearch">
             <h3 data-ng-if="!isSearch">Pinned Assets</h3>
             <ul>
-              <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | filter:{pinned_by_me: true} | unique:'id'">
+              <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | filter:{pinned_by_me_date: ''} | unique:'id'">
                 <div class="col-list-item-container">
                   <a data-ng-click="selectAsset(asset)">
                     <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>

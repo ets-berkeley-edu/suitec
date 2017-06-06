@@ -116,12 +116,12 @@
     /**
      * Get the assets for the current course through an infinite scroll
      *
-     * @param  {Asset[]}          assets           All assets from AssetsAPI, including pinned_by_me
-     * @return {Asset[]}                           Filtered set of assets (pinned_by_me are excluded). If user performs search then list is unfiltered.
+     * @param  {Asset[]}          assets           All assets from AssetsAPI
+     * @return {Asset[]}                           All assets NOT pinned by `me`
      */
     var notPinnedByMe = $scope.notPinnedByMe = function(assets) {
       return $scope.isSearch ? assets : _.filter(assets, function(asset) {
-        return !asset.pinned_by_me;
+        return !asset.pinned_by_me_date;
       });
     };
 
