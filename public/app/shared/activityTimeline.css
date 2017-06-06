@@ -120,6 +120,18 @@
   width: 100px;
 }
 
+.event-details .event-details-thumbnail-default {
+  align-items: center;
+  background-color: #E8E8E8;
+  display: flex;
+  justify-content: center;
+}
+
+.event-details .event-details-thumbnail-default i {
+  color: #ADABAA;
+  font-size: 50px;
+}
+
 .event-details .event-details-timestamp {
   font-size: 12px;
   color: #777;
