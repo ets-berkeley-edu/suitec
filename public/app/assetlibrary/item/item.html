@@ -15,12 +15,12 @@
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
-    <div class="col-xs-{{ 11 - (2 * upperRightButtonCount) }} col-sm-{{ 11 - (2 * upperRightButtonCount) }}">
+    <div class="col-xs-{{ 9 - upperRightButtonCount }} col-sm-{{ 9 - upperRightButtonCount }}">
       <h2>{{asset.title}}</h2>
     </div>
 
     <!-- EDIT DETAILS -->
-    <div class="col-xs-{{ (2 * upperRightButtonCount) + 1 }} col-sm-{{ (2 * upperRightButtonCount) + 1 }} text-right">
+    <div class="col-xs-{{ 3 + upperRightButtonCount }} col-sm-{{ 3 + upperRightButtonCount }} text-right">
       <a ui-sref="assetlibrarylist.item.edit({assetId: asset.id})" class="btn btn-default"
         data-ng-if="canManageAsset()">
         <i class="fa fa-pencil"></i>
