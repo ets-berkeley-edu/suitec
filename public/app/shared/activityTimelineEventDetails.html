@@ -3,7 +3,11 @@
     <img class="event-details-thumbnail"
          data-ng-src="{{activity.asset.thumbnail_url}}"
          alt="{{activity.asset.title}}"
-         title="{{activity.asset.title}}"/>
+         title="{{activity.asset.title}}"
+         data-ng-if="activity.asset.thumbnail_url"/>
+    <div class="event-details-thumbnail event-details-thumbnail-default" data-ng-if="!activity.asset.thumbnail_url">
+      <i class="fa fa-file"></i>
+    </div>
     <div class="event-details-avatar event-details-avatar-small">
       <img data-ng-src="{{activity.user.canvas_image}}"
            alt="{{activity.user.canvas_full_name}}"
