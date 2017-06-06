@@ -30,7 +30,7 @@
   /**
    * Display an activity timeline for a given dataset.
    */
-  angular.module('collabosphere').directive('activityTimeline', function(utilService, $compile, $interval, $templateCache, $timeout) {
+  angular.module('collabosphere').directive('activityTimeline', function(analyticsService, utilService, $compile, $interval, $templateCache, $timeout) {
     return {
       // The directive matches attribute name only and does not overwrite the declaration in markup.
       // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
@@ -235,8 +235,16 @@
 
           var isZoomingToPreset = false;
 
-          scope.zoomPreset = function(preset) {
+          scope.zoomPreset = function(preset, track) {
             isZoomingToPreset = true;
+
+            // Track zoom unless explicitly told not to.
+            if (track !== false) {
+              analyticsService.track('Zoom activity timeline', {
+                'zoom_level': preset
+              });
+            }
+
             switch (preset) {
               case 'week':
                 zoomDays(7);
@@ -262,7 +270,7 @@
             }
           });
 
-          scope.zoomPreset('all');
+          scope.zoomPreset('all', false);
         };
 
         // Do not start drawing the timeline until timelineId has been interpolated in markup. This will ensure that

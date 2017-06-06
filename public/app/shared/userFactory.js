@@ -32,10 +32,18 @@
     /**
      * Get all users in the current course
      *
+     * @param  {Boolean}              [track]     Whether to track the user request in analytics. Defaults to true
      * @return {Promise<User[]>}                  $http promise returning all users in the current course
      */
-    var getAllUsers = function() {
-      return $http.get(utilService.getApiUrl('/users'));
+    var getAllUsers = function(track) {
+      var url = '/users';
+
+      // Disable analytics tracking only if explicitly told to.
+      if (track === false) {
+        url += '?track=false';
+      }
+
+      return $http.get(utilService.getApiUrl(url));
     };
 
     /**
