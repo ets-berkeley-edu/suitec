@@ -4,7 +4,9 @@
 }
 
 .activity-timeline .btn-link {
-  padding: 0;
+  border: 0;
+  padding: 0 2px;
+  vertical-align: bottom;
 }
 
 .activity-timeline .btn-link-disabled {
