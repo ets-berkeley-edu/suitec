@@ -291,7 +291,7 @@
       }
 
       // Allow for searching and browsing of other users
-      userFactory.getAllUsers().then(function(response) {
+      userFactory.getAllUsers(false).then(function(response) {
         // Sort alphabetically
         var otherUsers = response.data;
         _.sortBy(otherUsers, [ 'canvas_full_name' ]);
