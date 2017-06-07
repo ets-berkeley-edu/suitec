@@ -69,11 +69,11 @@
           'whiteboard_add_asset': 'Added Asset to Whiteboard'
         };
 
-        // Default to showing at least one week of activity, even if no events go back that far.
-        var start = Date.now() - (7 * MILLISECONDS_PER_DAY);
-        var end = Date.now();
-
         scope.$watch('activityTimeline', function() {
+          // Default to showing at least one week of activity, even if no events go back that far.
+          var start = Date.now() - (7 * MILLISECONDS_PER_DAY);
+          var end = Date.now();
+
           _.forEach(scope.activityTimeline, function(eventSeries) {
             eventSeries.data = eventSeries.data || [];
             if (eventSeries.data.length) {
