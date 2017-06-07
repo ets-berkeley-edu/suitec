@@ -69,8 +69,8 @@
           'whiteboard_add_asset': 'Added Asset to Whiteboard'
         };
 
-        // Default to showing at least one day of activity, even if no events go back that far.
-        var start = Date.now() - MILLISECONDS_PER_DAY;
+        // Default to showing at least one week of activity, even if no events go back that far.
+        var start = Date.now() - (7 * MILLISECONDS_PER_DAY);
         var end = Date.now();
 
         scope.$watch('activityTimeline', function() {
@@ -83,6 +83,9 @@
           });
 
           var totalDays = parseFloat(end - start) / MILLISECONDS_PER_DAY;
+
+          // Enable 'all' zoom option only if there's more than a month of activity.
+          scope.zoomAllEnabled = (totalDays > 30);
 
           // Determine precision of x-axis tick values and format appropriately.
           var tickFormat = function(date) {
@@ -276,7 +279,12 @@
               }
             });
 
-            scope.zoomPreset('all', false);
+            // Initial zoom level depends on how much activity there is to see.
+            if (totalDays <= 7) {
+              scope.zoomPreset('week', false);
+            } else {
+              scope.zoomPreset('all', false);
+            }
           };
 
           // Do not start drawing the timeline until timelineId has been interpolated in markup. This will ensure that
