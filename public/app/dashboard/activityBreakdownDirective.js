@@ -72,7 +72,7 @@
             }, 0);
 
             if (count) {
-              var cssClass = 'profile-activity-breakdown-segment-' + displayName.toLowerCase().replace(/\s/g, '-');
+              var cssClass = 'profile-activity-breakdown-segment-' + scope.breakdownSelected + '-' + displayName.toLowerCase().replace(/\s/g, '-');
               scope.segments.push({
                 'displayName': displayName,
                 'cssClass': cssClass,
