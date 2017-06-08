@@ -292,23 +292,41 @@
 
       // Allow for searching and browsing of other users
       userFactory.getAllUsers(false).then(function(response) {
-        // Sort alphabetically
-        var otherUsers = response.data;
-        _.sortBy(otherUsers, [ 'canvas_full_name' ]);
+        var users = response.data;
 
-        // Remove user of current profile
-        var count = otherUsers.length;
-        otherUsers = _.reject(otherUsers, function(other, index) {
-          var rejectUser = (other.id === $scope.user.id);
-          // Browse feature is disabled if total user count is less than three
-          if (rejectUser && count > 2) {
-            // Browse users by clicking previous or next
-            $scope.browse.previous = otherUsers[index > 0 ? index - 1 : count - 1];
-            $scope.browse.next = otherUsers[index === count - 1 ? 0 : index + 1];
+        // If user count is less than two (2) then exclude search/browse feature
+        var count = users.length;
+        if (count > 1) {
+          // Default start position of browse
+          $scope.browse.previous = users[0];
+          $scope.browse.next = users[1];
+
+          if (count === 2) {
+            // 'me' might not be in the course. For example, 'me' is a Canvas admin.
+            var meInCourse = !!_.find(users, {'id': me.id});
+
+            if (meInCourse || (me.id !== user.id)) {
+              // Browse forward (i.e., next) to toggle between two users
+              $scope.browse.previous = null;
+              $scope.browse.next = users[0].id === user.id ? users[1] : users[0];
+            }
+
+          } else {
+            // Sort alphabetically
+            _.sortBy(users, [ 'canvas_full_name' ]);
+
+            // Search is available when the course has three (3) or more users.
+            $scope.browse.otherUsers = _.reject(users, function(other, index) {
+              var matching = (other.id === $scope.user.id);
+              if (matching) {
+                // We are name-centric when it comes to the start position of browse-other-users.
+                $scope.browse.previous = users[index > 0 ? index - 1 : count - 1];
+                $scope.browse.next = users[index === count - 1 ? 0 : index + 1];
+              }
+              return matching;
+            });
           }
-          return rejectUser;
-        });
-        $scope.browse.otherUsers = otherUsers;
+        }
       });
     };
 

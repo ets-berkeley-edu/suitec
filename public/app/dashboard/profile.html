@@ -1,33 +1,39 @@
 <div class="profile-container">
   <div class="other-users-container">
     <div>
-      <label for="findUser" class="sr-only">Search for users</label>
-      <oi-select id="find-user"
-        class="cleanMode"
-        name="findUser"
-        autofocus
-        oi-options="user.id as user.canvas_full_name for user in browse.otherUsers track by user.id | orderBy: canvas_full_name.toLowerCase()"
-        oi-select-options="{
-          dropdownFilter: 'userProfileSearchDropdown',
-          maxlength: 70
-        }"
-        ng-model="browse.searchedUserId"
-        placeholder="Search for other people"
-        tabindex="-1"></oi-select>
+      <span data-ng-if="browse.otherUsers.length">
+        <label for="findUser" class="sr-only">Search for users</label>
+        <oi-select id="find-user"
+          class="cleanMode"
+          name="findUser"
+          autofocus
+          oi-options="user.id as user.canvas_full_name for user in browse.otherUsers track by user.id | orderBy: canvas_full_name.toLowerCase()"
+          oi-select-options="{
+            dropdownFilter: 'userProfileSearchDropdown',
+            maxlength: 70
+          }"
+          ng-model="browse.searchedUserId"
+          placeholder="Search for other people"
+          tabindex="-1"></oi-select>
+      </span>
     </div>
-    <div data-ng-if="browse.previous && browse.next">
-      <i data-ng-click="loadProfile(browse.previous)" class="fa fa-caret-left"></i>
-      <button type="button"
-        class="btn btn-link other-users-browse"
-        data-ng-click="loadProfile(browse.previous)">
-        <span data-ng-bind="browse.previous.canvas_full_name"></span>
-      </button> |
-      <button type="button"
-        class="btn btn-link other-users-browse"
-        data-ng-click="loadProfile(browse.next)">
-        <span data-ng-bind="browse.next.canvas_full_name"></span>
-      </button>
-      <i data-ng-click="loadProfile(browse.next)" class="fa fa-caret-right" ></i>
+    <div>
+      <span data-ng-if="browse.previous">
+        <i data-ng-click="loadProfile(browse.previous)" class="fa fa-caret-left"></i>
+        <button type="button"
+          class="btn btn-link other-users-browse"
+          data-ng-click="loadProfile(browse.previous)">
+          <span data-ng-bind="browse.previous.canvas_full_name"></span>
+        </button> |
+      </span>
+      <span data-ng-if="browse.next">
+        <button type="button"
+          class="btn btn-link other-users-browse"
+          data-ng-click="loadProfile(browse.next)">
+          <span data-ng-bind="browse.next.canvas_full_name"></span>
+        </button>
+        <i data-ng-click="loadProfile(browse.next)" class="fa fa-caret-right" ></i>
+      </span>
     </div>
   </div>
   <div class="profile-summary-container">
