@@ -131,48 +131,68 @@
   white-space: nowrap;
 }
 
-.profile-activity-breakdown-segment-views {
+.profile-activity-breakdown-segment-contributions-views {
   background-color: #135470;
   color: #fff;
 }
 
-.profile-activity-breakdown-segment-likes {
+.profile-activity-breakdown-segment-contributions-likes {
   background-color: #1e7095;
   color: #fff;
 }
 
-.profile-activity-breakdown-segment-comments {
+.profile-activity-breakdown-segment-contributions-comments {
   background-color: #288ab8;
   color: #fff;
 }
 
-.profile-activity-breakdown-segment-posts {
+.profile-activity-breakdown-segment-contributions-posts {
   background-color: #4aa1ce;
   color: #fff;
 }
 
-.profile-activity-breakdown-segment-replies {
-  background-color: #4aa1ce;
-  color: #fff;
-}
-
-.profile-activity-breakdown-segment-add-assets {
+.profile-activity-breakdown-segment-contributions-add-assets {
   background-color: #7ab6da;
   color: #000;
 }
 
-.profile-activity-breakdown-segment-asset-usage {
-  background-color: #7ab6da;
-  color: #000;
-}
-
-.profile-activity-breakdown-segment-exports {
+.profile-activity-breakdown-segment-contributions-exports {
   background-color: #a4cbe5;
   color: #000;
 }
 
-.profile-activity-breakdown-segment-remixes {
+.profile-activity-breakdown-segment-contributions-remixes {
   background-color: #cbdff1;
+  color: #000;
+}
+
+.profile-activity-breakdown-segment-impacts-views {
+  background-color: #af3636;
+  color: #fff;
+}
+
+.profile-activity-breakdown-segment-impacts-likes {
+  background-color: #c95050;
+  color: #fff;
+}
+
+.profile-activity-breakdown-segment-impacts-comments {
+  background-color: #d57878;
+  color: #000;
+}
+
+.profile-activity-breakdown-segment-impacts-replies {
+  background-color: #e1a0a0;
+  color: #000;
+}
+
+.profile-activity-breakdown-segment-impacts-asset-usage {
+  background-color: #edc8c8;
+  color: #000;
+}
+
+.profile-activity-breakdown-segment-impacts-remixes {
+  background-color: #f9f0f0;
   color: #000;
 }
 
