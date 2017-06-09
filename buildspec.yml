@@ -19,6 +19,7 @@ phases:
   post_build:
     commands:
       - for i in $(ls node_modules | grep -v ^col-); do rm -Rf node_modules/$i; done
+      - ./scripts/generate-buildspec-report.sh
 
 artifacts:
   files:
