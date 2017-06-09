@@ -11,18 +11,38 @@
           data-search-options-category="searchOptions.category"
           data-search-options-user="searchOptions.user"
           data-search-options-section="searchOptions.section"
-          data-search-options-type="searchOptions.type"></search>
+          data-search-options-type="searchOptions.type"
+          data-ng-if="isSearch || pinned.length || assets.length"></search>
 
         <div class="col-list-container"
           data-infinite-scroll="getAssets()"
-          data-infinite-scroll-ready="list.ready"
+          data-infinite-scroll-ready="scrollReady"
           data-infinite-scroll-distance="400"
           data-infinite-scroll-container="whiteboards-reuse-list-container">
 
-          <div data-ng-if="!isSearch">
-            <h3 data-ng-if="!isSearch">Pinned Assets</h3>
+          <div data-ng-if="!isSearch && (pinned.length || assets.length)">
+            <h3>Pinned Assets</h3>
+            <ul data-ng-if="pinned.length">
+              <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in pinned | unique:'id'">
+                <div class="col-list-item-container">
+                  <a data-ng-click="selectAsset(asset)">
+                    <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
+                  </a>
+                  <div class="col-list-item-actions">
+                    <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="!pinned.length">
+              You have no pinned assets
+            </div>
+          </div>
+
+          <h3 data-ng-if="!isSearch && (pinned.length || assets.length)">All Assets</h3>
+          <div data-ng-if="assets.length">
             <ul>
-              <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | filter:{pinned_by_me_date: ''} | unique:'id'">
+              <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in assets | unique:'id'">
                 <div class="col-list-item-container">
                   <a data-ng-click="selectAsset(asset)">
                     <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
@@ -34,23 +54,11 @@
               </li>
             </ul>
           </div>
-
-          <h3 data-ng-if="!isSearch">All Assets</h3>
-          <ul>
-            <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-repeat="asset in notPinnedByMe(assets) | unique:'id'">
-              <div class="col-list-item-container">
-                <a data-ng-click="selectAsset(asset)">
-                  <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
-                </a>
-                <div class="col-list-item-actions">
-                  <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="isSearch && assets.length === 0">
-          No assets could be found
+          <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="!assets.length">
+            <span data-ng-if="isSearch">No assets found</span>
+            <span data-ng-if="!isSearch && pinned.length">No other assets</span>
+            <span data-ng-if="!isSearch && !pinned.length">Sorry, this course has no assets.</span>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
