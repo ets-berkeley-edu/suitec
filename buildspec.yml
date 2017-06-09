@@ -15,11 +15,11 @@ phases:
       - ./node_modules/.bin/gulp eslint
   build:
     commands:
-      - echo "build phase"
+      - echo "CODEBUILD_RESOLVED_SOURCE_VERSION: ${CODEBUILD_RESOLVED_SOURCE_VERSION}"
+      - chmod 554 scripts/generate-buildspec-report.sh && ./scripts/generate-buildspec-report.sh
   post_build:
     commands:
       - for i in $(ls node_modules | grep -v ^col-); do rm -Rf node_modules/$i; done
-      - chmod 554 scripts/generate-buildspec-report.sh && ./scripts/generate-buildspec-report.sh
 
 artifacts:
   files:
