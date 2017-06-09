@@ -155,6 +155,14 @@
     var sortUserAssets = $scope.sortUserAssets = function(sortType, track) {
       $scope.user.assets.isLoading = true;
 
+      // First, set marker to identify user as having one or more pins in this course.
+      // User with one or more pins, and no uploaded assets, needs filters under 'My Assets'
+      // such that s/he can navigate to 'Pinned' list.
+      assetLibraryFactory.getAssets(0, {'hasPins': true, 'limit': 1}, false).success(function(assets) {
+        $scope.user.hasPins = !!assets.results.length;
+      });
+
+      // Next, load requested assets
       var searchOptions = {
         'sort': sortType,
         'user': $scope.user.id,

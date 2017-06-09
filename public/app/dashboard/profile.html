@@ -174,9 +174,9 @@
 
   <div class="profile-assets-container">
     <div class="profile-filters">
-      <h3>{{isMyProfile ? 'My Assets' : 'Assets'}}{{user.totalAssetsInCourse ? ':' : ''}}</h3>
+      <h3>{{isMyProfile ? 'My Assets' : 'Assets'}}{{user.totalAssetsInCourse || user.hasPins ? ':' : ''}}</h3>
 
-      <div class="profile-filter-label" data-ng-repeat="(filter, label) in user.assets.filterLabels" data-ng-if="user.totalAssetsInCourse">
+      <div class="profile-filter-label" data-ng-repeat="(filter, label) in user.assets.filterLabels" data-ng-if="user.totalAssetsInCourse || user.hasPins">
         <button type="button"
           id="user-assets-by-{{filter}}"
           class="btn btn-link profile-filter-label"
@@ -197,13 +197,12 @@
 
     <div class="col-list-container">
       <div class="alert alert-info assetlibrary-list-noresults"
-        data-ng-if="!user.assets.isLoading && (!user.totalAssetsInCourse || !user.assets.results.length)">
-
+           data-ng-if="!user.assets.isLoading && ((!user.totalAssetsInCourse && !user.hasPins) || !user.assets.results.length)">
         No matching assets were found.
       </div>
       <ul>
         <!-- UPLOAD / ADD LINK -->
-        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !user.totalAssetsInCourse">
+        <li class="list-inline col-xs-6 col-sm-4 col-md-3" data-ng-if="isMyProfile && !user.totalAssetsInCourse && (user.assets.sortBy === 'recent')">
           <div class="col-list-item-container col-list-add-tile">
             <div class="col-list-item-tile">
               <div class="assetlibrary-list-item-add-container">
