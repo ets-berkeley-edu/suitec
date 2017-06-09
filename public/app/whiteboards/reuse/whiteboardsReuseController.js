@@ -27,13 +27,17 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, $scope) {
+  angular.module('collabosphere').controller('WhiteboardsReuseController', function(assetLibraryFactory, utilService, $scope) {
 
-    $scope.searchOptions = {};
-    $scope.assets = [];
-    $scope.list = {
-      'page': 0,
-      'ready': false
+    var ASSETS_PER_PAGE = 10;
+
+    var init = function(searchOptions) {
+      $scope.searchOptions = searchOptions || {};
+      $scope.scrollReady = false;
+      $scope.assets = [];
+      $scope.assetsPage = 0;
+      $scope.pinned = [];
+      $scope.pinnedPage = 0;
     };
 
     // Variable that keeps track of whether a search is being done. Note that we can't make this
@@ -41,6 +45,15 @@
     // directive which will update the options as soon as an input field changes. If we were to do
     // that, we might start showing certain interactions too soon (e.g., the "No assets could be found" alert)
     $scope.isSearch = false;
+
+    var isSearch = function(searchOptions) {
+      return !!(searchOptions.keywords ||
+                searchOptions.category ||
+                searchOptions.user ||
+                searchOptions.section ||
+                searchOptions.type ||
+                searchOptions.sort);
+    };
 
     /**
      * Add the selected assets to the current whiteboard
@@ -57,14 +70,8 @@
      * @return {Object}                        Selected assets from asset list
      */
     var getSelectedAssets = $scope.getSelectedAssets = function() {
-      var selectedAssets = [];
-      for (var i = 0; i < $scope.assets.length; i++) {
-        var asset = $scope.assets[i];
-        if (asset.selected) {
-          selectedAssets.push($scope.assets[i]);
-        }
-      }
-      return selectedAssets;
+      var allAssets = _.concat($scope.pinned, $scope.assets);
+      return _.filter(allAssets, {'selected': true});
     };
 
     /**
@@ -78,6 +85,31 @@
     };
 
     /**
+     * Get the next page of search results
+     *
+     * @param  {Object}          assetList               Previous pages of search results, concatenated
+     * @param  {Number}          page                    Page number as described in AssetsAPI
+     * @param  {Object}          searchOptions           Search parameters for AssetsAPI
+     * @param  {Function}        callback                Standard callback function
+     * @return {void}
+     */
+    var getNextPage = function(assetList, page, searchOptions, callback) {
+      assetLibraryFactory.getAssets(page, searchOptions).success(function(assets) {
+        _.each(assets.results, function(asset) {
+          assetList.push(asset);
+        });
+
+        // Only request another page of results if the number of items in the
+        // current result set is the same as the maximum number of items in a
+        // retrieved asset library page
+        if (assets.results.length === ASSETS_PER_PAGE) {
+          $scope.scrollReady = true;
+        }
+        callback();
+      });
+    };
+
+    /**
      * Get the assets for the current course through an infinite scroll
      *
      * @return {void}
@@ -85,53 +117,53 @@
     var getAssets = $scope.getAssets = function() {
       // Indicate the no further REST API requests should be made
       // until the current request has completed
-      $scope.list.ready = false;
+      $scope.scrollReady = false;
 
       // Indicate whether a search was performed
-      var opts = $scope.searchOptions;
-      $scope.isSearch = opts.keywords || opts.category || opts.user || opts.section || opts.type || opts.sort;
+      $scope.isSearch = isSearch($scope.searchOptions);
 
       // Default view has 'pins' assets listed first.
-      if (!$scope.isSearch) {
-        opts = {
-          'sort': 'pins'
-        };
+      if ($scope.isSearch) {
+        // Narrow the search as seen in Asset Library
+        utilService.narrowSearchPerSort($scope.searchOptions);
+        getNextPage($scope.assets, $scope.assetsPage, $scope.searchOptions, function() {
+          $scope.assetsPage++;
+        });
+
+      } else if ($scope.assets.length) {
+        // If $scope.assets is non-empty and isSearch is false then we are:
+        //  1. rendering the default, segregated view
+        //  2. done getting pinned assets
+
+        // Next page is unpinned assets
+        getNextPage($scope.assets, $scope.assetsPage, {'hasPins': false, 'sort': 'pins'}, function() {
+          $scope.assetsPage++;
+        });
+
+      } else {
+        // Default view has 'My Pinned' first.
+        var pinCount = $scope.pinned.length;
+
+        getNextPage($scope.pinned, $scope.pinnedPage, {'hasPins': true, 'sort': 'pins'}, function() {
+          $scope.pinnedPage++;
+
+          if ($scope.pinned.length - pinCount < ASSETS_PER_PAGE) {
+            // All pinned assets found; fill the remaining page with unpinned assets.
+            getNextPage($scope.assets, $scope.assetsPage, {'hasPins': false, 'sort': 'pins'}, function() {
+              $scope.assetsPage++;
+            });
+          }
+        });
       }
-
-      assetLibraryFactory.getAssets($scope.list.page, opts).success(function(assets) {
-        // Add the new assets
-        $scope.assets = $scope.assets.concat(assets.results);
-
-        // Only request another page of results if the number of items in the
-        // current result set is the same as the maximum number of items in a
-        // retrieved asset library page
-        if (assets.results.length === 10) {
-          $scope.list.ready = true;
-        }
-      });
-      // Ensure that the next page is requested the next time
-      $scope.list.page++;
     };
 
-    /**
-     * Get the assets for the current course through an infinite scroll
-     *
-     * @param  {Asset[]}          assets           All assets from AssetsAPI
-     * @return {Asset[]}                           All assets NOT pinned by `me`
-     */
-    var notPinnedByMe = $scope.notPinnedByMe = function(assets) {
-      return $scope.isSearch ? assets : _.filter(assets, function(asset) {
-        return !asset.pinned_by_me_date;
-      });
-    };
+    init();
 
     /**
      * Listen for events indicating that the user wants to search through the asset library
      */
     $scope.$on('assetLibrarySearchSearch', function(ev, searchOptions) {
-      $scope.list.page = 0;
-      $scope.assets = [];
-      $scope.searchOptions = searchOptions;
+      init(searchOptions);
       getAssets();
     });
 
