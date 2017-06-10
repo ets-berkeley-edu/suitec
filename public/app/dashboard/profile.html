@@ -172,7 +172,7 @@
     </div>
   </div>
 
-  <div class="profile-assets-container">
+  <div data-ng-class="{'profile-assets-container': user.totalAssetsInCourse, 'profile-assets-container-tall': !user.totalAssetsInCourse}">
     <div class="profile-filters">
       <h3>{{isMyProfile ? 'My Assets' : 'Assets'}}{{user.totalAssetsInCourse || user.hasPins ? ':' : ''}}</h3>
 
@@ -195,9 +195,8 @@
       </div>
     </div>
 
-    <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults"
-           data-ng-if="!user.assets.isLoading && ((!user.totalAssetsInCourse && !user.hasPins) || !user.assets.results.length)">
+    <div class="profile-list-compact col-list-container">
+      <div class="help-block alert alert-info" data-ng-if="(!user.totalAssetsInCourse && !user.hasPins) || !user.assets.results.length">
         No matching assets were found.
       </div>
       <ul>
@@ -242,7 +241,7 @@
           </div>
         </li>
 
-        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3"
+        <li class="profile-list-compact assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3"
             data-ng-repeat="asset in user.assets.results">
           <div class="col-list-item-container">
             <a tool-href
@@ -282,14 +281,12 @@
       </div>
     </div>
 
-    <div class="col-list-container">
-      <div class="alert alert-info assetlibrary-list-noresults"
-        data-ng-if="!community.assets.isLoading && (!community.totalAssetsInCourse || !community.assets.results.length)">
-
+    <div class="profile-list-compact col-list-container">
+      <div class="help-block alert alert-info" data-ng-if="!community.totalAssetsInCourse || !community.assets.results.length">
         No matching assets were found.
       </div>
       <ul>
-        <li class="assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3"
+        <li class="profile-list-compact assetlibrary-list-item list-inline col-xs-6 col-sm-4 col-md-3"
             data-ng-repeat="asset in community.assets.results">
           <div class="col-list-item-container">
             <a tool-href
