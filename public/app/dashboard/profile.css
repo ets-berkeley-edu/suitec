@@ -237,7 +237,11 @@
 }
 
 .profile-assets-container {
-  margin-bottom: 30px;
+  min-height: 360px;
+}
+
+.profile-assets-container-tall {
+  min-height: 420px;
 }
 
 .profile-container {
@@ -300,11 +304,16 @@
 }
 
 .profile-filters h3 {
+  margin-bottom: 15px;
   position: relative;
 }
 
 .profile-input-invalid {
   color: #A94442;
+}
+
+.profile-list-compact {
+  margin-top: 0;
 }
 
 .profile-summary-avatar {

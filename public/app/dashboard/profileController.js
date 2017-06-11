@@ -42,7 +42,6 @@
     $scope.user = {
       totalAssetsInCourse: null,
       assets: {
-        isLoading: true,
         sortBy: 'recent',
         advancedSearchId: null,
         filterLabels: {
@@ -61,7 +60,6 @@
     $scope.community = {
       totalAssetsInCourse: null,
       assets: {
-        isLoading: true,
         sortBy: 'recent',
         advancedSearchId: null,
         filterLabels: {
@@ -153,8 +151,6 @@
      * @return {void}
      */
     var sortUserAssets = $scope.sortUserAssets = function(sortType, track) {
-      $scope.user.assets.isLoading = true;
-
       // First, set marker to identify user as having one or more pins in this course.
       // User with one or more pins, and no uploaded assets, needs filters under 'My Assets'
       // such that s/he can navigate to 'Pinned' list.
@@ -194,7 +190,6 @@
           sort: isShowAllFilter ? '' : sortType,
           user: $scope.user.id
         });
-        $scope.user.assets.isLoading = false;
       });
     };
 
@@ -206,8 +201,6 @@
      * @return {void}
      */
     var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType, track) {
-      $scope.community.assets.isLoading = true;
-
       var searchOptions = {
         'sort': sortType,
         'limit': $scope.maxPerSwimlane
@@ -237,7 +230,6 @@
         $scope.community.assets.advancedSearchId = utilService.getAdvancedSearchId({
           sort: isShowAllFilter ? '' : sortType
         });
-        $scope.community.assets.isLoading = false;
       });
     };
 
