@@ -48,7 +48,7 @@
     var editWhiteboard = $scope.editWhiteboard = function() {
       // Warn if the user has removed him/herself from the whiteboard, unless user is admin
       if (!$scope.me.is_admin &&
-          !_.include($scope.updatedWhiteboard.members, $scope.me.id) &&
+          !_.includes($scope.updatedWhiteboard.members, $scope.me.id) &&
           !confirm('Are you sure you want to remove yourself from this whiteboard?')) {
         return;
       }
