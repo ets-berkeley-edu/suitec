@@ -39,7 +39,7 @@
     // If total asset count exceeds the following limit then we'll offer a link to 'Show all'.
     $scope.maxPerSwimlane = 4;
 
-    $scope.user = {
+    var defaultUserPreferences = {
       totalAssetsInCourse: null,
       assets: {
         sortBy: 'recent',
@@ -255,11 +255,20 @@
       }
     };
 
-    var loadProfile = $scope.loadProfile = function(user) {
+    /**
+     * Combine standard user data and activity metadata
+     *
+     * @param  {Object}               user              User being rendered in profile
+     * @return {void}
+     */
+    var loadProfile = function(user) {
+      // Set default preferences
+      $scope.user = user;
+      _.extend($scope.user, defaultUserPreferences);
+
       $scope.isMyProfile = user.id === me.id;
 
-      // Combine activity metadata and standard user data
-      angular.extend($scope.user, user);
+      // Sort section(s)
       $scope.user.canvasCourseSections = user.canvas_course_sections && user.canvas_course_sections.sort();
 
       $scope.showEngagementIndexBox = me.course.engagementindex_url && ($scope.isMyProfile || me.is_admin || (user.share_points && me.share_points));
@@ -331,6 +340,18 @@
     };
 
     /**
+     * Combine standard user data and activity metadata
+     *
+     * @param  {Object}               userId              Id of user being rendered in profile
+     * @return {void}
+     */
+    var loadProfileById = $scope.loadProfileById = function(userId) {
+      userFactory.getUser(userId).success(function(user) {
+        loadProfile(user);
+      });
+    };
+
+    /**
      * Listen for pinning/unpinning events by 'me'
      */
     $scope.$on('assetPinEventByMe', function(ev, updatedAsset) {
@@ -352,11 +373,9 @@
 
     var init = function() {
       // Determine user
-      var otherUserId = $stateParams.userId || (referringTool && referringTool.requestedId);
-      if (otherUserId) {
-        userFactory.getUser(otherUserId).success(function(user) {
-          loadProfile(user);
-        });
+      var userId = $stateParams.userId || (referringTool && referringTool.requestedId);
+      if (userId) {
+        loadProfileById(userId);
       } else {
         loadProfile(me);
       }
