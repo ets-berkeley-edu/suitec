@@ -27,14 +27,14 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, me, referringTool, utilService, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, me, crossToolRequest, utilService, $rootScope, $scope, $state) {
 
     // Make the me object available to the scope
     $scope.me = me;
 
-    // If the referringTool object is present then the request originated in
+    // If the crossToolRequest is present then the request originated in
     // a SuiteC tool other than the Asset Library
-    $scope.referringTool = referringTool;
+    $scope.crossToolRequest = crossToolRequest;
 
     // Variable that keeps track of the URL state
     $scope.state = $state;

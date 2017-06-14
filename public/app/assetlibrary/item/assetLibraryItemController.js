@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, referringTool, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, crossToolRequest, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -486,8 +486,8 @@
     getCurrentAsset();
     // Load activities for the selected asset
     getAssetActivities();
-    // If referringTool is not null then offer user a link to go back.
-    $scope.referringTool = referringTool;
+    // If crossToolRequest is present then offer user a 'return to' link.
+    $scope.crossToolRequest = crossToolRequest;
     // Scroll to the top of the page as the current scroll position could be somewhere
     // deep in the asset library list
     utilService.scrollToTop();

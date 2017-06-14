@@ -49,30 +49,43 @@
   ]);
 
   /**
+   * Extract parameter value from URI using regex pattern
+   *
+   * @param  {String}       uri           Query string of current URL
+   * @param  {Object}       pattern       Regex for identifying parameter value
+   * @return {String}                     Value of query arg or null
+   */
+  var getParameter = function(uri, pattern) {
+    var match = uri.match(pattern);
+    return (match && match.length > 0) ? decodeURIComponent(match[1]) : null;
+  };
+
+  /**
    * Get the parsed querystring parameters from the current URL
    *
    * @return {Object}                     The parsed querystring parameters from the current URL
    * @see https://css-tricks.com/snippets/jquery/get-query-params-object/
    */
-  var getQueryParameters = function() {
-    var queryArgs = decodeURIComponent(document.location.search).replace(/(^\?)/, '');
-    var parameters = queryArgs.split('&').map(function(n) {
+  var getParameters = function() {
+    var uri = decodeURIComponent(document.location.search).replace(/(^\?)/, '');
+    var params = uri.split('&').map(function(n) {
       return n = n.split('='), this[n[0]] = n[1], this;
     }.bind({}))[0];
 
-    // '_id' represents an asset, user or view requested via link action.
-    var m = queryArgs.match(/.*[\?&]_id=([%0-9a-zA-Z\-\.]+).*/);
-    parameters.requestedId = (m && m.length > 0) ? decodeURIComponent(m[1]) : null;
+    // Bundle info on referring tool if required param is present
+    var referringTool = getParameter(uri, /.*[\?&]_referring_tool=([a-z]+).*/);
 
-    // '_referring_tool' is the SuiteC tool in which user initiated the action.
-    var tool = queryArgs.match(/.*[\?&]_referring_tool=([a-z]+).*/);
-    parameters.referringTool = (tool && tool.length > 0) ? tool[1] : null;
+    if (referringTool) {
+      params.crossToolRequest = {
+        id: getParameter(uri, /.*[\?&]_id=([%0-9a-zA-Z\-\.]+).*/),
+        scroll: getParameter(uri, /.*[\?&]_scroll=([0-9]+[:A-Za-z]*).*/),
+        referringTool: referringTool,
+        referringId: getParameter(uri, /.*[\?&]_referring_id=([0-9a-zA-Z]+).*/),
+        referringScroll: getParameter(uri, /.*[\?&]_referring_scroll=([0-9]+).*/)
+      };
+    }
 
-    // '_referring_id' represents the state of the referring tool, at the time of exit.
-    var id = queryArgs.match(/.*[\?&]_referring_id=([0-9a-zA-Z]+).*/);
-    parameters.referringId = (id && id.length > 0) ? id[1] : null;
-
-    return parameters;
+    return params;
   };
 
   /**
@@ -88,8 +101,8 @@
     var $q = initInjector.get('$q');
 
     // Construct the base REST API URL
-    var parameters = getQueryParameters();
-    var baseUrl = '/api/' + parameters.api_domain + '/' + parameters.course_id;
+    var params = getParameters();
+    var baseUrl = '/api/' + params.api_domain + '/' + params.course_id;
 
     return $q.all({
       'me': $http.get(baseUrl + '/users/me'),
@@ -98,24 +111,15 @@
       collabosphere.constant('me', results.me.data);
       collabosphere.constant('config', results.config.data);
       collabosphere.constant('apiError', null);
+      collabosphere.constant('crossToolRequest', params.crossToolRequest || null);
 
-      // Bundle info on referring tool
-      if (parameters.referringTool) {
-        collabosphere.constant('referringTool', {
-          name: parameters.referringTool,
-          referringId: parameters.referringId,
-          requestedId: parameters.requestedId
-        });
-      } else {
-        collabosphere.constant('referringTool', null);
-      }
     }, function(error) {
       // Store the error to be handled after bootstrapping.
       collabosphere.constant('apiError', error);
 
       collabosphere.constant('me', null);
       collabosphere.constant('config', null);
-      collabosphere.constant('referringTool', null);
+      collabosphere.constant('crossToolRequest', null);
     });
   };
 

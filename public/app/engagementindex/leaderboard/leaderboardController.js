@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('LeaderboardController', function(analyticsService, courseFactory, me, referringTool, userFactory, utilService, $scope) {
+  angular.module('collabosphere').controller('LeaderboardController', function(analyticsService, courseFactory, me, crossToolRequest, userFactory, utilService, $scope) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -383,7 +383,7 @@
     };
 
     // Track if following link from another tool.
-    if (referringTool) {
+    if (crossToolRequest) {
       analyticsService.track('Link to Engagement Index', {
         'referer': document.referrer
       });

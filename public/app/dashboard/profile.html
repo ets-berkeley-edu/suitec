@@ -186,16 +186,17 @@
         <span data-ng-if="(user.assets.sortBy === filter) && (user.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
           <a tool-href
              data-tool="assetlibrary"
+             data-id="user.assets.advancedSearchId"
              data-referring-tool="dashboard"
              data-referring-id="user.id"
-             data-id="user.assets.advancedSearchId"
+             data-referring-scroll="positionOf('user-assets')"
              data-ng-bind="user.assets.total"></a>)
         </span>
         <span data-ng-if="!$last">|</span>
       </div>
     </div>
 
-    <div class="profile-list-compact col-list-container">
+    <div id="user-assets" class="profile-list-compact col-list-container">
       <div class="help-block alert alert-info" data-ng-if="(!user.totalAssetsInCourse && !user.hasPins) || !user.assets.results.length">
         No matching assets were found.
       </div>
@@ -209,18 +210,20 @@
                   <a tool-href
                      class="text-center col-pane"
                      data-tool="assetlibrary"
+                     data-id="routerStateUploadAsset"
                      data-referring-tool="dashboard"
                      data-referring-id="user.id"
-                     data-id="routerStateUploadAsset">
+                     data-referring-scroll="positionOf('user-assets')">
                     <i class="fa fa-laptop"></i>
                     <div class="assetlibrary-list-item-add-action">Upload</div>
                   </a>
                   <a tool-href
                      class="text-center col-pane"
                      data-tool="assetlibrary"
+                     data-id="routerStateAddLink"
                      data-referring-tool="dashboard"
                      data-referring-id="user.id"
-                     data-id="routerStateAddLink">
+                     data-referring-scroll="positionOf('user-assets')">
                     <i class="fa fa-link"></i>
                     <div class="assetlibrary-list-item-add-action">Add Link</div>
                   </a>
@@ -231,9 +234,10 @@
               <a tool-href
                  class="text-center col-pane"
                  data-tool="assetlibrary"
+                 data-id="routerStateBookmarkletInfo"
                  data-referring-tool="dashboard"
                  data-referring-id="user.id"
-                 data-id="routerStateBookmarkletInfo">
+                 data-referring-scroll="positionOf('user-assets')">
                 Add assets more easily
                 <i class="fa fa-bookmark pull-left"></i>
               </a>
@@ -246,9 +250,10 @@
           <div class="col-list-item-container">
             <a tool-href
                data-tool="assetlibrary"
+               data-id="asset.id"
                data-referring-tool="dashboard"
                data-referring-id="user.id"
-               data-id="asset.id">
+               data-referring-scroll="positionOf('user-assets')">
               <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
             </a>
             <div class="text-right col-list-item-actions" iconbar asset="asset" show-pin="true" viewonly="true"></div>
@@ -272,16 +277,17 @@
         <span data-ng-if="(community.assets.sortBy === filter) && (community.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
           <a tool-href
              data-tool="assetlibrary"
+             data-id="community.assets.advancedSearchId"
              data-referring-tool="dashboard"
              data-referring-id="user.id"
-             data-id="community.assets.advancedSearchId"
+             data-referring-scroll="positionOf('community-assets')"
              data-ng-bind="community.assets.total"></a>)
         </span>
         <span data-ng-if="!$last">|</span>
       </div>
     </div>
 
-    <div class="profile-list-compact col-list-container">
+    <div id="community-assets" class="profile-list-compact col-list-container">
       <div class="help-block alert alert-info" data-ng-if="!community.totalAssetsInCourse || !community.assets.results.length">
         No matching assets were found.
       </div>
@@ -291,9 +297,10 @@
           <div class="col-list-item-container">
             <a tool-href
                data-tool="assetlibrary"
+               data-id="asset.id"
                data-referring-tool="dashboard"
                data-referring-id="user.id"
-               data-id="asset.id">
+               data-referring-scroll="positionOf('community-assets')">
               <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
             </a>
           </div>
