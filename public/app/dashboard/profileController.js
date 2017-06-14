@@ -27,7 +27,10 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('ProfileController', function(analyticsService, assetLibraryFactory, me, profileFactory, referringTool, userFactory, utilService, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('ProfileController', function(analyticsService, assetLibraryFactory, me, profileFactory, crossToolRequest, userFactory, utilService, $scope, $state, $stateParams) {
+
+    // Function used to construct tool-href links to Asset Library
+    $scope.positionOf = utilService.getScrollPosition;
 
     // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
     $scope.routerStateAddLink = 'assetlibraryaddlink';
@@ -148,9 +151,10 @@
      *
      * @param  {String}         sortType              Name of field to sort by
      * @param  {Boolean}        track                 Whether to track sort in analytics
+     * @param  {Function}       callback              Standard callback function
      * @return {void}
      */
-    var sortUserAssets = $scope.sortUserAssets = function(sortType, track) {
+    var sortUserAssets = $scope.sortUserAssets = function(sortType, track, callback) {
       // First, set marker to identify user as having one or more pins in this course.
       // User with one or more pins, and no uploaded assets, needs filters under 'My Assets'
       // such that s/he can navigate to 'Pinned' list.
@@ -190,6 +194,8 @@
           sort: isShowAllFilter ? '' : sortType,
           user: $scope.user.id
         });
+
+        callback();
       });
     };
 
@@ -198,39 +204,48 @@
      *
      * @param  {String}               sortType              Name of field to sort by
      * @param  {Boolean}              track                 Whether to track sort in analytics
+     * @param  {Function}             callback              Standard callback function
      * @return {void}
      */
-    var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType, track) {
-      var searchOptions = {
-        'sort': sortType,
-        'limit': $scope.maxPerSwimlane
-      };
+    var sortCommunityAssets = $scope.sortCommunityAssets = function(sortType, track, callback) {
+      // Only show 'Everyone's Assets' swimlane when user is on his/her own profile
+      if ($scope.isMyProfile) {
+        var searchOptions = {
+          'sort': sortType,
+          'limit': $scope.maxPerSwimlane
+        };
 
-      if (track) {
-        analyticsService.track('Change profile page community assets filter', {
-          'profile_user': $scope.user.id,
-          'community_assets_filter': sortType
-        });
-      }
-
-      // Narrow the search, if appropriate
-      utilService.narrowSearchPerSort(searchOptions);
-
-      assetLibraryFactory.getAssets(0, searchOptions, false).success(function(assets) {
-        angular.extend($scope.community.assets, assets);
-        utilService.setPinnedByMe($scope.community.assets.results);
-
-      }).then(function() {
-        var isShowAllFilter = sortType === 'recent';
-        if (isShowAllFilter) {
-          // We need this count available when `assets.results.length` varies per swimlane filters.
-          $scope.community.totalAssetsInCourse = $scope.community.assets.results.length;
+        if (track) {
+          analyticsService.track('Change profile page community assets filter', {
+            'profile_user': $scope.user.id,
+            'community_assets_filter': sortType
+          });
         }
-        $scope.community.assets.sortBy = sortType;
-        $scope.community.assets.advancedSearchId = utilService.getAdvancedSearchId({
-          sort: isShowAllFilter ? '' : sortType
+
+        // Narrow the search, if appropriate
+        utilService.narrowSearchPerSort(searchOptions);
+
+        assetLibraryFactory.getAssets(0, searchOptions, false).success(function(assets) {
+          angular.extend($scope.community.assets, assets);
+          utilService.setPinnedByMe($scope.community.assets.results);
+
+        }).then(function() {
+          var isShowAllFilter = sortType === 'recent';
+          if (isShowAllFilter) {
+            // We need this count available when `assets.results.length` varies per swimlane filters.
+            $scope.community.totalAssetsInCourse = $scope.community.assets.results.length;
+          }
+          $scope.community.assets.sortBy = sortType;
+          $scope.community.assets.advancedSearchId = utilService.getAdvancedSearchId({
+            sort: isShowAllFilter ? '' : sortType
+          });
+
+          callback();
         });
-      });
+
+      } else {
+        callback();
+      }
     };
 
     /**
@@ -277,12 +292,16 @@
       getUserActivity(user.id);
 
       // Featured assets of user (current profile)
-      sortUserAssets($scope.user.assets.sortBy, false);
+      sortUserAssets($scope.user.assets.sortBy, false, function() {
+        sortCommunityAssets($scope.community.assets.sortBy, false, function() {
 
-      // Only show 'Everyone's Assets' swimlane when user is on his/her own profile
-      if ($scope.isMyProfile) {
-        sortCommunityAssets($scope.community.assets.sortBy, false);
-      }
+          if (crossToolRequest && crossToolRequest.scroll) {
+            utilService.getScrollInformation().then(function(s) {
+              utilService.scrollTo(crossToolRequest.scroll);
+            });
+          }
+        });
+      });
 
       // Set page context information for activity timeline directive
       $scope.pageContext = {
@@ -373,7 +392,7 @@
 
     var init = function() {
       // Determine user
-      var userId = $stateParams.userId || (referringTool && referringTool.requestedId);
+      var userId = $stateParams.userId || (crossToolRequest && crossToolRequest.id);
       if (userId) {
         loadProfileById(userId);
       } else {

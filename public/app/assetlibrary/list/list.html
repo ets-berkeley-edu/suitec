@@ -2,9 +2,10 @@
   <a tool-href
      class="col-back"
      data-tool="dashboard"
+     data-id="crossToolRequest.referringId"
+     data-scroll="crossToolRequest.referringScroll"
      data-referring-tool="assetlibrary"
-     data-id="referringTool.referringId"
-     data-ng-if="referringTool.name === 'dashboard'"><i class="fa fa-angle-left"></i> Back to Impact Studio</a>
+     data-ng-if="crossToolRequest.referringTool === 'dashboard'"><i class="fa fa-angle-left"></i> Back to Impact Studio</a>
 
   <div data-ng-if="me.is_admin && (!me.course.active || me.course.reactivated)" data-ng-include="'/app/shared/syncdisabled.html'"></div>
 

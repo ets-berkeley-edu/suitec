@@ -27,13 +27,13 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('BackToReferrerController', function(me, referringTool, $scope) {
+  angular.module('collabosphere').controller('BackToReferrerController', function(me, crossToolRequest, $scope) {
 
     // Make the me object available to the scope
     $scope.me = me;
 
     // The following allows user to link between LTI tools
-    $scope.referringTool = referringTool;
+    $scope.crossToolRequest = crossToolRequest;
 
   });
 

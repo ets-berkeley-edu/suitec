@@ -40,8 +40,10 @@
       scope: {
         tool: '=',
         id: '=',
+        scroll: '=',
         referringTool: '=',
-        referringId: '='
+        referringId: '=',
+        referringScroll: '='
       },
 
       'link': function(scope, elem, attrs) {
@@ -49,9 +51,11 @@
           // 'id' and 'referring-tool' attributes may specify either a variable name (the evaluated value
           // of which appears under 'scope'), or a string literal (which appears under 'attrs').
           var id = scope.id || attrs.id;
+          var scroll = scope.scroll || attrs.scroll;
           var referringTool = scope.referringTool || attrs.referringTool;
+          var referringScroll = scope.referringScroll || attrs.referringScroll;
 
-          elem.attr('href', utilService.getToolHref(attrs.tool, id, referringTool, scope.referringId));
+          elem.attr('href', utilService.getToolHref(attrs.tool, id, scroll, referringTool, scope.referringId, referringScroll));
           elem.attr('target', '_parent');
         });
       }

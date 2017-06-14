@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('assetLibraryService', function(analyticsService, referringTool, utilService, $state) {
+  angular.module('collabosphere').service('assetLibraryService', function(analyticsService, crossToolRequest, utilService, $state) {
 
     var goAdvancedSearch = function(data) {
       // Track the asset library search deep link
@@ -74,9 +74,9 @@
       }
     };
 
-    if (referringTool && referringTool.requestedId) {
+    if (crossToolRequest && crossToolRequest.id) {
       // Link to asset from tools other than assetlibrary (eg, user profile)
-      assetViewRedirect(referringTool.requestedId);
+      assetViewRedirect(crossToolRequest.id);
 
     } else if (window.parent) {
       // Get the parent window's URL. In case any SuiteC data is present,

@@ -33,17 +33,17 @@
      * Replace each hashtag with a link to the asset library that will search through the asset library
      * for that keyword.
      *
-     * @param  {String}     input             Text containing hashtags. Hashtags will be replaced with proper hrefs.
-     * @param  {String}     referringTool     SuiteC tool in which user initiated the action
-     * @param  {String}     referringId       State of the referring tool, at time of exit
-     * @return {String}                       The processed text, in which hashtags were replaced with links
+     * @param  {String}     input                Text containing hashtags. Hashtags will be replaced with proper hrefs.
+     * @param  {String}     crossToolRequest     SuiteC tool in which user initiated the action
+     * @param  {String}     referringId          State of the referring tool, at time of exit
+     * @return {String}                          The processed text, in which hashtags were replaced with links
      */
-    return function(input, referringTool, referringId) {
+    return function(input, crossToolRequest, referringId) {
       return input.replace(/#(\w*[a-zA-Z_\-\.]+\w*)/gim, function(match, hashtag) {
         // Remove trailing punctuation, as it might have been picked up by regex above
         var trimmed = hashtag.replace(/[\.\-]+$/g, '');
         var id = utilService.getAdvancedSearchId({'keywords': trimmed});
-        var url = utilService.getToolHref('assetlibrary', id, referringTool, referringId);
+        var url = utilService.getToolHref('assetlibrary', id, crossToolRequest, referringId);
         return '<a href="' + url + '" target="_parent">#' + hashtag + '</a>';
       });
     };

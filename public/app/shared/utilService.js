@@ -103,39 +103,49 @@
     /**
      * Get URL to link from one SuiteC LTI tool to another
      *
-     * @param  {String}       tool            Name of SuiteC LTI tool targeted in URL
-     * @param  {String}       id              Represents an asset, user or view requested via link action
-     * @param  {String}       referringTool   SuiteC tool in which user initiated the action
-     * @param  {String}       referringId     State of the referring tool, at time of exit
-     * @return {String}                       URL used to reload page, not simply the iFrame
+     * @param  {String}       tool                      Name of SuiteC LTI tool targeted in URL
+     * @param  {String}       id                        Represents an asset, user or view requested via link action
+     * @param  {String}       scroll                    Scroll position of target DOM element
+     * @param  {String}       referringTool             SuiteC tool in which user initiated the action
+     * @param  {String}       referringId               State of the referring tool, at time of exit
+     * @param  {String}       referringScroll           Scroll position of referring page element
+     * @return {String}                                 URL used to reload page, not simply the iFrame
      */
-    var getToolHref = function(tool, id, referringTool, referringId) {
-      // 'id' may refer to router-state, asset id, user id or similar.
-      var queryArgs = id ? '?_id=' + encodeURIComponent(id) : '';
-      if (referringTool) {
-        queryArgs = queryArgs ? queryArgs + '&' : '?';
-        queryArgs += '_referring_tool=' + referringTool;
-        if (referringId) {
-          queryArgs += '&_referring_id=' + encodeURIComponent(referringId);
-        }
+    var getToolHref = function(tool, id, scroll, referringTool, referringId, referringScroll) {
+      var url = null;
+
+      if (tool === 'assetlibrary') {
+        url = me.course.assetlibrary_url;
+      } else if (tool === 'dashboard') {
+        url = me.course.dashboard_url;
+      } else if (tool === 'engagementindex') {
+        url = me.course.engagementindex_url;
+      } else if (tool === 'whiteboards') {
+        url = me.course.whiteboards_url;
       }
-      switch (tool) {
-        case 'assetlibrary': {
-          return me.course.assetlibrary_url + queryArgs;
+
+      if (url) {
+        // 'id' may refer to router-state, asset id, user id or similar.
+        var query = id ? '?_id=' + encodeURIComponent(id) : '';
+
+        if (scroll) {
+          query = query ? query + '&' : '?';
+          query += '&_scroll=' + scroll;
         }
-        case 'dashboard': {
-          return me.course.dashboard_url + queryArgs;
+        if (referringTool) {
+          query = query ? query + '&' : '?';
+          query += '_referring_tool=' + referringTool;
+          if (referringId) {
+            query += '&_referring_id=' + encodeURIComponent(referringId);
+          }
+          if (referringScroll) {
+            query += '&_referring_scroll=' + referringScroll;
+          }
         }
-        case 'engagementindex': {
-          return me.course.engagementindex_url + queryArgs;
-        }
-        case 'whiteboards': {
-          return me.course.whiteboards_url + queryArgs;
-        }
-        default: {
-          return null;
-        }
+        url += query;
       }
+
+      return url;
     };
 
     /**
@@ -259,6 +269,22 @@
         });
       }
       return deferred.promise;
+    };
+
+    /**
+     * As an example, this function is used to construct tool-href links
+     *
+     * @param  {String}       elementId           Id of DOM element
+     * @return {Number}                           Scroll position of the DOM element id provided
+     */
+    var getScrollPosition = function(elementId) {
+      var position = null;
+      if (elementId) {
+        var element = document.getElementById(elementId);
+        var rect = element && element.getBoundingClientRect();
+        position = rect && _.round(rect.top);
+      }
+      return position;
     };
 
     /**
@@ -486,6 +512,7 @@
       'getLaunchParams': getLaunchParams,
       'getParentUrlData': getParentUrlData,
       'getScrollInformation': getScrollInformation,
+      'getScrollPosition': getScrollPosition,
       'getToolHref': getToolHref,
       'getToolUrl': getToolUrl,
       'narrowSearchPerSort': narrowSearchPerSort,
