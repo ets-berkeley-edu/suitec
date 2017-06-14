@@ -78,6 +78,8 @@
         analyticsService.track('Search for user profile', {
           'search_for_user': $scope.browse.searchedUserId
         });
+
+        crossToolRequest.scroll = null;
         $state.go('userprofile', {'userId': $scope.browse.searchedUserId});
       }
     }, true);
@@ -273,10 +275,11 @@
     /**
      * Combine standard user data and activity metadata
      *
-     * @param  {Object}               user              User being rendered in profile
+     * @param  {Object}           user                  User being rendered in profile
+     * @param  {Boolean}          considerScroll        If true then scroll down page per `crossToolRequest.scroll`
      * @return {void}
      */
-    var loadProfile = function(user) {
+    var loadProfile = function(user, considerScroll) {
       // Set default preferences
       $scope.user = user;
       _.extend($scope.user, defaultUserPreferences);
@@ -294,8 +297,7 @@
       // Featured assets of user (current profile)
       sortUserAssets($scope.user.assets.sortBy, false, function() {
         sortCommunityAssets($scope.community.assets.sortBy, false, function() {
-
-          if (crossToolRequest && crossToolRequest.scroll) {
+          if (considerScroll && crossToolRequest && crossToolRequest.scroll) {
             utilService.getScrollInformation().then(function(s) {
               utilService.scrollTo(crossToolRequest.scroll);
             });
@@ -361,12 +363,13 @@
     /**
      * Combine standard user data and activity metadata
      *
-     * @param  {Object}               userId              Id of user being rendered in profile
+     * @param  {Object}           userId                Id of user being rendered in profile
+     * @param  {Boolean}          considerScroll        If true then scroll down page per `crossToolRequest.scroll`
      * @return {void}
      */
-    var loadProfileById = $scope.loadProfileById = function(userId) {
+    var loadProfileById = $scope.loadProfileById = function(userId, considerScroll) {
       userFactory.getUser(userId).success(function(user) {
-        loadProfile(user);
+        loadProfile(user, considerScroll);
       });
     };
 
@@ -394,9 +397,9 @@
       // Determine user
       var userId = $stateParams.userId || (crossToolRequest && crossToolRequest.id);
       if (userId) {
-        loadProfileById(userId);
+        loadProfileById(userId, true);
       } else {
-        loadProfile(me);
+        loadProfile(me, true);
       }
     };
 
