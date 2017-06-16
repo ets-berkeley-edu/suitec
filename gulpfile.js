@@ -79,6 +79,20 @@ gulp.task('copyBookmarkletFiles', function() {
 });
 
 /**
+ * Copy image files used by the weekly email. In order to be accessible from email clients, these
+ * should not be versioned.
+ */
+gulp.task('copyEmailFiles', function() {
+  return es.merge(
+    gulp.src('public/assets/img/*-logo.png', {'base': 'public'})
+      .pipe(gulp.dest('target')),
+
+    gulp.src('public/assets/img/icon_*.png', {'base': 'public'})
+      .pipe(gulp.dest('target'))
+  );
+});
+
+/**
  * Copy Canvas customization code. Do not version or minify, since this code serves as a public reference.
  */
 gulp.task('copyCanvasCustomization', function() {
@@ -244,7 +258,16 @@ gulp.task('replaceImages', [ 'optimizeImages' ], function() {
  * Create a build
  */
 gulp.task('build', function() {
-  return runSequence('clean', 'buildEventDrops', ['replaceBookmarkletDependencies', 'copyFonts', 'minify'], 'copyCanvasCustomization', 'replaceImages', 'minifyViewer', 'copyViewerAssets');
+  return runSequence(
+    'clean',
+    'buildEventDrops',
+    ['replaceBookmarkletDependencies', 'copyFonts', 'minify'],
+    'copyCanvasCustomization',
+    'copyEmailFiles',
+    'replaceImages',
+    'minifyViewer',
+    'copyViewerAssets'
+  );
 });
 
 /**
