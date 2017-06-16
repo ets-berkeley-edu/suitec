@@ -11,7 +11,7 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "async": "2.1.4",
+    "async": "2.4.1",
     "body-parser": "1.16.0",
     "bower": "1.8.0",
     "bunyan": "1.8.5",

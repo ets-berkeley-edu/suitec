@@ -87,7 +87,7 @@
         'controller': 'ProfileEditController'
       })
       .state('userprofile', {
-        'url': '/profile/:userId',
+        'url': '/profile/:userId?loadPreviousState',
         'templateUrl': '/app/dashboard/profile.html',
         'controller': 'ProfileController'
       })

@@ -180,7 +180,7 @@
         <button type="button"
           id="user-assets-by-{{filter}}"
           class="btn btn-link profile-filter-label"
-          data-ng-click="sortUserAssets(filter, true)"
+          data-ng-click="sortUserAssets(filter, true, noOp)"
           data-ng-disabled="user.assets.sortBy === filter"
           data-ng-bind="label"></button>
         <span data-ng-if="(user.assets.sortBy === filter) && (user.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
@@ -189,7 +189,7 @@
              data-id="user.assets.advancedSearchId"
              data-referring-tool="dashboard"
              data-referring-id="user.id"
-             data-referring-scroll="positionOf('user-assets')"
+             data-referring-state="referringState('user-assets')"
              data-ng-bind="user.assets.total"></a>)
         </span>
         <span data-ng-if="!$last">|</span>
@@ -213,7 +213,7 @@
                      data-id="routerStateUploadAsset"
                      data-referring-tool="dashboard"
                      data-referring-id="user.id"
-                     data-referring-scroll="positionOf('user-assets')">
+                     data-referring-state="referringState('user-assets')">
                     <i class="fa fa-laptop"></i>
                     <div class="assetlibrary-list-item-add-action">Upload</div>
                   </a>
@@ -223,7 +223,7 @@
                      data-id="routerStateAddLink"
                      data-referring-tool="dashboard"
                      data-referring-id="user.id"
-                     data-referring-scroll="positionOf('user-assets')">
+                     data-referring-state="referringState('user-assets')">
                     <i class="fa fa-link"></i>
                     <div class="assetlibrary-list-item-add-action">Add Link</div>
                   </a>
@@ -237,7 +237,7 @@
                  data-id="routerStateBookmarkletInfo"
                  data-referring-tool="dashboard"
                  data-referring-id="user.id"
-                 data-referring-scroll="positionOf('user-assets')">
+                 data-referring-state="referringState('user-assets')">
                 Add assets more easily
                 <i class="fa fa-bookmark pull-left"></i>
               </a>
@@ -253,7 +253,7 @@
                data-id="asset.id"
                data-referring-tool="dashboard"
                data-referring-id="user.id"
-               data-referring-scroll="positionOf('user-assets')">
+               data-referring-state="referringState('user-assets')">
               <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
             </a>
             <div class="text-right col-list-item-actions" iconbar asset="asset" show-pin="true" viewonly="true"></div>
@@ -271,7 +271,7 @@
         <button type="button"
           id="community-assets-by-{{filter}}"
           class="btn btn-link profile-filter-label"
-          data-ng-click="sortCommunityAssets(filter, true)"
+          data-ng-click="sortCommunityAssets(filter, true, noOp)"
           data-ng-disabled="community.assets.sortBy === filter"
           data-ng-bind="label"></button>
         <span data-ng-if="(community.assets.sortBy === filter) && (community.assets.total > maxPerSwimlane)">({{maxPerSwimlane}} of
@@ -280,7 +280,7 @@
              data-id="community.assets.advancedSearchId"
              data-referring-tool="dashboard"
              data-referring-id="user.id"
-             data-referring-scroll="positionOf('community-assets')"
+             data-referring-state="referringState('community-assets')"
              data-ng-bind="community.assets.total"></a>)
         </span>
         <span data-ng-if="!$last">|</span>
@@ -300,7 +300,7 @@
                data-id="asset.id"
                data-referring-tool="dashboard"
                data-referring-id="user.id"
-               data-referring-scroll="positionOf('community-assets')">
+               data-referring-state="referringState('community-assets')">
               <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
             </a>
           </div>
