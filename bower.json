@@ -20,6 +20,7 @@
     "angular-socket-io": "0.7.0",
     "angular-strap": "2.3.10",
     "angular-ui-router": "0.2.18",
+    "async": "2.4.1",
     "bootstrap": "3.3.7",
     "d3": "4.8.0",
     "event-drops": "ets-berkeley-edu/eventDrops#master",

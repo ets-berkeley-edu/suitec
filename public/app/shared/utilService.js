@@ -105,13 +105,13 @@
      *
      * @param  {String}       tool                      Name of SuiteC LTI tool targeted in URL
      * @param  {String}       id                        Represents an asset, user or view requested via link action
-     * @param  {String}       scroll                    Scroll position of target DOM element
+     * @param  {String}       state                     Desired page state (e.g., scroll position) of target
      * @param  {String}       referringTool             SuiteC tool in which user initiated the action
      * @param  {String}       referringId               State of the referring tool, at time of exit
-     * @param  {String}       referringScroll           Scroll position of referring page element
+     * @param  {String}       referringState            State (e.g., scroll position) of referring page
      * @return {String}                                 URL used to reload page, not simply the iFrame
      */
-    var getToolHref = function(tool, id, scroll, referringTool, referringId, referringScroll) {
+    var getToolHref = function(tool, id, state, referringTool, referringId, referringState) {
       var url = null;
 
       if (tool === 'assetlibrary') {
@@ -128,9 +128,9 @@
         // 'id' may refer to router-state, asset id, user id or similar.
         var query = id ? '?_id=' + encodeURIComponent(id) : '';
 
-        if (scroll) {
+        if (state) {
           query = query ? query + '&' : '?';
-          query += '&_scroll=' + scroll;
+          query += '&_state=' + state;
         }
         if (referringTool) {
           query = query ? query + '&' : '?';
@@ -138,8 +138,8 @@
           if (referringId) {
             query += '&_referring_id=' + encodeURIComponent(referringId);
           }
-          if (referringScroll) {
-            query += '&_referring_scroll=' + referringScroll;
+          if (referringState) {
+            query += '&_referring_state=' + referringState;
           }
         }
         url += query;

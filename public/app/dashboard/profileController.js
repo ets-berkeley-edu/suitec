@@ -29,8 +29,8 @@
 
   angular.module('collabosphere').controller('ProfileController', function(analyticsService, assetLibraryFactory, me, profileFactory, crossToolRequest, userFactory, utilService, $scope, $state, $stateParams) {
 
-    // Function used to construct tool-href links to Asset Library
-    $scope.positionOf = utilService.getScrollPosition;
+    // Dummy function (i.e., no-op callback) used in profile template
+    var noOp = $scope.noOp = angular.noop;
 
     // Value of 'id' in toolUrlDirective can be router-state, asset id, etc.
     $scope.routerStateAddLink = 'assetlibraryaddlink';
@@ -79,8 +79,11 @@
           'search_for_user': $scope.browse.searchedUserId
         });
 
-        crossToolRequest.scroll = null;
-        $state.go('userprofile', {'userId': $scope.browse.searchedUserId});
+        crossToolRequest = null;
+        $state.go('userprofile', {
+          'userId': $scope.browse.searchedUserId,
+          'loadPreviousState': false
+        });
       }
     }, true);
 
@@ -273,13 +276,42 @@
     };
 
     /**
+     * Previous state describes user's scroll position and selected filters before linking to Asset Library.
+     * When user clicks 'Return to Dashboard' (e.g., on asset detail page) the Impact Studio will return to
+     * its previous rendering and scroll position.
+     *
+     * @param  {Boolean}              loadPreviousState     If true then load properties of crossToolRequest.state
+     * @param  {Function}             callback              Standard callback function
+     * @return {void}
+     */
+    var unpackPreviousState = function(loadPreviousState, callback) {
+      if (loadPreviousState) {
+        var args = crossToolRequest && _.split(crossToolRequest.state, '-');
+        if (args && args.length) {
+          var scrollTo = _.nth(args, 0) || null;
+          $scope.breakdown.selected = _.nth(args, 1) || $scope.breakdown.selected;
+          $scope.user.assets.sortBy = _.nth(args, 2) || $scope.user.assets.sortBy;
+          $scope.community.assets.sortBy = _.nth(args, 3) || $scope.community.assets.sortBy;
+          // Previous state might have non-default sortBy
+          callback($scope.user.assets.sortBy !== 'recent', $scope.community.assets.sortBy !== 'recent', scrollTo);
+
+        } else {
+          callback(false, false, null);
+
+        }
+      } else {
+        callback(false, false, null);
+      }
+    };
+
+    /**
      * Combine standard user data and activity metadata
      *
      * @param  {Object}           user                  User being rendered in profile
-     * @param  {Boolean}          considerScroll        If true then scroll down page per `crossToolRequest.scroll`
+     * @param  {Boolean}          loadPreviousState     If true then inspect `crossToolRequest` for previous scroll position, etc.
      * @return {void}
      */
-    var loadProfile = function(user, considerScroll) {
+    var loadProfile = function(user, loadPreviousState) {
       // Set default preferences
       $scope.user = user;
       _.extend($scope.user, defaultUserPreferences);
@@ -294,14 +326,38 @@
 
       getUserActivity(user.id);
 
-      // Featured assets of user (current profile)
+      // We perform default queries (i.e., get recent user and community assets) no matter the value of 'loadPreviousState'. The
+      // default queries are needed to calculate 'totalAssetsInCourse' of both user and community.
       sortUserAssets($scope.user.assets.sortBy, false, function() {
         sortCommunityAssets($scope.community.assets.sortBy, false, function() {
-          if (considerScroll && crossToolRequest && crossToolRequest.scroll) {
-            utilService.getScrollInformation().then(function(s) {
-              utilService.scrollTo(crossToolRequest.scroll);
-            });
-          }
+          // Load scroll and sort information
+          unpackPreviousState(loadPreviousState, function(reloadUserAssets, reloadCommunityAssets, scrollTo) {
+            if (loadPreviousState) {
+              // The following operations will run in parallel
+              async.series([
+                function(callback) {
+                  if (reloadUserAssets) {
+                    sortUserAssets($scope.user.assets.sortBy, false, noOp);
+                  }
+                  callback();
+                },
+                function(callback) {
+                  if (reloadCommunityAssets) {
+                    sortCommunityAssets($scope.community.assets.sortBy, false, noOp);
+                  }
+                  callback();
+                },
+                function(callback) {
+                  if (scrollTo) {
+                    utilService.getScrollInformation().then(function(s) {
+                      utilService.scrollTo(scrollTo, noOp);
+                    });
+                  }
+                  callback();
+                }
+              ]);
+            }
+          });
         });
       });
 
@@ -373,6 +429,16 @@
       });
     };
 
+    var referringState = $scope.referringState = function(elementId) {
+      var state = [
+        utilService.getScrollPosition(elementId),
+        $scope.breakdown && $scope.breakdown.selected,
+        $scope.user.assets.sortBy,
+        $scope.community.assets.sortBy
+      ];
+      return _.join(state, '-');
+    };
+
     /**
      * Listen for pinning/unpinning events by 'me'
      */
@@ -396,10 +462,12 @@
     var init = function() {
       // Determine user
       var userId = $stateParams.userId || (crossToolRequest && crossToolRequest.id);
+      var loadPreviousState = $stateParams.loadPreviousState !== 'false';
+
       if (userId) {
-        loadProfileById(userId, true);
+        loadProfileById(userId, loadPreviousState);
       } else {
-        loadProfile(me, true);
+        loadProfile(me, loadPreviousState);
       }
     };
 

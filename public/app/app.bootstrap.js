@@ -78,10 +78,10 @@
     if (referringTool) {
       params.crossToolRequest = {
         id: getParameter(uri, /.*[\?&]_id=([%0-9a-zA-Z\-\.]+).*/),
-        scroll: getParameter(uri, /.*[\?&]_scroll=([0-9]+[:A-Za-z]*).*/),
+        state: getParameter(uri, /.*[\?&]_state=([0-9a-zA-Z\-]+).*/),
         referringTool: referringTool,
         referringId: getParameter(uri, /.*[\?&]_referring_id=([0-9a-zA-Z]+).*/),
-        referringScroll: getParameter(uri, /.*[\?&]_referring_scroll=([0-9]+).*/)
+        referringState: getParameter(uri, /.*[\?&]_referring_state=([0-9a-zA-Z\-]+).*/)
       };
     }
 
