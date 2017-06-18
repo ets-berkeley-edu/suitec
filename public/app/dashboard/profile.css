@@ -31,7 +31,13 @@
 
 .other-users-container .other-users-browse {
   line-height: 1.1;
-  padding: 0 0 4px 0;
+  padding: 0 5px 0 5px;
+  vertical-align: text-top;
+}
+
+.other-users-container button:focus {
+  border: 0;
+  outline: none;
 }
 
 .other-users-container div:first-child {
@@ -43,14 +49,22 @@
 .other-users-container div:last-child {
   margin-left: auto;
   overflow: hidden;
-}
-
-.other-users-container .fa-caret-left {
   padding-right: 5px;
 }
 
-.other-users-container .fa-caret-right {
-  padding-left: 5px;
+.other-users-pagination {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.other-users-pagination div:first-child i {
+  float: right;
+  padding: 2px 0 0 10px;
+}
+
+.other-users-pagination div:last-child i {
+  float: left;
+  padding: 2px 15px 0 0;
 }
 
 .profile-activity-breakdown {
@@ -393,4 +407,9 @@
 
 .profile-user-description {
   white-space: pre-wrap;
+}
+
+i:focus {
+  border: 0;
+  outline: none;
 }
