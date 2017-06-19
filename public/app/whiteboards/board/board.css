@@ -40,9 +40,9 @@
 
 #whiteboards-board-viewport {
   height: 100%;
+  overflow: scroll;
   position: relative;
   width: 100%;
-  overflow: scroll;
 }
 
 /* NOTIFICATION */
@@ -54,8 +54,8 @@
 #whiteboards-board-notifications {
   display: inline-block;
   position: relative;
-  width: 85%;
   vertical-align: top;
+  width: 85%;
 }
 
 #whiteboards-board-notifications .alert {
@@ -117,9 +117,9 @@
 #whiteboards-board-toolbar {
   background-color: #FFF;
   border: 1px solid #D3D3D3;
+  border-radius: 4px;
   bottom: 85px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
   display: inline-block;
   margin-left: 5px;
   margin-right: 20px;
@@ -142,8 +142,8 @@
 }
 
 #whiteboards-board-toolbar > .btn-group > .btn > i {
-  font-weight: bold;
   font-size: 18px;
+  font-weight: bold;
 }
 
 #whiteboards-board-toolbar > .btn-group > .btn > i.fa-download {
@@ -200,8 +200,8 @@
 }
 
 #whiteboards-board-sidebar-container {
-  bottom: 0;
   border-left: 1px solid #D3D3D3;
+  bottom: 0;
   padding-top: 41px;
   position: absolute;
   right: 0;
@@ -379,9 +379,9 @@
 }
 
 .whiteboards-popover-select + .dropdown-menu {
-  overflow: auto;
   max-height: 115px;
   min-width: 68px;
+  overflow: auto;
   padding: 0
 }
 

@@ -30,8 +30,8 @@ body {
 /* Boostrap overrides */
 
 .modal-backdrop {
-  position: fixed;                      /* Ensure that the backdrop remains visible when scrolling the parent page */
   bottom: 0;                            /* Ensure that the backdrop stretches until the bottom of the page */
+  position: fixed;                      /* Ensure that the backdrop remains visible when scrolling the parent page */
 }
 
 .modal-header {
