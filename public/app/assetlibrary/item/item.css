@@ -49,8 +49,8 @@
 .assetlibrary-item-preview iframe {
   background-color: #FFF;
   overflow: auto;
-  width: 100%;
   -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 
 .assetlibrary-item-preview .preview-document,
@@ -64,9 +64,9 @@
 }
 
 .assetlibrary-item-whiteboard-preview {
+  background-color: #FFF;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: #FFF;
   height: 400px;
   position: relative;
   width: 100%;
@@ -128,8 +128,8 @@
 }
 
 .assetlibrary-item-metadata > .row {
-  padding-top: 10px;
   padding-bottom: 10px;
+  padding-top: 10px;
 }
 
 .assetlibrary-item-metadata > .row:first-child {
