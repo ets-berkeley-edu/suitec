@@ -106,10 +106,28 @@
       });
     };
 
+    /**
+     * Update the current user's looking-for-collaborators status
+     *
+     * @param  {Boolean}            looking       Whether the user is looking for collaborators
+     * @return {Promise}                          $http promise
+     */
+    var updateLookingForCollaborators = function(looking) {
+      var update = {
+        'looking': looking
+      };
+      return $http.post(utilService.getApiUrl('/users/me/looking_for_collaborators'), update).then(function() {
+        // Remove the me object from the cache as its `looking_for_collaborators` value is now updated
+        var $httpDefaultCache = $cacheFactory.get('$http');
+        $httpDefaultCache.remove(utilService.getApiUrl('/users/me'));
+      });
+    };
+
     return {
       'getAllUsers': getAllUsers,
       'getUser': getUser,
       'getLeaderboard': getLeaderboard,
+      'updateLookingForCollaborators': updateLookingForCollaborators,
       'updateSharePoints': updateSharePoints
     };
 
