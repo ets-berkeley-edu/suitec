@@ -15,14 +15,14 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -560,7 +560,8 @@ CREATE TABLE users (
     updated_at timestamp with time zone NOT NULL,
     course_id integer NOT NULL,
     canvas_course_sections character varying(255)[],
-    personal_bio character varying(255)
+    personal_bio character varying(255),
+    looking_for_collaborators boolean DEFAULT false NOT NULL
 );
 
 
