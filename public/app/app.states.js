@@ -127,9 +127,8 @@
         'templateUrl': '/app/shared/apiError.html',
         'controller': 'ApiErrorController'
       });
-  })
 
-  .run(function(apiError, $location, $rootScope, $state) {
+  }).run(function(apiError, $location, $rootScope, $state) {
     // Display error state if the API returned an error.
     if (apiError) {
       $state.go('error');

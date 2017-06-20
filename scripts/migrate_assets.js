@@ -26,15 +26,15 @@
  */
 
 var argv = require('yargs')
-    .usage('Usage: $0 --fromuser [fromuser] --touser [touser] --categories [categories]')
-    .demand(['fromuser', 'touser'])
-    .boolean('categories')
-    .describe('fromuser', 'The Collabosphere id of the user to migrate assets from')
-    .describe('touser', 'The Collabosphere id of the user to migrate assets to')
-    .describe('categories', 'Whether to migrate categories')
-    .help('h')
-    .alias('h', 'help')
-    .argv;
+  .usage('Usage: $0 --fromuser [fromuser] --touser [touser] --categories [categories]')
+  .demand(['fromuser', 'touser'])
+  .boolean('categories')
+  .describe('fromuser', 'The Collabosphere id of the user to migrate assets from')
+  .describe('touser', 'The Collabosphere id of the user to migrate assets to')
+  .describe('categories', 'Whether to migrate categories')
+  .help('h')
+  .alias('h', 'help')
+  .argv;
 
 var DB = require('col-core/lib/db');
 var log = require('col-core/lib/logger')('scripts/migrate_assets');

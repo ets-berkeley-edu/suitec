@@ -27,13 +27,13 @@
 
 var yargs = require('yargs');
 var argv = yargs
-    .usage('Usage: $0 --canvas [canvas] --suitec [suitec]')
-    .demand(['canvas', 'suitec'])
-    .describe('canvas', 'Canvas API domain on which tools should be reset')
-    .describe('suitec', 'Base URL for the SuiteC instance to which tools should be pointed')
-    .example('$0 --canvas bcourses.berkeley.edu --suitec https://app.ets-berkeley-suitec.net')
-    .wrap(100)
-    .argv;
+  .usage('Usage: $0 --canvas [canvas] --suitec [suitec]')
+  .demand(['canvas', 'suitec'])
+  .describe('canvas', 'Canvas API domain on which tools should be reset')
+  .describe('suitec', 'Base URL for the SuiteC instance to which tools should be pointed')
+  .example('$0 --canvas bcourses.berkeley.edu --suitec https://app.ets-berkeley-suitec.net')
+  .wrap(100)
+  .argv;
 
 var _ = require('lodash');
 var async = require('async');
@@ -236,7 +236,12 @@ var updateToolsForAccount = function(canvas, accountId, toolsToUpdate, callback)
  */
 var getTools = function(course) {
   var tools = [];
-  _.each(['assetlibrary', 'dashboard', 'engagementindex', 'whiteboards'], function(toolName) {
+  _.each([
+    'assetlibrary',
+    'dashboard',
+    'engagementindex',
+    'whiteboards'
+  ], function(toolName) {
 
     // Attempt to parse out Canvas tool ids from the URL values in the database.
     var toolUrl = course[toolName + '_url'];

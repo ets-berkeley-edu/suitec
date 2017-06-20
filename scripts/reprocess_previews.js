@@ -29,12 +29,12 @@ var _ = require('lodash');
 var async = require('async');
 var config = require('config');
 var argv = require('yargs')
-    .usage('Usage: $0 [--all]')
-    .alias('a', 'all')
-    .describe('a', 'Reprocess all assets')
-    .help('h')
-    .alias('h', 'help')
-    .argv;
+  .usage('Usage: $0 [--all]')
+  .alias('a', 'all')
+  .describe('a', 'Reprocess all assets')
+  .help('h')
+  .alias('h', 'help')
+  .argv;
 
 var AssetsAPI = require('col-assets');
 var CollabosphereConstants = require('col-core/lib/constants');

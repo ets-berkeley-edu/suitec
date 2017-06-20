@@ -26,10 +26,10 @@
  */
 
 var argv = require('yargs')
-    .usage('Usage: $0 --course [course]')
-    .demand([ 'course' ])
-    .describe('course', 'The SuiteC id of the course for which to recalculate impact scores; or \'all\' to recalculate all scores.')
-    .argv;
+  .usage('Usage: $0 --course [course]')
+  .demand([ 'course' ])
+  .describe('course', 'The SuiteC id of the course for which to recalculate impact scores; or \'all\' to recalculate all scores.')
+  .argv;
 
 var ActivitiesAPI = require('col-activities');
 var CourseAPI = require('col-course');

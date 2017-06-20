@@ -103,12 +103,7 @@
          * @return {void}
          */
         var checkInfiniteScrollLoad = function(scrollToBottom, scrollPosition) {
-          if (scope.infiniteScrollReady && (
-            (infiniteScrollDirection === 'bottom' && scrollToBottom < infiniteScrollDistance) ||
-            (infiniteScrollDirection === 'top' && scrollPosition < infiniteScrollDistance)
-            )
-          ) {
-
+          if (scope.infiniteScrollReady && ((infiniteScrollDirection === 'bottom' && scrollToBottom < infiniteScrollDistance) || (infiniteScrollDirection === 'top' && scrollPosition < infiniteScrollDistance))) {
             // When we're adding more data at the top of the container, we'll have to adjust the
             // scroll position when we've added data. We retain the scrolling offset to the bottom
             // of the container, so we can set it back when data was added
