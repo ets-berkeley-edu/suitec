@@ -27,12 +27,15 @@
 
   'use strict';
 
-  angular.module('collabosphere').filter('userProfileSearchDropdown', ['$sce', function($sce) {
-    return function(label, query, option) {
-      var html = option.is_admin ? '<i class="fa fa-graduation-cap"></i> ' + label : label;
+  angular.module('collabosphere').filter('userProfileSearchDropdown', [
+    '$sce',
+    function($sce) {
+      return function(label, query, option) {
+        var html = option.is_admin ? '<i class="fa fa-graduation-cap"></i> ' + label : label;
 
-      return $sce.trustAsHtml(html);
-    };
-  }]);
+        return $sce.trustAsHtml(html);
+      };
+    }
+  ]);
 
 }(window.angular));

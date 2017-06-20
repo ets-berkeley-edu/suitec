@@ -6,10 +6,18 @@
 ####################################################
 
 rules:
+  array-bracket-newline:
+    - 2
+    - multiline: true
+      minItems: 4
   array-bracket-spacing:
     - 1
     - never
     - singleValue: true
+  array-element-newline:
+    - 2
+    - multiline: true
+      minItems: 4
   # block-scoped-var: 2
   brace-style:
     - 2
@@ -40,6 +48,7 @@ rules:
     # - allowKeywords: false
   eol-last: 2
   eqeqeq: 2
+  for-direction: 2
   func-names: 0
   func-style:
     - 0
@@ -63,11 +72,13 @@ rules:
   #   - 2
   new-cap: 2
   new-parens: 2
-  # newline-after-var: 2
   no-array-constructor: 2
+  no-buffer-constructor: 2
   no-caller: 2
   no-catch-shadow: 2
+  no-compare-neg-zero: 2
   no-cond-assign: 2
+  no-confusing-arrow: 2
   no-constant-condition: 2
   no-continue: 2
   no-control-regex: 2
@@ -154,6 +165,7 @@ rules:
   #   - vars: all
   #     args: after-used
   # no-use-before-define: 2
+  # no-useless-escape: 2
   no-void: 2
   no-warning-comments:
     - 1
@@ -163,6 +175,9 @@ rules:
         - xxx
       location: start
   no-with: 2
+  object-curly-newline:
+    - 2
+    - consistent: true
   object-curly-spacing: 2
   one-var:
     - 2
@@ -174,6 +189,7 @@ rules:
     - 2
     - after
   padded-blocks: 0
+  padding-line-between-statements: 2
   # quote-props:
   #   - 2
   #   - as-needed
@@ -188,6 +204,7 @@ rules:
   semi:
     - 2
     - always
+  semi-style: 2
   sort-vars: 2
   space-before-blocks:
     - 2
@@ -206,6 +223,7 @@ rules:
   spaced-comment:
     - 2
     - always
+  switch-colon-spacing: 2
   use-isnan: 2
   valid-jsdoc:
     - 2

@@ -31,40 +31,46 @@
 
     // Register a custom filter that will return a slightly different DOM structure
     // for selected users in a user autosuggest
-    .filter('usersSearch', ['$sce', function($sce) {
-      return function(label, query, option) {
-        var html = '';
+    .filter('usersSearch', [
+      '$sce',
+      function($sce) {
+        return function(label, query, option) {
+          var html = '';
 
-        // Add the graduation cap if the selected user is an administrator
-        if (option.is_admin) {
-          html += '<i class="fa fa-graduation-cap"></i>';
-        }
+          // Add the graduation cap if the selected user is an administrator
+          if (option.is_admin) {
+            html += '<i class="fa fa-graduation-cap"></i>';
+          }
 
-        // Add the selected user's name
-        html += '<span>' + option.canvas_full_name + '</span>';
+          // Add the selected user's name
+          html += '<span>' + option.canvas_full_name + '</span>';
 
-        // Add a close icon
-        html += '<button type="button" class="btn btn-link pull-right close" tabindex=\"-1\">';
-        html += '  <i class="fa fa-times-circle"><span class="sr-only">Remove</span></i>';
-        html += '</button>';
+          // Add a close icon
+          html += '<button type="button" class="btn btn-link pull-right close" tabindex="-1">';
+          html += '  <i class="fa fa-times-circle"><span class="sr-only">Remove</span></i>';
+          html += '</button>';
 
-        return $sce.trustAsHtml(html);
-      };
-    }])
+          return $sce.trustAsHtml(html);
+        };
+      }
+    ])
 
     // Register a custom filter that will return a slightly different DOM structure
     // for displaying users in a user autosuggest list
-    .filter('usersDropdown', ['$sce', function($sce) {
-      return function(label, query, option) {
-        var html = '';
+    .filter('usersDropdown', [
+      '$sce',
+      function($sce) {
+        return function(label, query, option) {
+          var html = '';
 
-        if (option.is_admin) {
-          html += '<i class="fa fa-graduation-cap"></i> ';
-        }
+          if (option.is_admin) {
+            html += '<i class="fa fa-graduation-cap"></i> ';
+          }
 
-        html += label;
+          html += label;
 
-        return $sce.trustAsHtml(html);
-      };
-    }]);
+          return $sce.trustAsHtml(html);
+        };
+      }
+    ]);
 }(window.angular));

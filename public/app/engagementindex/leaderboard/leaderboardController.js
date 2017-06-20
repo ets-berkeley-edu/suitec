@@ -114,7 +114,12 @@
               'backgroundColor': 'transparent',
               'inverted': true,
               // Ensure that the box plot is displayed horizontally
-              'margin': [0, 20, 0, 20],
+              'margin': [
+                0,
+                20,
+                0,
+                20
+              ],
               'renderTo': 'leaderboard-userinfo-boxplot',
               'type': 'boxplot'
             },
@@ -211,7 +216,8 @@
                   'borderColor': 'transparent'
                 }
                 // Current user points
-              }, {
+              },
+              {
                 'data': [ [0, $scope.me.points] ],
                 'marker': {
                   'fillColor': '#3179BC',
@@ -257,7 +263,13 @@
       var q2 = calculateQuartile(series, 2);
       var q3 = calculateQuartile(series, 3);
 
-      return [max, q3, q2, q1, min];
+      return [
+        max,
+        q3,
+        q2,
+        q1,
+        min
+      ];
     };
 
     /**
