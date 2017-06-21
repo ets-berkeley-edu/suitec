@@ -398,6 +398,17 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
   background-color: #aff967;
 }
 
+.looking-for-collaborators-button-small {
+  font-size: 14px;
+  padding: 0;
+  width: 30px;
+}
+
+.looking-for-collaborators-toggle {
+  color: #4172b4;
+  cursor: pointer;
+}
+
 /* SEARCH */
 
 .search-container {
