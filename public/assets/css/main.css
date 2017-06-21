@@ -381,6 +381,23 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
   margin-top: 40px;
 }
 
+/* LOOKING FOR COLLABORATORS */
+
+.looking-for-collaborators-button {
+  background-color: #d5f8b3;
+  border: 1px solid #a3c978;
+  border-radius: 15px;
+  color: #417505;
+  display: inline-block;
+  font-size: 13px;
+  line-height: 28px;
+  padding: 0 12px;
+}
+
+.looking-for-collaborators-button:hover {
+  background-color: #aff967;
+}
+
 /* SEARCH */
 
 .search-container {
