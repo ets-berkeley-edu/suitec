@@ -324,18 +324,31 @@
   margin-top: 0;
 }
 
+.profile-looking-for-collaborators-heading {
+  font-weight: 600;
+}
+
+.profile-looking-for-collaborators-toggle {
+  color: #4172b4;
+  cursor: pointer;
+}
+
+.profile-looking-for-collaborators-toggle-off {
+  color: #aaa;
+}
+
+.profile-looking-for-collaborators-toggle-on {
+  color: #7ed321;
+}
+
+.profile-looking-for-collaborators-wrapper {
+  margin-bottom: 15px;
+}
+
 .profile-summary-avatar {
   border-radius: 50%;
   text-align: center;
   width: 100px;
-}
-
-.profile-summary-banner {
-  display: flex;
-  -webkit-flex-flow: row wrap;
-  flex-flow: row wrap;
-  padding-bottom: 15px;
-  vertical-align: middle;
 }
 
 .profile-summary-container {
@@ -390,6 +403,7 @@
   -webkit-flex: 1 0 100px;
   flex: 1 0 100px;
   font-size: 19px;
+  margin-bottom: 15px;
   padding-right: 20px;
   padding-top: 10px;
   white-space: nowrap;
