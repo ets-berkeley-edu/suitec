@@ -394,6 +394,15 @@
       }
     };
 
+    /**
+     * Update collaboration status for 'me'.
+     *
+     * @return {void}
+     */
+    var updateLookingForCollaborators = $scope.updateLookingForCollaborators = function() {
+      userFactory.updateLookingForCollaborators($scope.me.looking_for_collaborators);
+    };
+
     // Track if following link from another tool.
     if (crossToolRequest) {
       analyticsService.track('Link to Engagement Index', {

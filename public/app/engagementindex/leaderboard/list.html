@@ -25,6 +25,11 @@
         <span class="sr-only" data-ng-if="sortBy === 'canvas_full_name' && !reverse">Descending</span>
         <span class="caret" data-ng-if="sortBy === 'canvas_full_name'"></span>
       </th>
+      <th class="text-center" data-ng-click="sort('looking_for_collaborators')" data-ng-class="{dropup: !reverse}" data-ng-if="me.course.dashboard_url">
+        <span class="sr-only">Sort by </span>Collaborate
+        <span class="sr-only" data-ng-if="sortBy === 'looking_for_collaborators' && !reverse">Descending</span>
+        <span class="caret" data-ng-if="sortBy === 'looking_for_collaborators'"></span>
+      </th>
       <th class="text-center" data-ng-click="sort('share_points')" data-ng-class="{dropup: !reverse}" data-ng-if="me.is_admin">
         <span class="sr-only">Sort by </span>Share
         <span class="sr-only" data-ng-if="sortBy === 'share_points' && !reverse">Descending</span>
@@ -60,6 +65,19 @@
             </a>
           </div>
         </div>
+      </td>
+      <td class="col-sm-2 text-center" data-ng-if="me.course.dashboard_url">
+        <label class="looking-for-collaborators-toggle" data-ng-if="user.id === me.id">
+          <input type="checkbox"
+                 class="hidden"
+                 data-ng-model="me.looking_for_collaborators"
+                 data-ng-change="updateLookingForCollaborators()">
+          <span data-ng-bind="me.looking_for_collaborators ? 'Looking' : 'Not looking'"></span>
+        </label>
+        <button data-ng-if="user.id !== me.id && user.looking_for_collaborators"
+                class="looking-for-collaborators-button looking-for-collaborators-button-small">
+          <i class="fa fa-user-plus"></i>
+        </button>
       </td>
       <td class="col-sm-1 text-center" data-ng-if="me.is_admin" >
         <span data-ng-if="user.share_points">Yes</span>
