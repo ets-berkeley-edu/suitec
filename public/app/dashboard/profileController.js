@@ -440,6 +440,17 @@
     };
 
     /**
+     * Update collaboration status for 'me'
+     *
+     * @return {void}
+     */
+    var updateLookingForCollaborators = $scope.updateLookingForCollaborators = function() {
+      if ($scope.isMyProfile) {
+        userFactory.updateLookingForCollaborators($scope.me.looking_for_collaborators);
+      }
+    };
+
+    /**
      * Listen for pinning/unpinning events by 'me'
      */
     $scope.$on('assetPinEventByMe', function(ev, updatedAsset) {

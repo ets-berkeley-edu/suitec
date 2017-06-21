@@ -1,0 +1,17 @@
+<div class="profile-looking-for-collaborators-wrapper">
+  <div data-ng-if="isMyProfile">
+    <span class="profile-looking-for-collaborators-heading">Looking for collaborators:</a>
+    <label class="profile-looking-for-collaborators-toggle">
+      <input type="checkbox"
+             class="hidden"
+             data-ng-model="me.looking_for_collaborators"
+             data-ng-change="updateLookingForCollaborators()">
+      <span data-ng-if="me.looking_for_collaborators">
+        <i class="fa fa-toggle-on profile-looking-for-collaborators-toggle-on"></i> Looking
+      </span>
+      <span data-ng-if="!me.looking_for_collaborators">
+        <i class="fa fa-toggle-off profile-looking-for-collaborators-toggle-off"></i> Not Looking
+      </span>
+    </label>
+  </div>
+</div>
