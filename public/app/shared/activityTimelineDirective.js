@@ -30,7 +30,7 @@
   /**
    * Display an activity timeline for a given dataset.
    */
-  angular.module('collabosphere').directive('activityTimeline', function(analyticsService, deviceDetector, utilService, $compile, $interval, $templateCache, $timeout) {
+  angular.module('collabosphere').directive('activityTimeline', function(analyticsService, deviceDetector, $compile, $interval, $templateCache, $timeout) {
     return {
       // The directive matches attribute name only and does not overwrite the declaration in markup.
       // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
@@ -60,10 +60,12 @@
           'get_asset_comment_reply': 'Comment:',
           'get_discussion_entry_reply': 'Posted Discussion',
           'get_like': 'Liked Asset',
+          'get_pin_asset': 'Pinned Asset',
           'get_remix_whiteboard': 'Remixed Whiteboard',
           'get_view_asset': 'Viewed Asset',
           'get_whiteboard_add_asset': 'Added Asset to Whiteboard',
           'like': 'Liked Asset',
+          'pin_asset': 'Pinned Asset',
           'remix_whiteboard': 'Remixed Whiteboard',
           'view_asset': 'Viewed Asset',
           'whiteboard_add_asset': 'Added Asset to Whiteboard'
