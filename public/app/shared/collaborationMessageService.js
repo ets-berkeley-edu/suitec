@@ -27,7 +27,14 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('collaborationMessageService', function(me, userFactory, $alert, $modal, $rootScope) {
+  angular.module('collabosphere').service('collaborationMessageService', function(
+    me,
+    userFactory,
+    utilService,
+    $alert,
+    $modal,
+    $rootScope
+  ) {
 
     /**
      * Show a notification after sending a collaboration message
@@ -92,6 +99,7 @@
         'scope': scope,
         'templateUrl': '/app/shared/collaborationMessageModal.html'
       });
+      utilService.scrollToTop();
     };
 
     return {

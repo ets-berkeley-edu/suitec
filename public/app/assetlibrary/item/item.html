@@ -12,7 +12,9 @@
   <button type="button" class="btn btn-link col-back" data-ng-if="whiteboardReferral" data-ng-click="closeWindow()"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
 
   <!-- NOTIFICATIONS -->
-  <div id="assetlibrary-item-notifications"></div>
+  <div class="assetlibrary-item-notifications">
+    <div data-ng-include="'/app/shared/notifications.html'"></div>
+  </div>
 
   <!-- TITLE -->
   <div class="row assetlibrary-item-top">
@@ -115,16 +117,6 @@
       <whiteboard whiteboard="asset" readonly="true"></whiteboard>
     </div>
 
-    <!-- NOTIFICATIONS -->
-    <script type="text/ng-template" id="assetlibrary-item-notification-template">
-      <div class="alert" ng-class="'alert-' + type">
-        <button type="button" class="btn btn-link pull-right close" ng-click="$hide()">
-          <i class="fa fa-times-circle"><span class="sr-only">Close</span></i>
-        </button>
-        <strong ng-bind="title"></strong>&nbsp;<span ng-bind-html="content"></span>
-      </div>
-    </script>
-
     <!-- METADATA -->
     <div class="assetlibrary-item-metadata">
       <div class="row">
@@ -150,6 +142,11 @@
                     <i class="fa fa-graduation-cap" data-ng-if="user.is_admin"></i> {{user.canvas_full_name}}
                   </a>
                   <span data-ng-if="me.id === user.id">(me)</span>
+                  <button class="looking-for-collaborators-button"
+                          data-ng-click="launchCollaborationModal(user)"
+                          data-ng-if="me.course.dashboard_url && (me.id !== user.id) && user.looking_for_collaborators">
+                    <i class="fa fa-user-plus"></i> Looking for Collaborators
+                  </button>
                 </div>
               </li>
               <li class="media">
@@ -279,6 +276,11 @@
             <i class="fa fa-graduation-cap" data-ng-if="comment.user.is_admin"></i> {{comment.user.canvas_full_name}}
             <span data-ng-if="me.id === comment.user.id">(me)</span>
           </a>
+          <button class="looking-for-collaborators-button"
+                  data-ng-click="launchCollaborationModal(comment.user)"
+                  data-ng-if="me.course.dashboard_url && (me.id !== comment.user.id) && comment.user.looking_for_collaborators">
+            <i class="fa fa-user-plus"></i> Looking for Collaborators
+          </button>
           <small>on {{comment.created_at | date:"MMMM d 'at' h:mm a" }}</small>
           <div class="pull-right col-actions assetlibrary-item-comment-actions">
             <button class="btn btn-link" title="Reply to this comment" data-ng-if="comment.level === 0" data-ng-click="toggleReplyComment(comment)">

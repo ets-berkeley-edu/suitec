@@ -292,6 +292,6 @@ ul.assetlibrary-item-metadata-authors-multiple li .assetlibrary-item-metadata-au
 
 /* NOTIFICATIONS */
 
-#assetlibrary-item-notifications .alert {
+.assetlibrary-item-notifications .alert {
   margin: 20px 0;
 }
