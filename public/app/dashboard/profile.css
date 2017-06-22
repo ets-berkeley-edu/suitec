@@ -25,6 +25,7 @@
 
 .other-users-container {
   display: flex;
+  flex-direction: column;
   padding-bottom: 20px;
   vertical-align: top;
 }
@@ -40,14 +41,14 @@
   outline: none;
 }
 
-.other-users-container div:first-child {
+.other-users-search {
   -webkit-align-self: flex-start;
   align-self: flex-start;
   width: 300px;
 }
 
 .other-users-container div:last-child {
-  margin-left: auto;
+  margin-left: inherit;
   overflow: hidden;
   padding-right: 5px;
 }
@@ -55,6 +56,7 @@
 .other-users-pagination {
   display: flex;
   flex-wrap: nowrap;
+  padding-top: 5px;
 }
 
 .other-users-pagination div:first-child i {
@@ -282,8 +284,9 @@
 }
 
 .profile-filters {
+  /* Design for mobile first. Screen-only defined by @media rule below. */
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
   white-space: nowrap;
 }
@@ -302,11 +305,19 @@
   padding-left: 5px;
 }
 
+.profile-filters h3 {
+  margin-bottom: 0;
+}
+
 .profile-filter {
   font-size: 19px;
   font-weight: 400;
   line-height: normal;
   padding: 0 0 0 2px;
+}
+
+.profile-filter-delimiter {
+  display: none;
 }
 
 .profile-filter-selected {
@@ -410,6 +421,24 @@
 
 .profile-user-description {
   white-space: pre-wrap;
+}
+
+@media only screen and (min-width: 500px) {
+  .other-users-container {
+    flex-direction: row;
+  }
+  .other-users-container div:last-child {
+    margin-left: auto;
+  }
+  .other-users-pagination {
+    padding-top: 0;
+  }
+  .profile-filters {
+    flex-direction: row;
+  }
+  .profile-filter-delimiter {
+    display: inline-flex;
+  }
 }
 
 i:focus {
