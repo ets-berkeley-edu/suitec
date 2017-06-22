@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(assetLibraryFactory, me, crossToolRequest, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(analyticsService, assetLibraryFactory, crossToolRequest, me, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -141,6 +141,12 @@
       var pin = !$scope.asset.isPinnedByMe;
 
       assetLibraryFactory.pin($scope.asset.id, pin).success(function() {
+        if (pin) {
+          // Record pin events; ignore unpin events
+          analyticsService.track('Asset pinned on asset detail page', {
+            'asset_id': $scope.asset.id
+          });
+        }
         $scope.asset.isPinnedByMe = pin;
 
         // Indicate that the asset has been updated

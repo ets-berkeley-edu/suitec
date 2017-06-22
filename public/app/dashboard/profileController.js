@@ -27,7 +27,19 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('ProfileController', function(analyticsService, assetLibraryFactory, me, profileFactory, crossToolRequest, userFactory, utilService, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('ProfileController', function(
+    analyticsService,
+    assetLibraryFactory,
+    collaborationMessageService,
+    crossToolRequest,
+    me,
+    profileFactory,
+    userFactory,
+    utilService,
+    $scope,
+    $state,
+    $stateParams
+  ) {
 
     // Dummy function (i.e., no-op callback) used in profile template
     var noOp = $scope.noOp = angular.noop;
@@ -453,7 +465,13 @@
     /**
      * Listen for pinning/unpinning events by 'me'
      */
-    $scope.$on('assetPinEventByMe', function(ev, updatedAsset) {
+    $scope.$on('assetPinEventByMe', function(ev, updatedAsset, pin) {
+      if (pin) {
+        analyticsService.track('Asset pinned on user profile page', {
+          'asset_id': updatedAsset.id,
+          'profile_user': $scope.user.id
+        });
+      }
       if ($scope.isMyProfile) {
         var reloadUserAssets = false;
         _.each([$scope.user.assets.results, $scope.community.assets.results], function(assets) {
@@ -465,7 +483,7 @@
           });
         });
         if (reloadUserAssets) {
-          sortUserAssets($scope.user.assets.sortBy, false);
+          sortUserAssets($scope.user.assets.sortBy, false, noOp);
         }
       }
     });
