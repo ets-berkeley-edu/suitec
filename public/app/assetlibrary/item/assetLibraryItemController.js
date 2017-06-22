@@ -27,7 +27,20 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryItemController', function(analyticsService, assetLibraryFactory, crossToolRequest, me, utilService, $alert, $rootScope, $sce, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('AssetLibraryItemController', function(
+    analyticsService,
+    assetLibraryFactory,
+    collaborationMessageService,
+    crossToolRequest,
+    me,
+    utilService,
+    $alert,
+    $rootScope,
+    $sce,
+    $scope,
+    $state,
+    $stateParams
+  ) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -399,21 +412,21 @@
         whiteboardUrl += '&tool_url=' + launchParams.toolUrl;
 
         var successAlert = $alert({
-          'container': '#assetlibrary-item-notifications',
+          'container': '#notifications-placeholder',
           'content': 'A new board <a target="_blank" href="' + whiteboardUrl + '">"' + whiteboard.title + '"</a> has been created in Whiteboards.',
           'keyboard': true,
           'show': true,
-          'templateUrl': 'assetlibrary-item-notification-template',
+          'templateUrl': 'notifications-template',
           'type': 'success'
         });
 
       }).error(function() {
         var failureAlert = $alert({
-          'container': '#assetlibrary-item-notifications',
+          'container': '#notifications-placeholder',
           'content': 'There was an error creating a new board.',
           'keyboard': true,
           'show': true,
-          'templateUrl': 'assetlibrary-item-notification-template',
+          'templateUrl': 'notifications-template',
           'type': 'danger'
         });
       });
@@ -487,6 +500,9 @@
       }
       return count;
     };
+
+    // Make collaboration modal launch available to the scope.
+    $scope.launchCollaborationModal = collaborationMessageService.launchCollaborationModal;
 
     // Load the selected asset
     getCurrentAsset();
