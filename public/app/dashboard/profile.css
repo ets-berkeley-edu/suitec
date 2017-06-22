@@ -163,37 +163,47 @@
   color: #fff;
 }
 
-.profile-activity-breakdown-segment-contributions-add-assets {
+.profile-activity-breakdown-segment-contributions-pins {
   background-color: #7ab6da;
   color: #000;
 }
 
-.profile-activity-breakdown-segment-contributions-exports {
+.profile-activity-breakdown-segment-contributions-add-assets {
   background-color: #a4cbe5;
   color: #000;
 }
 
-.profile-activity-breakdown-segment-contributions-remixes {
+.profile-activity-breakdown-segment-contributions-exports {
   background-color: #cbdff1;
   color: #000;
 }
 
+.profile-activity-breakdown-segment-contributions-remixes {
+  background-color: #f0f3fc;
+  color: #000;
+}
+
 .profile-activity-breakdown-segment-impacts-views {
-  background-color: #af3636;
+  background-color: #872a2a;
   color: #fff;
 }
 
 .profile-activity-breakdown-segment-impacts-likes {
-  background-color: #c95050;
+  background-color: #af3636;
   color: #fff;
 }
 
 .profile-activity-breakdown-segment-impacts-comments {
-  background-color: #d57878;
+  background-color: #c95050;
   color: #000;
 }
 
 .profile-activity-breakdown-segment-impacts-replies {
+  background-color: #d57878;
+  color: #000;
+}
+
+.profile-activity-breakdown-segment-impacts-pins {
   background-color: #e1a0a0;
   color: #000;
 }

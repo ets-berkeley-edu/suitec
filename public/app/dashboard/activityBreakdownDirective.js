@@ -53,10 +53,11 @@
           'Comments': ['asset_comment', 'get_asset_comment', 'get_asset_comment_reply'],
           'Posts': ['discussion_topic', 'discussion_entry'],
           'Replies': [ 'get_discussion_entry_reply' ],
-          'Remixes': ['remix_whiteboard', 'get_remix_whiteboard'],
+          'Pins': ['pin_asset', 'get_pin_asset'],
           'Add Assets': ['add_asset', 'whiteboard_add_asset'],
           'Asset Usage': [ 'get_whiteboard_add_asset' ],
-          'Exports': [ 'export_whiteboard' ]
+          'Exports': [ 'export_whiteboard' ],
+          'Remixes': ['remix_whiteboard', 'get_remix_whiteboard']
         };
 
         scope.$watch('activityBreakdown', function() {

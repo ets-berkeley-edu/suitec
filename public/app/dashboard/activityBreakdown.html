@@ -33,7 +33,7 @@
       <div data-ng-switch-when="Views">
          <span data-ng-if="breakdownSelected === 'contributions'">Viewed asset.</span>
          <span data-ng-if="breakdownSelected === 'impacts'">Received a view.</span>
-       </div>
+      </div>
       <div data-ng-switch-when="Likes">
          <span data-ng-if="breakdownSelected === 'contributions'">Reacted to asset.</span>
          <span data-ng-if="breakdownSelected === 'impacts'">Received a reaction.</span>
@@ -41,16 +41,16 @@
       <div data-ng-switch-when="Comments">
         <span data-ng-if="breakdownSelected === 'contributions'">Commented on asset or replied to asset comment.</span>
         <span data-ng-if="breakdownSelected === 'impacts'">Received a comment or reply on a comment.</span>
-       </div>
+      </div>
       <div data-ng-switch-when="Posts">
         <span data-ng-if="breakdownSelected === 'contributions'">Posted to discussion.</span>
       </div>
       <div data-ng-switch-when="Replies">
         <span data-ng-if="breakdownSelected === 'impacts'">Received a reply in discussion thread.</span>
-       </div>
-      <div data-ng-switch-when="Remixes">
-        <span data-ng-if="breakdownSelected === 'contributions'">Remixed whiteboard.</span>
-        <span data-ng-if="breakdownSelected === 'impacts'">Whiteboard remixed.</span>
+      </div>
+      <div data-ng-switch-when="Pins">
+        <span data-ng-if="breakdownSelected === 'contributions'">Pinned asset.</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Received a pin.</span>
       </div>
       <div data-ng-switch-when="Add Assets">
         <span data-ng-if="breakdownSelected === 'contributions'">Added asset or added asset to whiteboard.</span>
@@ -60,6 +60,10 @@
       </div>
       <div data-ng-switch-when="Exports">
         <span data-ng-if="breakdownSelected === 'contributions'">Exported whiteboard to the Asset Library.</span>
+      </div>
+      <div data-ng-switch-when="Remixes">
+        <span data-ng-if="breakdownSelected === 'contributions'">Remixed whiteboard.</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Whiteboard remixed.</span>
       </div>
     </div>
   </div>
