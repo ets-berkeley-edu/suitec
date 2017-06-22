@@ -74,8 +74,10 @@
                  data-ng-change="updateLookingForCollaborators()">
           <span data-ng-bind="me.looking_for_collaborators ? 'Looking' : 'Not looking'"></span>
         </label>
-        <button data-ng-if="user.id !== me.id && user.looking_for_collaborators"
-                class="looking-for-collaborators-button looking-for-collaborators-button-small">
+        <button class="looking-for-collaborators-button looking-for-collaborators-button-small"
+                title="Looking for Collaborators"
+                data-ng-click="launchCollaborationModal(user)"
+                data-ng-if="user.id !== me.id && user.looking_for_collaborators">
           <i class="fa fa-user-plus"></i>
         </button>
       </td>
