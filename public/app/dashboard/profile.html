@@ -1,6 +1,6 @@
 <div class="profile-container">
   <div class="other-users-container">
-    <div>
+    <div class="other-users-search">
       <span data-ng-if="browse.otherUsers.length">
         <label for="findUser" class="sr-only">Search for users</label>
         <oi-select id="find-user"
@@ -29,7 +29,7 @@
           <span data-ng-bind="browse.previous.canvas_full_name"></span>
         </button>
       </div>
-      <div data-ng-if="browse.previous && browse.next">|</div>
+      <div class="profile-filter-delimiter" data-ng-if="browse.previous && browse.next">|</div>
       <div>
         <button type="button"
                 class="btn btn-link other-users-browse"
@@ -148,7 +148,7 @@
                 data-ng-click="toggleBreakdown(filter)"
                 data-ng-bind="label"
                 data-ng-if="breakdown.selected !== filter"></button>
-        <span data-ng-if="!$last">|</span>
+        <span class="profile-filter-delimiter" data-ng-if="!$last">|</span>
       </div>
     </div>
 
@@ -207,7 +207,7 @@
              data-referring-state="referringState('user-assets')"
              data-ng-bind="user.assets.total"></a>)
         </span>
-        <span data-ng-if="!$last">|</span>
+        <span class="profile-filter-delimiter" data-ng-if="!$last">|</span>
       </div>
     </div>
 
@@ -304,7 +304,7 @@
              data-referring-state="referringState('community-assets')"
              data-ng-bind="community.assets.total"></a>)
         </span>
-        <span data-ng-if="!$last">|</span>
+        <span class="profile-filter-delimiter" data-ng-if="!$last">|</span>
       </div>
     </div>
 
