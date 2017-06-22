@@ -1,0 +1,32 @@
+<div class="modal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-ng-click="closeModal()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title">Connect with Others Looking for Collaborators</h3>
+      </div>
+      <div class="modal-body">
+        <h2>
+          Send a collaboration invite.
+        </h2>
+        <div class="collaboration-message-field">
+          <span class="collaboration-message-header">Message to:</span> <span data-ng-bind="recipient.canvas_full_name"></span>
+        </div>
+        <div class="collaboration-message-field">
+          <span class="collaboration-message-header">Subject: Looking to Collaborate</a>
+        </div>
+        <div class="collaboration-message-field">
+          <span class="collaboration-message-header">Message:</span>
+        </div>
+        <textarea class="form-control" placeholder="I'm looking to collaborate on..." rows="5" data-ng-model="messageBody">
+        </textarea>
+      </div>
+      <div class="modal-footer">
+        <form name="whiteboardsReuseForm" class="form-horizontal" data-ng-submit="closeModal(messageBody)" novalidate>
+          <button type="button" class="btn btn-default" data-ng-click="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-ng-disabled="!messageBody">Send Invite</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

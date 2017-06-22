@@ -27,7 +27,16 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('LeaderboardController', function(analyticsService, courseFactory, me, crossToolRequest, userFactory, utilService, $scope) {
+  angular.module('collabosphere').controller('LeaderboardController', function(
+    analyticsService,
+    collaborationMessageService,
+    courseFactory,
+    crossToolRequest,
+    me,
+    userFactory,
+    utilService,
+    $scope
+  ) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -402,6 +411,9 @@
     var updateLookingForCollaborators = $scope.updateLookingForCollaborators = function() {
       userFactory.updateLookingForCollaborators($scope.me.looking_for_collaborators);
     };
+
+    // Make collaboration modal launch available to the scope.
+    $scope.launchCollaborationModal = collaborationMessageService.launchCollaborationModal;
 
     // Track if following link from another tool.
     if (crossToolRequest) {

@@ -1,0 +1,9 @@
+<div id="notifications-placeholder"></div>
+<script type="text/ng-template" id="notifications-template">
+  <div class="alert" ng-class="'alert-' + type">
+    <button type="button" class="btn btn-link pull-right close" ng-click="$hide()">
+      <i class="fa fa-times-circle"><span class="sr-only">Close</span></i>
+    </button>
+    <strong ng-bind="title"></strong>&nbsp;<span ng-bind-html="content"></span>
+  </div>
+</script>

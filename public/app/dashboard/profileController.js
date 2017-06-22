@@ -27,7 +27,19 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('ProfileController', function(analyticsService, assetLibraryFactory, me, profileFactory, crossToolRequest, userFactory, utilService, $scope, $state, $stateParams) {
+  angular.module('collabosphere').controller('ProfileController', function(
+    analyticsService,
+    assetLibraryFactory,
+    collaborationMessageService,
+    crossToolRequest,
+    me,
+    profileFactory,
+    userFactory,
+    utilService,
+    $scope,
+    $state,
+    $stateParams
+  ) {
 
     // Dummy function (i.e., no-op callback) used in profile template
     var noOp = $scope.noOp = angular.noop;
@@ -449,6 +461,9 @@
         userFactory.updateLookingForCollaborators($scope.me.looking_for_collaborators);
       }
     };
+
+    // Make collaboration modal launch available to the scope.
+    $scope.launchCollaborationModal = collaborationMessageService.launchCollaborationModal;
 
     /**
      * Listen for pinning/unpinning events by 'me'

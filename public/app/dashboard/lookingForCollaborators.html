@@ -14,7 +14,9 @@
       </span>
     </label>
   </div>
-  <button data-ng-if="!isMyProfile && user.looking_for_collaborators" class="looking-for-collaborators-button">
+  <button class="looking-for-collaborators-button"
+          data-ng-click="launchCollaborationModal(user)"
+          data-ng-if="!isMyProfile && user.looking_for_collaborators">
     <i class="fa fa-user-plus"></i> Looking for Collaborators
   </button>
 </div>

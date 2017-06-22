@@ -89,6 +89,22 @@
     };
 
     /**
+     * Send a Canvas conversation message to a user
+     *
+     * @param  {Number}             recipientId        The SuiteC id of the recipient user
+     * @param  {String}             messageSubject     The message subject
+     * @param  {String}             messageBody        The message body
+     * @return {Promise}                               $http promise
+     */
+    var messageUser = function(recipientId, messageSubject, messageBody) {
+      var message = {
+        'messageSubject': messageSubject,
+        'messageBody': messageBody
+      };
+      return $http.post(utilService.getApiUrl('/users/id/ ' + recipientId + '/message'), message);
+    };
+
+    /**
      * Update the points share status for a user. This will determine whether the user's
      * points are shared with the course
      *
@@ -127,6 +143,7 @@
       'getAllUsers': getAllUsers,
       'getUser': getUser,
       'getLeaderboard': getLeaderboard,
+      'messageUser': messageUser,
       'updateLookingForCollaborators': updateLookingForCollaborators,
       'updateSharePoints': updateSharePoints
     };
