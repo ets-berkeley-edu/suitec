@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').controller('AssetLibraryListController', function(assetLibraryFactory, assetLibraryService, me, crossToolRequest, utilService, $rootScope, $scope, $state) {
+  angular.module('collabosphere').controller('AssetLibraryListController', function(analyticsService, assetLibraryFactory, assetLibraryService, crossToolRequest, me, utilService, $rootScope, $scope, $state) {
 
     // Make the me object available to the scope
     $scope.me = me;
@@ -173,7 +173,13 @@
     /**
      * Listen for pinning/unpinning events by 'me'
      */
-    $scope.$on('assetPinEventByMe', function(ev, updatedAsset) {
+    $scope.$on('assetPinEventByMe', function(ev, updatedAsset, pin) {
+      if (pin) {
+        // Record pin events; ignore unpin events
+        analyticsService.track('Asset pinned in \'list\' view of Asset Library', {
+          'asset_id': updatedAsset.id
+        });
+      }
       var userId = $scope.searchOptions.user;
 
       // Proceed if search is on my pinned assets

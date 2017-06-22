@@ -468,7 +468,13 @@
     /**
      * Listen for pinning/unpinning events by 'me'
      */
-    $scope.$on('assetPinEventByMe', function(ev, updatedAsset) {
+    $scope.$on('assetPinEventByMe', function(ev, updatedAsset, pin) {
+      if (pin) {
+        analyticsService.track('Asset pinned on user profile page', {
+          'asset_id': updatedAsset.id,
+          'profile_user': $scope.user.id
+        });
+      }
       if ($scope.isMyProfile) {
         var reloadUserAssets = false;
         _.each([$scope.user.assets.results, $scope.community.assets.results], function(assets) {
@@ -480,7 +486,7 @@
           });
         });
         if (reloadUserAssets) {
-          sortUserAssets($scope.user.assets.sortBy, false);
+          sortUserAssets($scope.user.assets.sortBy, false, noOp);
         }
       }
     });
