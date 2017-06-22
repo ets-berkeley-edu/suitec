@@ -31,7 +31,14 @@
     '$sce',
     function($sce) {
       return function(label, query, option) {
-        var html = option.is_admin ? '<i class="fa fa-graduation-cap"></i> ' + label : label;
+        var html = '';
+        if (option.looking_for_collaborators) {
+          html += '<i class="fa fa-user-plus"></i> ';
+        }
+        if (option.is_admin) {
+          html += '<i class="fa fa-graduation-cap"></i> ';
+        }
+        html += label;
 
         return $sce.trustAsHtml(html);
       };
