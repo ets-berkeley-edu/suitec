@@ -31,28 +31,29 @@
     </h3>
 
     <p class="event-details-description">
-      <span data-ng-if="pageContext.tool === 'dashboard'">
-        <i class="fa fa-comment" data-ng-if="display.comment"></i>
-        <i class="fa fa-thumbs-up" data-ng-if="display.like"></i>
-        <i class="fa fa-eye" data-ng-if="display.view"></i>
-        <strong data-ng-bind="display.description"></strong>
-      </span>
-
-      <span data-ng-if="pageContext.tool === 'assetlibrary'">
-        <a tool-href
-           data-tool="dashboard"
-           data-id="activity.user.id"
-           data-referring-tool="pageContext.tool"
-           data-referring-id="pageContext.id"
-           class="event-details-strong"
-           data-ng-bind="activity.user.canvas_full_name"></a>
-        <span data-ng-switch="activity.type">
-          <span data-ng-switch-when="view_asset">viewed this asset.</span>
-          <span data-ng-switch-when="like">liked this asset.</span>
-          <span data-ng-switch-when="asset_comment">commented on this asset, </span>
-          <span data-ng-switch-when="whiteboard_add_asset">used this asset in a whiteboard.</span>
-          <span data-ng-switch-when="remix_whiteboard">remixed this asset in a whiteboard.</span>
-        </span>
+      <a tool-href
+         data-tool="dashboard"
+         data-id="activity.user.id"
+         data-referring-tool="pageContext.tool"
+         data-referring-id="pageContext.id"
+         class="event-details-strong"
+         data-ng-bind="activity.user.canvas_full_name"></a>
+      <span data-ng-switch="activity.type">
+        <span data-ng-switch-when="add_asset">added this asset.</span>
+        <span data-ng-switch-when="view_asset">viewed this asset.</span>
+        <span data-ng-switch-when="get_view_asset">viewed this asset.</span>
+        <span data-ng-switch-when="pin_asset">liked this asset.</span>
+        <span data-ng-switch-when="get_pin_asset">liked this asset.</span>
+        <span data-ng-switch-when="repin_asset">liked this asset.</span>
+        <span data-ng-switch-when="get_repin_asset">liked this asset.</span>
+        <span data-ng-switch-when="like">liked this asset.</span>
+        <span data-ng-switch-when="get_like">liked this asset.</span>
+        <span data-ng-switch-when="asset_comment">commented on this asset, </span>
+        <span data-ng-switch-when="get_asset_comment">commented on this asset, </span>
+        <span data-ng-switch-when="whiteboard_add_asset">used this asset in a whiteboard.</span>
+        <span data-ng-switch-when="get_whiteboard_add_asset">used this asset in a whiteboard.</span>
+        <span data-ng-switch-when="remix_whiteboard">remixed this asset in a whiteboard.</span>
+        <span data-ng-switch-when="get_remix_whiteboard">remixed this asset in a whiteboard.</span>
       </span>
 
       <span data-ng-if="display.comment">
@@ -73,15 +74,6 @@
     </p>
 
     <p class="event-details-timestamp">
-      <span data-ng-if="pageContext.tool === 'dashboard'">
-        <a tool-href
-           data-tool="dashboard"
-           data-id="activity.user.id"
-           data-referring-tool="pageContext.tool"
-           data-referring-id="pageContext.id"
-           data-ng-bind="activity.user.canvas_full_name"></a>
-        on
-      </span>
       <span data-ng-bind="display.date"></span>
     </p>
   </div>

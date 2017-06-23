@@ -42,7 +42,8 @@
         'activityBreakdown': '=',
         'activityTotal': '=',
         'breakdownLabel': '=',
-        'breakdownSelected': '@'
+        'breakdownSelected': '@',
+        'singleUser': '='
       },
       'templateUrl': '/app/dashboard/activityBreakdown.html',
       'link': function(scope, elem, attrs) {

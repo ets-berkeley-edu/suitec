@@ -92,10 +92,6 @@
   width: 100%;
 }
 
-.profile-activity-breakdown-explanatory {
-  margin-bottom: 20px;
-}
-
 .profile-activity-breakdown-header {
   font-size: 14px;
   font-weight: 600;
@@ -121,6 +117,10 @@
 
 .profile-activity-breakdown-popover-outer {
   padding: 5px;
+}
+
+.profile-activity-breakdown-popover-outer hr {
+  margin: 10px 0;
 }
 
 .profile-activity-breakdown-segment {
@@ -222,10 +222,6 @@
   display: flex;
 }
 
-.profile-activity-timeline-header {
-  margin: 0;
-}
-
 .profile-activity-timeline-legend {
   padding-top: 60px;
   width: 124px;
@@ -242,6 +238,14 @@
   font-size: 13px;
   font-weight: 600;
   padding-right: 10px;
+  text-align: left;
+}
+
+.profile-activity-timeline-legend-label-explanation {
+  font-weight: 300;
+}
+
+.profile-activity-timeline-legend-label-small {
   text-align: right;
 }
 
@@ -359,6 +363,14 @@
 
 .profile-looking-for-collaborators-wrapper {
   margin-bottom: 15px;
+}
+
+.profile-section-header {
+  margin: 0 0 10px 0;
+}
+
+.profile-subheader-explanatory {
+  margin-bottom: 20px;
 }
 
 .profile-summary-avatar {

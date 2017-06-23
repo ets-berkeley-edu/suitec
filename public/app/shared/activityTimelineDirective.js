@@ -30,7 +30,7 @@
   /**
    * Display an activity timeline for a given dataset.
    */
-  angular.module('collabosphere').directive('activityTimeline', function(analyticsService, deviceDetector, $compile, $interval, $templateCache, $timeout) {
+  angular.module('collabosphere').directive('activityTimeline', function(analyticsService, deviceDetector, $compile, $interval, $popover, $templateCache, $timeout) {
     return {
       // The directive matches attribute name only and does not overwrite the declaration in markup.
       // @see https://docs.angularjs.org/guide/directive#template-expanding-directive
@@ -41,6 +41,7 @@
       'scope': {
         'activityTimeline': '=',
         'labelsWidth': '=',
+        'labelDetailsTemplate': '@',
         'pageContext': '=',
         'timelineId': '@'
       },
@@ -216,6 +217,37 @@
             eventDropsChart.metaballs(false);
           }
 
+          var activityLabelDetails = function(element) {
+            element.selectAll('.label')
+              .classed('activity-timeline-label-hoverable', true)
+              .on('mouseover', function(obj) {
+                scope.activityType = obj.name.trim();
+
+                var pageX = d3.event.pageX;
+                var pageY = d3.event.pageY;
+
+                var eventDetails = d3
+                  .select('.activity-timeline-chart')
+                  .append('div')
+                  .attr('class', 'event-details')
+                  .style('opacity', 0);
+
+                var eventDetailsWidth = eventDetails.node().getBoundingClientRect().width;
+                eventDetails.style('left', (pageX - ARROW_OFFSET + 'px'))
+                  .style('top', (pageY + 16 + 'px'))
+                  .classed('left', true);
+
+                var detailsDiv = document.createElement('div');
+                detailsDiv.innerHTML = $templateCache.get(scope.labelDetailsTemplate);
+                $compile(detailsDiv)(scope);
+                eventDetails.append(function() { return detailsDiv; });
+                eventDetails.style('opacity', 1);
+              })
+              .on('mouseout', function() {
+                d3.select('.event-details').remove();
+              });
+          };
+
           var drawTimeline = function(element) {
             element = d3.select(element);
             element.datum(scope.activityTimeline);
@@ -224,6 +256,9 @@
             var timelineWidth = element.select('.line-separator').node().getBoundingClientRect().width;
 
             element.selectAll('.label').classed('activity-timeline-label', true);
+            if (scope.labelDetailsTemplate) {
+              activityLabelDetails(element);
+            }
 
             var nodes = element.nodes();
             var zoom = nodes[0].zoom;

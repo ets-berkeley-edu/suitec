@@ -104,9 +104,9 @@
     var getUserActivity = function(userId) {
       profileFactory.getActivitiesForUser(userId).success(function(activities) {
         $scope.user.activity = [
-          // "My Actions" swimlanes.
+          // "Contributions" swimlanes.
           {
-            'name': 'Engagements',
+            'name': 'Views/Likes',
             'data': activities.actions.engagements,
             'color': $scope.color.ACTIVITY_TIMELINE_BLUE
           },
@@ -120,10 +120,10 @@
             'data': activities.actions.creations,
             'color': $scope.color.ACTIVITY_TIMELINE_BLUE
           },
-          // "My Impacts" swimlanes. For the moment these get leading spaces under 'name' because duplicate names
+          // "Impacts" swimlanes. For the moment these get leading spaces under 'name' because duplicate names
           // seem to confuse EventDrops. This is not a great long-term solution.
           {
-            'name': ' Engagements',
+            'name': ' Views/Likes',
             'data': activities.impacts.engagements,
             'color': $scope.color.ACTIVITY_TIMELINE_RED
           },
@@ -133,7 +133,7 @@
             'color': $scope.color.ACTIVITY_TIMELINE_RED
           },
           {
-            'name': ' Creations',
+            'name': 'Recreates',
             'data': activities.impacts.creations,
             'color': $scope.color.ACTIVITY_TIMELINE_RED
           }

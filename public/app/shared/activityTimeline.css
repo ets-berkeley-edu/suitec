@@ -29,6 +29,11 @@
   font-weight: 300;
 }
 
+.activity-timeline-label-hoverable {
+  cursor: pointer;
+  fill: #4172b4;
+}
+
 .chart-wrapper {
   cursor: pointer; /* fallback if grab cursor is unsupported */
   cursor: -moz-grab;
