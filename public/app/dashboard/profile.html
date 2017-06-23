@@ -98,14 +98,15 @@
 
   <!-- ACTIVITY TIMELINE -->
   <div data-ng-if="user.activity">
-    <h3 class="profile-activity-timeline-header" data-ng-bind="isMyProfile ? 'My Activity' : 'Activity'"></h3>
+    <h3 class="profile-section-header">Activity Timeline</h3>
+    <div class="profile-subheader-explanatory">Your individual actions and others' responses to your actions over time.</div>
 
     <!-- LEGEND (SMALL SCREEN) -->
     <div class="profile-activity-timeline-legend-small hidden-sm hidden-md hidden-lg">
-      <div class="profile-activity-timeline-legend-label">{{isMyProfile ? 'My Contributions' : 'Contributions'}}</div>
+      <div class="profile-activity-timeline-legend-label profile-activity-timeline-legend-label-small">Contributions</div>
       <div class="profile-activity-timeline-legend-bar"
            data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_BLUE}"></div>
-      <div class="profile-activity-timeline-legend-label">{{isMyProfile ? 'My Impacts' : 'Impacts'}}</div>
+      <div class="profile-activity-timeline-legend-label profile-activity-timeline-legend-label-small">Impacts</div>
       <div class="profile-activity-timeline-legend-bar"
            data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_RED}"></div>
     </div>
@@ -114,12 +115,18 @@
       <!-- LEGEND (LARGE SCREEN) -->
       <div class="profile-activity-timeline-legend hidden-xs">
         <div class="profile-activity-timeline-legend-row">
-          <div class="profile-activity-timeline-legend-label">{{isMyProfile ? 'My Contributions' : 'Contributions'}}</div>
+          <div class="profile-activity-timeline-legend-label">
+            Contributions
+            <div class="profile-activity-timeline-legend-label-explanation">Activities you do.</div>
+          </div>
           <div class="profile-activity-timeline-legend-bar"
                data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_BLUE}"></div>
         </div>
         <div class="profile-activity-timeline-legend-row">
-          <div class="profile-activity-timeline-legend-label">{{isMyProfile ? 'My Impacts' : 'Impacts'}}</div>
+          <div class="profile-activity-timeline-legend-label">
+            Impacts
+            <div class="profile-activity-timeline-legend-label-explanation">Others responding and acting on your activities.</div>
+          </div>
           <div class="profile-activity-timeline-legend-bar"
                data-ng-style="{'background-color': color.ACTIVITY_TIMELINE_RED}"></div>
         </div>
@@ -129,13 +136,14 @@
       <div class="activity-timeline"
            data-activity-timeline="user.activity"
            data-labels-width="120"
+           data-label-details-template="/app/dashboard/activityTimelineLabelDetails.html"
            data-page-context="pageContext"
            data-timeline-id="timeline-user-activity"></div>
     </div>
   </div>
 
   <div class="profile-activity-breakdown-container">
-    <div class="profile-filters">
+    <div class="profile-filters profile-section-header">
       <div>
         <h3>Total Activities:</h3>
       </div>
@@ -154,30 +162,32 @@
     </div>
 
     <div data-ng-if="breakdown.selected === 'contributions'">
-      <div class="profile-activity-breakdown-explanatory">Contributions are activities you do.</div>
+      <div class="profile-subheader-explanatory">All actions you’ve done compared with the actions of others.</div>
 
       <div data-activity-breakdown="breakdown.contributions.counts.user"
            data-activity-total="breakdown.contributions.totals.user"
            data-breakdown-label="isMyProfile ? 'My Contributions' : user.canvas_full_name + '\'s Contributions'"
-           data-breakdown-selected="contributions"></div>
+           data-breakdown-selected="contributions"
+           data-single-user="true"></div>
 
       <div data-activity-breakdown="breakdown.contributions.counts.course"
            data-activity-total="breakdown.contributions.totals.course"
-           data-breakdown-label="'Compared to Everyone'"
+           data-breakdown-label="'Compared to Others'"
            data-breakdown-selected="contributions"></div>
     </div>
 
     <div data-ng-if="breakdown.selected === 'impacts'">
-      <div class="profile-activity-breakdown-explanatory">Impacts are interactions received from others.</div>
+      <div class="profile-subheader-explanatory">All actions received on your contributions compared with actions others received on their contributions.</div>
 
       <div data-activity-breakdown="breakdown.impacts.counts.user"
            data-activity-total="breakdown.impacts.totals.user"
            data-breakdown-label="isMyProfile ? 'My Impacts' : user.canvas_full_name + '\'s Impacts'"
-           data-breakdown-selected="impacts"></div>
+           data-breakdown-selected="impacts"
+           data-single-user="true"></div>
 
       <div data-activity-breakdown="breakdown.impacts.counts.course"
            data-activity-total="breakdown.impacts.totals.course"
-           data-breakdown-label="'Compared to Everyone'"
+           data-breakdown-label="'Compared to Others'"
            data-breakdown-selected="impacts"></div>
     </div>
   </div>

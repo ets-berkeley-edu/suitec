@@ -1,0 +1,17 @@
+<div class="profile-activity-breakdown-popover-outer">
+  <h4 class="profile-activity-breakdown-header" data-ng-bind="activityType"></h4>
+  <div data-ng-switch="activityType" class="profile-activity-breakdown-popover-details">
+    <div data-ng-switch-when="Views/Likes">
+      Includes the activities: views and likes.
+    </div>
+    <div data-ng-switch-when="Interactions">
+      Includes the activities: comments, pins, and discussion posts.
+    </div>
+    <div data-ng-switch-when="Creations">
+      Includes the activities: add new assets, add assets to whiteboard, export whiteboards, and remix whiteboards.
+    </div>
+    <div data-ng-switch-when="Recreates">
+      Includes the activities: asset used in whiteboards and whiteboard remixed.
+    </div>
+  </div>
+</div>
