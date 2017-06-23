@@ -20,12 +20,12 @@
     </div>
     <div class="other-users-pagination">
       <div data-ng-if="browse.previous">
-        <i data-ng-click="loadProfileById(browse.previous.id, false)" class="fa fa-caret-left"></i>
+        <i data-ng-click="loadProfileById(browse.previous.id, false, true)" class="fa fa-caret-left"></i>
       </div>
       <div>
         <button type="button"
                 class="btn btn-link other-users-browse"
-                data-ng-click="loadProfileById(browse.previous.id, false)"
+                data-ng-click="loadProfileById(browse.previous.id, false, true)"
                 data-ng-if="browse.previous">
           <span data-ng-bind="browse.previous.canvas_full_name"></span>
         </button>
@@ -34,13 +34,13 @@
       <div>
         <button type="button"
                 class="btn btn-link other-users-browse"
-                data-ng-click="loadProfileById(browse.next.id, false)"
+                data-ng-click="loadProfileById(browse.next.id, false, true)"
                 data-ng-if="browse.next">
           <span data-ng-bind="browse.next.canvas_full_name"></span>
         </button>
       </div>
       <div data-ng-if="browse.next">
-        <i data-ng-click="loadProfileById(browse.next.id, false)" class="fa fa-caret-right" ></i>
+        <i data-ng-click="loadProfileById(browse.next.id, false, true)" class="fa fa-caret-right" ></i>
       </div>
     </div>
   </div>
