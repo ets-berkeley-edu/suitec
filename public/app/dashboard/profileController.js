@@ -321,9 +321,10 @@
      *
      * @param  {Object}           user                  User being rendered in profile
      * @param  {Boolean}          loadPreviousState     If true then inspect `crossToolRequest` for previous scroll position, etc.
+     * @param  {Boolean}          isBrowseFeature       True if request was initiated via browse on Profile page.
      * @return {void}
      */
-    var loadProfile = function(user, loadPreviousState) {
+    var loadProfile = function(user, loadPreviousState, isBrowseFeature) {
       // Set default preferences
       $scope.user = user;
       _.extend($scope.user, defaultUserPreferences);
@@ -382,10 +383,16 @@
 
       // Track view of another user's profile
       if (!$scope.isMyProfile) {
-        analyticsService.track('View user profile', {
-          'profile_user': user.id,
-          'referer': document.referrer
-        });
+        if (isBrowseFeature) {
+          analyticsService.track('Browse another user profile using pagination feature', {
+            'profile_user': user.id
+          });
+        } else {
+          analyticsService.track('View user profile', {
+            'profile_user': user.id,
+            'referer': document.referrer
+          });
+        }
       }
 
       // Allow for searching and browsing of other users
@@ -433,11 +440,12 @@
      *
      * @param  {Object}           userId                Id of user being rendered in profile
      * @param  {Boolean}          considerScroll        If true then scroll down page per `crossToolRequest.scroll`
+     * @param  {Boolean}          isBrowseFeature       True if request was initiated via browse on Profile page.
      * @return {void}
      */
-    var loadProfileById = $scope.loadProfileById = function(userId, considerScroll) {
+    var loadProfileById = $scope.loadProfileById = function(userId, considerScroll, isBrowseFeature) {
       userFactory.getUser(userId).success(function(user) {
-        loadProfile(user, considerScroll);
+        loadProfile(user, considerScroll, isBrowseFeature);
       });
     };
 
@@ -497,9 +505,9 @@
       var loadPreviousState = $stateParams.loadPreviousState !== 'false';
 
       if (userId) {
-        loadProfileById(userId, loadPreviousState);
+        loadProfileById(userId, loadPreviousState, false);
       } else {
-        loadProfile(me, loadPreviousState);
+        loadProfile(me, loadPreviousState, false);
       }
     };
 
