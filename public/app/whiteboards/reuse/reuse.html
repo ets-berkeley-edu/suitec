@@ -29,7 +29,7 @@
                     <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
                   </a>
                   <div class="col-list-item-actions">
-                    <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
+                    <input id="select-asset-{{asset.id}}" type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
                   </div>
                 </div>
               </li>
@@ -48,7 +48,7 @@
                     <div data-ng-include="'/app/shared/assetThumbnail.html'"></div>
                   </a>
                   <div class="col-list-item-actions">
-                    <input type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
+                    <input id="select-asset-{{asset.id}}" type="checkbox" value="{{asset.id}}" data-ng-model="asset.selected"/>
                   </div>
                 </div>
               </li>
