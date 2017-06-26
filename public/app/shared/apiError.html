@@ -1,5 +1,5 @@
 <div class="text-center">
-  <div id="apierror-container" class="text-left" data-ng-if="errorStatus === 401 && !safariLti">
+  <div id="apierror-container" class="text-left" data-ng-if="errorStatus === 401 && !safariLti && !safariLtiMobile">
     <div id="apierror-title">
       <h2>Launch failure</h2>
     </div>
@@ -44,6 +44,21 @@
           <i class="fa fa-arrow-circle-o-right"></i>
         </button>
       </div>
+    </div>
+  </div>
+
+  <div id="apierror-container" class="text-left" data-ng-if="errorStatus === 401 && safariLtiMobile">
+    <div id="apierror-title">
+      <h2>Launch failure</h2>
+    </div>
+    <div>
+      SuiteC was unable to launch the tool you requested. You may need to adjust Safari's settings on your device to allow
+      SuiteC to set cookies.
+    </div>
+    <div>
+      Under your device's Settings app, select "Safari." Under "Privacy &amp; Security," select "Block Cookies"
+      and change the selected value to "Always Allow." You should now be able to launch the tool. Once the tool has
+      launched, you can return your Block Cookies setting to its original value.
     </div>
   </div>
 
