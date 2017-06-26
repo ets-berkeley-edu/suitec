@@ -133,7 +133,7 @@
             'color': $scope.color.ACTIVITY_TIMELINE_RED
           },
           {
-            'name': 'Recreates',
+            'name': 'Reuses',
             'data': activities.impacts.creations,
             'color': $scope.color.ACTIVITY_TIMELINE_RED
           }
