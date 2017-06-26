@@ -28,9 +28,15 @@
   'use strict';
 
   angular.module('collabosphere').controller('ApiErrorController', function(apiError, deviceDetector, $scope) {
-    // Instructions specific to Safari LTI tools should only be displayed if 1) the browser is Safari and 2) SuiteC
-    // is being run in an iframe.
-    $scope.safariLti = (window.top !== window.self) && (deviceDetector.browser === 'safari');
+    // Instructions specific to Safari LTI tools should only be displayed if the browser is Safari and SuiteC is
+    // being run in an iframe. Instructions for desktop and mobile differ.
+    if ((window.top !== window.self) && (deviceDetector.browser === 'safari')) {
+      if (deviceDetector.isMobile()) {
+        $scope.safariLtiMobile = true;
+      } else {
+        $scope.safariLti = true;
+      }
+    }
 
     $scope.errorStatus = apiError.status;
 
