@@ -4,7 +4,9 @@
 <div class="activity-timeline-footer" data-ng-style="{'padding-left': (10 + labelsWidth + 'px')}">
   <div>
     <button type="button" data-ng-click="zoomRelative(2)">+</button>
-    <button type="button" data-ng-click="zoomRelative(0.5)">-</button>
+    <button type="button"
+            data-ng-click="zoomRelative(0.5)"
+            data-ng-disabled="zoomScale === 1">-</button>
   </div>
   <div>
     <strong>View by:</strong>

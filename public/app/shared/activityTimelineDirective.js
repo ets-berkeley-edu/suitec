@@ -65,9 +65,18 @@
           });
 
           var totalDays = parseFloat(end - start) / MILLISECONDS_PER_DAY;
+          var maxZoom;
 
-          // Enable 'all' zoom option only if there's more than a month of activity.
-          scope.zoomAllEnabled = (totalDays > 30);
+          // If there's more than a month of activity, enable the 'all' zoom option.
+          if (totalDays > 30) {
+            scope.zoomAllEnabled = true;
+            maxZoom = totalDays;
+          // Otherwise set maximum zoom-out to the past month.
+          } else {
+            scope.zoomAllEnabled = false;
+            maxZoom = 30;
+            start = Date.now() - (30 * MILLISECONDS_PER_DAY);
+          }
 
           // Determine precision of x-axis tick values and format appropriately.
           var tickFormat = function(date) {
@@ -238,24 +247,29 @@
             var zoom = nodes[0].zoom;
 
             // Make programmatic zoom events available to the scope.
-            var zoomTransition = function() {
-              return element.select('.chart-wrapper').transition().duration(300);
+            var zoomTransition = function(transition) {
+              var wrapper = element.select('.chart-wrapper');
+              if (transition === false) {
+                return wrapper;
+              } else {
+                return wrapper.transition().duration(300);
+              }
             };
 
             scope.zoomRelative = function(scale) {
               zoomTransition().call(zoom.scaleBy, scale);
             };
 
-            var zoomDays = function(days) {
-              var scaleFactor = totalDays / days;
+            var zoomDays = function(days, transition) {
+              var scaleFactor = maxZoom / days;
               var translateX = (1 - scaleFactor) * timelineWidth;
               var transform = d3.zoomIdentity.translate(translateX, 0).scale(scaleFactor);
-              zoomTransition().call(zoom.transform, transform);
+              zoomTransition(transition).call(zoom.transform, transform);
             };
 
             var isZoomingToPreset = false;
 
-            scope.zoomPreset = function(preset, track) {
+            scope.zoomPreset = function(preset, track, transition) {
               isZoomingToPreset = true;
 
               // Track zoom unless explicitly told not to.
@@ -267,13 +281,13 @@
 
               switch (preset) {
                 case 'week':
-                  zoomDays(7);
+                  zoomDays(7, transition);
                   break;
                 case 'month':
-                  zoomDays(30);
+                  zoomDays(30, transition);
                   break;
                 case 'all':
-                  zoomTransition().call(zoom.transform, d3.zoomIdentity);
+                  zoomTransition(transition).call(zoom.transform, d3.zoomIdentity);
                   break;
                 default:
               }
@@ -281,20 +295,22 @@
               scope.currentZoomPreset = preset;
             };
 
-            // All zoom presets should be re-enabled on the next user zoom.
             zoom.on('end', function() {
+              // All zoom presets should be re-enabled on the next user zoom.
               if (!isZoomingToPreset) {
                 scope.currentZoomPreset = null;
               } else {
                 isZoomingToPreset = false;
               }
+              // Update the scope with the current zoom scale.
+              scope.zoomScale = d3.zoomTransform(element.select('.chart-wrapper').node()).k;
             });
 
             // Initial zoom level depends on how much activity there is to see.
             if (totalDays <= 7) {
-              scope.zoomPreset('week', false);
+              scope.zoomPreset('week', false, false);
             } else {
-              scope.zoomPreset('all', false);
+              scope.zoomPreset('all', false, false);
             }
           };
 
