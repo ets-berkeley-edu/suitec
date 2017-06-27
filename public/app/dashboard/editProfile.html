@@ -25,7 +25,7 @@
       <div class="form-group"
         data-ng-class="{'has-error': editProfileForm.$submitted && editProfileForm.bio.$invalid}">
 
-        <label for="profile-edit-description" class="control-label">Short Personal Description</label>
+        <label for="profile-edit-description" class="control-label">Short Personal Description or Collaboration Interests</label>
 
         <textarea id="profile-edit-description" name="bio" class="form-control" placeholder="" rows="3" data-ng-model="bio" data-ng-maxlength="255"></textarea>
         <div data-ng-if="!editProfileForm.$submitted || !editProfileForm.bio.$invalid">
