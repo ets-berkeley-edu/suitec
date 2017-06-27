@@ -78,9 +78,9 @@
               var percentage = _.round(100 * count / scope.activityTotal);
 
               // If a user count has been passed in, these are coursewide activity totals, and we should divide
-              // by the user count to get an average.
+              // by the user count to get an average. If the result of rounding is zero, bump it up to one.
               if (scope.userCount) {
-                count = (parseFloat(count) / scope.userCount).toFixed(1);
+                count = _.round(parseFloat(count) / scope.userCount) || 1;
               }
 
               // Build activity description string.
