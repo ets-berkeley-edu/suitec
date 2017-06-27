@@ -327,7 +327,7 @@
     var loadProfile = function(user, loadPreviousState, isBrowseFeature) {
       // Set default preferences
       $scope.user = user;
-      _.extend($scope.user, defaultUserPreferences);
+      _.extend($scope.user, _.cloneDeep(defaultUserPreferences));
 
       $scope.isMyProfile = user.id === me.id;
 
