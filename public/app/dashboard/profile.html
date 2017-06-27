@@ -83,7 +83,7 @@
             {{user.points}} {{user.points === 1 ? 'Point' : 'Points'}}
           </div>
           <div data-ng-if="userRank">
-            <span data-ng-bind="userRank"></span> out of <span data-ng-bind="courseUserCount"></span>
+            <span data-ng-bind="userRank"></span> out of <span data-ng-bind="leaderboardCount"></span>
           </div>
           <div data-ng-if="isMyProfile && !user.share_points">
             Sharing off.
@@ -168,12 +168,13 @@
            data-activity-total="breakdown.contributions.totals.user"
            data-breakdown-label="isMyProfile ? 'My Contributions' : user.canvas_full_name + '\'s Contributions'"
            data-breakdown-selected="contributions"
-           data-single-user="true"></div>
+           data-user="isMyProfile ? 'me' : user.canvas_full_name"></div>
 
       <div data-activity-breakdown="breakdown.contributions.counts.course"
            data-activity-total="breakdown.contributions.totals.course"
-           data-breakdown-label="'Compared to Others'"
-           data-breakdown-selected="contributions"></div>
+           data-breakdown-label="'Compared to Everyone'"
+           data-breakdown-selected="contributions"
+           data-user-count="userCount"></div>
     </div>
 
     <div data-ng-if="breakdown.selected === 'impacts'">
@@ -183,12 +184,13 @@
            data-activity-total="breakdown.impacts.totals.user"
            data-breakdown-label="isMyProfile ? 'My Impacts' : user.canvas_full_name + '\'s Impacts'"
            data-breakdown-selected="impacts"
-           data-single-user="true"></div>
+           data-user="isMyProfile ? 'me' : user.canvas_full_name"></div>
 
       <div data-activity-breakdown="breakdown.impacts.counts.course"
            data-activity-total="breakdown.impacts.totals.course"
-           data-breakdown-label="'Compared to Others'"
-           data-breakdown-selected="impacts"></div>
+           data-breakdown-label="'Compared to Everyone'"
+           data-breakdown-selected="impacts"
+           data-user-count="userCount"></div>
     </div>
   </div>
 

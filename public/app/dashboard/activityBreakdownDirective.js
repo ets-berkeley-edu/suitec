@@ -43,7 +43,8 @@
         'activityTotal': '=',
         'breakdownLabel': '=',
         'breakdownSelected': '@',
-        'singleUser': '='
+        'user': '=',
+        'userCount': '='
       },
       'templateUrl': '/app/dashboard/activityBreakdown.html',
       'link': function(scope, elem, attrs) {
@@ -61,7 +62,7 @@
           'Remixes': ['remix_whiteboard', 'get_remix_whiteboard']
         };
 
-        scope.$watch('activityBreakdown', function() {
+        scope.$watchGroup(['activityBreakdown', 'userCount'], function() {
           if (!scope.activityBreakdown) {
             return;
           }
@@ -74,12 +75,79 @@
             }, 0);
 
             if (count) {
+              var percentage = _.round(100 * count / scope.activityTotal);
+
+              // If a user count has been passed in, these are coursewide activity totals, and we should divide
+              // by the user count to get an average.
+              if (scope.userCount) {
+                count = (parseFloat(count) / scope.userCount).toFixed(1);
+              }
+
+              // Build activity description string.
+              var activityDescription;
+              var active = (scope.breakdownSelected === 'contributions');
+              var countString = '<strong>' + count + '</strong>';
+
+              switch (displayName) {
+                case 'Views':
+                  activityDescription = active ?
+                    ('viewed ' + countString + ' time') :
+                    ('received ' + countString + ' view');
+                  break;
+                case 'Likes':
+                  activityDescription = active ?
+                    ('liked ' + countString + ' time') :
+                    ('received ' + countString + ' like');
+                  break;
+                case 'Comments':
+                  activityDescription = active ?
+                    ('commented ' + countString + ' time') :
+                    ('received ' + countString + ' comment');
+                  break;
+                case 'Posts':
+                  activityDescription = 'posted ' + countString + ' time';
+                  break;
+                case 'Replies':
+                  activityDescription = 'received ' + countString + ' reply';
+                  break;
+                case 'Pins':
+                  activityDescription = active ?
+                    ('pinned ' + countString + ' time') :
+                    ('received ' + countString + ' pin');
+                  break;
+                case 'Add Assets':
+                  activityDescription = 'added ' + countString + ' asset';
+                  break;
+                case 'Asset Usage':
+                  activityDescription = 'had assets used ' + countString + ' time';
+                  break;
+                case 'Exports':
+                  activityDescription = 'exported ' + countString + ' whiteboard';
+                  break;
+                case 'Remixes':
+                  activityDescription = active ?
+                    ('remixed ' + countString + ' whiteboard') :
+                    ('had whiteboards remixed ' + countString + ' time');
+                  break;
+                default:
+                  break;
+              }
+
+              // Pluralize if necessary.
+              if (count !== 1) {
+                if (activityDescription.endsWith('y')) {
+                  activityDescription = activityDescription.slice(0, -1) + 'ies';
+                } else {
+                  activityDescription += 's';
+                }
+              }
+
               var cssClass = 'profile-activity-breakdown-segment-' + scope.breakdownSelected + '-' + displayName.toLowerCase().replace(/\s/g, '-');
               scope.segments.push({
                 'displayName': displayName,
+                'activityDescription': activityDescription,
                 'cssClass': cssClass,
-                'count': count,
-                'percentage': _.round(100 * count / scope.activityTotal)
+                'percentage': percentage
               });
             }
           });
