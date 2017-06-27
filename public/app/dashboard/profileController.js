@@ -274,10 +274,10 @@
     var determineRank = function(user) {
       if (me.is_admin || user.share_points) {
         userFactory.getLeaderboard().then(function(users) {
-          $scope.courseUserCount = users.length;
+          $scope.leaderboardCount = users.length;
 
           // Extract user's rank then break
-          for (var i = 0; i < $scope.courseUserCount; i++) {
+          for (var i = 0; i < $scope.leaderboardCount; i++) {
             if (users[i].id === user.id) {
               $scope.userRank = utilService.appendOrdinalSuffix(users[i].rank);
               break;
@@ -400,7 +400,7 @@
         var users = response.data;
 
         // If user count is less than two (2) then exclude search/browse feature
-        var count = users.length;
+        var count = $scope.userCount = users.length;
         if (count > 1) {
           // Default start position of browse
           $scope.browse.previous = users[0];
