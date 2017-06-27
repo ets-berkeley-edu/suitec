@@ -51,27 +51,6 @@
 
         var ARROW_OFFSET = 25;
 
-        var FRIENDLY_DESCRIPTIONS = {
-          'add_asset': 'Added Asset to Library',
-          'asset_comment': 'Comment:',
-          'discussion_entry': 'Posted Discussion',
-          'discussion_topic': 'Posted Discussion',
-          'export_whiteboard': 'Exported Whiteboard',
-          'get_asset_comment': 'Comment:',
-          'get_asset_comment_reply': 'Comment:',
-          'get_discussion_entry_reply': 'Posted Discussion',
-          'get_like': 'Liked Asset',
-          'get_pin_asset': 'Pinned Asset',
-          'get_remix_whiteboard': 'Remixed Whiteboard',
-          'get_view_asset': 'Viewed Asset',
-          'get_whiteboard_add_asset': 'Added Asset to Whiteboard',
-          'like': 'Liked Asset',
-          'pin_asset': 'Pinned Asset',
-          'remix_whiteboard': 'Remixed Whiteboard',
-          'view_asset': 'Viewed Asset',
-          'whiteboard_add_asset': 'Added Asset to Whiteboard'
-        };
-
         scope.$watch('activityTimeline', function() {
           // Default to showing at least one week of activity, even if no events go back that far.
           var start = Date.now() - (7 * MILLISECONDS_PER_DAY);
@@ -120,8 +99,7 @@
 
             // Format properties for display.
             scope.display = {
-              'date': d3.timeFormat('%B %d, %Y @ %H:%M')(new Date(activity.date)),
-              'description': FRIENDLY_DESCRIPTIONS[activity.type]
+              'date': d3.timeFormat('%B %d, %Y @ %H:%M')(new Date(activity.date))
             };
 
             if (activity.asset) {
@@ -135,10 +113,6 @@
               if (activity.comment.body.length > 100) {
                 scope.display.snippet = activity.comment.body.substring(0, 100);
               }
-            } else if (activity.type === 'get_like' || activity.type === 'like') {
-              scope.display.like = true;
-            } else if (activity.type === 'get_view_asset' || activity.type === 'view_asset') {
-              scope.display.view = true;
             }
 
             // The details window starts out hidden...
