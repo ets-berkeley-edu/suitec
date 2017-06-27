@@ -65,45 +65,11 @@
     </div>
     <hr>
     <div class="profile-activity-breakdown-popover-details">
-      <span data-ng-bind="singleUser ? 'You\'ve' : 'Others'"></span>
-      <span data-ng-switch="segment.displayName">
-        <span data-ng-switch-when="Views">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'viewed 1 time', 'other': 'viewed {} times'}" data-ng-if="breakdownSelected === 'contributions'"></span>
-          <span data-ng-pluralize count="segment.count" when="{'one': 'received 1 view', 'other': 'received {} views'}" data-ng-if="breakdownSelected === 'impacts'"></span>
-        </span>
-        <span data-ng-switch-when="Likes">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'liked 1 time', 'other': 'liked {} times'}" data-ng-if="breakdownSelected === 'contributions'"></span>
-          <span data-ng-pluralize count="segment.count" when="{'one': 'received 1 like', 'other': 'received {} likes'}" data-ng-if="breakdownSelected === 'impacts'"></span>
-        </span>
-        <span data-ng-switch-when="Comments">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'commented 1 time', 'other': 'commented {} times'}" data-ng-if="breakdownSelected === 'contributions'"></span>
-          <span data-ng-pluralize count="segment.count" when="{'one': 'received 1 comment', 'other': 'received {} comments'}" data-ng-if="breakdownSelected === 'impacts'"></span>
-        </span>
-        <span data-ng-switch-when="Posts">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'posted 1 time', 'other': 'posted {} times'}" data-ng-if="breakdownSelected === 'contributions'"></span>
-        </span>
-        <span data-ng-switch-when="Replies">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'received 1 reply', 'other': 'received {} replies'}" data-ng-if="breakdownSelected === 'impacts'"></span>
-        </span>
-        <span data-ng-switch-when="Pins">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'pinned 1 time', 'other': 'pinned {} times'}" data-ng-if="breakdownSelected === 'contributions'"></span>
-          <span data-ng-pluralize count="segment.count" when="{'one': 'received 1 pin', 'other': 'received {} pins'}" data-ng-if="breakdownSelected === 'impacts'"></span>
-        </span>
-        <span data-ng-switch-when="Add Assets">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'added 1 asset', 'other': 'added {} assets'}" data-ng-if="breakdownSelected === 'contributions'"></span>
-        </span>
-        <span data-ng-switch-when="Asset Usage">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'had assets used 1 times', 'other': 'had assets used {} times'}" data-ng-if="breakdownSelected === 'impacts'"></span>
-        </span>
-        <span data-ng-switch-when="Exports">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'exported 1 whiteboard', 'other': 'exported {} whiteboards'}" data-ng-if="breakdownSelected === 'contributions'"></span>
-        </span>
-        <span data-ng-switch-when="Remixes">
-          <span data-ng-pluralize count="segment.count" when="{'one': 'remixed 1 whiteboard', 'other': 'remixed {} whiteboards'}" data-ng-if="breakdownSelected === 'contributions'"></span>
-          <span data-ng-pluralize count="segment.count" when="{'one': 'had whiteboards remixed 1 time', 'other': 'had whiteboards remixed {} times'}" data-ng-if="breakdownSelected === 'impacts'"></span>
-        </span>
-      </span>
-      (<strong>{{segment.percentage}}%</strong> of {{singleUser ? 'your' : 'their'}} total {{breakdownSelected}}.)
+      <span data-ng-if="user === 'me'">You've</span>
+      <span data-ng-if="user && user !== 'me'">This person has</span>
+      <span data-ng-if="!user">On average, people in this course have</span>
+      <span data-ng-bind-html="segment.activityDescription"></span>
+      (<strong>{{segment.percentage}}%</strong> of {{user === 'me' ? 'your' : 'their'}} total {{breakdownSelected}}.)
     </div>
   </div>
 </script>
