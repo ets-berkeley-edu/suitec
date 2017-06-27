@@ -40,20 +40,25 @@
          data-ng-bind="activity.user.canvas_full_name"></a>
       <span data-ng-switch="activity.type">
         <span data-ng-switch-when="add_asset">added this asset.</span>
-        <span data-ng-switch-when="view_asset">viewed this asset.</span>
-        <span data-ng-switch-when="get_view_asset">viewed this asset.</span>
-        <span data-ng-switch-when="pin_asset">liked this asset.</span>
-        <span data-ng-switch-when="get_pin_asset">liked this asset.</span>
-        <span data-ng-switch-when="repin_asset">liked this asset.</span>
-        <span data-ng-switch-when="get_repin_asset">liked this asset.</span>
-        <span data-ng-switch-when="like">liked this asset.</span>
-        <span data-ng-switch-when="get_like">liked this asset.</span>
         <span data-ng-switch-when="asset_comment">commented on this asset, </span>
+        <span data-ng-switch-when="discussion_entry">posted to a discussion.</span>
+        <span data-ng-switch-when="discussion_topic">posted to a discussion.</span>
+        <span data-ng-switch-when="export_whiteboard">exported a whiteboard.</span>
         <span data-ng-switch-when="get_asset_comment">commented on this asset, </span>
-        <span data-ng-switch-when="whiteboard_add_asset">used this asset in a whiteboard.</span>
-        <span data-ng-switch-when="get_whiteboard_add_asset">used this asset in a whiteboard.</span>
-        <span data-ng-switch-when="remix_whiteboard">remixed this asset in a whiteboard.</span>
+        <span data-ng-switch-when="get_asset_comment_reply">commented on this asset, </span>
+        <span data-ng-switch-when="get_discussion_entry_reply">posted to a discussion.</span>
+        <span data-ng-switch-when="get_like">liked this asset.</span>
+        <span data-ng-switch-when="get_pin_asset">pinned this asset.</span>
         <span data-ng-switch-when="get_remix_whiteboard">remixed this asset in a whiteboard.</span>
+        <span data-ng-switch-when="get_repin_asset">pinned this asset.</span>
+        <span data-ng-switch-when="get_view_asset">viewed this asset.</span>
+        <span data-ng-switch-when="get_whiteboard_add_asset">used this asset in a whiteboard.</span>
+        <span data-ng-switch-when="like">liked this asset.</span>
+        <span data-ng-switch-when="pin_asset">pinned this asset.</span>
+        <span data-ng-switch-when="remix_whiteboard">remixed this asset in a whiteboard.</span>
+        <span data-ng-switch-when="repin_asset">pinned this asset.</span>
+        <span data-ng-switch-when="view_asset">viewed this asset.</span>
+        <span data-ng-switch-when="whiteboard_add_asset">used this asset in a whiteboard.</span>
       </span>
 
       <span data-ng-if="display.comment">
