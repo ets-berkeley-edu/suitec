@@ -12,7 +12,7 @@
           data-search-options-user="searchOptions.user"
           data-search-options-section="searchOptions.section"
           data-search-options-type="searchOptions.type"
-          data-ng-if="isSearch || pinned.length || assets.length"></search>
+          data-ng-if="!isLoading && (isSearch || pinned.length || assets.length)"></search>
 
         <div class="col-list-container"
           data-infinite-scroll="getAssets()"
@@ -34,7 +34,7 @@
                 </div>
               </li>
             </ul>
-            <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="!pinned.length">
+            <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="!isLoading && !pinned.length">
               You have no pinned assets
             </div>
           </div>
@@ -54,7 +54,7 @@
               </li>
             </ul>
           </div>
-          <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="!assets.length">
+          <div class="alert alert-info whiteboards-reuse-list-noresults" data-ng-if="!isLoading && !assets.length">
             <span data-ng-if="isSearch">No assets found</span>
             <span data-ng-if="!isSearch && pinned.length">No other assets</span>
             <span data-ng-if="!isSearch && !pinned.length">Sorry, this course has no assets.</span>
