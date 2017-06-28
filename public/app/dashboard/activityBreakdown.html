@@ -28,39 +28,39 @@
     </h4>
     <div data-ng-switch="segment.displayName" class="profile-activity-breakdown-popover-details">
       <div data-ng-switch-when="Views">
-         <span data-ng-if="breakdownSelected === 'contributions'">Viewed asset.</span>
-         <span data-ng-if="breakdownSelected === 'impacts'">Receiving a view.</span>
+         <span data-ng-if="breakdownSelected === 'contributions'">Viewed asset</span>
+         <span data-ng-if="breakdownSelected === 'impacts'">Receiving a view</span>
       </div>
       <div data-ng-switch-when="Likes">
-         <span data-ng-if="breakdownSelected === 'contributions'">Reacted to asset.</span>
-         <span data-ng-if="breakdownSelected === 'impacts'">Receiving a reaction.</span>
+         <span data-ng-if="breakdownSelected === 'contributions'">Reacted to asset</span>
+         <span data-ng-if="breakdownSelected === 'impacts'">Receiving a reaction</span>
       </div>
       <div data-ng-switch-when="Comments">
-        <span data-ng-if="breakdownSelected === 'contributions'">Commented on asset or replied to asset comment.</span>
-        <span data-ng-if="breakdownSelected === 'impacts'">Receiving a comment or reply on a comment.</span>
+        <span data-ng-if="breakdownSelected === 'contributions'">Commented on asset or replied to asset comment</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Receiving a comment or reply on a comment</span>
       </div>
       <div data-ng-switch-when="Posts">
-        <span data-ng-if="breakdownSelected === 'contributions'">Posted to discussion.</span>
+        <span data-ng-if="breakdownSelected === 'contributions'">Posted to discussion</span>
       </div>
       <div data-ng-switch-when="Replies">
-        <span data-ng-if="breakdownSelected === 'impacts'">Receive a reply in discussion thread.</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Receive a reply in discussion thread</span>
       </div>
       <div data-ng-switch-when="Pins">
-        <span data-ng-if="breakdownSelected === 'contributions'">Pinned asset.</span>
-        <span data-ng-if="breakdownSelected === 'impacts'">Receiving a pin.</span>
+        <span data-ng-if="breakdownSelected === 'contributions'">Pinned asset</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Receiving a pin</span>
       </div>
       <div data-ng-switch-when="Add Assets">
-        <span data-ng-if="breakdownSelected === 'contributions'">Add asset or add asset to whiteboard.</span>
+        <span data-ng-if="breakdownSelected === 'contributions'">Add asset or add asset to whiteboard</span>
       </div>
       <div data-ng-switch-when="Asset Usage">
-        <span data-ng-if="breakdownSelected === 'impacts'">Asset used in a whiteboard.</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Asset used in a whiteboard</span>
       </div>
       <div data-ng-switch-when="Exports">
-        <span data-ng-if="breakdownSelected === 'contributions'">Export whiteboard.</span>
+        <span data-ng-if="breakdownSelected === 'contributions'">Export whiteboard</span>
       </div>
       <div data-ng-switch-when="Remixes">
-        <span data-ng-if="breakdownSelected === 'contributions'">Remix whiteboard.</span>
-        <span data-ng-if="breakdownSelected === 'impacts'">Whiteboard remixed.</span>
+        <span data-ng-if="breakdownSelected === 'contributions'">Remix whiteboard</span>
+        <span data-ng-if="breakdownSelected === 'impacts'">Whiteboard remixed</span>
       </div>
     </div>
     <hr>
@@ -69,7 +69,7 @@
       <span data-ng-if="user && user !== 'me'">This person has</span>
       <span data-ng-if="!user">On average, people in this course have</span>
       <span data-ng-bind-html="segment.activityDescription"></span>
-      (<strong>{{segment.percentage}}%</strong> of {{user === 'me' ? 'your' : 'their'}} total {{breakdownSelected}}.)
+      (<strong>{{segment.percentage}}%</strong> of {{user === 'me' ? 'your' : 'their'}} total {{breakdownSelected}}).
     </div>
   </div>
 </script>
