@@ -78,9 +78,14 @@
               var percentage = _.round(100 * count / scope.activityTotal);
 
               // If a user count has been passed in, these are coursewide activity totals, and we should divide
-              // by the user count to get an average. If the result of rounding is zero, bump it up to one.
+              // by the user count to get an average. Round to integer or indicate 'less than 1'.
               if (scope.userCount) {
-                count = _.round(parseFloat(count) / scope.userCount) || 1;
+                var averageCount = parseFloat(count) / scope.userCount;
+                if (averageCount < 1) {
+                  count = 'less than 1';
+                } else {
+                  count = _.round(averageCount);
+                }
               }
 
               // Build activity description string.
@@ -134,7 +139,7 @@
               }
 
               // Pluralize if necessary.
-              if (count !== 1) {
+              if (count !== 1 && count !== 'less than 1') {
                 if (activityDescription.endsWith('y')) {
                   activityDescription = activityDescription.slice(0, -1) + 'ies';
                 } else {
