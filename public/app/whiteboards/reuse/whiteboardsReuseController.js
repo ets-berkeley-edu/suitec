@@ -35,6 +35,7 @@
       $scope.searchOptions = searchOptions || {};
       $scope.scrollReady = false;
       $scope.assets = [];
+      $scope.isLoading = true;
       $scope.assetsPage = 0;
       $scope.pinned = [];
       $scope.pinnedPage = 0;
@@ -128,6 +129,7 @@
         utilService.narrowSearchPerSort($scope.searchOptions);
         getNextPage($scope.assets, $scope.assetsPage, $scope.searchOptions, function() {
           $scope.assetsPage++;
+          $scope.isLoading = false;
         });
 
       } else if ($scope.assets.length) {
@@ -138,6 +140,7 @@
         // Next page is unpinned assets
         getNextPage($scope.assets, $scope.assetsPage, {'hasPins': false, 'sort': 'pins'}, function() {
           $scope.assetsPage++;
+          $scope.isLoading = false;
         });
 
       } else {
@@ -151,7 +154,10 @@
             // All pinned assets found; fill the remaining page with unpinned assets.
             getNextPage($scope.assets, $scope.assetsPage, {'hasPins': false, 'sort': 'pins'}, function() {
               $scope.assetsPage++;
+              $scope.isLoading = false;
             });
+          } else {
+            $scope.isLoading = false;
           }
         });
       }
