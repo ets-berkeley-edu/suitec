@@ -46,6 +46,9 @@
       'ready': true
     };
 
+    // False once getAssets is done
+    $scope.isLoading = true;
+
     // Variable that will keep track of the scroll position in the list
     var scrollPosition = 0;
 
@@ -121,6 +124,7 @@
             $scope.resultsMessage = utilService.buildSearchResultsMessage('Displaying assets', $scope.searchOptions);
           }
         }
+        $scope.isLoading = false;
       });
       // Ensure that the next page is requested the next time
       $scope.list.page++;
