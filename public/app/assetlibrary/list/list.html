@@ -70,7 +70,7 @@
       </li>
     </ul>
   </div>
-  <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="isSearch && assets.length === 0">
+  <div class="alert alert-info assetlibrary-list-noresults" data-ng-if="!isLoading && isSearch && assets.length === 0">
     No matching assets were found.
   </div>
   <!-- COPYRIGHT -->
