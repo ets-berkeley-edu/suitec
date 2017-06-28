@@ -91,6 +91,9 @@
      * @return {void}
      */
     var getAssets = $scope.getAssets = function() {
+      // Hide 'no results' message in the UI until we have results
+      $scope.isLoading = true;
+
       // Keep track of the search options in the parent container's hash to allow
       // for deep linking to a search
       // NOTE: For deep linking to work, our custom 'getParentUrlData' and 'setParentHash' cross-window events must be supported
