@@ -28,7 +28,7 @@ module.exports = {
     'enabled': false
   },
   'db': {
-    'database': 'collabospheretest',
+    'database': 'suitec_test',
     'dropOnStartup': true
   },
   'log': {

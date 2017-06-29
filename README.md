@@ -47,13 +47,12 @@ brew install postgresql
 postgres -D /usr/local/var/postgres
 
 # Create a database and user
-createuser collabosphere --no-createdb --no-superuser --no-createrole --pwprompt
+createuser suitec --no-createdb --no-superuser --no-createrole --pwprompt
 
-Enter password for new role:  collabosphere
-Enter it again:  collabosphere
+# Enter (and re-enter) the password: suitec
 
-createdb collabosphere --owner=collabosphere
-createdb collabospheretest --owner=collabosphere
+createdb suitec --owner=suitec
+createdb suitec_test --owner=suitec
 ```
 
 ### Node

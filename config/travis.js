@@ -28,9 +28,8 @@ module.exports = {
     'enabled': false
   },
   'db': {
-    'database': 'collabospheretravis',
+    'database': 'suitec_travis',
     'username': 'postgres',
-    'version': '9.4.1',
     'password': '',
     'dropOnStartup': true
   },

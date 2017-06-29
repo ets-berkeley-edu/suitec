@@ -10,7 +10,7 @@
   "app": {
     "https": false,
     "port": 2000,
-    "host": "collabosphere.berkeley"
+    "host": "suitec.berkeley"
   },
   "canvasPoller": {
     "enabled": true,
@@ -22,13 +22,13 @@
     "secret": "String to encrypt the cookies with. Change me in production"
   },
   "db": {
-    "database": "collabosphere",
-    "username": "collabosphere",
-    "password": "collabosphere",
+    "database": "suitec",
+    "username": "suitec",
+    "password": "suitec",
     "host": "localhost",
     "port": 5432,
     "dropOnStartup": false,
-    "version": "9.4.4",
+    "version": "9.5.4",
     "sync": true,
     "ssl": false
   },
