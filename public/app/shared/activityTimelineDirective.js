@@ -99,9 +99,17 @@
             return formatter(date);
           };
 
+          var fadeout = function(element) {
+            element.transition(d3.transition().duration(500))
+              .on('end', function() {
+                this.remove();
+              })
+              .style('opacity', 0);
+          };
+
           var showEventDetails = function(activity) {
             // Hide any existing event details.
-            d3.select('.activity-timeline-chart').selectAll('.event-details').remove();
+            d3.select('.activity-timeline-chart').selectAll('.details-popover').remove();
 
             // Make activity available to the scope.
             scope.activity = activity;
@@ -128,14 +136,15 @@
             var eventDetails = d3
               .select('.activity-timeline-chart')
               .append('div')
-              .attr('class', 'event-details')
+              .classed('details-popover', true)
+              .classed('details-popover-activity-' + scope.pageContext.tool, true)
               .style('opacity', 0);
 
             // ...and transitions to visible.
             eventDetails
-              .transition(d3.transition().duration(250).ease(d3.easeLinear))
+              .transition(d3.transition().duration(100).ease(d3.easeLinear))
               .on('start', function() {
-                d3.select('.event-details').style('display', 'block');
+                eventDetails.style('display', 'block');
               })
               .style('opacity', 1);
 
@@ -143,16 +152,17 @@
             var pageX = d3.event.pageX;
             var pageY = d3.event.pageY;
 
-            var eventDetailsWidth = eventDetails.node().getBoundingClientRect().width;
-            var direction = pageX > eventDetailsWidth ? 'right' : 'left';
+            var eventDetailsDimensions = eventDetails.node().getBoundingClientRect();
+
+            var direction = pageX > eventDetailsDimensions.width ? 'right' : 'left';
 
             var left = direction === 'right' ?
-              pageX - eventDetailsWidth + ARROW_OFFSET :
+              pageX - eventDetailsDimensions.width + ARROW_OFFSET :
               pageX - ARROW_OFFSET;
 
             eventDetails
               .style('left', (left + 'px'))
-              .style('top', (pageY + 16 + 'px'))
+              .style('top', (pageY - (eventDetailsDimensions.height + 16) + 'px'))
               .classed(direction, true);
 
             // Add template HTML and compile in the scope.
@@ -162,15 +172,20 @@
               $compile(detailsDiv)(scope);
               return detailsDiv;
             });
+
+            // Cancel pending fadeout if hovering over detail window.
+            eventDetails.on('mouseenter', function() {
+              eventDetails.transition();
+            });
+
+            // Restart fadeout after leaving detail window.
+            eventDetails.on('mouseleave', function() {
+              fadeout(eventDetails);
+            });
           };
 
           var hideEventDetails = function() {
-            d3.select('.event-details')
-              .transition(d3.transition().duration(2000).ease(d3.easeExpIn))
-              .on('end', function() {
-                this.remove();
-              })
-              .style('opacity', 0);
+            fadeout(d3.select('.details-popover'));
           };
 
           var eventDropsChart = eventDrops.default()
@@ -212,12 +227,13 @@
                 var eventDetails = d3
                   .select('.activity-timeline-chart')
                   .append('div')
-                  .attr('class', 'event-details')
+                  .classed('details-popover', true)
+                  .classed('details-popover-label', true)
                   .style('opacity', 0);
 
-                var eventDetailsWidth = eventDetails.node().getBoundingClientRect().width;
+                var eventDetailsDimensions = eventDetails.node().getBoundingClientRect();
                 eventDetails.style('left', (pageX - ARROW_OFFSET + 'px'))
-                  .style('top', (pageY + 16 + 'px'))
+                  .style('top', (pageY - (eventDetailsDimensions.height + 16) + 'px'))
                   .classed('left', true);
 
                 var detailsDiv = document.createElement('div');
@@ -227,7 +243,7 @@
                 eventDetails.style('opacity', 1);
               })
               .on('mouseout', function() {
-                d3.select('.event-details').remove();
+                d3.select('.activity-timeline-chart').selectAll('.details-popover').remove();
               });
           };
 
