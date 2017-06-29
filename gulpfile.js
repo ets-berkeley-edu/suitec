@@ -341,6 +341,9 @@ gulp.task('csslint', function() {
  * Run the Mocha test suite
  */
 gulp.task('mocha', function() {
+  // Use default environment if none is specified
+  process.env.NODE_ENV = process.env.NODE_ENV || 'test';
+
   return gulp
     .src(['node_modules/col-tests/lib/beforeTests.js', 'node_modules/col-*/tests/**/*.js'])
     .pipe(mocha({
@@ -354,22 +357,21 @@ gulp.task('mocha', function() {
 });
 
 /**
- * Run the full Collabosphere test suite
+ * Perform tests and run all linters
  */
 gulp.task('test', function() {
-  // Set the environment to `test`
+  // Set the environment
   process.env.NODE_ENV = 'test';
 
   runSequence('eslint', 'csslint', 'mocha');
 });
 
 /**
- * Run the full Collabosphere TravisCI test suite (including code coverage)
+ * Perform tests, run all linters and measure code coverage
  */
-gulp.task('test-travis', function() {
-  // Set the environment to `travis`
+gulp.task('travis', function() {
+  // Set the environment
   process.env.NODE_ENV = 'travis';
 
   runSequence('eslint', 'csslint', 'mocha');
 });
-

@@ -21,8 +21,8 @@ before_install:
   - cd $TRAVIS_BUILD_DIR
 
   # Configure postgres
-  - psql -c 'create database collabospheretravis;' -U postgres
-  - psql collabospheretravis -c 'create extension pg_trgm;' -U postgres
+  - psql -c 'create database suitec_travis;' -U postgres
+  - psql suitec_travis -c 'create extension pg_trgm;' -U postgres
 
 script:
-  - node_modules/.bin/gulp test-travis
+  - node_modules/.bin/gulp travis

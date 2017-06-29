@@ -1,6 +1,6 @@
 {
-  "name": "collabosphere",
-  "description": "Collabosphere Instructure Canvas LTI Tools",
+  "name": "suitec",
+  "description": "SuiteC LTI Tools",
   "version": "2.2.0",
   "repository": {
     "type": "git",
