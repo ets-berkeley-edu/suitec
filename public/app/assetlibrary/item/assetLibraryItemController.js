@@ -186,6 +186,11 @@
             'color': $scope.color.ACTIVITY_TIMELINE_BLUE
           },
           {
+            'name': 'Pinned',
+            'data': activities.pin_asset,
+            'color': $scope.color.ACTIVITY_TIMELINE_BLUE
+          },
+          {
             'name': 'Commented',
             'data': activities.asset_comment,
             'color': $scope.color.ACTIVITY_TIMELINE_BLUE
