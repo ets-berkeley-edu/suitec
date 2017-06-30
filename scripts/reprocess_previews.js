@@ -42,7 +42,7 @@ var DB = require('col-core/lib/db');
 var log = require('col-core/lib/logger')('scripts/reprocess_previews');
 
 /**
- * Connect to the Collabosphere database
+ * Connect to the database
  * @return {void}
  */
 var init = function() {

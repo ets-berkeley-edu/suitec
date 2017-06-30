@@ -34,7 +34,7 @@ var DB = require('col-core/lib/db');
 var log = require('col-core/lib/logger')('scripts/20160525-col378/populate_element_asset_id');
 
 /**
- * Connect to the Collabosphere database
+ * Connect to the SuiteC database
  */
 var init = function() {
   // Apply global utilities
