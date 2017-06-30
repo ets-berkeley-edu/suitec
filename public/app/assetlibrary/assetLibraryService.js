@@ -52,7 +52,7 @@
     };
 
     var assetViewRedirect = function(id) {
-      if (id.match(/^assetlibrary/)) {
+      if (_.isString(id) && id.match(/^assetlibrary/)) {
         // The `id` param is an Asset Library state name with
         // optional search criteria appended after colon
         var searchOptions = id.split(/:(.*)/)[1];
