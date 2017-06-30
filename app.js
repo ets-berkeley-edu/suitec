@@ -32,8 +32,8 @@ var log = require('col-core/lib/logger')('app');
 // Initialize the app server
 Collabosphere.init(function(err) {
   if (err) {
-    return log.error({'err': err}, 'An error has occured while starting Collabosphere');
+    return log.error({'err': err}, 'An error has occured while starting SuiteC');
   }
 
-  log.info('Collabosphere has started up. Enjoy!');
+  log.info('SuiteC has started. Enjoy!');
 });

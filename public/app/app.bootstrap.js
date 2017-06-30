@@ -90,7 +90,7 @@
 
   /**
    * Get and cache the config feed and me data before bootstrapping
-   * the Collabosphere angular app to remove the need for asynchronous
+   * the SuiteC angular app to remove the need for asynchronous
    * operations during the configuration phase
    *
    * @return {Promise}                      $q promise

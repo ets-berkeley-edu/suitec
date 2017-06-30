@@ -36,7 +36,7 @@
       'requireBase': false
     }).hashPrefix('!');
 
-    // Configure the Collabosphere routes
+    // Configure routes
     $stateProvider
       // Asset Library routes
       .state('assetlibraryupload', {

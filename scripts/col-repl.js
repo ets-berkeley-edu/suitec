@@ -28,10 +28,10 @@ var repl = require('repl');
 
 var DB = require('col-core/lib/db');
 
-console.log('Loading Collabosphere environment...');
+console.log('Loading SuiteC environment...');
 
 /**
- * Load Collabosphere environment and start an instance of Node's REPL (read-eval-print loop),
+ * Load SuiteC environment and start an instance of Node's REPL (read-eval-print loop),
  * an interactive interpreter that evaluates input line by line and displays evaluation results.
  * @see https://nodejs.org/api/repl.html
  * @return {void}
@@ -40,7 +40,7 @@ var init = function() {
   // Apply global utilities
   require('col-core/lib/globals');
 
-  // Connect to the Collabosphere database
+  // Connect to the SuiteC database
   DB.init(function() {
 
     // Require additional modules and utilities, assigning them to properties
@@ -56,7 +56,7 @@ var init = function() {
       'moment': require('moment-timezone'),
       'Sequelize': require('sequelize'),
 
-      // Collabosphere modules, including:
+      // SuiteC modules, including:
       // - Top-level APIs;
       // - Constants and utilities frequently called across modules.
       'ActivitiesAPI': require('col-activities'),
@@ -81,7 +81,7 @@ var init = function() {
       // WhiteboardAPI is not included as it expects a running Express server on load.
     };
 
-    console.log('Collabosphere environment loaded. Enjoy!');
+    console.log('SuiteC environment loaded. Enjoy!');
 
     // Start the REPL and make exports available.
     var replInstance = repl.start({'prompt': 'col-repl> '});

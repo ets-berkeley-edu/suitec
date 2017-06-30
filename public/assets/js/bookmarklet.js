@@ -29,9 +29,8 @@
   // being listed as a website asset that can be added to the Asset Library
   var MIN_DIMENSIONS = 150;
 
-  // The Collabosphere configuration object made available on the parent frame.
-  // This contains the Collabosphere base API URL, the Bookmarklet token for the
-  // user and the user id
+  // The SuiteC configuration object made available on the parent frame.
+  // This contains the base API URL, the Bookmarklet token for the user and the user id.
   var collabosphere = window.parent.collabosphere;
 
   // The cached available categories in the course

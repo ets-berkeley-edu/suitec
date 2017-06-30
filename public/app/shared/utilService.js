@@ -162,7 +162,7 @@
 
     /**
      * Adjust the height of the current iFrame to the size of its content.
-     * This will only happen when Collabosphere is embedded as an LTI tool in
+     * This will only happen when SuiteC is embedded as an LTI tool in
      * a different application
      *
      * @return {Object}                       iFrame resizing summary
@@ -185,8 +185,8 @@
     setInterval(resizeIFrame, 250);
 
     /**
-     * Scroll to the top of the window. When Collabosphere is being run stand-alone,
-     * it will scroll the current window to the top. When Collabosphere is being run
+     * Scroll to the top of the window. When SuiteC is being run stand-alone,
+     * it will scroll the current window to the top. When SuiteC is being run
      * as a BasicLTI tool, it will scroll the parent window to the top
      *
      * @return {Object}                       Scroll summary
@@ -194,7 +194,7 @@
     var scrollToTop = function() {
       // Always scroll the current window to the top
       window.scrollTo(0, 0);
-      // When running Collabosphere as a BasicLTI tool, also scroll the parent window to the top.
+      // When running SuiteC as a BasicLTI tool, also scroll the parent window to the top.
       if (window.parent) {
         // Use our custom 'changeParent' cross-window event, if the hosting Canvas instance supports it.
         if (isCustomMessagingSupported) {
@@ -216,15 +216,15 @@
     };
 
     /**
-     * Scroll the window to a specified position. When Collabosphere is being run stand-alone,
-     * it will scroll the current window to the specified position. When Collabosphere is being run
+     * Scroll the window to a specified position. When SuiteC is being run stand-alone,
+     * it will scroll the current window to the specified position. When SuiteC is being run
      * as a BasicLTI tool, it will scroll the parent window to the specified position
      *
      * @param  {Number}           position            The vertical scroll position to scroll to
      * @return {Object}                               Scroll summary
      */
     var scrollTo = function(position) {
-      // When running Collabosphere as a BasicLTI tool, scroll the parent window via our custom 'changeParent'
+      // When running SuiteC as a BasicLTI tool, scroll the parent window via our custom 'changeParent'
       // event, if the hosting Canvas instance supports it.
       if (window.parent && isCustomMessagingSupported) {
         postIFrameMessage(function() {
@@ -241,15 +241,15 @@
     };
 
     /**
-     * Get the current scroll information. When Collabosphere is being run stand-alone,
-     * it will return the scroll position of the current window. When Collabosphere is being run
+     * Get the current scroll information. When SuiteC is being run stand-alone,
+     * it will return the scroll position of the current window. When SuiteC is being run
      * as a BasicLTI tool, it will return the scroll information of the parent window
      *
      * @return {Promise<Object>}                      Promise returning the current scroll information
      */
     var getScrollInformation = function() {
       var deferred = $q.defer();
-      // When running Collabosphere as a BasicLTI tool, request the scroll position of the parent window via cross-window
+      // When running SuiteC as a BasicLTI tool, request the scroll position of the parent window via cross-window
       // messaging, if the hosting Canvas instance supports it.
       if (window.parent && isCustomMessagingSupported) {
         postIFrameMessage(function() {
@@ -288,8 +288,8 @@
     };
 
     /**
-     * Get the Collabosphere related data from the parent URL. This function assumes that
-     * Collabosphere data in the query string or hash is prefixed with `col_`.
+     * Get the SuiteC related data from the parent URL. This function assumes that
+     * SuiteC data in the query string or hash is prefixed with `col_`.
      *
      * For example:
      *
@@ -306,7 +306,7 @@
      *     ```
      *
      * @param  {Function}   callback          Standard callback function
-     * @param  {Object}     callback.data     The Collabosphere data that's present in the parent's URL
+     * @param  {Object}     callback.data     The SuiteC data that's present in the parent's URL
      * @return {Object}                       Processed URL metadata
      */
     var getParentUrlData = function(callback) {
@@ -371,7 +371,7 @@
 
     /**
      * Utility function used to send a window event to the parent container. When running
-     * Collabosphere as a BasicLTI tool, this is our main way of communicating with the container
+     * SuiteC as a BasicLTI tool, this is our main way of communicating with the container
      * application
      *
      * @param  {Function}   messageGenerator                          Function that will return the message to send to the parent container

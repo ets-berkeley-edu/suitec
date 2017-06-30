@@ -117,7 +117,7 @@
         };
 
         /**
-         * Interval that checks whether the next set of results should be loaded. As the Collabosphere tools might
+         * Interval that checks whether the next set of results should be loaded. As the SuiteC tools might
          * be loaded inside of an LTI iFrame and it's difficult to get access to the scrolling events
          * from the parent window, an interval is used instead.
          */

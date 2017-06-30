@@ -29,8 +29,8 @@ var argv = require('yargs')
   .usage('Usage: $0 --fromuser [fromuser] --touser [touser] --categories [categories]')
   .demand(['fromuser', 'touser'])
   .boolean('categories')
-  .describe('fromuser', 'The Collabosphere id of the user to migrate assets from')
-  .describe('touser', 'The Collabosphere id of the user to migrate assets to')
+  .describe('fromuser', 'The SuiteC id of the user to migrate assets from')
+  .describe('touser', 'The SuiteC id of the user to migrate assets to')
   .describe('categories', 'Whether to migrate categories')
   .help('h')
   .alias('h', 'help')
@@ -42,7 +42,7 @@ var MigrateAssetsAPI = require('col-assets/lib/migrate');
 var UserAPI = require('col-users');
 
 /**
- * Connect to the Collabosphere database and kick off asset migration
+ * Connect to the SuiteC database and kick off asset migration
  * @return {void}
  */
 var init = function() {
@@ -90,7 +90,7 @@ var init = function() {
 /**
  * Create a mock context for the source user
  *
- * @param  {Number}           userId              Collabosphere id for the source user
+ * @param  {Number}           userId              SuiteC id for the source user
  * @param  {Function}         callback            Standard callback function
  * @param  {Context}          callback.err        Error if any
  * @param  {Context}          callback.fromCtx    Context for source user
