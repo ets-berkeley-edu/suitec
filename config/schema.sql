@@ -178,7 +178,8 @@ CREATE TABLE activities (
     asset_id integer,
     course_id integer NOT NULL,
     user_id integer NOT NULL,
-    actor_id integer
+    actor_id integer,
+    reciprocal_id integer
 );
 
 
@@ -888,10 +889,24 @@ ALTER TABLE ONLY whiteboards
 
 
 --
+-- Name: activities_actor_id_idx; Type: INDEX; Schema: public; Owner: suitec
+--
+
+CREATE INDEX activities_actor_id_idx ON activities USING btree (actor_id);
+
+
+--
 -- Name: activities_asset_id_idx; Type: INDEX; Schema: public; Owner: suitec
 --
 
 CREATE INDEX activities_asset_id_idx ON activities USING btree (asset_id);
+
+
+--
+-- Name: activities_created_at_idx; Type: INDEX; Schema: public; Owner: suitec
+--
+
+CREATE INDEX activities_created_at_idx ON activities USING btree (created_at);
 
 
 --
@@ -937,6 +952,14 @@ ALTER TABLE ONLY activities
 
 ALTER TABLE ONLY activities
     ADD CONSTRAINT activities_course_id_fkey FOREIGN KEY (course_id) REFERENCES courses(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: activities activities_reciprocal_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: suitec
+--
+
+ALTER TABLE ONLY activities
+    ADD CONSTRAINT activities_reciprocal_id_fkey FOREIGN KEY (reciprocal_id) REFERENCES activities(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
