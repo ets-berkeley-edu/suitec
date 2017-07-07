@@ -55,7 +55,7 @@
         </a>
       </div>
     </div>
-    <div class="profile-summary-column-variable">
+    <div id="about-user" class="profile-summary-column-variable">
       <h1 class="profile-summary-header" data-ng-bind="user.canvas_full_name"></h1>
       <div data-ng-include="'/app/dashboard/lookingForCollaborators.html'"></div>
       <div>
@@ -66,7 +66,9 @@
         <span data-ng-if="user.last_activity">{{user.last_activity | formatDate}}</span>
         <span data-ng-if="!user.last_activity">Never</span>
       </div>
-      <div class="profile-user-description" data-ng-if="user.personal_bio" data-ng-bind-html="user.personal_bio | linky:'_blank' | toolHrefHashtag:'dashboard':user.id"></div>
+      <div class="profile-user-description"
+           data-ng-bind-html="user.personal_bio | linky:'_blank' | toolHrefHashtag:referringState('about-user'):'dashboard':user.id"
+           data-ng-if="user.personal_bio"></div>
     </div>
     <div class="profile-summary-column-with-border" data-ng-if="showEngagementIndexBox">
       <div class="profile-summary-column-square">
