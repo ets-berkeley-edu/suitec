@@ -1,5 +1,10 @@
 <div data-ng-show="state.current.name === 'assetlibrarylist.item'">
-  <a ui-sref="assetlibrarylist($parent.searchOptions)" class="col-back" data-ng-click="backToAssetLibrary()" data-ng-if="!whiteboardReferral && !crossToolRequest"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
+  <a tool-href
+     class="col-back"
+     data-tool="assetlibrary"
+     data-id="backToAssetLibraryId"
+     data-referring-tool="assetlibrary"
+     data-ng-if="!whiteboardReferral && (!crossToolRequest || crossToolRequest.referringTool === 'assetlibrary')"><i class="fa fa-angle-left"></i> Back to Asset Library</a>
 
   <a tool-href
      class="col-back"
@@ -9,7 +14,10 @@
      data-referring-tool="assetlibrary"
      data-ng-if="crossToolRequest.referringTool === 'dashboard'"><i class="fa fa-angle-left"></i> Back to Impact Studio</a>
 
-  <button type="button" class="btn btn-link col-back" data-ng-if="whiteboardReferral" data-ng-click="closeWindow()"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
+  <button type="button"
+          class="btn btn-link col-back"
+          data-ng-click="closeWindow()"
+          data-ng-if="whiteboardReferral"><i class="fa fa-angle-left"></i> Back to whiteboard</button>
 
   <!-- NOTIFICATIONS -->
   <div class="assetlibrary-item-notifications">
