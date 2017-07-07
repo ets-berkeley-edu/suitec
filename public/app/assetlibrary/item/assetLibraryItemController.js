@@ -79,6 +79,14 @@
     utilService.setParentHash({'asset': assetId});
 
     /**
+     * Restore search options when navigating back to the Asset Library list.
+     *
+     * NOTE: Requires SuiteC's custom 'getParentUrlData' and 'setParentHash' cross-window events to be
+     * supported in the hosting Canvas instance.
+     */
+    $scope.backToAssetLibraryId = utilService.getAdvancedSearchId($scope.$parent.searchOptions);
+
+    /**
      * Get the current asset
      *
      * @param  {Boolean}      [incrementViews]      Whether the total number of views for the asset should be incremented by 1. Defaults to `true`
@@ -449,20 +457,6 @@
         $scope.asset = updatedAsset;
       }
     });
-
-    /**
-     * Restore the asset library search options when navigating back to the asset library list. As navigating
-     * back to the asset library list doesn't trigger a new search, the easiest solution is to restore the hash
-     * value here
-     *
-     * NOTE: This functionality requires our custom 'getParentUrlData' and 'setParentHash' cross-window events to be
-     * supported in the hosting Canvas instance.
-     *
-     * @return {void}
-     */
-    var backToAssetLibrary = $scope.backToAssetLibrary = function() {
-      utilService.setParentHash($scope.$parent.searchOptions);
-    };
 
     /**
      * Close the current browser window. This is used when an asset has been opened

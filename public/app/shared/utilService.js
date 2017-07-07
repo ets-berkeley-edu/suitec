@@ -57,7 +57,10 @@
      * @return {String}                                   Search options, stringified
      */
     var getAdvancedSearchId = function(searchOptions) {
-      return 'assetlibrarylist:' + JSON.stringify(searchOptions);
+      var opts = _.pickBy(searchOptions, function(value, key) {
+        return !_.isNil(value) && !_.isObject(value) && (!_.isString(value) || !_.isEmpty(value));
+      });
+      return 'assetlibrarylist:' + JSON.stringify(opts);
     };
 
     /**
