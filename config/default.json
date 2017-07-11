@@ -1,4 +1,15 @@
 {
+  "aws": {
+    "credentials": {
+      "accessKeyId": "",
+      "secretAccessKey": ""
+    },
+    "s3": {
+      "bucket": "suitec-dev",
+      "region": "us-west-2",
+      "version": "2006-03-01"
+    }
+  },
   "analytics": {
     "enabled": true,
     "apiKey": "ed26bc504e17992d16554c70f8bb3914"
