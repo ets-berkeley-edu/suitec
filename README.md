@@ -53,6 +53,9 @@ createuser suitec --no-createdb --no-superuser --no-createrole --pwprompt
 
 createdb suitec --owner=suitec
 createdb suitec_test --owner=suitec
+
+# Give SuiteC schema ownership on the test database so that it can reset the schema during tests
+psql suitec_test -c 'alter schema public owner to suitec;'
 ```
 
 ### Node
