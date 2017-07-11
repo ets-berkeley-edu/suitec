@@ -23,6 +23,7 @@ before_install:
   # Configure postgres
   - psql -c 'create database suitec_travis;' -U postgres
   - psql suitec_travis -c 'create extension pg_trgm;' -U postgres
+  - psql suitec_travis -c 'create role suitec superuser login; alter schema public owner to suitec;' -U postgres
 
 script:
   - node_modules/.bin/gulp travis

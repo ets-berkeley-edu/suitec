@@ -29,7 +29,7 @@ module.exports = {
   },
   'db': {
     'database': 'suitec_travis',
-    'username': 'postgres',
+    'username': 'suitec',
     'password': '',
     'dropOnStartup': true
   },
