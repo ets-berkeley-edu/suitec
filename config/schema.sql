@@ -628,6 +628,7 @@ CREATE TABLE whiteboards (
     id integer NOT NULL,
     title character varying(255),
     thumbnail_url character varying(255),
+    aws_s3_object_key character varying(255),
     image_url character varying(255),
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
