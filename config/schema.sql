@@ -267,6 +267,7 @@ CREATE TABLE assets (
     id integer NOT NULL,
     type enum_assets_type NOT NULL,
     url character varying(255),
+    aws_s3_object_key character varying(255),
     download_url character varying(255),
     title character varying(255),
     canvas_assignment_id integer,

@@ -27,6 +27,11 @@ module.exports = {
   'analytics': {
     'enabled': false
   },
+  'aws': {
+    's3': {
+      'cutoverDate': '9999-99-99'
+    }
+  },
   'db': {
     'database': 'suitec_travis',
     'username': 'suitec',
