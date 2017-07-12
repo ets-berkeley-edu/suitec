@@ -66,9 +66,10 @@
      * @param  {String}               [searchOptions.section]         The name of section (i.e., subset of users) to filter assets by
      * @param  {String}               [searchOptions.type]            The type of assets
      * @param  {Boolean}              [track]                         Whether to track the asset listing or search in analytics. Defaults to true
+     * @param  {String}               [searchContext]                 Optional string specifying a search context for analytics tracking
      * @return {Promise<Object>}                                      $http promise returning the total number of assets for the current course and the assets in the current page
      */
-    var getAssets = function(page, searchOptions, track) {
+    var getAssets = function(page, searchOptions, track, searchContext) {
       page = page || 0;
       searchOptions = searchOptions || {};
 
@@ -112,6 +113,9 @@
       }
       if (searchOptions.limit) {
         url += '&limit=' + searchOptions.limit;
+      }
+      if (searchContext) {
+        url += '&searchContext=' + searchContext;
       }
 
       // Disable analytics tracking only if explicitly told to.
