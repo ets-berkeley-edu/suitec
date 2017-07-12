@@ -64,12 +64,19 @@
       'sort': $state.params.sort || ''
     };
 
+    var hasAdvancedFields = function(fields) {
+      return !!(fields.category || fields.user || fields.section || fields.type || fields.sort);
+    };
+
     // Variable that keeps track of whether the search component is in the advanced view state. The
     // initial value gets derived from the state parameters that are passed into this controller.
     // The value will be bound to the search directive which will update it when a user switches
     // between simple and advanced search mode
     var search = $scope.searchOptions;
-    $scope.isAdvancedSearch = search.category || search.user || search.section || search.type || search.sort;
+    $scope.isAdvancedSearch = hasAdvancedFields(search);
+
+    // For analytics purposes, note whether the asset list is being loaded with prepopulated search terms.
+    var isPrepopulatedSearch = search.keywords || $scope.isAdvancedSearch;
 
     /**
      * If a search is being performed, initialize variables
@@ -78,7 +85,7 @@
      */
     var initializeSearchContext = function() {
       var opts = $scope.searchOptions;
-      $scope.isSearch = opts.keywords || opts.category || opts.user || opts.section || opts.type || opts.sort;
+      $scope.isSearch = opts.keywords || hasAdvancedFields(opts);
 
       $scope.resultsMessage = null;
     };
@@ -109,7 +116,22 @@
       // Narrow the search, if appropriate
       utilService.narrowSearchPerSort($scope.searchOptions);
 
-      assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions).success(function(assets) {
+      // If a search is being performed, track the page context.
+      var searchContext = null;
+      if ($scope.searchOptions.keywords || hasAdvancedFields($scope.searchOptions)) {
+        // If there are no prepopulated search fields, the context is the Asset Library list view.
+        if (!isPrepopulatedSearch) {
+          searchContext = 'assetlibrary_list';
+        // If the search was triggered by a tool other than the Asset Library, the context is that tool.
+        } else if (crossToolRequest && crossToolRequest.referringTool) {
+          searchContext = crossToolRequest.referringTool;
+        // Otherwise the search was triggered an item detail page within the Asset Library.
+        } else {
+          searchContext = 'assetlibrary_item';
+        }
+      }
+
+      assetLibraryFactory.getAssets($scope.list.page, $scope.searchOptions, true, searchContext).success(function(assets) {
         utilService.setPinnedByMe(assets.results);
 
         $scope.assets = $scope.assets.concat(assets.results);

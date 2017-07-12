@@ -95,7 +95,7 @@
      * @return {void}
      */
     var getNextPage = function(assetList, page, searchOptions, callback) {
-      assetLibraryFactory.getAssets(page, searchOptions).success(function(assets) {
+      assetLibraryFactory.getAssets(page, searchOptions, true, 'whiteboards_modal').success(function(assets) {
         _.each(assets.results, function(asset) {
           assetList.push(asset);
         });
