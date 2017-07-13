@@ -5,6 +5,7 @@
       "secretAccessKey": ""
     },
     "s3": {
+      "awsSdkPackage": "aws-sdk",
       "cutoverDate": "2017-08-14",
       "bucket": "suitec-dev",
       "baseDownloadUrl": "https://foo.cloudfront.net",
