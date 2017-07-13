@@ -71,6 +71,9 @@
     "xml2js": "0.4.17",
     "yargs": "7.0.2"
   },
+  "devDependencies": {
+    "mock-aws-s3": "2.5.1"
+  },
   "bundledDependencies": [
     "col-activities",
     "col-analytics",

@@ -29,7 +29,9 @@ module.exports = {
   },
   'aws': {
     's3': {
-      'cutoverDate': '9999-99-99'
+      'awsSdkPackage': 'mock-aws-s3',
+      'bucket': 'mock-s3-bucket',
+      'cutoverDate': '9999-12-31'
     }
   },
   'db': {
