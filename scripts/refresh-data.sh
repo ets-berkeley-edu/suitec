@@ -21,9 +21,9 @@ dest_suitec=$1
 
 "$(dirname ${0})/verify-suitec-base-dir.sh"
 
-# Verify that a production.json config file exists for the source connection.
-[[ -f "${SUITEC_BASE_DIR}/config/production.json" ]] || {
-  echo "[ERROR] production.json config file not found."; echo
+# Verify that a suitec-prod.json config file exists for the source connection.
+[[ -f "${SUITEC_BASE_DIR}/config/suitec-prod.json" ]] || {
+  echo "[ERROR] suitec-prod.json config file not found."; echo
   echo_usage
   exit 1
 }
@@ -36,11 +36,11 @@ dest_suitec=$1
 }
 
 # Parse source connection info.
-source_host=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/production.json').db.host || '')"`
-source_port=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/production.json').db.port || '')"`
-source_db=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/production.json').db.database || '')"`
-source_user=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/production.json').db.username || '')"`
-source_password=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/production.json').db.password || '')"`
+source_host=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/suitec-prod.json').db.host || '')"`
+source_port=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/suitec-prod.json').db.port || '')"`
+source_db=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/suitec-prod.json').db.database || '')"`
+source_user=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/suitec-prod.json').db.username || '')"`
+source_password=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/suitec-prod.json').db.password || '')"`
 
 # Parse destination connection info.
 dest_host=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/${dest_suitec}.json').db.host || '')"`
@@ -51,7 +51,7 @@ dest_password=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/${dest_su
 
 # Validate parsed connection info.
 [[ "${source_host}" && "${source_port}" && "${source_db}" && "${source_user}" && "${source_password}" ]] || {
-  echo "[ERROR] Complete source database connection information not found in local production.json."; echo
+  echo "[ERROR] Complete source database connection information not found in local suitec-prod.json."; echo
   echo_usage
   exit 1
 }
