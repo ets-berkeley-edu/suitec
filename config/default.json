@@ -6,9 +6,9 @@
     },
     "s3": {
       "awsSdkPackage": "aws-sdk",
+      "baseDownloadUrl": "http://some.cloudfront.url",
+      "bucket": "s3-bucket-development",
       "cutoverDate": "2017-08-14",
-      "bucket": "suitec-dev",
-      "baseDownloadUrl": "https://foo.cloudfront.net",
       "region": "us-west-2",
       "version": "2006-03-01"
     }

@@ -14,8 +14,8 @@ config/*
 node_modules/*
 !node_modules/col-*
 
-# Mock Amazon S3
-mock-s3-bucket
+# Localhost Amazon S3
+s3-bucket-*
 
 public/lib
 
