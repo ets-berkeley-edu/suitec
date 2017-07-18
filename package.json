@@ -90,7 +90,7 @@
     "col-whiteboards"
   ],
   "scripts": {
-    "pretest": "test -f logs/test.log && rm logs/test.log || echo 'No test log to remove'",
+    "pretest": "echo 'Clean up old artifacts before running tests'; rm -f logs/test.log; rm -Rf s3-bucket-test",
     "test": "gulp test"
   },
   "engines": {

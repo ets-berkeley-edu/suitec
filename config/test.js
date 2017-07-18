@@ -30,7 +30,7 @@ module.exports = {
   'aws': {
     's3': {
       'awsSdkPackage': 'mock-aws-s3',
-      'bucket': 'mock-s3-bucket',
+      'bucket': 's3-bucket-test',
       'cutoverDate': '9999-12-31'
     }
   },
