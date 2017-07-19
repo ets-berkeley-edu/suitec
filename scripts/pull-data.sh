@@ -145,7 +145,8 @@ if [[ "${replacement_canvas}" ]]; then
                 replace(a.download_url, '${source_canvas}', '${replacement_canvas}') as download_url,
                 a.title, a.canvas_assignment_id, a.description, a.thumbnail_url, a.image_url, a.mime,
                 a.source, a.body, a.likes, a.dislikes, a.views, a.comment_count, a.created_at, a.updated_at,
-                a.deleted_at, a.course_id, a.pdf_url, a.preview_status, a.preview_metadata, a.visible
+                a.deleted_at, a.course_id, a.pdf_url, a.preview_status, a.preview_metadata, a.visible,
+                a.impact_score, a.trending_score
               from assets a
               join courses c
               on a.course_id = c.id and c.canvas_api_domain = '${source_canvas}'"
