@@ -42,9 +42,9 @@
         <span>Remix</span>
       </button>
       <a id="download-asset" class="btn btn-default"
-        data-ng-href="{{asset.download_url}}"
+        data-ng-href="{{getDownloadUrl(asset)}}"
         target="_blank"
-        data-ng-if="asset.type !== 'link' && asset.download_url">
+        data-ng-if="asset.type !== 'link' && (asset.download_url || asset.aws_s3_object_key)">
         <i class="fa fa-download"></i>
         <span>Download</span>
       </a>
