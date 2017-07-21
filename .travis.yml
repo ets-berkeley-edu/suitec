@@ -25,5 +25,8 @@ before_install:
   - psql suitec_travis -c 'create extension pg_trgm;' -U postgres
   - psql suitec_travis -c 'create role suitec superuser login; alter schema public owner to suitec;' -U postgres
 
+  # Set API key for caliper-js access on Github
+  - echo -e "machine github.com\n  login $CALIPER_JS_ACCESS_TOKEN" >> ~/.netrc
+
 script:
   - node_modules/.bin/gulp travis

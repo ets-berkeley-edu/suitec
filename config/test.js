@@ -25,6 +25,10 @@
 
 module.exports = {
   'analytics': {
+    'caliper': {
+      'enabled': true,
+      'url': 'http://example.com/caliper'
+    },
     'mixpanel': {
       'enabled': false
     }
