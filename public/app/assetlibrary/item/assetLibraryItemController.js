@@ -172,7 +172,7 @@
      * @return {String}                             URL to download asset file
      */
     $scope.getDownloadUrl = function(asset) {
-      return asset.aws_s3_object_key ? utilService.getApiUrl('/assets/' + assetId + '/download') : asset.download_url;
+      return utilService.getApiUrl('/assets/' + assetId + '/download');
     };
 
     /**
