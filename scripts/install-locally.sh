@@ -23,6 +23,9 @@ log() {
 
 log "Local install of SuiteC is starting."
 
+# node-gyp wants NODEJS_ORG_MIRROR set
+export NODEJS_ORG_MIRROR="${NVM_NODEJS_ORG_MIRROR}"
+
 cd "${SUITEC_BASE_DIR}"
 find node_modules/ -mindepth 1 -maxdepth 1 -not -name 'col-*' -exec /bin/rm -rf '{}' \+
 
