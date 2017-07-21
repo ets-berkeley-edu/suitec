@@ -14,8 +14,10 @@
     }
   },
   "analytics": {
-    "enabled": true,
-    "apiKey": "ed26bc504e17992d16554c70f8bb3914"
+    "mixpanel": {
+      "enabled": true,
+      "apiKey": "qwertyuiop"
+    }
   },
   "apache": {
     "documentRoot": "/var/www/html",

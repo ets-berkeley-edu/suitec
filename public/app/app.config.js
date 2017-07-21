@@ -38,8 +38,8 @@
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
 
     // Initialize the Mixpanel analytics with the configured API key
-    if (config.analytics.enabled) {
-      $mixpanelProvider.apiKey(config.analytics.apiKey);
+    if (config.analytics.mixpanel.enabled) {
+      $mixpanelProvider.apiKey(config.analytics.mixpanel.apiKey);
     }
 
   });

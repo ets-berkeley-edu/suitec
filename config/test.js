@@ -25,7 +25,9 @@
 
 module.exports = {
   'analytics': {
-    'enabled': false
+    'mixpanel': {
+      'enabled': false
+    }
   },
   'aws': {
     's3': {
