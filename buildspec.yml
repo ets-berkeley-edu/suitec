@@ -2,7 +2,7 @@ version: 0.1
 
 eb_codebuild_settings:
   CodeBuildServiceRole: arn:aws:iam::234923831700:role/service-role/codebuild-suitec-service-role
-  ComputeType: Linux
+  ComputeType: BUILD_GENERAL1_MEDIUM
   Image: aws/codebuild/nodejs:6.3.1
   Timeout: 60
 
