@@ -15,7 +15,9 @@
   },
   "analytics": {
     "caliper": {
-      "enabled": false
+      "enabled": false,
+      "url": "http://example.com/caliper",
+      "apiKey": "qwertyuiop"
     },
     "mixpanel": {
       "enabled": true,

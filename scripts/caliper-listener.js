@@ -23,41 +23,43 @@
  * ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-module.exports = {
-  'analytics': {
-    'caliper': {
-      'enabled': true,
-      'url': 'http://localhost:3030/caliper'
-    },
-    'mixpanel': {
-      'enabled': false
-    }
-  },
-  'aws': {
-    's3': {
-      'awsSdkPackage': 'mock-aws-s3',
-      'bucket': 's3-bucket-test',
-      'cutoverDate': '9999-12-31'
-    }
-  },
-  'db': {
-    'database': 'suitec_test',
-    'dropOnStartup': true
-  },
-  'log': {
-    'level': 'error',
-    'stream': 'logs/test.log'
-  },
-  'canvasPoller': {
-    'enabled': false
-  },
-  'previews': {
-    'enabled': false
-  },
-  'email': {
-    'enabled': false,
-    // We set these values two hours in the future so that the integration tests will pick up just-created activities.
-    'dailyHour': ((new Date().getHours() + 2) % 34),
-    'weeklyHour': ((new Date().getHours() + 2) % 34)
-  }
-};
+/**
+ * This script enables local verification of Caliper instrumentation. To use it, enable Caliper in your
+ * local config and set the URL to a localhost address, e.g.:
+ *
+ * {
+ *   "analytics": {
+ *     "caliper": {
+ *       "enabled": true,
+ *       "url": "http://localhost:2525/events"
+ *     }
+ *   }
+ * }
+ *
+ * Then start this script (`node scripts/caliper-listener.js`) in a separate terminal window. It will
+ * pick up the URL from your config and log the body of any POST request received.
+ */
+
+var bodyParser = require('body-parser');
+var config = require('config');
+var express = require('express');
+var http = require('http');
+var url = require('url');
+var util = require('util');
+
+var log = require('col-core/lib/logger')('caliper-listener');
+
+var app = express();
+app.httpServer = http.createServer(app);
+
+var caliperUrl = url.parse(config.get('analytics.caliper.url'));
+app.httpServer.listen(caliperUrl.port, caliperUrl.hostname);
+
+app.use(bodyParser.json({'extended': false}));
+
+app.post(caliperUrl.pathname, function(req, res) {
+  log.info({'requestBody': req.body}, 'Received POST request');
+  res.sendStatus(201);
+});
+
+log.info(util.format('Listening on %s, will log POST requests', caliperUrl.href));
