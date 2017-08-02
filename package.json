@@ -82,7 +82,7 @@
     "socket.io": "1.7.2",
     "validator": "6.2.1",
     "xml2js": "0.4.17",
-    "yargs": "7.0.2"
+    "yargs": "8.0.2"
   },
   "engines": {
     "node": ">=6.10"

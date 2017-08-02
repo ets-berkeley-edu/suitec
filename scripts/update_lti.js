@@ -68,7 +68,7 @@ var init = function() {
 
     log.info('Connected to the database');
 
-    CourseAPI.getCourses({'canvas_api_domain': argv.canvas}, function(err, courses) {
+    CourseAPI.getCourses({'canvas_api_domain': argv.canvas}, null, function(err, courses) {
       if (err) {
         log.error({'err': err}, 'Unable to retrieve courses for LTI reset');
         return callback();
