@@ -44,15 +44,19 @@ var MigrateAssetsAPI = require('col-assets/lib/migrate');
 var Storage = require('col-core/lib/storage');
 
 var downloadDir = path.join(os.tmpdir(), Date.now().toString());
-var obsoleteCanvasFiles = [];
+var successes = [];
+var failures = [];
 var timezone = config.get('timezone');
 
 var argv = yargs
-  .usage('Usage: $0 --after [YYYY-MM-DD] --before [YYYY-MM-DD]')
+  .usage('Usage: node $0 --after [YYYY-MM-DD] --before [YYYY-MM-DD] --csv_directory /writable/dir/for/csv-files/')
+  .demand([ 'csv_directory' ])
+  .describe('after', 'Courses created after this date are eligible')
+  .describe('before', 'Courses created before this date are eligible')
+  .describe('csv_directory', 'Output directory (CSV files)')
   .alias('a', 'after')
-  .describe('after', 'Courses created after this date are eligible for move.')
   .alias('b', 'before')
-  .describe('before', 'Courses created before this date are eligible for move.')
+  .alias('c', 'csv_directory')
   .help('h')
   .alias('h', 'help')
   .argv;
@@ -68,22 +72,29 @@ var emphatic = function(message) {
 };
 
 /**
- * Create CSV with obsolete Canvas URLs (files)
+ * Create CSV with Canvas URLs
  *
- * @param  {String}       csvFilename            Name (not path) of target CSV file
+ * @param  {Object}       data                  Array of objects aligned with column headers (below)
+ * @param  {String}       csvFilePath           Absolute path to target CSV file
  * @return {void}
  */
-var reportObsoleteCanvasFiles = function(csvFilename) {
-  if (obsoleteCanvasFiles.length) {
-    var headers = {
-      'headers': ['course', 'asset', 'legacy_url'],
-      'quoteColumns': true
-    };
-    var filePath = path.join(__dirname, '..', csvFilename);
+var writeCsv = function(data, csvFilePath) {
+  data.unshift([
+    'course',
+    'type',
+    'id',
+    'url',
+    'notes'
+  ]);
+  var opts = {
+    'quoteColumns': {
+      'url': true,
+      'notes': true
+    }
+  };
 
-    csv.writeToStream(fs.createWriteStream(filePath), obsoleteCanvasFiles, headers);
-    emphatic(obsoleteCanvasFiles.length + ' obsolete Canvas URLs (files) records in CSV file:\n' + filePath);
-  }
+  csv.writeToStream(fs.createWriteStream(csvFilePath), data, opts);
+  emphatic(data.length + ' rows written to ' + csvFilePath);
 };
 
 /**
@@ -124,7 +135,7 @@ var whereCreatedAt = function(scope, dateString) {
  * @param  {Course}       asset            Asset with URL of Canvas file
  * @param  {Course}       stream           The content being moved (input stream)
  * @param  {Course}       filePath         Where to write content on local disk
- * @param  {String}       callback         Standard callback function
+ * @param  {Function}     callback         Standard callback function
  * @return {Object}                        Callback result
  */
 var storeAssetInAmazonS3 = function(course, asset, stream, filePath, callback) {
@@ -142,9 +153,16 @@ var storeAssetInAmazonS3 = function(course, asset, stream, filePath, callback) {
         DB.Asset.update({'download_url': s3Uri}, {'where': {'id': asset.id}}).complete(function(dbErr) {
           if (dbErr) {
             log.error({'err': err.message, 'asset': asset.id, 's3Uri': s3Uri}, 'Failed to update asset');
+
           } else {
             log.info({'asset': asset.id}, 'Asset ' + asset.title + ' moved to S3');
-            obsoleteCanvasFiles.push([course.id, asset.id, asset.download_url]);
+            successes.push([
+              course.id,
+              'asset',
+              asset.id,
+              asset.download_url,
+              'Moved to ' + s3Uri
+            ]);
           }
           return callback(err);
         });
@@ -156,34 +174,43 @@ var storeAssetInAmazonS3 = function(course, asset, stream, filePath, callback) {
  * Move all course assets of type 'file' to Amazon S3
  *
  * @param  {Course}       course           Canvas course
- * @param  {String}       callback         Standard callback function
+ * @param  {Function}     callback         Standard callback function
  * @return {Object}                        Callback result
  */
 var moveFilesToAmazonS3 = function(course, callback) {
-  var opts = {
-    'where': {
-      'course_id': course.id
-    },
-    'order': 'id ASC'
-  };
+  // Raw SQL is necessary in order to ignore 'deleted' status.
+  var query = 'SELECT id, title, type, download_url FROM assets WHERE download_url IS NOT NULL AND type=\'file\' AND course_id=' + course.id;
 
-  DB.Asset.findAll(opts).complete(function(err, assets) {
+  DB.getSequelize().query(query, {'model': DB.Asset}).complete(function(err, assets) {
     if (err) {
       log.error({'course': course.id}, 'Failed to fetch assets');
 
       return callback(err);
     }
-    log.info({'course': course.id}, assets.length + ' assets in course \'' + course.title + '\'');
+    log.info({'course': course.id}, assets.length + ' assets in course \'' + course.name + '\'');
 
     async.each(assets, function(asset, done) {
-      if (asset.type !== 'file' || Storage.isS3Uri(asset.download_url)) {
+      if (Storage.isS3Uri(asset.download_url) || !_.startsWith(asset.download_url, 'http')) {
         // No move is necessary for this asset
         return done();
 
       } else {
         log.info({'asset': asset.id}, 'Move ' + asset.title);
 
-        request(asset.download_url).on('response', function(res) {
+        request(asset.download_url).on('error', function(canvasErr) {
+          // Record the error then carry on.
+          failures.push([
+            course.id,
+            'asset',
+            asset.id,
+            asset.download_url,
+            'Canvas responded with error: ' + canvasErr.message
+          ]);
+          log.error({'course': course.id, 'asset': asset.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
+
+          return done();
+
+        }).on('response', function(res) {
           // Extract the name of the file
           var filename = _.split(url.parse(asset.download_url).pathname, '/').pop();
           var filePath = path.join(downloadDir, filename);
@@ -208,7 +235,7 @@ var moveFilesToAmazonS3 = function(course, callback) {
  * Get courses per criteria, ordered by canvas_api_domain
  *
  * @param  {Object}       opts             If empty, we will get all courses
- * @param  {String}       callback         Standard callback function
+ * @param  {Function}     callback         Standard callback function
  * @return {Object}                        Callback result
  */
 var getCourses = function(opts, callback) {
@@ -226,7 +253,7 @@ var getCourses = function(opts, callback) {
 /**
  * Do the deed
  *
- * @param  {String}       callback         Standard callback function
+ * @param  {Function}     callback         Standard callback function
  * @return {Object}                        Callback result
  */
 var performTheMove = function(callback) {
@@ -282,43 +309,69 @@ var performTheMove = function(callback) {
 /**
  * Perform init tasks and then perform the move
  *
+ * @param  {String}      directory         Path to directory we wish to create
+ * @param  {Function}    callback          Standard callback function
+ * @param  {Object}      [callback.err]    An error that occurred, if any
+ * @return {void}
+ */
+var mkdir = function(directory, callback) {
+  fs.stat(directory, function(err, stat) {
+    if (err && err.code === 'ENOENT') {
+      fs.mkdirSync(directory);
+      return callback();
+    }
+
+    return callback(err);
+  });
+};
+
+/**
+ * Perform init tasks and then perform the move
+ *
+ * @param  {Function}    callback              Standard callback function
+ * @param  {Object}      [callback.err]        An error that occurred, if any
  * @return {void}
  */
 var begin = function() {
   // Apply global utilities
   require('col-core/lib/globals');
+  var csvDirectory = argv.csv_directory;
 
-  var timestamp = moment().tz(timezone).format('YYYY-MM-DD_HHmmss');
-  var csvFilename = timestamp + '_move-canvas-files-to-amazon-s3.csv';
+  emphatic('IMPORTANT:\nThis script will respect the \'aws.s3.cutoverDate\' config. All courses created before that date will be skipped, regardless of before/after values.');
 
-  emphatic('Obsolete Canvas URLs (files) will be recorded in ' + csvFilename);
-
-  fs.stat(downloadDir, function(statErr, stat) {
-    if (statErr) {
-      if (statErr.code === 'ENOENT') {
-        fs.mkdirSync(downloadDir);
-      } else {
-        log.error({'downloadDir': downloadDir, 'err': statErr}, 'Failed to create temp directory');
-        return;
-      }
+  mkdir(csvDirectory, function(csvDirErr) {
+    if (csvDirErr) {
+      log.error({'downloadDir': csvDirectory, 'err': csvDirErr}, 'Failed to create target CSV directory');
+      return;
     }
-    emphatic('IMPORTANT:\nThis script will respect the \'aws.s3.cutoverDate\' config. All courses created before that date will be skipped, no matter the args you pass to this script.');
-
-    performTheMove(function(err) {
-      if (err) {
-        emphatic('The move failed with error: ' + err.message);
-      } else {
-        emphatic('The move is complete');
-      }
-      // The source files are in Canvas and can now be deleted
-      reportObsoleteCanvasFiles(csvFilename);
-
-      // Clean up
-      log.info('Close db connection');
-      DB.getSequelize().close();
-
-      fs.unlink(downloadDir, function() {
+    mkdir(downloadDir, function(mkdirErr) {
+      if (mkdirErr) {
+        log.error({'downloadDir': downloadDir, 'err': mkdirErr}, 'Failed to create temp directory');
         return;
+      }
+      var timestamp = moment().tz(timezone).format('YYYY-MM-DD_HHmmss');
+      var successesCsv = path.join(csvDirectory, timestamp + '_move-canvas-files-to-amazon-s3.csv');
+      var failuresCsv = path.join(csvDirectory, timestamp + '_FAILURES_move-canvas-files-to-amazon-s3.csv');
+
+      emphatic('Two CSV files (successes and failures) will be written to directory: ' + csvDirectory);
+
+      performTheMove(function(err) {
+        if (err) {
+          emphatic('The move failed with error: ' + err.message);
+        } else {
+          emphatic('Woo hoo! The move finished without error.');
+        }
+        // The source files are in Canvas and can now be deleted
+        writeCsv(successes, successesCsv);
+        writeCsv(failures, failuresCsv);
+
+        // Clean up
+        log.info('Close db connection');
+        DB.getSequelize().close();
+
+        fs.unlink(downloadDir, function() {
+          return;
+        });
       });
     });
   });
