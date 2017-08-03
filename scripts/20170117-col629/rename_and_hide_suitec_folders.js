@@ -57,7 +57,7 @@ var init = function() {
 
 var updateFolders = function() {
   // Get all active courses.
-  CourseAPI.getCourses(null, function(err, courses) {
+  CourseAPI.getCourses(null, null, function(err, courses) {
     if (err) {
       log.error({'err': err}, 'Failed to get courses');
       return callback(err);
@@ -87,7 +87,7 @@ var delayedUpdateFolderForCourse = function(course, callback) {
   setTimeout(updateFolderForCourse, timeout, course, callback);
 };
 
-// Look for a _collabosphere folder. If one exists, rename it to _suitec and mark it as hidden. 
+// Look for a _collabosphere folder. If one exists, rename it to _suitec and mark it as hidden.
 var updateFolderForCourse = function(course, callback) {
   log.debug({
     'course': course.id,
