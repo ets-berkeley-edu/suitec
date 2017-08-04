@@ -1624,6 +1624,11 @@
             }
           }
 
+          if (_.startsWith(asset.image_url, 's3://')) {
+            // Assets stored in S3 must be pulled from SuiteC route
+            asset.image_url = utilService.getApiUrl('/assets/' + asset.id + '/download');
+          }
+
           // Add the asset to the center of the whiteboard canvas
           fabric.Image.fromURL(asset.image_url, function(element) {
             var canvasCenter = getCanvasCenter();
