@@ -11,7 +11,7 @@ rules:
     - multiline: true
       minItems: 4
   array-bracket-spacing:
-    - 1
+    - 2
     - never
     - singleValue: true
   array-element-newline:
