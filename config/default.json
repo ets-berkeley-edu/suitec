@@ -19,7 +19,7 @@
       "apiKey": "qwertyuiop"
     },
     "mixpanel": {
-      "enabled": true,
+      "enabled": false,
       "apiKey": "qwertyuiop"
     }
   },
