@@ -30,7 +30,9 @@
   angular.module('collabosphere').service('analyticsService', function(config, me, $mixpanel) {
     // Do not attempt to set up analytics if initial feed retrieval failed or Mixpanel is disabled in configuration.
     if (!me || !config.analytics.mixpanel.enabled) {
-      return;
+      return {
+        'track': _.noop
+      };
     }
 
     $mixpanel.identify(me.id);
