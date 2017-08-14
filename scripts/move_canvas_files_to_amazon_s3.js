@@ -190,9 +190,11 @@ var moveFilesToAmazonS3 = function(course, callback) {
     log.info({'course': course.id}, assets.length + ' assets in course \'' + course.name + '\'');
 
     async.each(assets, function(asset, done) {
+      var doneOnce = _.once(done);
+
       if (Storage.isS3Uri(asset.download_url) || !_.startsWith(asset.download_url, 'http')) {
         // No move is necessary for this asset
-        return done();
+        return doneOnce();
 
       } else {
         log.info({'asset': asset.id}, 'Move ' + asset.title);
@@ -208,7 +210,7 @@ var moveFilesToAmazonS3 = function(course, callback) {
           ]);
           log.error({'course': course.id, 'asset': asset.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
 
-          return done();
+          return doneOnce();
 
         }).on('response', function(res) {
           // Extract the name of the file
@@ -216,7 +218,11 @@ var moveFilesToAmazonS3 = function(course, callback) {
           var filePath = path.join(downloadDir, filename);
 
           storeAssetInAmazonS3(course, asset, res, filePath, function(s3Err) {
-            return done(s3Err);
+            if (s3Err) {
+              log.error({'course': course.id, 'asset': asset.id, 'err': s3Err.message}, 'Error uploading asset to S3');
+            }
+
+            return doneOnce();
           });
         });
       }
