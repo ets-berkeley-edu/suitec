@@ -78,6 +78,9 @@
         var launchParams = utilService.getLaunchParams();
         if (!$scope.readonly) {
           var socket = io(window.location.origin, {
+            // Websocket handshakes are presently failing on Elastic Beanstalk deployments. Socket.io handles this by falling back to polling.
+            'transport': [ 'polling' ],
+            'upgrade': false,
             'query': 'api_domain=' + launchParams.apiDomain + '&course_id=' + launchParams.courseId + '&whiteboard_id=' + $scope.whiteboard.id
           });
         }
