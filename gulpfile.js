@@ -242,6 +242,13 @@ gulp.task('optimizeImages', function() {
 });
 
 /**
+ * Create an empty favicon.ico to suppress 404 errors
+ */
+gulp.task('createFavicon', function(callback) {
+  exec('touch target/favicon.ico', callback);
+});
+
+/**
  * Replace the images with their optimized versions
  */
 gulp.task('replaceImages', [ 'optimizeImages' ], function() {
@@ -266,6 +273,7 @@ gulp.task('build', function() {
     'copyCanvasCustomization',
     'copyEmailFiles',
     'replaceImages',
+    'createFavicon',
     'minifyViewer',
     'copyViewerAssets'
   );
