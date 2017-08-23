@@ -72,29 +72,45 @@ var emphatic = function(message) {
 };
 
 /**
+ * @param  {Number}       count              Whole number
+ * @param  {String}       itemName           Name of item being described (e.g., 'asset')
+ * @param  {String}       suffix             Suffix to apply when count is not one
+ * @return {void}
+ */
+var pluralize = function(count, itemName, suffix) {
+  return itemName + (count === 1 ? '' : suffix);
+};
+
+/**
  * Create CSV with Canvas URLs
  *
  * @param  {Object}       data                  Array of objects aligned with column headers (below)
  * @param  {String}       csvFilePath           Absolute path to target CSV file
+ * @param  {String}       outputType            Short description of data
  * @return {void}
  */
-var writeCsv = function(data, csvFilePath) {
-  data.unshift([
-    'course',
-    'type',
-    'id',
-    'url',
-    'notes'
-  ]);
-  var opts = {
-    'quoteColumns': {
-      'url': true,
-      'notes': true
-    }
-  };
+var writeCsv = function(data, csvFilePath, outputType) {
+  var rowCount = data.length;
 
-  csv.writeToStream(fs.createWriteStream(csvFilePath), data, opts);
-  emphatic(data.length + ' rows written to ' + csvFilePath);
+  if (rowCount > 0) {
+    data.unshift([
+      'course',
+      'type',
+      'id',
+      'url',
+      'notes'
+    ]);
+    var opts = {
+      'quoteColumns': {
+        'url': true,
+        'notes': true
+      }
+    };
+
+    csv.writeToStream(fs.createWriteStream(csvFilePath), data, opts);
+
+    emphatic('The \'' + outputType + '\' CSV file (' + rowCount + pluralize(rowCount, ' row', 's') + ') is ' + csvFilePath);
+  }
 };
 
 /**
@@ -240,9 +256,11 @@ var moveFilesToAmazonS3 = function(course, callback) {
 /**
  * Get courses per criteria, ordered by canvas_api_domain
  *
- * @param  {Object}       opts             If empty, we will get all courses
- * @param  {Function}     callback         Standard callback function
- * @return {Object}                        Callback result
+ * @param  {Object}       opts                 If empty, we will get all courses
+ * @param  {Function}     callback             Standard callback function
+ * @param  {Object}       [callback.err]       An error that occurred, if any
+ * @param  {Object}       [callback.courses]   Courses matching criteria
+ * @return {Object}                            Callback result
  */
 var getCourses = function(opts, callback) {
   // Get courses from the database
@@ -259,15 +277,18 @@ var getCourses = function(opts, callback) {
 /**
  * Do the deed
  *
- * @param  {Function}     callback         Standard callback function
- * @return {Object}                        Callback result
+ * @param  {Function}     callback                      Standard callback function
+ * @param  {Object}       [callback.err]                An error that occurred, if any
+ * @param  {Object}       [callback.coursesProcessed]   The courses actually processed
+ * @param  {Number}       [callback.totalCourseCount]   Number of courses matching search criteria
+ * @return {Object}                                     Callback result
  */
 var performTheMove = function(callback) {
   // Connect to the database
   DB.init(function(dbErr) {
     if (dbErr) {
-      log.error('Unable to set up a connection to the database');
-      return callback(dbErr);
+      emphatic('[ERROR] Unable to set up a connection to the database');
+      return callback(dbErr, [], 0);
     }
     var opts = _.merge(whereCreatedAt('after', argv.after), whereCreatedAt('before', argv.before));
 
@@ -275,39 +296,50 @@ var performTheMove = function(callback) {
 
     getCourses(opts, function(fetchErr, courses) {
       if (fetchErr) {
-        log.error('Failed to fetch courses');
-        return callback(fetchErr);
+        emphatic('[ERROR] Failed to fetch courses');
+        return callback(fetchErr, [], 0);
+
+      } else if (courses.length === 0) {
+        return callback(null, [], 0);
       }
       var canvasApiDomain = null;
+      var coursesProcessed = [];
 
-      async.each(courses, function(course, done) {
-        if (!canvasApiDomain || canvasApiDomain !== course.canvas_api_domain) {
-          // Notify user that we are transitioning to a new canvas_api_domain, a new set of courses
-          canvasApiDomain = course.canvas_api_domain;
-          emphatic('Begin processing courses of ' + canvasApiDomain);
-        }
-        log.info({'course': course.id}, 'Process course \'' + course.name + '\'');
+      try {
+        async.each(courses, function(course, done) {
+          if (!canvasApiDomain || canvasApiDomain !== course.canvas_api_domain) {
+            // Notify user that we are transitioning to a new canvas_api_domain, a new set of courses
+            canvasApiDomain = course.canvas_api_domain;
+            emphatic('Begin processing courses of ' + canvasApiDomain);
+          }
+          log.info({'course': course.id}, 'Process course \'' + course.name + '\'');
 
-        if (Storage.useAmazonS3(course)) {
-          moveFilesToAmazonS3(course, function(err) {
-            if (err) {
-              log.error({'err': err.message, 'course': course.id}, 'Failed to move course assets (files) to Amazon S3');
-            }
-            return done(err);
-          });
+          if (Storage.useAmazonS3(course)) {
+            moveFilesToAmazonS3(course, function(err) {
+              if (err) {
+                log.error({'err': err.message, 'course': course.id}, 'Failed to move course assets (files) to Amazon S3');
+              } else {
+                coursesProcessed.push(course);
+              }
+              return done(err);
+            });
 
-        } else {
-          log.warn({'course': course.id}, 'Skipping course because it does not qualify for Amazon S3 (see config \'aws.s3.cutoverDate\')');
-        }
+          } else {
+            log.warn({'course': course.id}, 'Skipping course because it does not qualify for Amazon S3 (see config \'aws.s3.cutoverDate\')');
+          }
 
-      }, function(err) {
-        if (err) {
-          log.error({'err': err.message}, 'Failed to process all courses');
-        } else {
-          log.info('All courses processed successfully');
-        }
-        return callback(err);
-      });
+        }, function(err) {
+          if (err) {
+            log.error({'err': err.message}, 'Failed to process all courses');
+          } else {
+            log.info('All courses processed successfully');
+          }
+          return callback(err, coursesProcessed, courses.length);
+        });
+
+      } catch (uncaughtErr) {
+        return callback(uncaughtErr, coursesProcessed, courses.length);
+      }
     });
   });
 };
@@ -332,6 +364,25 @@ var mkdir = function(directory, callback) {
 };
 
 /**
+ * Verify that requested csv_directory is writable
+ *
+ * @param  {Function}    callback          Standard callback function
+ * @param  {Object}      [callback.err]    An error that occurred, if any
+ * @return {void}
+ */
+var getCsvDirectory = function(callback) {
+  var csvDirectory = argv.csv_directory;
+
+  fs.access(csvDirectory, fs.W_OK, function(err) {
+    if (err) {
+      return callback(err, csvDirectory);
+    }
+
+    return callback(null, csvDirectory);
+  });
+};
+
+/**
  * Perform init tasks and then perform the move
  *
  * @param  {Function}    callback              Standard callback function
@@ -341,42 +392,71 @@ var mkdir = function(directory, callback) {
 var begin = function() {
   // Apply global utilities
   require('col-core/lib/globals');
-  var csvDirectory = argv.csv_directory;
 
-  emphatic('IMPORTANT:\nThis script will respect the \'aws.s3.cutoverDate\' config. All courses created before that date will be skipped, regardless of before/after values.');
-
-  mkdir(csvDirectory, function(csvDirErr) {
-    if (csvDirErr) {
-      log.error({'downloadDir': csvDirectory, 'err': csvDirErr}, 'Failed to create target CSV directory');
+  getCsvDirectory(function(permErr, csvDirectory) {
+    if (permErr) {
+      emphatic('[ERROR] Directory is NOT writable: ' + csvDirectory + ' (err: ' + permErr.message + ')');
       return;
     }
-    mkdir(downloadDir, function(mkdirErr) {
-      if (mkdirErr) {
-        log.error({'downloadDir': downloadDir, 'err': mkdirErr}, 'Failed to create temp directory');
+
+    mkdir(csvDirectory, function(csvDirErr) {
+      if (csvDirErr) {
+        log.error({'downloadDir': csvDirectory, 'err': csvDirErr}, 'Failed to create target CSV directory');
         return;
       }
-      var timestamp = moment().tz(timezone).format('YYYY-MM-DD_HHmmss');
-      var successesCsv = path.join(csvDirectory, timestamp + '_move-canvas-files-to-amazon-s3.csv');
-      var failuresCsv = path.join(csvDirectory, timestamp + '_FAILURES_move-canvas-files-to-amazon-s3.csv');
-
-      emphatic('Two CSV files (successes and failures) will be written to directory: ' + csvDirectory);
-
-      performTheMove(function(err) {
-        if (err) {
-          emphatic('The move failed with error: ' + err.message);
-        } else {
-          emphatic('Woo hoo! The move finished without error.');
-        }
-        // The source files are in Canvas and can now be deleted
-        writeCsv(successes, successesCsv);
-        writeCsv(failures, failuresCsv);
-
-        // Clean up
-        log.info('Close db connection');
-        DB.getSequelize().close();
-
-        fs.unlink(downloadDir, function() {
+      mkdir(downloadDir, function(mkdirErr) {
+        if (mkdirErr) {
+          log.error({'downloadDir': downloadDir, 'err': mkdirErr}, 'Failed to create temp directory');
           return;
+        } else {
+          log.info('CSV files will be written to ' + csvDirectory);
+        }
+
+        emphatic('IMPORTANT: This script will respect the \'aws.s3.cutoverDate\' config. All courses created before that date will be skipped, regardless of before/after values.');
+
+        performTheMove(function(err, coursesProcessed, totalCourseCount) {
+          if (totalCourseCount === 0) {
+            emphatic('No matching courses found.');
+
+          } else {
+            var summary = err ? '[ERROR] An error occurred during the move: ' + err.message : 'Processing is complete.';
+            var notProcessedCount = totalCourseCount - coursesProcessed.length;
+
+            if (notProcessedCount > 0) {
+              summary += '[ERROR] ' + notProcessedCount + pluralize(notProcessedCount, ' matching course', 's') + ' not processed.';
+            }
+
+            if (coursesProcessed.length === 1) {
+              summary += '\n\nOne course processed: ' + coursesProcessed[0].name + ' (id: ' + coursesProcessed[0].id + ')';
+            } else {
+              summary += '\n\n' + coursesProcessed.length + ' courses processed.';
+            }
+            if (successes.length === 0 && failures.length === 0) {
+              summary += '\n\nWithin the courses considered, no assets (i.e., files) need to be moved from the Canvas filesystem to Amazon S3.';
+            } else {
+              summary += '\n\n' + successes.length + pluralize(successes.length, ' success', 'es') + ' and ' + failures.length + pluralize(failures.length, ' failure', 's');
+            }
+
+            emphatic(summary);
+          }
+
+          // The source files are in Canvas and can now be deleted
+          var timestamp = moment().tz(timezone).format('YYYY-MM-DD_HHmmss');
+          var successesCsv = path.join(csvDirectory, timestamp + '_move-canvas-files-to-amazon-s3.csv');
+          var failuresCsv = path.join(csvDirectory, timestamp + '_FAILURES_move-canvas-files-to-amazon-s3.csv');
+
+          writeCsv(successes, successesCsv, 'successes');
+          writeCsv(failures, failuresCsv, 'failures');
+
+          // Clean up
+          log.info('Close db connection');
+          DB.getSequelize().close();
+
+          fs.unlink(downloadDir, function() {
+            emphatic('Done.');
+
+            return;
+          });
         });
       });
     });
