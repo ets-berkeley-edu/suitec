@@ -43,10 +43,13 @@ var log = require('col-core/lib/logger')('scripts/move_canvas_files_to_amazon_s3
 var MigrateAssetsAPI = require('col-assets/lib/migrate');
 var Storage = require('col-core/lib/storage');
 
+var coursesProcessed = [];
+var coursesSkipped = [];
 var downloadDir = path.join(os.tmpdir(), Date.now().toString());
-var successes = [];
 var failures = [];
+var successes = [];
 var timezone = config.get('timezone');
+var totalCourseCount = 0;
 
 var argv = yargs
   .usage('Usage: node $0 --after [YYYY-MM-DD] --before [YYYY-MM-DD] --csv_directory /writable/dir/for/csv-files/')
@@ -115,65 +118,61 @@ var writeCsv = function(data, csvFilePath, outputType) {
 
 /**
  * @param  {String}       [scope]          'before' or 'after'
- * @param  {String}       [dateString]     Format must match 'YYYY-MM-DD'
+ * @param  {String}       [date]           Valid date
  * @return {Object}                        Partial 'where' clause for Sequelize
  */
-var whereCreatedAt = function(scope, dateString) {
+var whereCreatedAt = function(scope, date) {
   var opts = {};
 
-  if (dateString) {
-    var date = moment(dateString, 'YYYY-MM-DD').tz(timezone);
-
-    switch (scope) {
-      case 'before':
-        opts = {
-          'created_at': {
-            '$lt': date
-          }
-        };
-        break;
-      case 'after':
-        opts = {
-          'created_at': {
-            '$gt': date
-          }
-        };
-        break;
-      default:
-        break;
-    }
+  switch (scope) {
+    case 'before':
+      opts = {
+        'created_at': {
+          '$lt': date
+        }
+      };
+      break;
+    case 'after':
+      opts = {
+        'created_at': {
+          '$gt': date
+        }
+      };
+      break;
+    default:
+      break;
   }
+
   return opts;
 };
 
 /**
- * @param  {Course}       course           Canvas course
  * @param  {Course}       asset            Asset with URL of Canvas file
  * @param  {Course}       stream           The content being moved (input stream)
  * @param  {Course}       filePath         Where to write content on local disk
  * @param  {Function}     callback         Standard callback function
  * @return {Object}                        Callback result
  */
-var storeAssetInAmazonS3 = function(course, asset, stream, filePath, callback) {
+var storeAssetInAmazonS3 = function(asset, stream, filePath, callback) {
   stream.pipe(fs.createWriteStream(filePath))
     .on('error', callback)
     .on('finish', function() {
       // Store file in Amazon S3
-      Storage.storeAsset(course.id, filePath, function(err, s3Uri, contentType) {
+      Storage.storeAsset(asset.course_id, filePath, function(err, s3Uri, contentType) {
         if (err) {
-          log.error({'err': err.message, 'asset': asset.id, 'download_url': asset.download_url}, 'Failed to store file in Amazon S3');
+          log.error({'err': err.message, 'course': asset.course_id, 'asset': asset.id, 'download_url': asset.download_url}, 'Failed to store file in Amazon S3');
 
           return callback(err);
         }
 
         DB.Asset.update({'download_url': s3Uri}, {'where': {'id': asset.id}}).complete(function(dbErr) {
           if (dbErr) {
-            log.error({'err': err.message, 'asset': asset.id, 's3Uri': s3Uri}, 'Failed to update asset');
+            log.error({'err': dbErr.message, 'course': asset.course_id, 'asset': asset.id, 's3Uri': s3Uri}, 'Failed to update asset');
 
           } else {
-            log.info({'asset': asset.id}, 'Asset ' + asset.title + ' moved to S3');
+            log.info({'course': asset.course_id, 'asset': asset.id}, 'Asset ' + asset.title + ' moved to S3');
             successes.push([
-              course.id,
+              asset.course_id,
               'asset',
               asset.id,
               asset.download_url,
@@ -187,6 +186,53 @@ var storeAssetInAmazonS3 = function(course, asset, stream, filePath, callback) {
 };
 
 /**
+ * Move file asset to Amazon S3.
+ *
+ * @param  {Asset}            asset               The asset to update
+ * @param  {Number}           index               Index in the list of courses, used to show progress
+ * @param  {Function}         callback            Standard callback function
+ * @return {Object}                               Return per callback
+ */
+var moveAsset = function(asset, index, callback) {
+  if (Storage.isS3Uri(asset.download_url) || !_.startsWith(asset.download_url, 'http')) {
+    log.info({'course': asset.course_id, 'asset': asset.id}, 'Asset \'' + asset.title + '\' requires no action');
+    return callback();
+
+  } else {
+    log.info({'course': asset.course_id, 'asset': asset.id}, 'Prepare to move asset \'' + asset.title + '\'');
+
+    request(asset.download_url).on('error', function(canvasErr) {
+      // Record the error then carry on.
+      failures.push([
+        asset.course_id,
+        'asset',
+        asset.id,
+        asset.download_url,
+        'Canvas responded with error: ' + canvasErr.message
+      ]);
+      log.error({'course': asset.course_id, 'asset': asset.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
+
+      return callback(canvasErr);
+
+    }).on('response', function(res) {
+      // Extract the name of the file
+      var filename = 'asset-' + asset.id + '_' + _.split(url.parse(asset.download_url).pathname, '/').pop();
+      var filePath = path.join(downloadDir, filename);
+
+      storeAssetInAmazonS3(asset, res, filePath, function(s3Err) {
+        if (s3Err) {
+          log.error({'course': asset.course_id, 'asset': asset.id, 'err': s3Err.message}, 'Error uploading asset to S3');
+
+          return callback(s3Err);
+        }
+
+        return callback();
+      });
+    });
+  }
+};
+
+/**
  * Move all course assets of type 'file' to Amazon S3
  *
  * @param  {Course}       course           Canvas course
@@ -195,60 +241,19 @@ var storeAssetInAmazonS3 = function(course, asset, stream, filePath, callback) {
  */
 var moveFilesToAmazonS3 = function(course, callback) {
   // Raw SQL is necessary in order to ignore 'deleted' status.
-  var query = 'SELECT id, title, type, download_url FROM assets WHERE download_url IS NOT NULL AND type=\'file\' AND course_id=' + course.id;
+  var query = 'SELECT id, course_id, title, type, download_url FROM assets WHERE download_url IS NOT NULL AND type=\'file\' AND course_id=' + course.id;
 
   DB.getSequelize().query(query, {'model': DB.Asset}).complete(function(err, assets) {
     if (err) {
-      log.error({'course': course.id}, 'Failed to fetch assets');
+      log.error({'err': err.message, 'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, 'Failed to fetch assets');
 
       return callback(err);
     }
-    log.info({'course': course.id}, assets.length + ' assets in course \'' + course.name + '\'');
 
-    async.each(assets, function(asset, done) {
-      var doneOnce = _.once(done);
+    log.info({'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, assets.length + ' assets in course \'' + course.name + '\'');
 
-      if (Storage.isS3Uri(asset.download_url) || !_.startsWith(asset.download_url, 'http')) {
-        // No move is necessary for this asset
-        return doneOnce();
-
-      } else {
-        log.info({'asset': asset.id}, 'Move ' + asset.title);
-
-        request(asset.download_url).on('error', function(canvasErr) {
-          // Record the error then carry on.
-          failures.push([
-            course.id,
-            'asset',
-            asset.id,
-            asset.download_url,
-            'Canvas responded with error: ' + canvasErr.message
-          ]);
-          log.error({'course': course.id, 'asset': asset.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
-
-          return doneOnce();
-
-        }).on('response', function(res) {
-          // Extract the name of the file
-          var filename = _.split(url.parse(asset.download_url).pathname, '/').pop();
-          var filePath = path.join(downloadDir, filename);
-
-          storeAssetInAmazonS3(course, asset, res, filePath, function(s3Err) {
-            if (s3Err) {
-              log.error({'course': course.id, 'asset': asset.id, 'err': s3Err.message}, 'Error uploading asset to S3');
-            }
-
-            return doneOnce();
-          });
-        });
-      }
-    }, function(asyncErr) {
-      if (asyncErr) {
-        log.error({'course': course.id, 'err': asyncErr.message}, 'Error during asset migration');
-      } else {
-        log.info({'course': course.id}, 'Course asset(s) processed successfully');
-      }
-      return callback(asyncErr);
+    async.eachOfSeries(assets, moveAsset, function() {
+      return callback();
     });
   });
 };
@@ -268,78 +273,85 @@ var getCourses = function(opts, callback) {
     if (err) {
       return callback(err);
     }
-    log.info(courses.length + ' courses will be processed');
+    emphatic(courses.length + ' courses will be processed: ' + _.map(courses, 'id'));
 
     return callback(null, courses);
   });
 };
 
 /**
- * Do the deed
+ * Move file assets of SuiteC course from Canvas to Amazon S3.
+ *
+ * @param  {Course}           course              The course to update
+ * @param  {Number}           index               Index in the list of courses, used to show progress
+ * @param  {Function}         callback            Standard callback function
+ * @return {Object}                               Return per callback
+ */
+var updateCourseAssets = function(course, index, callback) {
+  if (Storage.useAmazonS3(course)) {
+    log.info({'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, 'Prepare to move course \'' + course.name + '\' files to Amazon S3');
+
+    try {
+      moveFilesToAmazonS3(course, function(err) {
+        if (err) {
+          log.error({'err': err.message, 'course': course.id}, 'Failed to move some or all course assets (files) to Amazon S3');
+        } else {
+          log.info({'course': course.id}, 'Finished processing course \'' + course.name + '\' without error');
+        }
+        coursesProcessed.push(course);
+
+        return callback();
+      });
+    } catch (uncaughtErr) {
+      log.error({'err': uncaughtErr.message}, 'Error during Amazon S3 move operation');
+
+      return callback(uncaughtErr);
+    }
+
+  } else {
+    coursesSkipped.push(course);
+    log.warn({'course': course.id}, 'Skipping course because it does not qualify for Amazon S3 (see config \'aws.s3.cutoverDate\')');
+
+    return callback();
+  }
+};
+
+/**
+ * Move files to Amazon S3
  *
  * @param  {Function}     callback                      Standard callback function
  * @param  {Object}       [callback.err]                An error that occurred, if any
- * @param  {Object}       [callback.coursesProcessed]   The courses actually processed
- * @param  {Number}       [callback.totalCourseCount]   Number of courses matching search criteria
  * @return {Object}                                     Callback result
  */
-var performTheMove = function(callback) {
-  // Connect to the database
-  DB.init(function(dbErr) {
-    if (dbErr) {
+var moveAssets = function(callback) {
+  // The date range is exclusive. E.g., created_at must be less than beforeDate, not less than or equal.
+  var afterDate = moment(argv.after, 'YYYY-MM-DD').endOf('day').tz(timezone);
+  var beforeDate = moment(argv.before, 'YYYY-MM-DD').startOf('day').tz(timezone);
+
+  var opts = _.merge(whereCreatedAt('after', afterDate), whereCreatedAt('before', beforeDate));
+
+  emphatic(_.isEmpty(opts) ? 'We will fetch ALL courses' : 'Get courses where ' + JSON.stringify(opts));
+
+  DB.init(function(err) {
+    if (err) {
       emphatic('[ERROR] Unable to set up a connection to the database');
-      return callback(dbErr, [], 0);
+
+      return callback(err);
     }
-    var opts = _.merge(whereCreatedAt('after', argv.after), whereCreatedAt('before', argv.before));
-
-    emphatic(_.isEmpty(opts) ? 'We will fetch ALL courses' : 'Get courses where ' + JSON.stringify(opts));
-
     getCourses(opts, function(fetchErr, courses) {
       if (fetchErr) {
-        emphatic('[ERROR] Failed to fetch courses');
-        return callback(fetchErr, [], 0);
+        emphatic('[ERROR] Failed to fetch courses due to error: ' + fetchErr.message);
 
-      } else if (courses.length === 0) {
-        return callback(null, [], 0);
+        return callback(fetchErr);
       }
-      var canvasApiDomain = null;
-      var coursesProcessed = [];
+      totalCourseCount = courses.length;
 
-      try {
-        async.each(courses, function(course, done) {
-          if (!canvasApiDomain || canvasApiDomain !== course.canvas_api_domain) {
-            // Notify user that we are transitioning to a new canvas_api_domain, a new set of courses
-            canvasApiDomain = course.canvas_api_domain;
-            emphatic('Begin processing courses of ' + canvasApiDomain);
-          }
-          log.info({'course': course.id}, 'Process course \'' + course.name + '\'');
+      async.eachOfSeries(courses, updateCourseAssets, function() {
+        log.info('Close db connection');
+        DB.getSequelize().close();
 
-          if (Storage.useAmazonS3(course)) {
-            moveFilesToAmazonS3(course, function(err) {
-              if (err) {
-                log.error({'err': err.message, 'course': course.id}, 'Failed to move course assets (files) to Amazon S3');
-              } else {
-                coursesProcessed.push(course);
-              }
-              return done(err);
-            });
-
-          } else {
-            log.warn({'course': course.id}, 'Skipping course because it does not qualify for Amazon S3 (see config \'aws.s3.cutoverDate\')');
-          }
-
-        }, function(err) {
-          if (err) {
-            log.error({'err': err.message}, 'Failed to process all courses');
-          } else {
-            log.info('All courses processed successfully');
-          }
-          return callback(err, coursesProcessed, courses.length);
-        });
-
-      } catch (uncaughtErr) {
-        return callback(uncaughtErr, coursesProcessed, courses.length);
-      }
+        return callback();
+      });
     });
   });
 };
@@ -386,35 +398,31 @@ var getCsvDirectory = function(callback) {
  * Perform init tasks and then perform the move
  *
  * @param  {Function}    callback              Standard callback function
- * @param  {Object}      [callback.err]        An error that occurred, if any
  * @return {void}
  */
-var begin = function() {
-  // Apply global utilities
-  require('col-core/lib/globals');
-
+var perform = function(callback) {
   getCsvDirectory(function(permErr, csvDirectory) {
     if (permErr) {
       emphatic('[ERROR] Directory is NOT writable: ' + csvDirectory + ' (err: ' + permErr.message + ')');
-      return;
+      return callback();
     }
 
     mkdir(csvDirectory, function(csvDirErr) {
       if (csvDirErr) {
         log.error({'downloadDir': csvDirectory, 'err': csvDirErr}, 'Failed to create target CSV directory');
-        return;
+        return callback();
       }
       mkdir(downloadDir, function(mkdirErr) {
         if (mkdirErr) {
           log.error({'downloadDir': downloadDir, 'err': mkdirErr}, 'Failed to create temp directory');
-          return;
+          return callback();
         } else {
           log.info('CSV files will be written to ' + csvDirectory);
         }
 
         emphatic('IMPORTANT: This script will respect the \'aws.s3.cutoverDate\' config. All courses created before that date will be skipped, regardless of before/after values.');
 
-        performTheMove(function(err, coursesProcessed, totalCourseCount) {
+        moveAssets(function(err) {
           if (totalCourseCount === 0) {
             emphatic('No matching courses found.');
 
@@ -423,18 +431,19 @@ var begin = function() {
             var notProcessedCount = totalCourseCount - coursesProcessed.length;
 
             if (notProcessedCount > 0) {
-              summary += '[ERROR] ' + notProcessedCount + pluralize(notProcessedCount, ' matching course', 's') + ' not processed.';
+              summary += '\n\n[ERROR] ' + notProcessedCount + pluralize(notProcessedCount, ' matching course', 's') + ' not processed.';
+            }
+            summary += '\n\n' + totalCourseCount + pluralize(coursesProcessed, ' course', 's') + ' were considered';
+            summary += '\n\n' + coursesProcessed.length + pluralize(coursesProcessed, ' course', 's') + ' processed';
+            if (coursesSkipped.length > 0) {
+              summary += '\n\n' + coursesSkipped.length + pluralize(coursesSkipped, ' course', 's') + ' skipped (check value of config \'aws.s3.cutoverDate\')';
             }
 
-            if (coursesProcessed.length === 1) {
-              summary += '\n\nOne course processed: ' + coursesProcessed[0].name + ' (id: ' + coursesProcessed[0].id + ')';
-            } else {
-              summary += '\n\n' + coursesProcessed.length + ' courses processed.';
-            }
             if (successes.length === 0 && failures.length === 0) {
               summary += '\n\nWithin the courses considered, no assets (i.e., files) need to be moved from the Canvas filesystem to Amazon S3.';
             } else {
-              summary += '\n\n' + successes.length + pluralize(successes.length, ' success', 'es') + ' and ' + failures.length + pluralize(failures.length, ' failure', 's');
+              summary += '\n\n' + successes.length + pluralize(successes.length, ' asset', 's') + ' moved to Amazon S3';
+              summary += '\n\n' + failures.length + pluralize(failures.length, ' asset', 's') + ' FAILED to move to Amazon S3';
             }
 
             emphatic(summary);
@@ -449,13 +458,9 @@ var begin = function() {
           writeCsv(failures, failuresCsv, 'failures');
 
           // Clean up
-          log.info('Close db connection');
-          DB.getSequelize().close();
-
           fs.unlink(downloadDir, function() {
-            emphatic('Done.');
 
-            return;
+            return callback();
           });
         });
       });
@@ -463,4 +468,13 @@ var begin = function() {
   });
 };
 
-begin();
+var init = function() {
+  // Apply global utilities
+  require('col-core/lib/globals');
+
+  perform(function() {
+    emphatic('Done.');
+  });
+};
+
+init();
