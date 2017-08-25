@@ -147,13 +147,13 @@ var whereCreatedAt = function(scope, date) {
 };
 
 /**
- * @param  {Course}       asset            Asset with URL of Canvas file
- * @param  {Course}       stream           The content being moved (input stream)
- * @param  {Course}       filePath         Where to write content on local disk
+ * @param  {Asset}        asset            Asset with URL of Canvas file
+ * @param  {Stream}       stream           The content being moved (input stream)
+ * @param  {String}       filePath         Where to write content on local disk
  * @param  {Function}     callback         Standard callback function
  * @return {Object}                        Callback result
  */
-var storeAssetInAmazonS3 = function(asset, stream, filePath, callback) {
+var storeAssetFileInAmazonS3 = function(asset, stream, filePath, callback) {
   stream.pipe(fs.createWriteStream(filePath))
     .on('error', callback)
     .on('finish', function() {
@@ -186,42 +186,94 @@ var storeAssetInAmazonS3 = function(asset, stream, filePath, callback) {
 };
 
 /**
- * Move file asset to Amazon S3.
+ * @param  {Whiteboard}   whiteboard       Whiteboard with image URL
+ * @param  {Stream}       stream           The content being moved (input stream)
+ * @param  {String}       filePath         Where to write content on local disk
+ * @param  {Function}     callback         Standard callback function
+ * @return {Object}                        Callback result
+ */
+var storeWhiteboardImageInAmazonS3 = function(whiteboard, stream, filePath, callback) {
+  stream.pipe(fs.createWriteStream(filePath))
+    .on('error', callback)
+    .on('finish', function() {
+      // Store file in Amazon S3
+      Storage.storeWhiteboardImage(whiteboard, filePath, function(err, s3Uri, contentType) {
+        if (err) {
+          log.error({'err': err.message, 'course': whiteboard.course_id, 'whiteboard': whiteboard.id, 'image_url': whiteboard.image_url}, 'Failed to store file in Amazon S3');
+
+          return callback(err);
+        }
+
+        DB.Whiteboard.update({'image_url': s3Uri}, {'where': {'id': whiteboard.id}}).complete(function(dbErr) {
+          if (dbErr) {
+            log.error({'err': dbErr.message, 'course': whiteboard.course_id, 'whiteboard': asset.id, 's3Uri': s3Uri}, 'Failed to update whiteboard');
+
+          } else {
+            log.info({'course': whiteboard.course_id, 'whiteboard': whiteboard.id}, 'Whiteboard ' + whiteboard.title + ' moved to S3');
+            successes.push([
+              whiteboard.course_id,
+              'whiteboard',
+              whiteboard.id,
+              whiteboard.image_url,
+              'Moved to ' + s3Uri
+            ]);
+          }
+          return callback(err);
+        });
+      });
+    });
+};
+
+/**
+ * Move file (related to asset or whiteboard) to Amazon S3.
  *
- * @param  {Asset}            asset               The asset to update
+ * @param  {Object}           item                The item to migrate
  * @param  {Number}           index               Index in the list of courses, used to show progress
  * @param  {Function}         callback            Standard callback function
  * @return {Object}                               Return per callback
  */
-var moveAsset = function(asset, index, callback) {
-  if (Storage.isS3Uri(asset.download_url) || !_.startsWith(asset.download_url, 'http')) {
-    log.info({'course': asset.course_id, 'asset': asset.id}, 'Asset \'' + asset.title + '\' requires no action');
+var moveFileToAmazonS3 = function(item, index, callback) {
+  if (item.download_url) {
+    item.entity_type = 'asset';
+
+  } else if (item.image_url) {
+    item.entity_type = 'whiteboard';
+    item.download_url = item.image_url;
+
+  } else {
+    emphatic('[ERROR] Unrecognized item: ' + JSON.stringify(item));
+    return callback();
+  }
+
+  if (Storage.isS3Uri(item.download_url) || !_.startsWith(item.download_url, 'http')) {
+    log.info({'course': item.course_id, 'id': item.id}, item.entity_type + ' \'' + item.title + '\' requires no action');
     return callback();
 
   } else {
-    log.info({'course': asset.course_id, 'asset': asset.id}, 'Prepare to move asset \'' + asset.title + '\'');
+    log.info({'course': item.course_id, 'id': item.id}, 'Prepare to move ' + item.entity_type + ' \'' + item.title + '\'');
 
-    request(asset.download_url).on('error', function(canvasErr) {
+    request(item.download_url).on('error', function(canvasErr) {
       // Record the error then carry on.
       failures.push([
-        asset.course_id,
-        'asset',
-        asset.id,
-        asset.download_url,
+        item.course_id,
+        item.entity_type,
+        item.id,
+        item.download_url,
         'Canvas responded with error: ' + canvasErr.message
       ]);
-      log.error({'course': asset.course_id, 'asset': asset.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
+      log.error({'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
 
       return callback(canvasErr);
 
     }).on('response', function(res) {
       // Extract the name of the file
-      var filename = 'asset-' + asset.id + '_' + _.split(url.parse(asset.download_url).pathname, '/').pop();
+      var filename = item.entity_type + '-' + item.id + '_' + _.split(url.parse(item.download_url).pathname, '/').pop();
       var filePath = path.join(downloadDir, filename);
+      var storeFunction = item.entity_type === 'asset' ? storeAssetFileInAmazonS3 : storeWhiteboardImageInAmazonS3;
 
-      storeAssetInAmazonS3(asset, res, filePath, function(s3Err) {
+      storeFunction(item, res, filePath, function(s3Err) {
         if (s3Err) {
-          log.error({'course': asset.course_id, 'asset': asset.id, 'err': s3Err.message}, 'Error uploading asset to S3');
+          log.error({'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': s3Err.message}, 'Error uploading file to S3');
 
           return callback(s3Err);
         }
@@ -239,9 +291,9 @@ var moveAsset = function(asset, index, callback) {
  * @param  {Function}     callback         Standard callback function
  * @return {Object}                        Callback result
  */
-var moveFilesToAmazonS3 = function(course, callback) {
+var moveAssetsToAmazonS3 = function(course, callback) {
   // Raw SQL is necessary in order to ignore 'deleted' status.
-  var query = 'SELECT id, course_id, title, type, download_url FROM assets WHERE download_url IS NOT NULL AND type=\'file\' AND course_id=' + course.id;
+  var query = 'SELECT id, course_id, title, type, download_url FROM assets WHERE download_url IS NOT NULL AND type=\'file\' AND download_url LIKE \'http%\' AND download_url NOT LIKE \'%amazonaws%\' AND course_id=' + course.id;
 
   DB.getSequelize().query(query, {'model': DB.Asset}).complete(function(err, assets) {
     if (err) {
@@ -252,7 +304,33 @@ var moveFilesToAmazonS3 = function(course, callback) {
 
     log.info({'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, assets.length + ' assets in course \'' + course.name + '\'');
 
-    async.eachOfSeries(assets, moveAsset, function() {
+    async.eachOfSeries(assets, moveFileToAmazonS3, function() {
+      return callback();
+    });
+  });
+};
+
+/**
+ * Move all course whiteboard files (image_url) from Canvas to Amazon S3
+ *
+ * @param  {Course}       course           Canvas course
+ * @param  {Function}     callback         Standard callback function
+ * @return {Object}                        Callback result
+ */
+var moveWhiteboardImagesToAmazonS3 = function(course, callback) {
+  // Raw SQL is necessary in order to ignore 'deleted' status.
+  var query = 'SELECT id, course_id, title, image_url FROM whiteboards WHERE image_url LIKE \'http%\' AND image_url NOT LIKE \'%amazonaws%\' AND course_id=' + course.id;
+
+  DB.getSequelize().query(query, {'model': DB.Whiteboard}).complete(function(err, whiteboards) {
+    if (err) {
+      log.error({'err': err.message, 'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, 'Failed to fetch whiteboards');
+
+      return callback(err);
+    }
+
+    log.info({'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, whiteboards.length + ' whiteboards in course \'' + course.name + '\'');
+
+    async.eachOfSeries(whiteboards, moveFileToAmazonS3, function() {
       return callback();
     });
   });
@@ -280,27 +358,33 @@ var getCourses = function(opts, callback) {
 };
 
 /**
- * Move file assets of SuiteC course from Canvas to Amazon S3.
+ * Move files of SuiteC course from Canvas to Amazon S3.
  *
  * @param  {Course}           course              The course to update
  * @param  {Number}           index               Index in the list of courses, used to show progress
  * @param  {Function}         callback            Standard callback function
  * @return {Object}                               Return per callback
  */
-var updateCourseAssets = function(course, index, callback) {
+var processCourse = function(course, index, callback) {
   if (Storage.useAmazonS3(course)) {
     log.info({'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, 'Prepare to move course \'' + course.name + '\' files to Amazon S3');
 
     try {
-      moveFilesToAmazonS3(course, function(err) {
+      moveAssetsToAmazonS3(course, function(err) {
         if (err) {
-          log.error({'err': err.message, 'course': course.id}, 'Failed to move some or all course assets (files) to Amazon S3');
-        } else {
-          log.info({'course': course.id}, 'Finished processing course \'' + course.name + '\' without error');
+          log.error({'err': err.message, 'course': course.id}, 'Failed to move some or all course assets to Amazon S3');
         }
-        coursesProcessed.push(course);
 
-        return callback();
+        moveWhiteboardImagesToAmazonS3(course, function(moveErr) {
+          if (moveErr) {
+            log.error({'err': moveErr.message, 'course': course.id}, 'Failed to move some or all course whiteboard images to Amazon S3');
+          }
+
+          coursesProcessed.push(course);
+
+          return callback();
+        });
+
       });
     } catch (uncaughtErr) {
       log.error({'err': uncaughtErr.message}, 'Error during Amazon S3 move operation');
@@ -323,7 +407,7 @@ var updateCourseAssets = function(course, index, callback) {
  * @param  {Object}       [callback.err]                An error that occurred, if any
  * @return {Object}                                     Callback result
  */
-var moveAssets = function(callback) {
+var moveFiles = function(callback) {
   // The date range is exclusive. E.g., created_at must be less than beforeDate, not less than or equal.
   var afterDate = moment(argv.after, 'YYYY-MM-DD').endOf('day').tz(timezone);
   var beforeDate = moment(argv.before, 'YYYY-MM-DD').startOf('day').tz(timezone);
@@ -346,7 +430,7 @@ var moveAssets = function(callback) {
       }
       totalCourseCount = courses.length;
 
-      async.eachOfSeries(courses, updateCourseAssets, function() {
+      async.eachOfSeries(courses, processCourse, function() {
         log.info('Close db connection');
         DB.getSequelize().close();
 
@@ -422,7 +506,7 @@ var perform = function(callback) {
 
         emphatic('IMPORTANT: This script will respect the \'aws.s3.cutoverDate\' config. All courses created before that date will be skipped, regardless of before/after values.');
 
-        moveAssets(function(err) {
+        moveFiles(function(err) {
           if (totalCourseCount === 0) {
             emphatic('No matching courses found.');
 
@@ -440,10 +524,10 @@ var perform = function(callback) {
             }
 
             if (successes.length === 0 && failures.length === 0) {
-              summary += '\n\nWithin the courses considered, no assets (i.e., files) need to be moved from the Canvas filesystem to Amazon S3.';
+              summary += '\n\nWithin the courses considered, no files need to be moved from the Canvas filesystem to Amazon S3.';
             } else {
-              summary += '\n\n' + successes.length + pluralize(successes.length, ' asset', 's') + ' moved to Amazon S3';
-              summary += '\n\n' + failures.length + pluralize(failures.length, ' asset', 's') + ' FAILED to move to Amazon S3';
+              summary += '\n\n' + successes.length + pluralize(successes.length, ' file', 's') + ' moved to Amazon S3';
+              summary += '\n\n' + failures.length + pluralize(failures.length, ' file', 's') + ' FAILED to move to Amazon S3';
             }
 
             emphatic(summary);
