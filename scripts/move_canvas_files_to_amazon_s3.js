@@ -67,11 +67,12 @@ var argv = yargs
 /**
  * Log message and prepend/append line breaks
  *
- * @param  {String}       message            What to log
+ * @param  {String}       message            User-friendly statement
+ * @param  {Object}       [context]          Debug info (e.g., asset id)
  * @return {void}
  */
-var emphatic = function(message) {
-  log.warn('\n' + message + '\n');
+var emphatic = function(message, context) {
+  log.warn('\n' + message + '\n' + (context ? JSON.stringify(context) + '\n' : ''));
 };
 
 /**
@@ -241,7 +242,7 @@ var moveFileToAmazonS3 = function(item, index, callback) {
     item.download_url = item.image_url;
 
   } else {
-    emphatic('[ERROR] Unrecognized item: ' + JSON.stringify(item));
+    emphatic('[ERROR] Unrecognized item:', item);
     return callback();
   }
 
@@ -252,35 +253,50 @@ var moveFileToAmazonS3 = function(item, index, callback) {
   } else {
     log.info({'course': item.course_id, 'id': item.id}, 'Prepare to move ' + item.entity_type + ' \'' + item.title + '\'');
 
-    request(item.download_url).on('error', function(canvasErr) {
-      // Record the error then carry on.
+    try {
+      request(item.download_url).on('error', function(canvasErr) {
+        // Record the error and carry on
+        failures.push([
+          item.course_id,
+          item.entity_type,
+          item.id,
+          item.download_url,
+          'Canvas responded with error: ' + canvasErr.message
+        ]);
+        log.error({'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
+
+        return callback(canvasErr);
+
+      }).on('response', function(res) {
+        // Extract the name of the file
+        var filename = item.entity_type + '-' + item.id + '_' + _.split(url.parse(item.download_url).pathname, '/').pop();
+        var filePath = path.join(downloadDir, filename);
+        var storeFunction = item.entity_type === 'asset' ? storeAssetFileInAmazonS3 : storeWhiteboardImageInAmazonS3;
+
+        storeFunction(item, res, filePath, function(s3Err) {
+          if (s3Err) {
+            log.error({'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': s3Err.message}, 'Error uploading file to S3');
+
+            return callback(s3Err);
+          }
+
+          return callback();
+        });
+      });
+
+    } catch (uncaughtErr) {
+      // Record the error and carry on
+      emphatic('[ERROR] Failed to move file to Amazon S3', {'item': item, 'err': uncaughtErr});
       failures.push([
         item.course_id,
         item.entity_type,
         item.id,
         item.download_url,
-        'Canvas responded with error: ' + canvasErr.message
+        'Error: ' + uncaughtErr.message
       ]);
-      log.error({'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
 
-      return callback(canvasErr);
-
-    }).on('response', function(res) {
-      // Extract the name of the file
-      var filename = item.entity_type + '-' + item.id + '_' + _.split(url.parse(item.download_url).pathname, '/').pop();
-      var filePath = path.join(downloadDir, filename);
-      var storeFunction = item.entity_type === 'asset' ? storeAssetFileInAmazonS3 : storeWhiteboardImageInAmazonS3;
-
-      storeFunction(item, res, filePath, function(s3Err) {
-        if (s3Err) {
-          log.error({'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': s3Err.message}, 'Error uploading file to S3');
-
-          return callback(s3Err);
-        }
-
-        return callback();
-      });
-    });
+      return callback();
+    }
   }
 };
 
@@ -293,7 +309,7 @@ var moveFileToAmazonS3 = function(item, index, callback) {
  */
 var moveAssetsToAmazonS3 = function(course, callback) {
   // Raw SQL is necessary in order to ignore 'deleted' status.
-  var query = 'SELECT id, course_id, title, type, download_url FROM assets WHERE download_url IS NOT NULL AND type=\'file\' AND download_url LIKE \'http%\' AND download_url NOT LIKE \'%amazonaws%\' AND course_id=' + course.id;
+  var query = 'SELECT id, course_id, title, type, download_url FROM assets WHERE download_url IS NOT NULL AND type IN (\'file\', \'whiteboard\') AND download_url LIKE \'http%\' AND download_url NOT LIKE \'%amazonaws%\' AND course_id=' + course.id;
 
   DB.getSequelize().query(query, {'model': DB.Asset}).complete(function(err, assets) {
     if (err) {
@@ -369,32 +385,25 @@ var processCourse = function(course, index, callback) {
   if (Storage.useAmazonS3(course)) {
     log.info({'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, 'Prepare to move course \'' + course.name + '\' files to Amazon S3');
 
-    try {
-      moveAssetsToAmazonS3(course, function(err) {
-        if (err) {
-          log.error({'err': err.message, 'course': course.id}, 'Failed to move some or all course assets to Amazon S3');
+    moveAssetsToAmazonS3(course, function(err) {
+      if (err) {
+        log.error({'err': err.message, 'course': course.id}, 'Failed to move some or all course assets to Amazon S3');
+      }
+
+      moveWhiteboardImagesToAmazonS3(course, function(moveErr) {
+        if (moveErr) {
+          log.error({'err': moveErr.message, 'course': course.id}, 'Failed to move some or all course whiteboard images to Amazon S3');
         }
 
-        moveWhiteboardImagesToAmazonS3(course, function(moveErr) {
-          if (moveErr) {
-            log.error({'err': moveErr.message, 'course': course.id}, 'Failed to move some or all course whiteboard images to Amazon S3');
-          }
+        coursesProcessed.push(course);
 
-          coursesProcessed.push(course);
-
-          return callback();
-        });
-
+        return callback();
       });
-    } catch (uncaughtErr) {
-      log.error({'err': uncaughtErr.message}, 'Error during Amazon S3 move operation');
-
-      return callback(uncaughtErr);
-    }
+    });
 
   } else {
     coursesSkipped.push(course);
-    log.warn({'course': course.id}, 'Skipping course because it does not qualify for Amazon S3 (see config \'aws.s3.cutoverDate\')');
+    log.warn({'course': course.id, 'created_at': course.created_at, 'aws.s3.cutoverDate': config.get('aws.s3.cutoverDate')}, 'Course skipped because \'created_at\' date is before \'aws.s3.cutoverDate\'');
 
     return callback();
   }
@@ -414,7 +423,11 @@ var moveFiles = function(callback) {
 
   var opts = _.merge(whereCreatedAt('after', afterDate), whereCreatedAt('before', beforeDate));
 
-  emphatic(_.isEmpty(opts) ? 'We will fetch ALL courses' : 'Get courses where ' + JSON.stringify(opts));
+  if (_.isEmpty(opts)) {
+    emphatic('We will fetch ALL courses');
+  } else {
+    emphatic('Get courses where:', opts);
+  }
 
   DB.init(function(err) {
     if (err) {
