@@ -226,6 +226,23 @@ var storeWhiteboardImageInAmazonS3 = function(whiteboard, stream, filePath, call
 };
 
 /**
+ * Write failure info to CSV file
+ *
+ * @param  {Object}           item                The item (e.g., asset file) being migrated
+ * @param  {String}           message             Error message
+ * @return {void}
+ */
+var recordFailure = function(item, message) {
+  failures.push([
+    item.course_id,
+    item.entity_type,
+    item.id,
+    item.download_url,
+    message
+  ]);
+};
+
+/**
  * Move file (related to asset or whiteboard) to Amazon S3.
  *
  * @param  {Object}           item                The item to migrate
@@ -263,9 +280,10 @@ var moveFileToAmazonS3 = function(item, index, callback) {
           item.download_url,
           'Canvas responded with error: ' + canvasErr.message
         ]);
-        log.error({'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': canvasErr.message}, 'Error while requesting file from Canvas');
+        emphatic('Error while requesting file from Canvas', {'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': canvasErr.message});
+        recordFailure(item, 'Error: ' + canvasErr.message);
 
-        return callback(canvasErr);
+        return callback();
 
       }).on('response', function(res) {
         // Extract the name of the file
@@ -275,25 +293,20 @@ var moveFileToAmazonS3 = function(item, index, callback) {
 
         storeFunction(item, res, filePath, function(s3Err) {
           if (s3Err) {
-            log.error({'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': s3Err.message}, 'Error uploading file to S3');
-
-            return callback(s3Err);
+            emphatic('Error uploading file to S3', {'course': item.course_id, 'type': item.entity_type, 'id': item.id, 'err': s3Err.message});
+            recordFailure(item, 'Error: ' + s3Err.message);
           }
-
-          return callback();
+          // Delete temp file
+          fs.unlink(filePath, function() {
+            return callback();
+          });
         });
       });
 
     } catch (uncaughtErr) {
       // Record the error and carry on
       emphatic('[ERROR] Failed to move file to Amazon S3', {'item': item, 'err': uncaughtErr});
-      failures.push([
-        item.course_id,
-        item.entity_type,
-        item.id,
-        item.download_url,
-        'Error: ' + uncaughtErr.message
-      ]);
+      recordFailure(item, 'Error: ' + uncaughtErr.message);
 
       return callback();
     }
@@ -506,7 +519,7 @@ var perform = function(callback) {
 
     mkdir(csvDirectory, function(csvDirErr) {
       if (csvDirErr) {
-        log.error({'downloadDir': csvDirectory, 'err': csvDirErr}, 'Failed to create target CSV directory');
+        log.error({'csvDirectory': csvDirectory, 'err': csvDirErr}, 'Failed to create target CSV directory');
         return callback();
       }
       mkdir(downloadDir, function(mkdirErr) {
@@ -517,6 +530,7 @@ var perform = function(callback) {
           log.info('CSV files will be written to ' + csvDirectory);
         }
 
+        log.info('We will use temp directory for downloads: ' + downloadDir);
         emphatic('IMPORTANT: This script will respect the \'aws.s3.cutoverDate\' config. All courses created before that date will be skipped, regardless of before/after values.');
 
         moveFiles(function(err) {
