@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function(analyticsService, me, $cookies, $location, $q, $timeout) {
+  angular.module('collabosphere').service('utilService', function(analyticsService, me, $cookies, $location, $q, $sce, $timeout) {
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
@@ -503,18 +503,45 @@
       });
     };
 
+    /**
+     * @param  {Object}               asset         Asset being viewed by user
+     * @return {String}                             URL to download asset file
+     */
+    var getDownloadUrl = function(asset) {
+      return getApiUrl('/assets/' + asset.id + '/download');
+    };
+
+    /**
+     * @param  {Object}     asset         Asset being viewed by user
+     * @return {String}                   Fully qualified URL if asset mime-type is video; otherwise null.
+     */
+    var getVideoUrl = function(asset) {
+      var url = null;
+      if (_.startsWith(asset.mime, 'video/')) {
+        if (asset.preview_metadata.converted_video) {
+          url = asset.preview_metadata.converted_video;
+        } else {
+          url = getDownloadUrl(asset);
+        }
+        url = url && $sce.trustAsResourceUrl(url);
+      }
+      return url;
+    };
+
     return {
       'appendOrdinalSuffix': appendOrdinalSuffix,
       'buildSearchResultsMessage': buildSearchResultsMessage,
       'getAdvancedSearchId': getAdvancedSearchId,
       'getApiUrl': getApiUrl,
       'getColorConstants': getColorConstants,
+      'getDownloadUrl': getDownloadUrl,
       'getLaunchParams': getLaunchParams,
       'getParentUrlData': getParentUrlData,
       'getScrollInformation': getScrollInformation,
       'getScrollPosition': getScrollPosition,
       'getToolHref': getToolHref,
       'getToolUrl': getToolUrl,
+      'getVideoUrl': getVideoUrl,
       'narrowSearchPerSort': narrowSearchPerSort,
       'resizeIFrame': resizeIFrame,
       'scrollTo': scrollTo,
