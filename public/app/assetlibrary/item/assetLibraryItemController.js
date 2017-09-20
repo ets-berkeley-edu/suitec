@@ -78,6 +78,8 @@
     // in the hosting Canvas instance.
     utilService.setParentHash({'asset': assetId});
 
+    $scope.getDownloadUrl = utilService.getDownloadUrl;
+
     /**
      * Get the current asset
      *
@@ -96,7 +98,7 @@
             if (asset.pdf_url) {
               asset.embedUrl = '/viewer/viewer.html?file=' + encodeURIComponent(asset.pdf_url);
             } else if (asset.mime && asset.mime.lastIndexOf('video') === 0 && asset.image_url !== null && asset.download_url !== null) {
-              asset.video_url = $sce.trustAsResourceUrl(asset.preview_metadata.converted_video || asset.download_url);
+              asset.video_url = utilService.getVideoUrl(asset);
               asset.height = asset.preview_metadata.image_height;
               asset.width = asset.preview_metadata.image_width;
             }
@@ -165,14 +167,6 @@
         // Indicate that the asset has been updated
         $scope.$emit('assetLibraryAssetUpdated', $scope.asset);
       });
-    };
-
-    /**
-     * @param  {Object}               asset         Asset being viewed by user
-     * @return {String}                             URL to download asset file
-     */
-    $scope.getDownloadUrl = function(asset) {
-      return utilService.getApiUrl('/assets/' + assetId + '/download');
     };
 
     /**
