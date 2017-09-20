@@ -28,6 +28,10 @@ git clone git://github.com/ets-berkeley-edu/suitec.git
 
 ## Dependencies
 
+### Canvas
+
+On the [Canvas LMS github README](https://github.com/instructure/canvas-lms) page, go to *Installation > Quick Start*. Follow those instructions to get Canvas LMS running on *http://localhost:3000*.
+
 ### Apache
 
 Apache setup is described in the [SuiteC configuration](docs/configuration.md) doc.
