@@ -7,7 +7,6 @@
     "s3": {
       "awsSdkPackage": "aws-sdk",
       "bucket": "s3-bucket-development",
-      "cutoverDate": "2017-08-14",
       "region": "us-west-2",
       "version": "2006-03-01"
     }

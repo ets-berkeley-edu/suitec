@@ -44,7 +44,6 @@ var MigrateAssetsAPI = require('col-assets/lib/migrate');
 var Storage = require('col-core/lib/storage');
 
 var coursesProcessed = [];
-var coursesSkipped = [];
 var downloadDir = path.join(os.tmpdir(), Date.now().toString());
 var failures = [];
 var successes = [];
@@ -395,31 +394,23 @@ var getCourses = function(opts, callback) {
  * @return {Object}                               Return per callback
  */
 var processCourse = function(course, index, callback) {
-  if (Storage.useAmazonS3(course)) {
-    log.info({'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, 'Prepare to move course \'' + course.name + '\' files to Amazon S3');
+  log.info({'course': course.id, 'canvas_api_domain': course.canvas_api_domain}, 'Prepare to move course \'' + course.name + '\' files to Amazon S3');
 
-    moveAssetsToAmazonS3(course, function(err) {
-      if (err) {
-        log.error({'err': err.message, 'course': course.id}, 'Failed to move some or all course assets to Amazon S3');
+  moveAssetsToAmazonS3(course, function(err) {
+    if (err) {
+      log.error({'err': err.message, 'course': course.id}, 'Failed to move some or all course assets to Amazon S3');
+    }
+
+    moveWhiteboardImagesToAmazonS3(course, function(moveErr) {
+      if (moveErr) {
+        log.error({'err': moveErr.message, 'course': course.id}, 'Failed to move some or all course whiteboard images to Amazon S3');
       }
 
-      moveWhiteboardImagesToAmazonS3(course, function(moveErr) {
-        if (moveErr) {
-          log.error({'err': moveErr.message, 'course': course.id}, 'Failed to move some or all course whiteboard images to Amazon S3');
-        }
+      coursesProcessed.push(course);
 
-        coursesProcessed.push(course);
-
-        return callback();
-      });
+      return callback();
     });
-
-  } else {
-    coursesSkipped.push(course);
-    log.warn({'course': course.id, 'created_at': course.created_at, 'aws.s3.cutoverDate': config.get('aws.s3.cutoverDate')}, 'Course skipped because \'created_at\' date is before \'aws.s3.cutoverDate\'');
-
-    return callback();
-  }
+  });
 };
 
 /**
@@ -531,7 +522,6 @@ var perform = function(callback) {
         }
 
         log.info('We will use temp directory for downloads: ' + downloadDir);
-        emphatic('IMPORTANT: This script will respect the \'aws.s3.cutoverDate\' config. All courses created before that date will be skipped, regardless of before/after values.');
 
         moveFiles(function(err) {
           if (totalCourseCount === 0) {
@@ -546,9 +536,6 @@ var perform = function(callback) {
             }
             summary += '\n\n' + totalCourseCount + pluralize(coursesProcessed, ' course', 's') + ' were considered';
             summary += '\n\n' + coursesProcessed.length + pluralize(coursesProcessed, ' course', 's') + ' processed';
-            if (coursesSkipped.length > 0) {
-              summary += '\n\n' + coursesSkipped.length + pluralize(coursesSkipped, ' course', 's') + ' skipped (check value of config \'aws.s3.cutoverDate\')';
-            }
 
             if (successes.length === 0 && failures.length === 0) {
               summary += '\n\nWithin the courses considered, no files need to be moved from the Canvas filesystem to Amazon S3.';
