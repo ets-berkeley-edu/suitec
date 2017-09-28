@@ -27,7 +27,7 @@
     "fontawesome": "4.4.0",
     "highcharts-release": "4.1.10",
     "lodash": "4.17.4",
-    "moment": "2.10.6",
+    "moment": "2.18.1",
     "ng-device-detector": "1.1.9",
     "ng-file-upload": "7.0.17",
     "ng-file-upload-shim": "~7.0.x",
