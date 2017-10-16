@@ -49,6 +49,13 @@ dest_db=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/${dest_suitec}.
 dest_user=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/${dest_suitec}.json').db.username || '')"`
 dest_password=`node -e "console.log(require('${SUITEC_BASE_DIR}/config/${dest_suitec}.json').db.password || '')"`
 
+# Exit if dest_host URL looks like a prod URL
+[[ "${dest_host}" == *"-prod"* ]] && {
+  echo "[ERROR] Value of 'db.host' in ${dest_suitec}.json contains substring '-prod'. Abort in fear of writing to a production database."; echo
+  echo_usage
+  exit 1
+}
+
 # Validate parsed connection info.
 [[ "${source_host}" && "${source_port}" && "${source_db}" && "${source_user}" && "${source_password}" ]] || {
   echo "[ERROR] Complete source database connection information not found in local suitec-prod.json."; echo
