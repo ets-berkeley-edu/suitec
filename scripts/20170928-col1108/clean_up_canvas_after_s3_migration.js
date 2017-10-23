@@ -47,13 +47,15 @@ var timezone = config.get('timezone');
 var totalCourseCount = 0;
 
 var argv = yargs
-  .usage('Usage: node $0 --after [YYYY-MM-DD] --before [YYYY-MM-DD] --csv_directory /writable/dir/for/csv-files/')
+  .usage('Usage: node $0 [--after YYYY-MM-DD] [--before YYYY-MM-DD] [--id 123] --csv_directory /writable/dir/for/csv-files/')
   .demand([ 'csv_directory' ])
   .describe('after', 'Courses created after this date are eligible')
   .describe('before', 'Courses created before this date are eligible')
+  .describe('id', 'The SuiteC course id to process')
   .describe('csv_directory', 'Output directory (CSV files)')
   .alias('a', 'after')
   .alias('b', 'before')
+  .alias('i', 'id')
   .alias('c', 'csv_directory')
   .help('h')
   .alias('h', 'help')
@@ -335,11 +337,18 @@ var getCourses = function(opts, callback) {
  * @return {Object}                                     Callback result
  */
 var cleanUpCanvasFilesystem = function(callback) {
-  // The date range is exclusive. E.g., created_at must be less than beforeDate, not less than or equal.
-  var afterDate = moment(argv.after, 'YYYY-MM-DD').endOf('day').tz(timezone);
-  var beforeDate = moment(argv.before, 'YYYY-MM-DD').startOf('day').tz(timezone);
+  var opts = {};
 
-  var opts = _.merge(whereCreatedAt('after', afterDate), whereCreatedAt('before', beforeDate));
+  if (argv.id) {
+    opts = {id: argv.id};
+
+  } else {
+    // The date range is exclusive. E.g., created_at must be less than beforeDate, not less than or equal.
+    var afterDate = moment(argv.after, 'YYYY-MM-DD').endOf('day').tz(timezone);
+    var beforeDate = moment(argv.before, 'YYYY-MM-DD').startOf('day').tz(timezone);
+
+    opts = _.merge(whereCreatedAt('after', afterDate), whereCreatedAt('before', beforeDate));
+  }
 
   if (_.isEmpty(opts)) {
     emphatic('We will fetch ALL courses');
@@ -417,6 +426,8 @@ var perform = function(callback) {
         writeCsv(failures, path.join(csvDirectory, timestamp + '_FAILURE_clean-up-canvas.csv'), 'failures');
         writeCsv(notFound, path.join(csvDirectory, timestamp + '_NOTFOUND_clean-up-canvas.csv'), 'notFound');
         writeCsv(successes, path.join(csvDirectory, timestamp + '_SUCCESS_clean-up-canvas.csv'), 'successes');
+
+        return callback();
       });
     });
   });
