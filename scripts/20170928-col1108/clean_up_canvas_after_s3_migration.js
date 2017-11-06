@@ -193,21 +193,22 @@ var getCanvasBaseURI = function(canvas) {
 };
 
 /**
- * Remove course's obsolete files
+ * Attempt to delete obsolete Canvas folder
  *
- * @param  {Course}           course              The course to update
- * @param  {Number}           index               Index in the list of courses, used to show progress
- * @param  {Function}         callback            Standard callback function
- * @return {Object}                               Return per callback
+ * @param  {Course}           course                    The course to update
+ * @param  {Number}           folderName                Name of hidden SuiteC folder (we expect '_suitec' or '_collabosphere')
+ * @param  {Function}         callback                  Standard callback function
+ * @param  {Object}           [callback.err]            An error that occurred, if any
+ * @param  {Object}           [callback.responseCode]   HTTP response code from Canvas
+ * @return {Object}                                     Callback return
  */
-var deleteCanvasFolderPerCourse = function(course, index, callback) {
+var deleteCanvasFolderPerCourse = function(course, folderName, callback) {
   log.info({
     'course': course.id,
     'canvas_course_id': course.canvas_course_id,
     'canvas_api_domain': course.canvas_api_domain
   }, 'Prepare to clean up course \'' + course.name + '\'');
 
-  var folderName = '_suitec';
   var getFolderUrl = util.format('%s/api/v1/courses/%d/folders/by_path/%s',
     getCanvasBaseURI(course.canvas),
     course.canvas_course_id,
@@ -221,9 +222,18 @@ var deleteCanvasFolderPerCourse = function(course, index, callback) {
   };
 
   request(getFolderOpts, function(err, response, body) {
-    if (err) {
+    if (response.statusCode === 404) {
+      log.info({
+        'course': course.id,
+        'canvas_course_id': course.canvas_course_id
+      }, folderName + ' folder does not exist');
+
+      return callback(err, response.statusCode);
+
+    } else if (err) {
       log.error({
         'err': err,
+        'responseStatus': response.statusCode,
         'course': course.id,
         'canvas_course_id': course.canvas_course_id,
         'folderName': folderName
@@ -231,18 +241,7 @@ var deleteCanvasFolderPerCourse = function(course, index, callback) {
 
       recordFailure(course, 'Err: ' + err.message);
 
-      return callback();
-
-    } else if (response.statusCode === 404) {
-      log.info({
-        'course': course.id,
-        'canvas_course_id': course.canvas_course_id,
-        'folderName': folderName
-      }, 'Canvas folder not found for course');
-
-      notFound.push([course.id, course.canvas_course_id, course.name]);
-
-      return callback();
+      return callback(err, response.statusCode);
 
     } else if (response.statusCode !== 200) {
       log.error({
@@ -254,18 +253,21 @@ var deleteCanvasFolderPerCourse = function(course, index, callback) {
 
       recordFailure(course, 'Unexpected status code: ' + response.statusCode);
 
-      return callback();
+      return callback(err, response.statusCode);
     }
 
     var folderInfo = null;
     try {
       folderInfo = JSON.parse(body);
     } catch (parseErr) {
-      log.error({'err': parseErr, 'course': course.id}, 'Failed to parse Canvas response');
+      log.error({
+        'err': parseErr,
+        'course': course.id
+      }, 'Failed to parse Canvas response');
 
       recordFailure(course, 'Failed to parse Canvas response. Parse err: ' + parseErr.message);
 
-      return callback();
+      return callback(parseErr, response.statusCode);
     }
 
     var folderId = _.last(folderInfo).id;
@@ -290,21 +292,65 @@ var deleteCanvasFolderPerCourse = function(course, index, callback) {
 
     request(opts, function(deleteErr, deleteResponse, deleteBody) {
       if (deleteErr) {
-        log.error({'err': deleteErr, 'course': course.id}, 'Failed to delete folder in Canvas');
+        log.error({
+          'err': deleteErr,
+          'responseStatus': deleteResponse.statusCode,
+          'course': course.id
+        }, 'Failed to delete folder in Canvas');
         recordFailure(course, 'Err: ' + deleteErr.message);
-        return callback();
+
+        return callback(deleteErr, deleteResponse.statusCode);
 
       } else if (deleteResponse.statusCode !== 200) {
-        log.error({'response': deleteResponse, 'course': course.id}, 'Failed to delete folder in Canvas');
+        log.error({
+          'response': deleteResponse,
+          'course': course.id
+        }, 'Failed to delete folder in Canvas');
         recordFailure(course, 'Response: ' + deleteResponse.body);
-        return callback();
+
+        return callback(null, deleteResponse.statusCode);
       }
-      log.info({'course': course.id, 'name': course.name}, 'Successfully cleaned up course');
+      log.info({
+        'course': course.id,
+        'name': course.name
+      }, 'Successfully cleaned up course');
 
       successes.push([course.id, course.canvas_course_id, course.name]);
 
-      return callback();
+      return callback(null, deleteResponse.statusCode);
     });
+  });
+};
+
+/**
+ * Attempt to delete obsolete Canvas folder(s)
+ *
+ * @param  {Course}           course             Course with valid canvas_course_id
+ * @param  {Number}           index              Indicates progress in list of all courses
+ * @param  {Function}         callback           Standard callback function
+ * @return {Object}                              Callback return
+ */
+var deleteObsoleteCanvasFolders = function(course, index, callback) {
+  deleteCanvasFolderPerCourse(course, '_suitec', function(err, responseCode) {
+    // If err is non-null then info was logged/recorded in deleteCanvasFolderPerCourse().
+    if (responseCode === 404) {
+      log.warn({'course': course.id}, 'No \'_suitec\' folder found so we check for a \'_collabosphere\' folder.');
+
+      // Retry with old naming scheme. (Legacy course sites might have '_collabosphere'.)
+      deleteCanvasFolderPerCourse(course, '_collabosphere', function(errAgain, nextResponseCode) {
+        if (nextResponseCode === 404) {
+          log.warn({'course': course.id}, 'No \'_collabosphere\' folder found.');
+          // The 404 will be written to final 'notFound' report
+          notFound.push([course.id, course.canvas_course_id, course.name]);
+        }
+
+        return callback();
+      });
+
+    } else {
+      // Folder was found and the success (or failure) was recorded in deleteCanvasFolderPerCourse().
+      return callback();
+    }
   });
 };
 
@@ -370,7 +416,7 @@ var cleanUpCanvasFilesystem = function(callback) {
       }
       totalCourseCount = courses.length;
 
-      async.eachOfSeries(courses, deleteCanvasFolderPerCourse, function() {
+      async.eachOfSeries(courses, deleteObsoleteCanvasFolders, function() {
         log.info('Close db connection');
         DB.getSequelize().close();
 
@@ -413,7 +459,7 @@ var perform = function(callback) {
             summary += '\n\nNo Canvas filesystem cleanup is necessary.';
           } else {
             summary += '\n\n' + failures.length + pluralize(failures.length, ' course', 's') + ' FAILED';
-            summary += '\n\n' + notFound.length + pluralize(notFound.length, ' course', 's') + ' did not have _suitec folder (NOT FOUND)';
+            summary += '\n\n' + notFound.length + pluralize(notFound.length, ' course', 's') + ' had neither \'_suitec\' nor \'_collabosphere\' folder';
             summary += '\n\n' + successes.length + pluralize(successes.length, ' course', 's') + ' cleaned up in Canvas';
           }
 
