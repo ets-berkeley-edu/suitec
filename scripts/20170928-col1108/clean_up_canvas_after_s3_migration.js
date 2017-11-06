@@ -251,7 +251,7 @@ var deleteCanvasFolderPerCourse = function(course, folderName, callback) {
         'folderName': folderName
       }, 'Failed to check existence of Canvas folder; unexpected status code');
 
-      recordFailure(course, 'Unexpected status code: ' + response.statusCode);
+      recordFailure(course, 'Unexpected response status: ' + response.statusCode);
 
       return callback(err, response.statusCode);
     }
@@ -279,6 +279,7 @@ var deleteCanvasFolderPerCourse = function(course, folderName, callback) {
       folderName));
 
     var deleteFolderUrl = util.format('%s/api/v1/folders/%d', getCanvasBaseURI(course.canvas), folderId);
+    var readTimeout = config.get('canvasPoller.timeout') * 1000;
     var opts = {
       'url': deleteFolderUrl,
       'method': 'DELETE',
@@ -287,7 +288,8 @@ var deleteCanvasFolderPerCourse = function(course, folderName, callback) {
       },
       'qs': {
         'force': 'true'
-      }
+      },
+      'timeout': readTimeout
     };
 
     request(opts, function(deleteErr, deleteResponse, deleteBody) {
@@ -302,13 +304,18 @@ var deleteCanvasFolderPerCourse = function(course, folderName, callback) {
         return callback(deleteErr, deleteResponse.statusCode);
 
       } else if (deleteResponse.statusCode !== 200) {
+        var statusErr = {
+          'message': 'Failed to delete folder in Canvas. Unexpected response status: ' + deleteResponse.statusCode
+        };
+
+        // Record info in the failures report
+        recordFailure(course, statusErr.message);
         log.error({
           'response': deleteResponse,
           'course': course.id
-        }, 'Failed to delete folder in Canvas');
-        recordFailure(course, 'Response: ' + deleteResponse.body);
+        }, statusErr.message);
 
-        return callback(null, deleteResponse.statusCode);
+        return callback(statusErr, deleteResponse.statusCode);
       }
       log.info({
         'course': course.id,
