@@ -339,25 +339,20 @@ var deleteCanvasFolderPerCourse = function(course, folderName, callback) {
  */
 var deleteObsoleteCanvasFolders = function(course, index, callback) {
   deleteCanvasFolderPerCourse(course, '_suitec', function(err, responseCode) {
-    // If err is non-null then info was logged/recorded in deleteCanvasFolderPerCourse().
-    if (responseCode === 404) {
-      log.warn({'course': course.id}, 'No \'_suitec\' folder found so we check for a \'_collabosphere\' folder.');
+    log.info({'course': course.id}, 'Next, check for a \'_collabosphere\' folder.');
 
-      // Retry with old naming scheme. (Legacy course sites might have '_collabosphere'.)
-      deleteCanvasFolderPerCourse(course, '_collabosphere', function(errAgain, nextResponseCode) {
-        if (nextResponseCode === 404) {
-          log.warn({'course': course.id}, 'No \'_collabosphere\' folder found.');
-          // The 404 will be written to final 'notFound' report
-          notFound.push([course.id, course.canvas_course_id, course.name]);
-        }
+    // Legacy course sites might have '_collabosphere'.
+    deleteCanvasFolderPerCourse(course, '_collabosphere', function(errAgain, nextResponseCode) {
 
-        return callback();
-      });
+      // If no folder is found then record the 404 in the 'notFound' report
+      if (responseCode === 404 && nextResponseCode === 404) {
+        log.warn({'course': course.id}, 'Neither \'_suitec\' nor \'_collabosphere\' folder found for course.');
 
-    } else {
-      // Folder was found and the success (or failure) was recorded in deleteCanvasFolderPerCourse().
+        notFound.push([course.id, course.canvas_course_id, course.name]);
+      }
+
       return callback();
-    }
+    });
   });
 };
 
