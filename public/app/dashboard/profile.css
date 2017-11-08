@@ -222,6 +222,80 @@
   display: flex;
 }
 
+.profile-activity-network .links line {
+  opacity: 0.3;
+  stroke: #999;
+}
+
+.profile-activity-network .node {
+  fill: #aaa;
+}
+
+.profile-activity-network .node circle {
+  cursor: pointer;
+  stroke-width: 2;
+}
+
+.profile-activity-network .node text {
+  font: 11px helvetica;
+  font-weight: 400;
+  stroke: none;
+  text-anchor: middle;
+}
+
+.profile-activity-network .node-connected circle {
+  opacity: 1;
+  stroke: #999;
+}
+
+.profile-activity-network .node-connected text {
+  fill: #666;
+}
+
+.profile-activity-network .node-unconnected circle {
+  opacity: 0.4;
+  stroke: #aaa;
+}
+
+.profile-activity-network .node-unconnected text {
+  fill: #bbb;
+}
+
+.profile-activity-network-container {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.profile-activity-network-controls {
+  margin-top: 15px;
+}
+
+.profile-activity-network-controls-label {
+  font-size: 13px;
+  font-weight: 300;
+  padding-right: 15px;
+}
+
+.profile-activity-network-controls-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.profile-activity-network-tooltip {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #666;
+  font: 14px sans-serif;
+  height: 300px;
+  line-height: 1.4em;
+  opacity: 1;
+  padding: 2px;
+  position: absolute;
+  text-align: center;
+  width: 275px;
+}
+
 .profile-activity-timeline-legend {
   padding-top: 60px;
   width: 124px;

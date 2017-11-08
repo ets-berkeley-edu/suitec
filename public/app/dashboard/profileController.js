@@ -85,6 +85,11 @@
       }
     };
 
+    $scope.interactions = {
+      linkTypes: [],
+      nodes: []
+    };
+
     $scope.$watch('browse.searchedUserId', function() {
       if ($scope.browse.searchedUserId) {
         analyticsService.track('Search for user profile', {
@@ -398,6 +403,14 @@
       // Allow for searching and browsing of other users
       userFactory.getAllUsers(false).then(function(response) {
         var users = response.data;
+
+        // Load interaction data for the course
+        profileFactory.getInteractionsForCourse().then(function(interactionsResponse) {
+          $scope.interactions = {
+            'nodes': users,
+            'linkTypes': interactionsResponse.data
+          };
+        });
 
         // If user count is less than two (2) then exclude search/browse feature
         var count = $scope.userCount = users.length;
