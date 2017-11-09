@@ -1,0 +1,8 @@
+<svg id="profile-activity-network" class="profile-activity-network"></svg>
+<form id="profile-activity-network-controls" class="profile-activity-network-controls">
+  <div class="profile-activity-network-controls-title">Collaboration activities:</div>
+  <label class="profile-activity-network-controls-label" ng-repeat="(type, enabled) in interactionTypesEnabled">
+    <input type="checkbox" data-ng-model="interactionTypesEnabled[type]" data-ng-change="restartLinks()">
+    <span data-ng-bind="type"></span>
+  </label>
+</form>

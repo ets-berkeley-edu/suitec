@@ -50,9 +50,20 @@
       return $http.get(utilService.getApiUrl(path));
     };
 
+    /**
+     * Get interaction data for a user
+     *
+     * @return {Promise}                          $http promise
+     */
+    var getInteractionsForCourse = function() {
+      var path = '/activities/interactions';
+      return $http.get(utilService.getApiUrl(path));
+    };
+
     return {
       'editProfile': editProfile,
-      'getActivitiesForUser': getActivitiesForUser
+      'getActivitiesForUser': getActivitiesForUser,
+      'getInteractionsForCourse': getInteractionsForCourse
     };
   });
 

@@ -98,6 +98,17 @@
     </div>
   </div>
 
+  <!-- ACTIVITY NETWORK -->
+  <div class="profile-activity-network-container">
+  <h3 class="profile-section-header">Activity Network</h3>
+  <div class="profile-subheader-explanatory">See how you and others are connected.</div>
+    <activity-network data-interactions="interactions"
+                      data-load-profile-by-id="loadProfileById"
+                      data-me="me"
+                      data-user="user">
+    </activity-network>
+  </div>
+
   <!-- ACTIVITY TIMELINE -->
   <div data-ng-if="user.activity">
     <h3 class="profile-section-header">Activity Timeline</h3>
