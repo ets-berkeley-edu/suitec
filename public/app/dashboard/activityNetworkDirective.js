@@ -68,6 +68,7 @@
         var simulation = d3.forceSimulation();
         simulation.force('link', d3.forceLink().id(function(d) { return d.id; }));
         simulation.force('collide', d3.forceCollide(30));
+        simulation.alphaDecay(0.01);
 
         scope.$watchGroup(['interactions', 'user'], function() {
           // Clear any existing elements within the SVG and re-initialize.
@@ -288,15 +289,16 @@
             restart(0.1);
           };
 
-          // Size force diagram to window, resizing as necessary.
+          // Size force diagram to window, accounting for course size and resizing as necessary.
+          var activityNetworkArea = 3000 * scope.interactions.nodes.length;
           var activityNetworkWidth;
           var activityNetworkHeight;
 
           var sizeAndRestart = function() {
             activityNetworkWidth = controlsForm.node().getBoundingClientRect().width;
-            activityNetworkHeight = 300;
+            activityNetworkHeight = Math.max((activityNetworkArea / activityNetworkWidth), 250);
             svg.attr('width', activityNetworkWidth).attr('height', activityNetworkHeight);
-            simulation.force('charge', d3.forceManyBody().strength(-activityNetworkWidth));
+            simulation.force('charge', d3.forceManyBody().strength(-0.1 * Math.sqrt(activityNetworkWidth * activityNetworkHeight)));
             simulation.force('center', d3.forceCenter(activityNetworkWidth / 2, activityNetworkHeight / 2));
             restart(0.6);
           };
