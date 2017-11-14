@@ -1,29 +1,36 @@
 <div>
-  <h3>Activity Connections</h3>
-  <table>
-    <tr>
-      <th></th>
-      <th data-ng-bind="user.canvas_full_name"></th>
-      <th data-ng-bind="selectedUser.canvas_full_name"></th>
-    </th>
-    <tr data-ng-repeat="(interactionType, enabled) in interactionTypesEnabled" data-ng-if="enabled">
-      <td data-ng-bind="interactionType"></td>
-      <td>
-        x
-        <i class="fa fa-long-arrow-right"></i>
-      </td>
-      <td>
-        <i class="fa fa-long-arrow-left"></i>
-        y
-      </td>
-    </tr>
-  </table>
-  <div>
-    <button type="button" class="btn btn-link" data-ng-click="switchUser(selectedUser)">
-      View <span data-ng-bind="selectedUser.canvas_full_name"></span>'s profile
-    </button>
-  </div>
-  <div>
-    Last activity: July 14, 1789
+  <h4 class="profile-activity-network-tooltip-header">Activity Connections</h4>
+  <div class="profile-activity-network-tooltip-inner">
+    <table class="profile-activity-network-tooltip-table" data-ng-if="interactionCounts">
+      <tr>
+        <th></th>
+        <th class="profile-activity-network-tooltip-table-header text-right" data-ng-bind="user.canvas_full_name.split(' ')[0]"></th>
+        <th></th>
+        <th></th>
+        <th class="profile-activity-network-tooltip-table-header text-left" data-ng-bind="selectedUser.canvas_full_name"></th>
+      </th>
+      <tr data-ng-repeat="interactionType in interactionTypesEnabled | pickKeys track by $index"
+          data-ng-class-odd="'profile-activity-network-tooltip-table-odd'">
+        <td data-ng-bind="interactionType" class="profile-activity-network-tooltip-table-interaction-type"></td>
+        <td class="profile-activity-network-tooltip-table-value text-right"
+            data-ng-bind="interactionCounts.left[interactionType]"></td>
+        <td class="profile-activity-network-tooltip-table-value">
+          <i class="fa fa-long-arrow-right" data-ng-if="interactionCounts.left[interactionType]"></i>
+        </td>
+        <td class="profile-activity-network-tooltip-table-value">
+          <i class="fa fa-long-arrow-left" data-ng-if="interactionCounts.right[interactionType]"></i>
+        </td>
+        <td class="profile-activity-network-tooltip-table-value text-left"
+            data-ng-bind="interactionCounts.right[interactionType]"></td>
+      </tr>
+    </table>
+    <div class="profile-activity-network-tooltip-footer">
+      <button type="button" class="btn btn-link profile-activity-network-tooltip-profile-link" data-ng-click="switchUser(selectedUser)">
+        View <span data-ng-bind="selectedUser.canvas_full_name"></span>'s profile
+      </button>
+      Last activity:
+      <span data-ng-if="selectedUser.last_activity">{{selectedUser.last_activity | formatDate}}</span>
+      <span data-ng-if="!selectedUser.last_activity">Never</span>
+    </div>
   </div>
 </div>

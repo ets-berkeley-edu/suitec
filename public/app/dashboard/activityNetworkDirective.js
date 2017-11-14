@@ -125,7 +125,7 @@
 
               var linkKey;
               var direction;
-              if (link.source > link.target) {
+              if (link.source < link.target) {
                 linkKey = link.source + ',' + link.target;
                 direction = 'up';
               } else {
@@ -188,12 +188,62 @@
             container.selectAll('.profile-activity-network-tooltip').remove();
 
             if (scope.selectedUser.id !== scope.user.id) {
-              // The tooltip starts out hidden...
+              // Calculate interaction totals between the selected users.
+              var interactionsLeft;
+              var interactionsRight;
+              if (scope.user.id < scope.selectedUser.id) {
+                var linksBetweenUsers = linksByIds[scope.user.id + ',' + scope.selectedUser.id];
+                if (linksBetweenUsers) {
+                  interactionsLeft = linksBetweenUsers.up || {};
+                  interactionsRight = linksBetweenUsers.down || {};
+                }
+              } else {
+                var linksBetweenUsers = linksByIds[scope.selectedUser.id + ',' + scope.user.id];
+                if (linksBetweenUsers) {
+                  interactionsLeft = linksBetweenUsers.down || {};
+                  interactionsRight = linksBetweenUsers.up || {};
+                }
+              }
+
+              if (interactionsLeft || interactionsRight) {
+                scope.interactionCounts = {
+                  'left': {},
+                  'right': {}
+                };
+                _.forOwn(INTERACTION_TYPES, function(typesList, interactionLabel) {
+                  scope.interactionCounts.left[interactionLabel] = 0;
+                  scope.interactionCounts.right[interactionLabel] = 0;
+                  _.forEach(typesList, function(typeKey) {
+                    scope.interactionCounts.left[interactionLabel] += (interactionsLeft[typeKey] || 0);
+                    scope.interactionCounts.right[interactionLabel] += (interactionsRight[typeKey] || 0);
+                  });
+                });
+              } else {
+                scope.interactionCounts = null;
+              }
+
+              // Position tooltip and arrow; orientation will depend on location within the chart.
+              var containerHeight = container.node().getBoundingClientRect().height;
+              var tooltipOrientation = (scope.selectedUser.x < 240) ? 'left' : 'right';
+
               var tooltip = container.append('div')
-                .attr('class', 'profile-activity-network-tooltip')
-                .style('left', (scope.selectedUser.x - 60) + 'px')
-                .style('top', (scope.selectedUser.y - 275) + 'px')
-                .style('opacity', 0);
+                .attr('class', ('profile-activity-network-tooltip profile-activity-network-tooltip-' + tooltipOrientation))
+                .style('bottom', (containerHeight - (scope.selectedUser.y + 50)) + 'px');
+
+              if (tooltipOrientation === 'left') {
+                tooltip.style('left', (scope.selectedUser.x - 30) + 'px');
+              } else {
+                tooltip.style('right', (activityNetworkWidth - scope.selectedUser.x - 30) + 'px');
+              }
+
+              // The tooltip starts out hidden...
+              tooltip.style('opacity', 0);
+              tooltip.append(function() {
+                var tooltipDiv = document.createElement('div');
+                tooltipDiv.innerHTML = $templateCache.get('/app/dashboard/activityNetworkTooltip.html');
+                $compile(tooltipDiv)(scope);
+                return tooltipDiv;
+              });
 
               // ...and transitions to visible.
               tooltip.transition(d3.transition().duration(100).ease(d3.easeLinear))
@@ -201,14 +251,6 @@
                   tooltip.style('display', 'block');
                 })
                 .style('opacity', 1);
-
-              // Compile the tooltip template.
-              tooltip.append(function() {
-                var tooltipDiv = document.createElement('div');
-                tooltipDiv.innerHTML = $templateCache.get('/app/dashboard/activityNetworkTooltip.html');
-                $compile(tooltipDiv)(scope);
-                return tooltipDiv;
-              });
 
               // Cancel pending fadeout if hovering over tooltip.
               tooltip.on('mouseenter', function() {
@@ -373,6 +415,16 @@
           sizeAndRestart();
         });
       }
+    };
+  });
+
+  /**
+   * Given an object, return an array of those keys which have truthy values. Used in the tooltip template for well-behaved
+   * row repeats.
+   */
+  angular.module('collabosphere').filter('pickKeys', function() {
+    return function(interactionTypes) {
+      return _.keys(_.pickBy(interactionTypes));
     };
   });
 

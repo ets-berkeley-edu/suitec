@@ -32,15 +32,23 @@
     /**
      * Get all users in the current course
      *
-     * @param  {Boolean}              [track]     Whether to track the user request in analytics. Defaults to true
-     * @return {Promise<User[]>}                  $http promise returning all users in the current course
+     * @param  {Boolean}           [track]                Whether to track the user request in analytics. Defaults to true
+     * @param  {Boolean}           [includeLastActivity]  Whether to include last activity timestamps. Defaults to false
+     * @return {Promise<User[]>}                          $http promise returning all users in the current course
      */
-    var getAllUsers = function(track) {
+    var getAllUsers = function(track, includeLastActivity) {
       var url = '/users';
 
+      var queryParams = [];
       // Disable analytics tracking only if explicitly told to.
       if (track === false) {
-        url += '?track=false';
+        queryParams.push('track=false');
+      }
+      if (includeLastActivity === true) {
+        queryParams.push('includeLastActivity=true');
+      }
+      if (queryParams.length) {
+        url += '?' + queryParams.join('&');
       }
 
       return $http.get(utilService.getApiUrl(url));
