@@ -4,10 +4,12 @@
     <table class="profile-activity-network-tooltip-table" data-ng-if="interactionCounts">
       <tr>
         <th></th>
-        <th class="profile-activity-network-tooltip-table-header text-right" data-ng-bind="user.canvas_full_name.split(' ')[0]"></th>
+        <th class="profile-activity-network-tooltip-table-header text-right"
+            data-ng-bind="user.id === me.id ? 'Me' : user.canvas_full_name.split(' ')[0]"></th>
         <th></th>
         <th></th>
-        <th class="profile-activity-network-tooltip-table-header text-left" data-ng-bind="selectedUser.canvas_full_name"></th>
+        <th class="profile-activity-network-tooltip-table-header text-left"
+            data-ng-bind="selectedUser.id === me.id ? 'Me' : selectedUser.canvas_full_name"></th>
       </th>
       <tr data-ng-repeat="interactionType in interactionTypesEnabled | pickKeys track by $index"
           data-ng-class-odd="'profile-activity-network-tooltip-table-odd'">
@@ -26,7 +28,12 @@
     </table>
     <div class="profile-activity-network-tooltip-footer">
       <button type="button" class="btn btn-link profile-activity-network-tooltip-profile-link" data-ng-click="switchUser(selectedUser)">
+      <div data-ng-if="selectedUser.id === me.id">
+        View my profile
+      </div>
+      <div data-ng-if="selectedUser.id !== me.id">
         View <span data-ng-bind="selectedUser.canvas_full_name"></span>'s profile
+      </div>
       </button>
       Last activity:
       <span data-ng-if="selectedUser.last_activity">{{selectedUser.last_activity | formatDate}}</span>
