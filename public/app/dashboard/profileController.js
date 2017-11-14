@@ -401,7 +401,7 @@
       }
 
       // Allow for searching and browsing of other users
-      userFactory.getAllUsers(false).then(function(response) {
+      userFactory.getAllUsers(false, true).then(function(response) {
         var users = response.data;
 
         // Load interaction data for the course
