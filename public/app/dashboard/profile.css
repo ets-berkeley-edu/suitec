@@ -370,6 +370,11 @@
   width: 100%;
 }
 
+.profile-activity-network-tooltip-table-arrow {
+  min-width: 18px;
+  padding: 1px;
+}
+
 .profile-activity-network-tooltip-table-header {
   color: #aaa;
   font-weight: 300;
