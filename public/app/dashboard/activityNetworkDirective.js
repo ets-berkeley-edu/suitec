@@ -355,9 +355,18 @@
               var key2 = node.id + ',' + selectedNode.id;
               return !!(linksByIds[key1] && linksByIds[key1].total) || !!(linksByIds[key2] && linksByIds[key2].total);
             };
-            nodeSelection.classed('node-connected', isNodeConnected);
-            nodeSelection.classed('node-unconnected', function(node) {
-              return !isNodeConnected(node);
+            nodeSelection.attr('class', function(node) {
+              if (node.id === scope.me.id) {
+                if (isNodeConnected(node)) {
+                  return 'node node-connected-me';
+                } else {
+                  return 'node node-unconnected-me';
+                }
+              } else if (isNodeConnected(node)) {
+                return 'node node-connected';
+              } else {
+                return 'node node-unconnected';
+              }
             });
             nodeSelection.style('fill', function(node) {
               if (isNodeConnected(node)) {

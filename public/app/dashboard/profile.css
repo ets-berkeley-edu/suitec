@@ -252,12 +252,30 @@
   fill: #666;
 }
 
+.profile-activity-network .node-connected-me circle {
+  opacity: 1;
+  stroke: #008ee2;
+}
+
+.profile-activity-network .node-connected-me text {
+  fill: #666;
+}
+
 .profile-activity-network .node-unconnected circle {
   opacity: 0.4;
   stroke: #aaa;
 }
 
 .profile-activity-network .node-unconnected text {
+  fill: #bbb;
+}
+
+.profile-activity-network .node-unconnected-me circle {
+  opacity: 0.4;
+  stroke: #008ee2;
+}
+
+.profile-activity-network .node-unconnected-me text {
   fill: #bbb;
 }
 
