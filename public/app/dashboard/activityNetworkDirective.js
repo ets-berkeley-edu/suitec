@@ -67,7 +67,6 @@
 
         var simulation = d3.forceSimulation();
         simulation.force('link', d3.forceLink().id(function(d) { return d.id; }));
-        simulation.force('collide', d3.forceCollide(30));
         simulation.alphaDecay(0.01);
 
         scope.$watchGroup(['interactions', 'user'], function() {
@@ -76,12 +75,26 @@
           svg.selectAll('defs').remove();
 
           var defs = svg.append('defs');
-          var linkSelection = svg.append('g')
+          var g = svg.append('g');
+
+          var linkSelection = g.append('g')
             .attr('class', 'links')
             .selectAll('line');
-          var nodeSelection = svg.append('g')
+          var nodeSelection = g.append('g')
             .attr('class', 'nodes')
             .selectAll('g.circle');
+          var clipPathRect = defs.append('clipPath')
+            .attr('id', 'profile-activity-network-clipper')
+            .append('rect');
+
+          var executeZoom = function() {
+            g.attr('transform', d3.event.transform);
+          };
+          var zoom = d3.zoom()
+            // Setting scaleExtent to [1, 1] allows user panning but not zooming.
+            .scaleExtent([1, 1])
+            .on('zoom', executeZoom);
+          svg.call(zoom);
 
           scope.interactions.links = [];
 
@@ -161,24 +174,6 @@
               .style('opacity', 0);
           };
 
-          // Drag event handlers.
-          var onDragStarted = function(d) {
-            if (!d3.event.active) { simulation.alphaTarget(0.3).restart(); }
-            d.fx = d.x;
-            d.fy = d.y;
-          };
-
-          var onDragEnded = function(d) {
-            if (!d3.event.active) { simulation.alphaTarget(0); }
-            d.fx = null;
-            d.fy = null;
-          };
-
-          var onDragged = function(d) {
-            d.fx = d3.event.x;
-            d.fy = d3.event.y;
-          };
-
           // Node selection handler; show connections and tooltip.
           var onNodeSelected = function() {
             scope.selectedUser = d3.select(this).node().__data__;
@@ -188,6 +183,11 @@
             container.selectAll('.profile-activity-network-tooltip').remove();
 
             if (scope.selectedUser.id !== scope.user.id) {
+              var coordinates = [0, 0];
+              coordinates = d3.mouse(container.node());
+              var mouseX = coordinates[0];
+              var mouseY = coordinates[1];
+
               // Calculate interaction totals between the selected users.
               var interactionsLeft;
               var interactionsRight;
@@ -223,17 +223,17 @@
               }
 
               // Position tooltip and arrow; orientation will depend on location within the chart.
-              var containerHeight = container.node().getBoundingClientRect().height;
-              var tooltipOrientation = (scope.selectedUser.x < 240) ? 'left' : 'right';
+              var containerDimensions = container.node().getBoundingClientRect();
+              var tooltipOrientation = (mouseX < 240) ? 'left' : 'right';
 
               var tooltip = container.append('div')
                 .attr('class', ('profile-activity-network-tooltip profile-activity-network-tooltip-' + tooltipOrientation))
-                .style('bottom', (containerHeight - (scope.selectedUser.y + 50)) + 'px');
+                .style('bottom', (containerDimensions.height - mouseY + 16) + 'px');
 
               if (tooltipOrientation === 'left') {
-                tooltip.style('left', (scope.selectedUser.x - 30) + 'px');
+                tooltip.style('left', (mouseX - 30) + 'px');
               } else {
-                tooltip.style('right', (activityNetworkWidth - scope.selectedUser.x - 30) + 'px');
+                tooltip.style('right', (containerDimensions.width - mouseX - 30) + 'px');
               }
 
               // The tooltip starts out hidden...
@@ -286,14 +286,6 @@
 
             nodeSelection = nodeSelection.enter().append('g')
               .attr('class', 'node')
-              .call(d3.drag()
-                .on('start', onDragStarted)
-                .on('drag', onDragged)
-                .on('end', onDragEnded))
-              .on('mouseover', onNodeSelected)
-              .on('mouseout', function() {
-                fadeout(container.select('.profile-activity-network-tooltip'));
-              })
               .merge(nodeSelection);
             nodeSelection.append('circle')
               .attr('r', function(d) {
@@ -302,6 +294,10 @@
                 } else {
                   return DEFAULT_RADIUS;
                 }
+              })
+              .on('mouseover', onNodeSelected)
+              .on('mouseout', function() {
+                fadeout(container.select('.profile-activity-network-tooltip'));
               });
             nodeSelection.append('text')
               .attr('dx', 0)
@@ -332,16 +328,19 @@
           };
 
           // Size force diagram to window, accounting for course size and resizing as necessary.
-          var activityNetworkArea = 3000 * scope.interactions.nodes.length;
-          var activityNetworkWidth;
-          var activityNetworkHeight;
+          var viewportWidth;
+          var viewportHeight;
+          var activityNetworkScale = Math.round(Math.sqrt(1000 * scope.interactions.nodes.length));
 
           var sizeAndRestart = function() {
-            activityNetworkWidth = controlsForm.node().getBoundingClientRect().width;
-            activityNetworkHeight = Math.max((activityNetworkArea / activityNetworkWidth), 250);
-            svg.attr('width', activityNetworkWidth).attr('height', activityNetworkHeight);
-            simulation.force('charge', d3.forceManyBody().strength(-0.1 * Math.sqrt(activityNetworkWidth * activityNetworkHeight)));
-            simulation.force('center', d3.forceCenter(activityNetworkWidth / 2, activityNetworkHeight / 2));
+            viewportWidth = controlsForm.node().getBoundingClientRect().width;
+            viewportHeight = 400;
+            svg.attr('width', viewportWidth).attr('height', 300);
+            clipPathRect.attr('width', viewportWidth).attr('height', 300);
+            simulation.force('charge', d3.forceManyBody().strength(-0.6 * activityNetworkScale).distanceMax(300));
+            simulation.force('gravity', d3.forceManyBody().strength(70).distanceMax(600));
+            simulation.force('center', d3.forceCenter(viewportWidth / 2, viewportHeight / 2));
+            simulation.force('collide', d3.forceCollide(30));
             restart(0.6);
           };
 
@@ -403,17 +402,15 @@
             svg.selectAll('circle')
               .attr('cx', function(d) {
                 if (d.id === scope.user.id) {
-                  return d.x = Math.max(activityNetworkWidth / 4, Math.min(3 * activityNetworkWidth / 4, d.x));
-                } else {
-                  return d.x = Math.max(DEFAULT_RADIUS + 15, Math.min(activityNetworkWidth - (DEFAULT_RADIUS + 15), d.x));
+                  d.x = Math.max((viewportWidth - 200) / 2, Math.min((viewportWidth + 200) / 2, d.x));
                 }
+                return d.x;
               })
               .attr('cy', function(d) {
                 if (d.id === scope.user.id) {
-                  return d.y = Math.max(activityNetworkHeight / 4, Math.min(3 * activityNetworkHeight / 4, d.y));
-                } else {
-                  return d.y = Math.max(DEFAULT_RADIUS + 5, Math.min(activityNetworkHeight - (DEFAULT_RADIUS + 20), d.y));
+                  d.y = Math.max((viewportHeight - 200) / 2, Math.min((viewportHeight + 200) / 2, d.y));
                 }
+                return d.y;
               });
 
             svg.selectAll('text')
