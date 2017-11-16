@@ -26,7 +26,7 @@
             data-ng-bind="interactionCounts.right[interactionType]"></td>
       </tr>
     </table>
-    <div class="profile-activity-network-tooltip-footer">
+    <div class="profile-activity-network-tooltip-content">
       <button type="button" class="btn btn-link profile-activity-network-tooltip-profile-link" data-ng-click="switchUser(selectedUser)">
       <div data-ng-if="selectedUser.id === me.id">
         View my profile
@@ -38,6 +38,13 @@
       Last activity:
       <span data-ng-if="selectedUser.last_activity">{{selectedUser.last_activity | formatDate}}</span>
       <span data-ng-if="!selectedUser.last_activity">Never</span>
+    </div>
+    <div class="profile-activity-network-tooltip-content">
+      <button class="looking-for-collaborators-button"
+              data-ng-click="launchCollaborationModal(selectedUser)"
+              data-ng-if="selectedUser.looking_for_collaborators">
+        <i class="fa fa-user-plus"></i> Looking for Collaborators
+      </button>
     </div>
   </div>
 </div>
