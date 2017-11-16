@@ -35,6 +35,7 @@
       'restrict': 'E',
       'scope': {
         'interactions': '=',
+        'launchCollaborationModal': '=',
         'loadProfileById': '=',
         'me': '=',
         'user': '='
@@ -355,23 +356,24 @@
               return !!(linksByIds[key1] && linksByIds[key1].total) || !!(linksByIds[key2] && linksByIds[key2].total);
             };
             nodeSelection.attr('class', function(node) {
-              if (node.id === scope.me.id) {
-                if (isNodeConnected(node)) {
-                  return 'node node-connected-me';
-                } else {
-                  return 'node node-unconnected-me';
-                }
-              } else if (isNodeConnected(node)) {
-                return 'node node-connected';
+              var classAttr;
+              if (isNodeConnected(node)) {
+                classAttr = 'node node-connected';
               } else {
-                return 'node node-unconnected';
+                classAttr = 'node node-unconnected';
               }
+              if (node.id === scope.me.id) {
+                classAttr += ' node-me';
+              } else if (node.looking_for_collaborators) {
+                classAttr += ' node-looking-for-collaborators';
+              }
+              return classAttr;
             });
             nodeSelection.style('fill', function(node) {
               if (isNodeConnected(node)) {
                 return avatar(node);
               } else {
-                return '#aaa';
+                return '#eee';
               }
             });
             var isLinkConnected = function(link) {

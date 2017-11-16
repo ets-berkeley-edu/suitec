@@ -244,7 +244,6 @@
 }
 
 .profile-activity-network .node-connected circle {
-  opacity: 1;
   stroke: #999;
 }
 
@@ -252,31 +251,20 @@
   fill: #666;
 }
 
-.profile-activity-network .node-connected-me circle {
-  opacity: 1;
-  stroke: #008ee2;
-}
-
-.profile-activity-network .node-connected-me text {
-  fill: #666;
-}
-
-.profile-activity-network .node-unconnected circle {
-  opacity: 0.4;
-  stroke: #aaa;
-}
-
 .profile-activity-network .node-unconnected text {
   fill: #bbb;
 }
 
-.profile-activity-network .node-unconnected-me circle {
-  opacity: 0.4;
-  stroke: #008ee2;
+.profile-activity-network .node-unconnected circle {
+  stroke: #ddd;
 }
 
-.profile-activity-network .node-unconnected-me text {
-  fill: #bbb;
+.profile-activity-network .node-looking-for-collaborators circle {
+  stroke: #aff967;
+}
+
+.profile-activity-network .node-me circle {
+  stroke: #008ee2;
 }
 
 .profile-activity-network-container {
@@ -333,7 +321,7 @@
   right: 24px;
 }
 
-.profile-activity-network-tooltip-footer {
+.profile-activity-network-tooltip-content {
   color: #aaa;
   font-size: 13px;
   margin-top: 10px;
