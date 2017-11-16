@@ -1,3 +1,22 @@
+<div class="profile-activity-network-controls-top" data-ng-if="minScale !== 1">
+  <div>
+    <strong>View:</strong>
+    <span data-ng-if="meNode">
+      <button type="button" class="btn btn-link profile-activity-network-preset"
+              data-ng-class="{'profile-activity-network-preset-disabled': currentNetworkPreset === 'me'}"
+              data-ng-disabled="currentNetworkPreset === 'me'"
+              data-ng-click="networkPreset('me')">Me</button> |
+    </span>
+    <button type="button" class="btn btn-link profile-activity-network-preset"
+            data-ng-class="{'profile-activity-network-preset-disabled': zoomScale === minScale}"
+            data-ng-disabled="zoomScale === minScale"
+            data-ng-click="networkPreset('all')">All networks</button>
+  </div>
+  <div>
+    <button type="button" data-ng-click="networkZoom(1.25)">+</button>
+    <button type="button" data-ng-click="networkZoom(0.8)">-</button>
+  </div>
+</div>
 <svg id="profile-activity-network" class="profile-activity-network" clip-path="url('#profile-activity-network-clipper')"></svg>
 <form id="profile-activity-network-controls" class="profile-activity-network-controls">
   <div class="profile-activity-network-controls-title">Collaboration activities:</div>

@@ -88,14 +88,26 @@
             .attr('id', 'profile-activity-network-clipper')
             .append('rect');
 
+          var isZoomingToPreset = false;
+
           var executeZoom = function() {
             g.attr('transform', d3.event.transform);
           };
-          var zoom = d3.zoom()
-            // Setting scaleExtent to [1, 1] allows user panning but not zooming.
-            .scaleExtent([1, 1])
-            .on('zoom', executeZoom);
+          var zoom = d3.zoom().on('zoom', executeZoom);
           svg.call(zoom);
+
+          scope.zoomScale = 1;
+
+          zoom.on('end', function() {
+            // All zoom presets should be re-enabled on the next user zoom.
+            if (!isZoomingToPreset) {
+              scope.currentNetworkPreset = null;
+            } else {
+              isZoomingToPreset = false;
+            }
+            // Update the scope with the current zoom scale.
+            scope.zoomScale = d3.zoomTransform(svg.node()).k;
+          });
 
           scope.interactions.links = [];
 
@@ -329,20 +341,51 @@
           };
 
           // Size force diagram to window, accounting for course size and resizing as necessary.
+          var activityNetworkScale = Math.round(Math.sqrt(4000 * scope.interactions.nodes.length));
+          var bounds;
           var viewportWidth;
           var viewportHeight;
-          var activityNetworkScale = Math.round(Math.sqrt(1000 * scope.interactions.nodes.length));
+
+          scope.minScale = 1;
 
           var sizeAndRestart = function() {
             viewportWidth = controlsForm.node().getBoundingClientRect().width;
-            viewportHeight = 400;
-            svg.attr('width', viewportWidth).attr('height', 300);
-            clipPathRect.attr('width', viewportWidth).attr('height', 300);
-            simulation.force('charge', d3.forceManyBody().strength(-0.6 * activityNetworkScale).distanceMax(300));
+            viewportHeight = Math.max(400, Math.min(250, activityNetworkScale));
+
+            var aspectRatio = viewportWidth * 1.0 / viewportHeight;
+
+            svg.attr('width', viewportWidth).attr('height', viewportHeight);
+            clipPathRect.attr('width', viewportWidth).attr('height', viewportHeight);
+
+            var xMargin = Math.max(0, (Math.round(activityNetworkScale * aspectRatio) - viewportWidth) / 2);
+            var yMargin = Math.max(0, (activityNetworkScale - viewportHeight) / 2);
+            bounds = [[-1 * xMargin, -1 * yMargin], [viewportWidth + xMargin, viewportHeight + yMargin]];
+            scope.minScale = Math.min(viewportHeight / activityNetworkScale, 1);
+            zoom.scaleExtent([scope.minScale, 1]).translateExtent(bounds);
+
+            simulation.force('charge', d3.forceManyBody().strength(-0.3 * activityNetworkScale).distanceMax(300));
             simulation.force('gravity', d3.forceManyBody().strength(70).distanceMax(600));
             simulation.force('center', d3.forceCenter(viewportWidth / 2, viewportHeight / 2));
             simulation.force('collide', d3.forceCollide(30));
             restart(0.6);
+          };
+
+          scope.meNode = null;
+
+          var networkPreset = scope.networkPreset = function(preset) {
+            isZoomingToPreset = true;
+            scope.currentNetworkPreset = preset;
+            if (preset === 'me') {
+              var translateX = Math.max(bounds[0][0], Math.min(viewportWidth / 2 - scope.meNode.x, bounds[1][0] - viewportWidth));
+              var translateY = Math.max(bounds[0][1], Math.min(viewportHeight / 2 - scope.meNode.y, bounds[1][1] - viewportHeight));
+              svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY));
+            } else if (preset === 'all') {
+              svg.transition().duration(300).call(zoom.scaleTo, scope.minScale);
+            }
+          };
+
+          var networkZoom = scope.networkZoom = function(scale) {
+            svg.transition().duration(300).call(zoom.scaleBy, scale);
           };
 
           window.addEventListener('resize', sizeAndRestart);
@@ -363,6 +406,7 @@
                 classAttr = 'node node-unconnected';
               }
               if (node.id === scope.me.id) {
+                scope.meNode = node;
                 classAttr += ' node-me';
               } else if (node.looking_for_collaborators) {
                 classAttr += ' node-looking-for-collaborators';
@@ -404,15 +448,17 @@
             svg.selectAll('circle')
               .attr('cx', function(d) {
                 if (d.id === scope.user.id) {
-                  d.x = Math.max((viewportWidth - 200) / 2, Math.min((viewportWidth + 200) / 2, d.x));
+                  return d.x = Math.max((viewportWidth - 200) / 2, Math.min((viewportWidth + 200) / 2, d.x));
+                } else {
+                  return d.x = Math.max(bounds[0][0] + DEFAULT_RADIUS + 15, Math.min(bounds[1][0] - (DEFAULT_RADIUS + 15), d.x));
                 }
-                return d.x;
               })
               .attr('cy', function(d) {
                 if (d.id === scope.user.id) {
-                  d.y = Math.max((viewportHeight - 200) / 2, Math.min((viewportHeight + 200) / 2, d.y));
+                  return d.y = Math.max((viewportHeight - 200) / 2, Math.min((viewportHeight + 200) / 2, d.y));
+                } else {
+                  return d.y = Math.max(bounds[0][1] + DEFAULT_RADIUS + 5, Math.min(bounds[1][1] - (DEFAULT_RADIUS + 20), d.y));
                 }
-                return d.y;
               });
 
             svg.selectAll('text')
