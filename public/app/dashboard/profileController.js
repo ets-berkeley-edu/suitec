@@ -407,7 +407,9 @@
         // Load interaction data for the course
         profileFactory.getInteractionsForCourse().then(function(interactionsResponse) {
           $scope.interactions = {
-            'nodes': users,
+            'nodes': _.filter(users, function(interactionsUser) {
+              return (interactionsUser.canvas_course_role === 'Student' || interactionsUser.canvas_course_role === 'Learner');
+            }),
             'linkTypes': interactionsResponse.data
           };
         });
