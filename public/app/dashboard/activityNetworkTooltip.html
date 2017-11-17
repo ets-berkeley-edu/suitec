@@ -13,7 +13,7 @@
       </th>
       <tr data-ng-repeat="interactionType in interactionTypesEnabled | pickKeys track by $index"
           data-ng-class-odd="'profile-activity-network-tooltip-table-odd'">
-        <td data-ng-bind="interactionType" class="profile-activity-network-tooltip-table-interaction-type"></td>
+        <td data-ng-bind="interactionType | firstWords:2" class="profile-activity-network-tooltip-table-interaction-type"></td>
         <td class="profile-activity-network-tooltip-table-value text-right"
             data-ng-bind="interactionCounts.left[interactionType]"></td>
         <td class="profile-activity-network-tooltip-table-arrow text-left">

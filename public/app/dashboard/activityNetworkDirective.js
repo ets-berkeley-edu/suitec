@@ -52,9 +52,9 @@
           'Comments': ['get_asset_comment_reply', 'get_asset_comment'],
           'Posts': [ 'get_discussion_entry_reply' ],
           'Pins': [ 'get_pin_asset' ],
-          'Use Assets': [ 'get_whiteboard_add_asset' ],
+          'Assets Added to Whiteboard': [ 'get_whiteboard_add_asset' ],
           'Remixes': [ 'get_remix_whiteboard' ],
-          'Co-creations': [ 'co_create_whiteboard' ]
+          'Whiteboards Exported': [ 'co_create_whiteboard' ]
         };
         scope.interactionTypesEnabled = _.mapValues(INTERACTION_TYPES, _.constant(true));
 
@@ -300,6 +300,9 @@
             nodeSelection = nodeSelection.enter().append('g')
               .attr('class', 'node')
               .merge(nodeSelection);
+            nodeSelection.attr('id', function(d) {
+              return 'profile-activity-network-user-node-' + d.id;
+            });
             nodeSelection.append('circle')
               .attr('r', function(d) {
                 if (d.id === scope.user.id) {
@@ -479,6 +482,15 @@
   angular.module('collabosphere').filter('pickKeys', function() {
     return function(interactionTypes) {
       return _.keys(_.pickBy(interactionTypes));
+    };
+  });
+
+  /**
+   * Truncate a string to the first n words.
+   */
+  angular.module('collabosphere').filter('firstWords', function() {
+    return function(string, count) {
+      return string.split(' ').slice(0, count).join(' ');
     };
   });
 
