@@ -222,6 +222,22 @@
   display: flex;
 }
 
+.profile-activity-network-controls-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile-activity-network-preset {
+  border: 0;
+  padding: 0 2px;
+  vertical-align: bottom;
+}
+
+.profile-activity-network-preset-disabled {
+  color: #777;
+  cursor: default;
+}
+
 .profile-activity-network .links line {
   opacity: 0.3;
   stroke: #999;
