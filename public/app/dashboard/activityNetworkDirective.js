@@ -160,20 +160,21 @@
               }
               linksByIds[linkKey] = linksByIds[linkKey] || {};
               linksByIds[linkKey].total = linksByIds[linkKey].total || 0;
-              linksByIds[linkKey].total += 1;
+              linksByIds[linkKey].total += link.count;
               linksByIds[linkKey][direction] = linksByIds[linkKey][direction] || {};
               linksByIds[linkKey][direction][link.type] = linksByIds[linkKey][direction][link.type] || 0;
-              linksByIds[linkKey][direction][link.type] += 1;
+              linksByIds[linkKey][direction][link.type] += link.count;
             });
 
             scope.interactions.links.splice(0, scope.interactions.links.length);
 
             _.forOwn(linksByIds, function(value, key) {
               var keyComponents = key.split(',');
+              var taperedTotal = value.total === 0 ? 0 : Math.round(1 + Math.sqrt(value.total - 1));
               scope.interactions.links.push({
                 'source': keyComponents[0],
                 'target': keyComponents[1],
-                'value': value.total
+                'value': taperedTotal
               });
             });
           };
