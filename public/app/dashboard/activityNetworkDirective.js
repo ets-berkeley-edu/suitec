@@ -70,7 +70,19 @@
         simulation.force('link', d3.forceLink().id(function(d) { return d.id; }));
         simulation.alphaDecay(0.01);
 
-        scope.$watchGroup(['interactions', 'user'], function() {
+        scope.$watchGroup(['interactions', 'user'], function(newVals, oldVals) {
+          // Don't reload the diagram unless interaction data or user id has changed.
+          var newNodeSize = _.size(_.get(newVals, ['0', 'nodes']));
+          var oldNodeSize = _.size(_.get(oldVals, ['0', 'nodes']));
+          var newUserId = _.get(newVals, ['1', 'id']);
+          var oldUserId = _.get(oldVals, ['1', 'id']);
+          if ((newNodeSize === oldNodeSize) && (newUserId === oldUserId)) {
+            return;
+          }
+
+          // Set the focal user, whose avatar will appear larger and who will be the point of reference for interaction counts.
+          scope.focalUser = scope.user;
+
           // Clear any existing elements within the SVG and re-initialize.
           svg.selectAll('g').remove();
           svg.selectAll('defs').remove();
@@ -196,7 +208,7 @@
             // Clear any existing tooltips.
             container.selectAll('.profile-activity-network-tooltip').remove();
 
-            if (scope.selectedUser.id !== scope.user.id) {
+            if (scope.selectedUser.id !== scope.focalUser.id) {
               var coordinates = [0, 0];
               coordinates = d3.mouse(container.node());
               var mouseX = coordinates[0];
@@ -205,14 +217,14 @@
               // Calculate interaction totals between the selected users.
               var interactionsLeft;
               var interactionsRight;
-              if (scope.user.id < scope.selectedUser.id) {
-                var linksBetweenUsers = linksByIds[scope.user.id + ',' + scope.selectedUser.id];
+              if (scope.focalUser.id < scope.selectedUser.id) {
+                var linksBetweenUsers = linksByIds[scope.focalUser.id + ',' + scope.selectedUser.id];
                 if (linksBetweenUsers) {
                   interactionsLeft = linksBetweenUsers.up || {};
                   interactionsRight = linksBetweenUsers.down || {};
                 }
               } else {
-                var linksBetweenUsers = linksByIds[scope.selectedUser.id + ',' + scope.user.id];
+                var linksBetweenUsers = linksByIds[scope.selectedUser.id + ',' + scope.focalUser.id];
                 if (linksBetweenUsers) {
                   interactionsLeft = linksBetweenUsers.down || {};
                   interactionsRight = linksBetweenUsers.up || {};
@@ -314,7 +326,7 @@
             });
             nodeSelection.append('circle')
               .attr('r', function(d) {
-                if (d.id === scope.user.id) {
+                if (d.id === scope.focalUser.id) {
                   return 25;
                 } else {
                   return DEFAULT_RADIUS;
@@ -323,11 +335,16 @@
               .on('mouseover', onNodeSelected)
               .on('mouseout', function() {
                 fadeout(container.select('.profile-activity-network-tooltip'));
+              })
+              .on('click', function(node) {
+                container.select('.profile-activity-network-tooltip').remove();
+                scope.focalUser = node;
+                restart(0.1);
               });
             nodeSelection.append('text')
               .attr('dx', 0)
               .attr('dy', function(d) {
-                if (d.id === scope.user.id) {
+                if (d.id === scope.focalUser.id) {
                   return 35;
                 } else {
                   return 25;
@@ -339,7 +356,7 @@
               });
 
             svg.selectAll('.node').each(function(d) {
-              if (d.id === scope.user.id) {
+              if (d.id === scope.focalUser.id) {
                 showConnections.call(this);
               }
             });
@@ -459,14 +476,14 @@
 
             svg.selectAll('circle')
               .attr('cx', function(d) {
-                if (d.id === scope.user.id) {
+                if (d.id === scope.focalUser.id) {
                   return d.x = Math.max((viewportWidth - 200) / 2, Math.min((viewportWidth + 200) / 2, d.x));
                 } else {
                   return d.x = Math.max(bounds[0][0] + DEFAULT_RADIUS + 15, Math.min(bounds[1][0] - (DEFAULT_RADIUS + 15), d.x));
                 }
               })
               .attr('cy', function(d) {
-                if (d.id === scope.user.id) {
+                if (d.id === scope.focalUser.id) {
                   return d.y = Math.max((viewportHeight - 200) / 2, Math.min((viewportHeight + 200) / 2, d.y));
                 } else {
                   return d.y = Math.max(bounds[0][1] + DEFAULT_RADIUS + 5, Math.min(bounds[1][1] - (DEFAULT_RADIUS + 20), d.y));

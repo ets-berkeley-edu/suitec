@@ -404,15 +404,17 @@
       userFactory.getAllUsers(false, true).then(function(response) {
         var users = response.data;
 
-        // Load interaction data for the course
-        profileFactory.getInteractionsForCourse().then(function(interactionsResponse) {
-          $scope.interactions = {
-            'nodes': _.filter(users, function(interactionsUser) {
-              return (interactionsUser.canvas_course_role === 'Student' || interactionsUser.canvas_course_role === 'Learner');
-            }),
-            'linkTypes': interactionsResponse.data
-          };
-        });
+        // Load interaction data for the course if not previously fetched
+        if (!$scope.interactions.nodes.length) {
+          profileFactory.getInteractionsForCourse().then(function(interactionsResponse) {
+            $scope.interactions = {
+              'nodes': _.filter(users, function(interactionsUser) {
+                return (interactionsUser.canvas_course_role === 'Student' || interactionsUser.canvas_course_role === 'Learner');
+              }),
+              'linkTypes': interactionsResponse.data
+            };
+          });
+        }
 
         // If user count is less than two (2) then exclude search/browse feature
         var count = $scope.userCount = users.length;
