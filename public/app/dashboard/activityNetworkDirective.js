@@ -228,8 +228,16 @@
                   scope.interactionCounts.left[interactionLabel] = 0;
                   scope.interactionCounts.right[interactionLabel] = 0;
                   _.forEach(typesList, function(typeKey) {
-                    scope.interactionCounts.left[interactionLabel] += (interactionsLeft[typeKey] || 0);
-                    scope.interactionCounts.right[interactionLabel] += (interactionsRight[typeKey] || 0);
+                    var leftCount = (interactionsLeft[typeKey] || 0);
+                    var rightCount = (interactionsRight[typeKey] || 0);
+                    // Whiteboard co-creation is a special-case bidirectional activity.
+                    if (typeKey === 'co_create_whiteboard') {
+                      var totalCount = leftCount + rightCount;
+                      leftCount = totalCount;
+                      rightCount = totalCount;
+                    }
+                    scope.interactionCounts.left[interactionLabel] += leftCount;
+                    scope.interactionCounts.right[interactionLabel] += rightCount;
                   });
                 });
               } else {
