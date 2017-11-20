@@ -476,15 +476,19 @@
 
             svg.selectAll('circle')
               .attr('cx', function(d) {
-                if (d.id === scope.focalUser.id) {
+                if (d.id === scope.user.id) {
                   return d.x = Math.max((viewportWidth - 200) / 2, Math.min((viewportWidth + 200) / 2, d.x));
+                } else if (d.id === scope.focalUser.id) {
+                  return d.x = Math.max(bounds[0][0] + 40, Math.min(bounds[1][0] - 40, d.x));
                 } else {
                   return d.x = Math.max(bounds[0][0] + DEFAULT_RADIUS + 15, Math.min(bounds[1][0] - (DEFAULT_RADIUS + 15), d.x));
                 }
               })
               .attr('cy', function(d) {
-                if (d.id === scope.focalUser.id) {
+                if (d.id === scope.user.id) {
                   return d.y = Math.max((viewportHeight - 200) / 2, Math.min((viewportHeight + 200) / 2, d.y));
+                } else if (d.id === scope.focalUser.id) {
+                  return d.y = Math.max(bounds[0][1] + 30, Math.min(bounds[1][1] - 45, d.y));
                 } else {
                   return d.y = Math.max(bounds[0][1] + DEFAULT_RADIUS + 5, Math.min(bounds[1][1] - (DEFAULT_RADIUS + 20), d.y));
                 }
