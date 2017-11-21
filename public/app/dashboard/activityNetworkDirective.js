@@ -80,6 +80,8 @@
             return;
           }
 
+          var initializing = true;
+
           // Set the focal user, whose avatar will appear larger and who will be the point of reference for interaction counts.
           scope.focalUser = scope.user;
 
@@ -203,7 +205,7 @@
           // Node selection handler; show connections and tooltip.
           var onNodeSelected = function() {
             scope.selectedUser = d3.select(this).node().__data__;
-            showConnections.call(this);
+            showConnections();
 
             // Clear any existing tooltips.
             container.selectAll('.profile-activity-network-tooltip').remove();
@@ -298,6 +300,15 @@
             }
           };
 
+          // Node deselection handler; remove tooltip, restore opacity to all nodes.
+          var onNodeDeselected = function() {
+            fadeout(container.select('.profile-activity-network-tooltip'));
+            nodeSelection.style('opacity', 1);
+            linkSelection.style('opacity', function(link) {
+              return isLinkConnected(link) ? 1 : 0.3;
+            });
+          };
+
           // Restart simulation.
           var restart = function(alpha) {
             calculateLinks();
@@ -333,9 +344,7 @@
                 }
               })
               .on('mouseover', onNodeSelected)
-              .on('mouseout', function() {
-                fadeout(container.select('.profile-activity-network-tooltip'));
-              })
+              .on('mouseout', onNodeDeselected)
               .on('click', function(node) {
                 container.select('.profile-activity-network-tooltip').remove();
                 scope.focalUser = node;
@@ -355,11 +364,13 @@
                 return d.canvas_full_name.split(' ')[0];
               });
 
-            svg.selectAll('.node').each(function(d) {
-              if (d.id === scope.focalUser.id) {
-                showConnections.call(this);
-              }
-            });
+            // Show initial diagram with the focal user's connections highlighted, but not in full mouseover mode.
+            if (initializing) {
+              scope.selectedUser = scope.focalUser;
+              showConnections();
+              onNodeDeselected();
+              initializing = false;
+            }
 
             simulation.alpha(alpha).restart();
           };
@@ -376,6 +387,16 @@
           var viewportHeight;
 
           scope.minScale = 1;
+
+          var isNodeConnected = function(node) {
+            var key1 = scope.selectedUser.id + ',' + node.id;
+            var key2 = node.id + ',' + scope.selectedUser.id;
+            return !!(linksByIds[key1] && linksByIds[key1].total) || !!(linksByIds[key2] && linksByIds[key2].total);
+          };
+
+          var isLinkConnected = function(link) {
+            return scope.selectedUser.id === link.source.id || scope.selectedUser.id === link.target.id;
+          };
 
           var sizeAndRestart = function() {
             viewportWidth = controlsForm.node().getBoundingClientRect().width;
@@ -421,12 +442,6 @@
 
           // Highlight connected nodes and links for a given node.
           var showConnections = function() {
-            var selectedNode = d3.select(this).node().__data__;
-            var isNodeConnected = function(node) {
-              var key1 = selectedNode.id + ',' + node.id;
-              var key2 = node.id + ',' + selectedNode.id;
-              return !!(linksByIds[key1] && linksByIds[key1].total) || !!(linksByIds[key2] && linksByIds[key2].total);
-            };
             nodeSelection.attr('class', function(node) {
               var classAttr;
               if (isNodeConnected(node)) {
@@ -449,11 +464,11 @@
                 return '#eee';
               }
             });
-            var isLinkConnected = function(link) {
-              return selectedNode.id === link.source.id || selectedNode.id === link.target.id;
-            };
+            nodeSelection.style('opacity', function(node) {
+              return isNodeConnected(node) ? 1 : 0.35;
+            });
             linkSelection.style('opacity', function(link) {
-              return isLinkConnected(link) ? 1 : 0.3;
+              return isLinkConnected(link) ? 1 : 0.15;
             });
             linkSelection.style('stroke-width', function(link) {
               return isLinkConnected(link) ? link.value : 1;
