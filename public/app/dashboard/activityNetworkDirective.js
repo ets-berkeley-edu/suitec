@@ -309,6 +309,11 @@
             });
           };
 
+          // Touch devices have no 'mouseout' event; call the deselection handler when document elements are tapped.
+          if ('ontouchstart' in window) {
+            document.body.addEventListener('touchstart', onNodeDeselected);
+          }
+
           // Restart simulation.
           var restart = function(alpha) {
             calculateLinks();
