@@ -80,10 +80,11 @@
             return;
           }
 
-          var initializing = true;
-
           // Set the focal user, whose avatar will appear larger and who will be the point of reference for interaction counts.
           scope.focalUser = scope.user;
+
+          // The selected user is set on mouseover.
+          scope.selectedUser = scope.focalUser;
 
           // Clear any existing elements within the SVG and re-initialize.
           svg.selectAll('g').remove();
@@ -203,9 +204,15 @@
           };
 
           // Node selection handler; show connections and tooltip.
-          var onNodeSelected = function() {
-            scope.selectedUser = d3.select(this).node().__data__;
-            showConnections();
+          var onNodeSelected = function(node) {
+            if (!node) {
+              node = d3.select(this).node().__data__;
+            }
+            scope.selectedUser = node;
+
+            if (isNodeConnected(scope.selectedUser)) {
+              showConnections();
+            }
 
             // Clear any existing tooltips.
             container.selectAll('.profile-activity-network-tooltip').remove();
@@ -315,7 +322,7 @@
           }
 
           // Restart simulation.
-          var restart = function(alpha) {
+          var restart = function(alpha, recalculateConnections) {
             calculateLinks();
 
             linkSelection = linkSelection.data(scope.interactions.links);
@@ -353,7 +360,8 @@
               .on('click', function(node) {
                 container.select('.profile-activity-network-tooltip').remove();
                 scope.focalUser = node;
-                restart(0.1);
+                onNodeSelected(node);
+                restart(0.1, false);
               });
             nodeSelection.append('text')
               .attr('dx', 0)
@@ -369,12 +377,10 @@
                 return d.canvas_full_name.split(' ')[0];
               });
 
-            // Show initial diagram with the focal user's connections highlighted, but not in full mouseover mode.
-            if (initializing) {
-              scope.selectedUser = scope.focalUser;
+            // Calculate links to highlight the focal user's connections, but not in full mouseover mode.
+            if (recalculateConnections) {
               showConnections();
               onNodeDeselected();
-              initializing = false;
             }
 
             simulation.alpha(alpha).restart();
@@ -382,7 +388,7 @@
 
           // Called when link type selection is changed.
           var restartLinks = scope.restartLinks = function() {
-            restart(0.1);
+            restart(0.1, true);
           };
 
           // Size force diagram to window, accounting for course size and resizing as necessary.
@@ -394,16 +400,16 @@
           scope.minScale = 1;
 
           var isNodeConnected = function(node) {
-            var key1 = scope.selectedUser.id + ',' + node.id;
-            var key2 = node.id + ',' + scope.selectedUser.id;
+            var key1 = scope.focalUser.id + ',' + node.id;
+            var key2 = node.id + ',' + scope.focalUser.id;
             return !!(linksByIds[key1] && linksByIds[key1].total) || !!(linksByIds[key2] && linksByIds[key2].total);
           };
 
           var isLinkConnected = function(link) {
-            return scope.selectedUser.id === link.source.id || scope.selectedUser.id === link.target.id;
+            return scope.focalUser.id === link.source.id || scope.focalUser.id === link.target.id;
           };
 
-          var sizeAndRestart = function() {
+          var sizeAndRestart = function(recalculateConnections) {
             viewportWidth = controlsForm.node().getBoundingClientRect().width;
             viewportHeight = Math.max(400, Math.min(250, activityNetworkScale));
 
@@ -422,7 +428,7 @@
             simulation.force('gravity', d3.forceManyBody().strength(70).distanceMax(600));
             simulation.force('center', d3.forceCenter(viewportWidth / 2, viewportHeight / 2));
             simulation.force('collide', d3.forceCollide(30));
-            restart(0.6);
+            restart(0.6, recalculateConnections);
           };
 
           scope.meNode = null;
@@ -443,7 +449,9 @@
             svg.transition().duration(300).call(zoom.scaleBy, scale);
           };
 
-          window.addEventListener('resize', sizeAndRestart);
+          window.addEventListener('resize', function() {
+            sizeAndRestart(false);
+          });
 
           // Highlight connected nodes and links for a given node.
           var showConnections = function() {
@@ -519,7 +527,7 @@
               .attr('y', function(d) { return d.y; });
           };
 
-          sizeAndRestart();
+          sizeAndRestart(true);
         });
       }
     };
