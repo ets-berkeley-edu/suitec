@@ -85,7 +85,7 @@
     "yargs": "8.0.2"
   },
   "engines": {
-    "node": ">=6.10"
+    "node": ">=6.11.5"
   },
   "bugs": {
     "url": "https://jira.ets.berkeley.edu/jira/browse/COL"
