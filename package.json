@@ -1,7 +1,7 @@
 {
   "name": "suitec",
   "description": "SuiteC LTI Tools",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/ets-berkeley-edu/suitec.git"
