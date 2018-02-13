@@ -278,7 +278,7 @@
      */
     var determineRank = function(user) {
       if (me.is_admin || user.share_points) {
-        userFactory.getLeaderboard().then(function(users) {
+        userFactory.getLeaderboard(false).then(function(users) {
           $scope.leaderboardCount = users.length;
 
           // Extract user's rank then break

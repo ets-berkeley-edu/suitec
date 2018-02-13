@@ -67,10 +67,13 @@
     /**
      * Get the users in the current course and their points
      *
-     * @return {Promise<User[]>}                  $http promise returning the users in the current course and their points
+     * @param  {Boolean}            trackEvent      Default is true. If false then skip AnalyticsAPI step to track event.
+     * @return {Promise<User[]>}                    $http promise returning the users in the current course and their points
      */
-    var getLeaderboard = function() {
-      return $http.get(utilService.getApiUrl('/users/leaderboard'))
+    var getLeaderboard = function(trackEvent) {
+      var track = trackEvent === null || _.isUndefined(trackEvent) || trackEvent;
+      var apiPath = track ? '/users/leaderboard' : '/users/leaderboard?track=false';
+      return $http.get(utilService.getApiUrl(apiPath))
         .then(function(response) {
           var users = response.data;
 
