@@ -513,6 +513,44 @@ ALTER SEQUENCE courses_id_seq OWNED BY courses.id;
 
 
 --
+-- Name: events; Type: TABLE; Schema: public; Owner: suitec
+--
+
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    uuid uuid NOT NULL,
+    event_name VARCHAR(255) NOT NULL,
+    event_metadata jsonb NOT NULL,
+    canvas_domain VARCHAR(255) NOT NULL,
+    user_id INTEGER,
+    user_full_name VARCHAR(255),
+    canvas_user_id INTEGER,
+    canvas_course_role VARCHAR(255),
+    course_id INTEGER,
+    canvas_course_id INTEGER,
+    course_name VARCHAR(255),
+    activity_id INTEGER,
+    asset_id INTEGER,
+    comment_id INTEGER,
+    whiteboard_id INTEGER,
+    whiteboard_element_uid INTEGER
+);
+
+ALTER TABLE events OWNER TO suitec;
+
+-- --
+-- -- Name: events_id_seq; Type: SEQUENCE; Schema: public; Owner: suitec
+-- --
+
+ALTER TABLE events_id_seq OWNER TO suitec;
+
+--
+-- Name: events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: suitec
+--
+
+ALTER SEQUENCE events_id_seq OWNED BY events.id;
+
+--
 -- Name: pinned_user_assets; Type: TABLE; Schema: public; Owner: suitec
 --
 

@@ -7,8 +7,8 @@ CREATE TABLE events (
   event_metadata jsonb NOT NULL,
   canvas_domain VARCHAR(255) NOT NULL,
   user_id INTEGER,
+  user_full_name VARCHAR(255),
   canvas_user_id INTEGER,
-  canvas_full_name VARCHAR(255),
   canvas_course_role VARCHAR(255),
   course_id INTEGER,
   canvas_course_id INTEGER,
@@ -17,7 +17,9 @@ CREATE TABLE events (
   asset_id INTEGER,
   comment_id INTEGER,
   whiteboard_id INTEGER,
-  whiteboard_element_uid INTEGER
+  whiteboard_element_uid INTEGER,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE INDEX events_asset_id_idx ON events (asset_id);
