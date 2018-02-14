@@ -533,7 +533,9 @@ CREATE TABLE events (
     asset_id INTEGER,
     comment_id INTEGER,
     whiteboard_id INTEGER,
-    whiteboard_element_uid INTEGER
+    whiteboard_element_uid INTEGER,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 ALTER TABLE events OWNER TO suitec;
