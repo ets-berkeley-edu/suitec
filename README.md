@@ -106,7 +106,26 @@ Read [instructions on deploying SuiteC](docs/deployment.md) on a network server.
 
 # Notes
 
-### Canvas synchronization
+## Run tests, lint the code
+
+```
+# Run all tests and linters
+npm test
+
+# Run all tests
+gulp mocha
+
+# Run specific test(s)
+gulp mocha --grep 'Caliper LTI launch events'
+
+# Lint the js
+gulp eslint
+
+# Lint the CSS
+gulp csslint
+```
+
+## Canvas synchronization
 
 By default, SuiteC will poll the Canvas API for any new activities that are included in the
 engagement index. Whether polling should be enabled and how often it should run can be configured
@@ -117,7 +136,7 @@ Configure a Canvas API key for a user, preferably a global Canvas administrator,
  - assignments *and* all their submissions
  - discussion
 
-### Production build
+## Production build
 
 The production build will:
  - Concatenate and revision all vendor files (AngularJS, Bootstrap, etc.)
