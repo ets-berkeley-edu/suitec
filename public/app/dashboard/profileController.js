@@ -289,6 +289,8 @@
             }
           }
         });
+      } else {
+        $scope.userRank = null;
       }
     };
 
@@ -339,7 +341,10 @@
       // Sort section(s)
       $scope.user.canvasCourseSections = user.canvas_course_sections && user.canvas_course_sections.sort();
 
-      $scope.showEngagementIndexBox = me.course.engagementindex_url && ($scope.isMyProfile || me.is_admin || (user.share_points && me.share_points));
+      $scope.showEngagementIndexBox = me.course.engagementindex_url &&
+        !_.isUndefined(user.points) &&
+        ($scope.isMyProfile || me.is_admin || (user.share_points && me.share_points));
+
       determineRank(user);
 
       getUserActivity(user.id);
