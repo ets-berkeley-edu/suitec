@@ -29,11 +29,13 @@ var _ = require('lodash');
 var async = require('async');
 var config = require('config');
 var argv = require('yargs')
-  .usage('Usage: $0 [--all]')
+  .usage('Usage: $0 [--all] [--asset_id id]')
   .alias('a', 'all')
   .describe('a', 'Reprocess all assets')
   .help('h')
   .alias('h', 'help')
+  .describe('i', 'Asset id to reprocess')
+  .alias('i', 'asset_id')
   .argv;
 
 var AssetsAPI = require('col-assets');
@@ -73,12 +75,20 @@ var init = function() {
 var getAssets = function() {
   var options = {};
   if (!argv.all) {
-    options = {
-      'where': {
-        'thumbnail_url': null,
-        'deleted_at': null
-      }
-    };
+    if (argv.asset_id) {
+      options = {
+        'where': {
+          'id': argv.asset_id
+        }
+      };
+    } else {
+      options = {
+        'where': {
+          'thumbnail_url': null,
+          'deleted_at': null
+        }
+      };
+    }
   }
 
   DB.Asset.findAll(options).complete(function(dbErr, assets) {
