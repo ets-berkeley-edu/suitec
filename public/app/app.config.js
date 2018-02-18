@@ -27,21 +27,12 @@
 
   'use strict';
 
-  var collabosphere = angular.module('collabosphere');
-  collabosphere.config(function(config, me, $compileProvider, $mixpanelProvider) {
-    // Abort further configuration if information from LTI launch is missing.
-    if (!config || !me) {
-      return;
+  angular.module('collabosphere').config(function(config, me, $compileProvider) {
+    // Check for information from LTI launch
+    if (config && me) {
+      // Add `javascript:` to list of accepted href protocols, a Bookmarklet requirement
+      $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
     }
-
-    // Add `javascript:` to the list of accepted href protocols. This will be used for the Bookmarklet
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|javascript):/);
-
-    // Initialize the Mixpanel analytics with the configured API key
-    if (config.analytics.mixpanel.enabled) {
-      $mixpanelProvider.apiKey(config.analytics.mixpanel.apiKey);
-    }
-
   });
 
 }(window.angular));
