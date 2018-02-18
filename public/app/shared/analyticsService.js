@@ -27,25 +27,61 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('analyticsService', function(config, me, $mixpanel) {
-    // Do not attempt to set up analytics if initial feed retrieval failed or Mixpanel is disabled in configuration.
-    if (!me || !config.analytics.mixpanel.enabled) {
-      return {
-        'track': _.noop
-      };
-    }
-
-    $mixpanel.identify(me.id);
+  angular.module('collabosphere').service('analyticsService', function(utilService, $http) {
 
     /**
-     * Track a new event
+     * @param  {Object}      metadata     Object IDs (asset, whiteboard, etc.) and other event info
+     * @param  {String[]}    keys         Variety of key types, for example 'asset_id' and 'assetId'
+     * @return {Number}                   Object id
+     */
+    var get = function(metadata, keys) {
+      var value = null;
+      _.each(keys, function(key) {
+        value = metadata[key];
+        // Break out of loop if value is defined
+        return value === null || _.isUndefined(value);
+      });
+      return value;
+    };
+
+    /**
+     * Track an event and its metadata (site analytics)
      *
-     * @param  {String}         event           The unique identifier of the event to track
-     * @param  {Object}         [options]       Additional options to store against the specified event
+     * @param  {String}         event           Event type
+     * @param  {Object}         [metadata]      Object IDs (asset, whiteboard, etc.) and other event info
      * @return {void}
      */
-    var track = function(event, options) {
-      $mixpanel.track(event, options);
+    var track = function(event, metadata) {
+      metadata = metadata || {};
+      var args = {
+        activityId: get(metadata, ['activityId', 'activity_id']),
+        assetId: get(metadata, ['assetId', 'asset_id']),
+        commentId: get(metadata, ['commentId', 'comment_id']),
+        whiteboardId: get(metadata, ['whiteboardId', 'whiteboard_id']),
+        whiteboardElementUid: get(metadata, ['whiteboardElementUid', 'whiteboard_element_uid', 'whiteboard_element_id'])
+      };
+      // Remove what was extracted above
+      var omitKeys = [
+        'activityId',
+        'activity_id',
+        'assetId',
+        'asset_id',
+        'commentId',
+        'comment_id',
+        'whiteboardId',
+        'whiteboard_id',
+        'whiteboardElementUid',
+        'whiteboard_element_uid',
+        'whiteboard_element_id'
+      ];
+      metadata = _.omit(metadata, omitKeys);
+      // Merge remaining metadata
+      args = _.merge(args, {
+        event: event,
+        metadata: metadata
+      });
+
+      $http.post(utilService.getApiUrl('/track'), args);
     };
 
     return {
