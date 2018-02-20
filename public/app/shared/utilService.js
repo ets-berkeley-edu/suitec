@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('utilService', function(analyticsService, me, $cookies, $location, $q, $sce, $timeout) {
+  angular.module('collabosphere').service('utilService', function(me, $cookies, $location, $q, $sce, $timeout) {
 
     // Cache the API domain and Course ID that were passed in through
     // the iFrame launch URL. These variables need to be used to construct
