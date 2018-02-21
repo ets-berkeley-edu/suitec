@@ -33,10 +33,15 @@
      * Get a whiteboard
      *
      * @param  {Number}               id                            The id of the whiteboard
+     * @param  {Boolean}              track                         If true then track event in db
      * @return {Promise<Whiteboard>}                                Promise returning the requested whiteboard
      */
-    var getWhiteboard = function(id) {
-      return $http.get(utilService.getApiUrl('/whiteboards/' + id));
+    var getWhiteboard = function(id, track) {
+      var apiPath = '/whiteboards/' + id;
+      if (!_.isUndefined(track) && track !== null) {
+        apiPath += '?track=' + track;
+      }
+      return $http.get(utilService.getApiUrl(apiPath));
     };
 
     /**
