@@ -1633,7 +1633,8 @@
           }
 
           // Add the asset to the center of the whiteboard canvas
-          fabric.Image.fromURL(asset.image_url, function(element) {
+          var imageUrl = asset.image_url + '?track=false';
+          fabric.Image.fromURL(imageUrl, function(element) {
             var canvasCenter = getCanvasCenter();
 
             // Scale the element to ensure it takes up a maximum of 80% of the

@@ -80,7 +80,7 @@
      * @return {void}
      */
     var getWhiteboard = function() {
-      whiteboardsFactory.getWhiteboard($scope.whiteboard.id).success(function(whiteboard) {
+      whiteboardsFactory.getWhiteboard($scope.whiteboard.id, false).success(function(whiteboard) {
         $scope.whiteboard = whiteboard;
       });
     };
