@@ -1633,7 +1633,8 @@
           }
 
           // Add the asset to the center of the whiteboard canvas
-          var imageUrl = asset.image_url + '?track=false';
+          var connector = _.includes(asset.image_url, '?') ? '&' : '?';
+          var imageUrl = asset.image_url + connector + 'track=false';
           fabric.Image.fromURL(imageUrl, function(element) {
             var canvasCenter = getCanvasCenter();
 
