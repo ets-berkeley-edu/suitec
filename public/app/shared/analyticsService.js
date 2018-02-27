@@ -27,7 +27,7 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('analyticsService', function(utilService, $http) {
+  angular.module('collabosphere').service('analyticsService', function(utilService, $http, $q) {
 
     /**
      * @param  {Object}      metadata     Object IDs (asset, whiteboard, etc.) and other event info
@@ -45,13 +45,11 @@
     };
 
     /**
-     * Track an event and its metadata (site analytics)
-     *
      * @param  {String}         event           Event type
      * @param  {Object}         [metadata]      Object IDs (asset, whiteboard, etc.) and other event info
-     * @return {void}
+     * @return {Promise}                        HTTP post
      */
-    var track = function(event, metadata) {
+    var recordEvent = function(event, metadata) {
       metadata = metadata || {};
       var args = {
         activityId: get(metadata, ['activityId', 'activity_id']),
@@ -81,7 +79,22 @@
         metadata: metadata
       });
 
-      $http.post(utilService.getApiUrl('/track'), args);
+      return $http.post(utilService.getApiUrl('/track'), args);
+    };
+
+    /**
+     * Track an event and its metadata (site analytics)
+     *
+     * @param  {String}         event           Event type
+     * @param  {Object}         [metadata]      Object IDs (asset, whiteboard, etc.) and other event info
+     * @return {void}
+     */
+    var track = function(event, metadata) {
+      return $q(function(resolve) {
+        setTimeout(function() {
+          return recordEvent(event, metadata).then(resolve);
+        }, 1000);
+      });
     };
 
     return {
