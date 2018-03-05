@@ -67,7 +67,7 @@ psql suitec_test -c 'alter schema public owner to suitec;'
 Ensure you have the following packages installed and available in your `${PATH}`:
 
  * [Node.js](http://nodejs.org)
- * NPM
+ * NPM v3.10.10 (the most recent versions of NPM will not work)
  * Cairo and all its dependencies. On RHEL systems the following packages have to be installed:
    - cairo
    - cairo-devel
