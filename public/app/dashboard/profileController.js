@@ -492,8 +492,8 @@
       }
     };
 
-    // Make collaboration modal launch available to the scope.
-    $scope.launchCollaborationModal = collaborationMessageService.launchCollaborationModal;
+    // Make user messaging available to the scope.
+    $scope.messageUser = collaborationMessageService.messageUser;
 
     /**
      * Listen for pinning/unpinning events by 'me'

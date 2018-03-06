@@ -508,8 +508,8 @@
       return count;
     };
 
-    // Make collaboration modal launch available to the scope.
-    $scope.launchCollaborationModal = collaborationMessageService.launchCollaborationModal;
+    // Make user messaging available to the scope.
+    $scope.messageUser = collaborationMessageService.messageUser;
 
     // Load the selected asset
     getCurrentAsset();
