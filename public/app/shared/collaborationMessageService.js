@@ -27,83 +27,31 @@
 
   'use strict';
 
-  angular.module('collabosphere').service('collaborationMessageService', function(
-    me,
-    userFactory,
-    utilService,
-    $alert,
-    $modal,
-    $rootScope
-  ) {
+  angular.module('collabosphere').service('collaborationMessageService', function(me) {
 
     /**
-     * Show a notification after sending a collaboration message
-     *
-     * @param  {String}      type          Notification type: 'success' or 'error'
-     * @param  {String}      content       Notification text
-     * @return {void}
-     */
-    var showNotification = function(type, content) {
-      $alert({
-        'container': '#notifications-placeholder',
-        'content': content,
-        'duration': 3,
-        'keyboard': true,
-        'show': true,
-        'templateUrl': 'notifications-template',
-        'type': type
-      });
-    };
-
-    /**
-     * Send a collaboration invite message
-     *
-     * @param  {User}        recipient         The user receiving the message
-     * @param  {String}      messageBody       Message body text
-     * @return {Promise}                       $http Promise
-     */
-    var sendCollaborationInvite = function(recipient, messageBody) {
-      return userFactory.messageUser(recipient.id, 'Looking to Collaborate', messageBody).then(function() {
-        showNotification('success', 'Your message was sent to <strong>' + recipient.canvas_full_name + '</strong>.');
-      }).catch(function() {
-        showNotification('danger', 'There was an error sending your message.');
-      });
-    };
-
-    /**
-     * Launch the collaboration message modal window
+     * Send a Canvas conversation message to a specified recipient
      *
      * @param  {User}        recipient         The user receiving the message
      * @return {void}
      */
-    var launchCollaborationModal = function(recipient) {
-      // Create a new scope for the modal dialog
-      var scope = $rootScope.$new(true);
-      scope.me = me;
-      scope.recipient = recipient;
-      scope.closeModal = function(messageBody) {
-        var modal = this;
-        var removeModal = function() {
-          modal.$hide();
-          modal.$destroy();
-        };
-        if (messageBody) {
-          sendCollaborationInvite(recipient, messageBody).then(removeModal);
-        } else {
-          removeModal();
-        }
-      };
-      $modal({
-        'animation': false,
-        'backdrop': false,
-        'scope': scope,
-        'templateUrl': '/app/shared/collaborationMessageModal.html'
-      });
-      utilService.scrollToTop();
+    var messageUser = function(recipient) {
+      var url = (
+        (me.course.canvas.use_https ? 'https://' : 'http://') +
+        me.course.canvas.canvas_api_domain +
+        '/conversations?context_id=course_' +
+        me.course.canvas_course_id +
+        '&user_id=' +
+        recipient.canvas_user_id +
+        '&user_name=' +
+        encodeURIComponent(recipient.canvas_full_name) +
+        '#filter=type=inbox'
+      );
+      window.top.location.replace(url);
     };
 
     return {
-      'launchCollaborationModal': launchCollaborationModal
+      'messageUser': messageUser
     };
 
   });

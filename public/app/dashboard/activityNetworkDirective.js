@@ -35,9 +35,9 @@
       'restrict': 'E',
       'scope': {
         'interactions': '=',
-        'launchCollaborationModal': '=',
         'loadProfileById': '=',
         'me': '=',
+        'messageUser': '=',
         'user': '='
       },
       'templateUrl': '/app/dashboard/activityNetwork.html',

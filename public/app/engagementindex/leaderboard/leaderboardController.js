@@ -35,6 +35,7 @@
     me,
     userFactory,
     utilService,
+    $location,
     $scope
   ) {
 
@@ -412,8 +413,8 @@
       userFactory.updateLookingForCollaborators($scope.me.looking_for_collaborators);
     };
 
-    // Make collaboration modal launch available to the scope.
-    $scope.launchCollaborationModal = collaborationMessageService.launchCollaborationModal;
+    // Make user messaging available to the scope.
+    $scope.messageUser = collaborationMessageService.messageUser;
 
     // Track if following link from another tool.
     if (crossToolRequest) {

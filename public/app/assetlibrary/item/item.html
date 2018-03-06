@@ -143,7 +143,7 @@
                   </a>
                   <span data-ng-if="me.id === user.id">(me)</span>
                   <button class="looking-for-collaborators-button"
-                          data-ng-click="launchCollaborationModal(user)"
+                          data-ng-click="messageUser(user)"
                           data-ng-if="me.course.dashboard_url && (me.id !== user.id) && user.looking_for_collaborators">
                     <i class="fa fa-user-plus"></i> Looking for Collaborators
                   </button>
@@ -277,7 +277,7 @@
             <span data-ng-if="me.id === comment.user.id">(me)</span>
           </a>
           <button class="looking-for-collaborators-button"
-                  data-ng-click="launchCollaborationModal(comment.user)"
+                  data-ng-click="messageUser(comment.user)"
                   data-ng-if="me.course.dashboard_url && (me.id !== comment.user.id) && comment.user.looking_for_collaborators">
             <i class="fa fa-user-plus"></i> Looking for Collaborators
           </button>
