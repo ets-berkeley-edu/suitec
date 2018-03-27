@@ -217,94 +217,92 @@
             // Clear any existing tooltips.
             container.selectAll('.profile-activity-network-tooltip').remove();
 
-            if (scope.selectedUser.id !== scope.focalUser.id) {
-              var coordinates = [0, 0];
-              coordinates = d3.mouse(container.node());
-              var mouseX = coordinates[0];
-              var mouseY = coordinates[1];
+            var coordinates = [0, 0];
+            coordinates = d3.mouse(container.node());
+            var mouseX = coordinates[0];
+            var mouseY = coordinates[1];
 
-              // Calculate interaction totals between the selected users.
-              var interactionsLeft;
-              var interactionsRight;
-              if (scope.focalUser.id < scope.selectedUser.id) {
-                var linksBetweenUsers = linksByIds[scope.focalUser.id + ',' + scope.selectedUser.id];
-                if (linksBetweenUsers) {
-                  interactionsLeft = linksBetweenUsers.up || {};
-                  interactionsRight = linksBetweenUsers.down || {};
-                }
-              } else {
-                var linksBetweenUsers = linksByIds[scope.selectedUser.id + ',' + scope.focalUser.id];
-                if (linksBetweenUsers) {
-                  interactionsLeft = linksBetweenUsers.down || {};
-                  interactionsRight = linksBetweenUsers.up || {};
-                }
+            // Calculate interaction totals between the selected users.
+            var interactionsLeft;
+            var interactionsRight;
+            if (scope.focalUser.id < scope.selectedUser.id) {
+              var linksBetweenUsers = linksByIds[scope.focalUser.id + ',' + scope.selectedUser.id];
+              if (linksBetweenUsers) {
+                interactionsLeft = linksBetweenUsers.up || {};
+                interactionsRight = linksBetweenUsers.down || {};
               }
-
-              if (interactionsLeft || interactionsRight) {
-                scope.interactionCounts = {
-                  'left': {},
-                  'right': {}
-                };
-                _.forOwn(INTERACTION_TYPES, function(typesList, interactionLabel) {
-                  scope.interactionCounts.left[interactionLabel] = 0;
-                  scope.interactionCounts.right[interactionLabel] = 0;
-                  _.forEach(typesList, function(typeKey) {
-                    var leftCount = (interactionsLeft[typeKey] || 0);
-                    var rightCount = (interactionsRight[typeKey] || 0);
-                    // Whiteboard co-creation is a special-case bidirectional activity.
-                    if (typeKey === 'co_create_whiteboard') {
-                      var totalCount = leftCount + rightCount;
-                      leftCount = totalCount;
-                      rightCount = totalCount;
-                    }
-                    scope.interactionCounts.left[interactionLabel] += leftCount;
-                    scope.interactionCounts.right[interactionLabel] += rightCount;
-                  });
-                });
-              } else {
-                scope.interactionCounts = null;
+            } else if (scope.focalUser.id > scope.selectedUser.id) {
+              var linksBetweenUsers = linksByIds[scope.selectedUser.id + ',' + scope.focalUser.id];
+              if (linksBetweenUsers) {
+                interactionsLeft = linksBetweenUsers.down || {};
+                interactionsRight = linksBetweenUsers.up || {};
               }
-
-              // Position tooltip and arrow; orientation will depend on location within the chart.
-              var containerDimensions = container.node().getBoundingClientRect();
-              var tooltipOrientation = (mouseX < 240) ? 'left' : 'right';
-
-              var tooltip = container.append('div')
-                .attr('class', ('profile-activity-network-tooltip profile-activity-network-tooltip-' + tooltipOrientation))
-                .style('bottom', (containerDimensions.height - mouseY + 16) + 'px');
-
-              if (tooltipOrientation === 'left') {
-                tooltip.style('left', (mouseX - 30) + 'px');
-              } else {
-                tooltip.style('right', (containerDimensions.width - mouseX - 30) + 'px');
-              }
-
-              // The tooltip starts out hidden...
-              tooltip.style('opacity', 0);
-              tooltip.append(function() {
-                var tooltipDiv = document.createElement('div');
-                tooltipDiv.innerHTML = $templateCache.get('/app/dashboard/activityNetworkTooltip.html');
-                $compile(tooltipDiv)(scope);
-                return tooltipDiv;
-              });
-
-              // ...and transitions to visible.
-              tooltip.transition(d3.transition().duration(100).ease(d3.easeLinear))
-                .on('start', function() {
-                  tooltip.style('display', 'block');
-                })
-                .style('opacity', 1);
-
-              // Cancel pending fadeout if hovering over tooltip.
-              tooltip.on('mouseenter', function() {
-                tooltip.transition();
-              });
-
-              // Restart fadeout after leaving tooltip.
-              tooltip.on('mouseleave', function() {
-                fadeout(tooltip);
-              });
             }
+
+            if (interactionsLeft || interactionsRight) {
+              scope.interactionCounts = {
+                'left': {},
+                'right': {}
+              };
+              _.forOwn(INTERACTION_TYPES, function(typesList, interactionLabel) {
+                scope.interactionCounts.left[interactionLabel] = 0;
+                scope.interactionCounts.right[interactionLabel] = 0;
+                _.forEach(typesList, function(typeKey) {
+                  var leftCount = (interactionsLeft[typeKey] || 0);
+                  var rightCount = (interactionsRight[typeKey] || 0);
+                  // Whiteboard co-creation is a special-case bidirectional activity.
+                  if (typeKey === 'co_create_whiteboard') {
+                    var totalCount = leftCount + rightCount;
+                    leftCount = totalCount;
+                    rightCount = totalCount;
+                  }
+                  scope.interactionCounts.left[interactionLabel] += leftCount;
+                  scope.interactionCounts.right[interactionLabel] += rightCount;
+                });
+              });
+            } else {
+              scope.interactionCounts = null;
+            }
+
+            // Position tooltip and arrow; orientation will depend on location within the chart.
+            var containerDimensions = container.node().getBoundingClientRect();
+            var tooltipOrientation = (mouseX < 240) ? 'left' : 'right';
+
+            var tooltip = container.append('div')
+              .attr('class', ('profile-activity-network-tooltip profile-activity-network-tooltip-' + tooltipOrientation))
+              .style('bottom', (containerDimensions.height - mouseY + 16) + 'px');
+
+            if (tooltipOrientation === 'left') {
+              tooltip.style('left', (mouseX - 30) + 'px');
+            } else {
+              tooltip.style('right', (containerDimensions.width - mouseX - 30) + 'px');
+            }
+
+            // The tooltip starts out hidden...
+            tooltip.style('opacity', 0);
+            tooltip.append(function() {
+              var tooltipDiv = document.createElement('div');
+              tooltipDiv.innerHTML = $templateCache.get('/app/dashboard/activityNetworkTooltip.html');
+              $compile(tooltipDiv)(scope);
+              return tooltipDiv;
+            });
+
+            // ...and transitions to visible.
+            tooltip.transition(d3.transition().duration(100).ease(d3.easeLinear))
+              .on('start', function() {
+                tooltip.style('display', 'block');
+              })
+              .style('opacity', 1);
+
+            // Cancel pending fadeout if hovering over tooltip.
+            tooltip.on('mouseenter', function() {
+              tooltip.transition();
+            });
+
+            // Restart fadeout after leaving tooltip.
+            tooltip.on('mouseleave', function() {
+              fadeout(tooltip);
+            });
           };
 
           // Node deselection handler; remove tooltip, restore opacity to all nodes.
