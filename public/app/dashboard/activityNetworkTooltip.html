@@ -28,10 +28,10 @@
     </table>
     <div class="profile-activity-network-tooltip-content">
       <button type="button" class="btn btn-link profile-activity-network-tooltip-profile-link" data-ng-click="switchUser(selectedUser)">
-      <div data-ng-if="selectedUser.id === me.id">
+      <div data-ng-if="selectedUser.id === me.id && selectedUser.id !== user.id">
         View my profile
       </div>
-      <div data-ng-if="selectedUser.id !== me.id">
+      <div data-ng-if="selectedUser.id !== me.id && selectedUser.id !== user.id">
         View <span data-ng-bind="selectedUser.canvas_full_name"></span>'s profile
       </div>
       </button>
