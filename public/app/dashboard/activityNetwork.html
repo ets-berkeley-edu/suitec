@@ -1,4 +1,4 @@
-<div class="profile-activity-network-controls-top" data-ng-if="minScale !== 1">
+<div class="profile-activity-network-controls-outer" data-ng-if="minScale !== 1">
   <div>
     <strong>View:</strong>
     <span data-ng-if="meNode">
@@ -18,10 +18,22 @@
   </div>
 </div>
 <svg id="profile-activity-network" class="profile-activity-network" clip-path="url('#profile-activity-network-clipper')"></svg>
-<form id="profile-activity-network-controls" class="profile-activity-network-controls">
-  <div class="profile-activity-network-controls-title">Collaboration activities:</div>
-  <label class="profile-activity-network-controls-label" ng-repeat="(type, enabled) in interactionTypesEnabled">
-    <input type="checkbox" data-ng-model="interactionTypesEnabled[type]" data-ng-change="restartLinks()">
-    <span data-ng-bind="type"></span>
-  </label>
-</form>
+<div class="profile-activity-network-controls-outer">
+  <form id="profile-activity-network-controls" class="profile-activity-network-controls">
+    <div class="profile-activity-network-controls-title">Collaboration activities:</div>
+    <label class="profile-activity-network-controls-label" ng-repeat="(type, enabled) in interactionTypesEnabled">
+      <input type="checkbox" data-ng-model="interactionTypesEnabled[type]" data-ng-change="restartLinks()">
+      <span data-ng-bind="type"></span>
+    </label>
+  </form>
+  <div class="profile-activity-network-controls-show-users">
+    <button type="button" class="btn btn-link profile-activity-network-preset"
+            data-ng-class="{'profile-activity-network-preset-disabled': showUsers === 'recent'}"
+            data-ng-disabled="showUsers === 'recent'"
+            data-ng-click="setShowUsers('recent')">Recent</button> |
+    <button type="button" class="btn btn-link profile-activity-network-preset"
+            data-ng-class="{'profile-activity-network-preset-disabled': showUsers === 'all'}"
+            data-ng-disabled="showUsers === 'all'"
+            data-ng-click="setShowUsers('all')">All</button>
+  </div>
+</div>
