@@ -222,6 +222,10 @@
   display: flex;
 }
 
+.profile-activity-network {
+  border: 1px solid #ccc;
+}
+
 .profile-activity-network-controls-top {
   display: flex;
   justify-content: space-between;
