@@ -56,7 +56,19 @@
           'Remixes': [ 'get_remix_whiteboard' ],
           'Whiteboards Exported': [ 'co_create_whiteboard' ]
         };
+
         scope.interactionTypesEnabled = _.mapValues(INTERACTION_TYPES, _.constant(true));
+
+        var resetNodes = function() {
+          if (scope.showUsers === 'recent') {
+            scope.interactions.nodes = scope.interactions.recentUsers;
+          } else {
+            scope.interactions.nodes = scope.interactions.allUsers;
+          }
+        };
+
+        scope.showUsers = 'recent';
+        resetNodes();
 
         var linksByIds = {};
         var linkTypesVisible = {};
@@ -72,13 +84,15 @@
 
         scope.$watchGroup(['interactions', 'user'], function(newVals, oldVals) {
           // Don't reload the diagram unless interaction data or user id has changed.
-          var newNodeSize = _.size(_.get(newVals, ['0', 'nodes']));
-          var oldNodeSize = _.size(_.get(oldVals, ['0', 'nodes']));
+          var newUserCount = _.size(_.get(newVals, ['0', 'allUsers']));
+          var oldUserCount = _.size(_.get(oldVals, ['0', 'allUsers']));
           var newUserId = _.get(newVals, ['1', 'id']);
           var oldUserId = _.get(oldVals, ['1', 'id']);
-          if ((newNodeSize === oldNodeSize) && (newUserId === oldUserId)) {
+          if ((newUserCount === oldUserCount) && (newUserId === oldUserId)) {
             return;
           }
+
+          resetNodes();
 
           // Set the focal user, whose avatar will appear larger and who will be the point of reference for interaction counts.
           scope.focalUser = scope.user;
@@ -161,6 +175,11 @@
 
             _.forEach(scope.interactions.linkTypes, function(link) {
               if (!linkTypesVisible[link.type]) {
+                return;
+              }
+
+              if (scope.showUsers === 'recent' &&
+                 (!scope.interactions.recentIds[link.source] || !scope.interactions.recentIds[link.target])) {
                 return;
               }
 
@@ -321,6 +340,7 @@
 
           // Restart simulation.
           var restart = function(alpha, recalculateConnections) {
+            resetNodes();
             calculateLinks();
 
             linkSelection = linkSelection.data(scope.interactions.links);
@@ -484,6 +504,11 @@
             linkSelection.style('stroke-width', function(link) {
               return isLinkConnected(link) ? link.value : 1;
             });
+          };
+
+          var setShowUsers = scope.setShowUsers = function(showUsers) {
+            scope.showUsers = showUsers;
+            restart(0.1, true);
           };
 
           // Handle user profile loads triggered from a tooltip link.

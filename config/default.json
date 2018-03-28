@@ -11,6 +11,9 @@
       "version": "2006-03-01"
     }
   },
+  "activityNetwork": {
+    "recentUserCutoff": 90
+  },
   "analytics": {
     "caliper": {
       "enabled": false,

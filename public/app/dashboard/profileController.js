@@ -31,6 +31,7 @@
     analyticsService,
     assetLibraryFactory,
     collaborationMessageService,
+    config,
     crossToolRequest,
     me,
     profileFactory,
@@ -87,7 +88,9 @@
 
     $scope.interactions = {
       linkTypes: [],
-      nodes: []
+      allUsers: [],
+      recentUsers: [],
+      recentIds: {}
     };
 
     $scope.$watch('browse.searchedUserId', function() {
@@ -410,13 +413,27 @@
         var users = response.data;
 
         // Load interaction data for the course if not previously fetched
-        if (!$scope.interactions.nodes.length) {
+        if (!$scope.interactions.allUsers.length) {
           profileFactory.getInteractionsForCourse().then(function(interactionsResponse) {
+            var recentUsers = [];
+            var allUsers = [];
+            var recentIds = {};
+            _.each(users, function(interactionsUser) {
+              if (interactionsUser.canvas_course_role === 'Student' || interactionsUser.canvas_course_role === 'Learner') {
+                allUsers.push(interactionsUser);
+                if (interactionsUser.last_activity &&
+                   // Recent user cutoff is expressed in days, date difference in milliseconds.
+                   ((new Date() - new Date(interactionsUser.last_activity)) / 86400000 < config.activityNetwork.recentUserCutoff)) {
+                  recentUsers.push(interactionsUser);
+                  recentIds[interactionsUser.id] = true;
+                }
+              }
+            });
             $scope.interactions = {
-              'nodes': _.filter(users, function(interactionsUser) {
-                return (interactionsUser.canvas_course_role === 'Student' || interactionsUser.canvas_course_role === 'Learner');
-              }),
-              'linkTypes': interactionsResponse.data
+              'linkTypes': interactionsResponse.data,
+              'recentIds': recentIds,
+              'recentUsers': recentUsers,
+              'allUsers': allUsers
             };
           });
         }

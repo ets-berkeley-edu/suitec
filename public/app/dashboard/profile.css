@@ -226,22 +226,6 @@
   border: 1px solid #ccc;
 }
 
-.profile-activity-network-controls-top {
-  display: flex;
-  justify-content: space-between;
-}
-
-.profile-activity-network-preset {
-  border: 0;
-  padding: 0 2px;
-  vertical-align: bottom;
-}
-
-.profile-activity-network-preset-disabled {
-  color: #777;
-  cursor: default;
-}
-
 .profile-activity-network .links line {
   opacity: 0.3;
   stroke: #999;
@@ -302,9 +286,31 @@
   padding-right: 15px;
 }
 
+.profile-activity-network-controls-outer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile-activity-network-controls-show-users {
+  flex: 0 0 100px;
+  margin-top: 15px;
+  text-align: right;
+}
+
 .profile-activity-network-controls-title {
   font-size: 13px;
   font-weight: 600;
+}
+
+.profile-activity-network-preset {
+  border: 0;
+  padding: 0 2px;
+  vertical-align: bottom;
+}
+
+.profile-activity-network-preset-disabled {
+  color: #777;
+  cursor: default;
 }
 
 .profile-activity-network-tooltip {
