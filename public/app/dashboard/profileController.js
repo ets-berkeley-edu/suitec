@@ -421,9 +421,10 @@
             _.each(users, function(interactionsUser) {
               if (interactionsUser.canvas_course_role === 'Student' || interactionsUser.canvas_course_role === 'Learner') {
                 allUsers.push(interactionsUser);
-                if (interactionsUser.last_activity &&
+                var lastActiveOrCreated = interactionsUser.last_activity || interactionsUser.created_at;
+                if (lastActiveOrCreated &&
                    // Recent user cutoff is expressed in days, date difference in milliseconds.
-                   ((new Date() - new Date(interactionsUser.last_activity)) / 86400000 < config.activityNetwork.recentUserCutoff)) {
+                   ((new Date() - new Date(lastActiveOrCreated)) / 86400000 < config.activityNetwork.recentUserCutoff)) {
                   recentUsers.push(interactionsUser);
                   recentIds[interactionsUser.id] = true;
                 }
