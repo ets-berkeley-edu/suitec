@@ -224,6 +224,7 @@
 
 .profile-activity-network {
   border: 1px solid #ccc;
+  min-width: 100%;
 }
 
 .profile-activity-network .links line {
@@ -289,6 +290,7 @@
 .profile-activity-network-controls-outer {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 5px;
 }
 
 .profile-activity-network-controls-show-users {

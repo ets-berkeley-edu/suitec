@@ -59,16 +59,17 @@
 
         scope.interactionTypesEnabled = _.mapValues(INTERACTION_TYPES, _.constant(true));
 
+        var activityNetworkScale;
+
         var resetNodes = function() {
           if (scope.showUsers === 'recent') {
             scope.interactions.nodes = scope.interactions.recentUsers;
           } else {
             scope.interactions.nodes = scope.interactions.allUsers;
           }
+          // Size force diagram to window, accounting for course size and resizing as necessary.
+          activityNetworkScale = Math.round(Math.sqrt(4000 * scope.interactions.nodes.length));
         };
-
-        scope.showUsers = 'recent';
-        resetNodes();
 
         var linksByIds = {};
         var linkTypesVisible = {};
@@ -76,11 +77,11 @@
         // Initialize force diagram.
         var svg = d3.select('#profile-activity-network');
         var container = d3.select('.profile-activity-network-container');
-        var controlsForm = d3.select('#profile-activity-network-controls');
+        var controlsForm = d3.select('#profile-activity-network-controls-outer-bottom');
 
         var simulation = d3.forceSimulation();
         simulation.force('link', d3.forceLink().id(function(d) { return d.id; }));
-        simulation.alphaDecay(0.01);
+        simulation.alphaDecay(0.05);
 
         scope.$watchGroup(['interactions', 'user'], function(newVals, oldVals) {
           // Don't reload the diagram unless interaction data or user id has changed.
@@ -92,6 +93,7 @@
             return;
           }
 
+          scope.showUsers = scope.interactions.recentUsers.length > 1 ? 'recent' : 'all';
           resetNodes();
 
           // Set the focal user, whose avatar will appear larger and who will be the point of reference for interaction counts.
@@ -340,7 +342,6 @@
 
           // Restart simulation.
           var restart = function(alpha, recalculateConnections) {
-            resetNodes();
             calculateLinks();
 
             linkSelection = linkSelection.data(scope.interactions.links);
@@ -409,8 +410,6 @@
             restart(0.1, true);
           };
 
-          // Size force diagram to window, accounting for course size and resizing as necessary.
-          var activityNetworkScale = Math.round(Math.sqrt(4000 * scope.interactions.nodes.length));
           var bounds;
           var viewportWidth;
           var viewportHeight;
@@ -428,8 +427,10 @@
           };
 
           var sizeAndRestart = function(recalculateConnections) {
+            resetNodes();
+
             viewportWidth = controlsForm.node().getBoundingClientRect().width;
-            viewportHeight = Math.max(400, Math.min(250, activityNetworkScale));
+            viewportHeight = Math.max(300, Math.min(700, activityNetworkScale));
 
             var aspectRatio = viewportWidth * 1.0 / viewportHeight;
 
@@ -508,7 +509,7 @@
 
           var setShowUsers = scope.setShowUsers = function(showUsers) {
             scope.showUsers = showUsers;
-            restart(0.1, true);
+            sizeAndRestart(0.1);
           };
 
           // Handle user profile loads triggered from a tooltip link.
