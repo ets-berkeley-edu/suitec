@@ -30,7 +30,7 @@
   /**
    * Display an activity network for a given dataset.
    */
-  angular.module('collabosphere').directive('activityNetwork', function($compile, $templateCache) {
+  angular.module('collabosphere').directive('activityNetwork', function(config, $compile, $templateCache) {
     return {
       'restrict': 'E',
       'scope': {
@@ -58,6 +58,7 @@
         };
 
         scope.interactionTypesEnabled = _.mapValues(INTERACTION_TYPES, _.constant(true));
+        scope.recentUserCutoff = config.activityNetwork.recentUserCutoff;
 
         var activityNetworkScale;
 
