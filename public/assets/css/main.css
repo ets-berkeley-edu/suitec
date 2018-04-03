@@ -409,6 +409,10 @@ oi-select .select-search-list .btn.select-search-list-item i.fa-graduation-cap {
   cursor: pointer;
 }
 
+.no-wrap {
+  white-space: nowrap;
+}
+
 /* SEARCH */
 
 .search-container {
