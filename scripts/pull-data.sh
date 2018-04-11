@@ -110,6 +110,11 @@ if [[ "${source_canvas}" ]]; then
                 on u.course_id = c.id and c.canvas_api_domain = '${source_canvas}')
               on com.user_id = u.id"
 
+  output_csv "pinned_user_assets" "select p.* from pinned_user_assets p
+              join (users u join courses c
+                on u.course_id = c.id and c.canvas_api_domain = '${source_canvas}')
+              on p.user_id = u.id"
+
   output_csv "whiteboard_members" "select wm.* from whiteboard_members wm
               join (whiteboards w join courses c
                 on w.course_id = c.id and c.canvas_api_domain = '${source_canvas}')
@@ -130,6 +135,7 @@ else
   output_csv "categories" "select * from categories"
   output_csv "chats" "select * from chats"
   output_csv "comments" "select * from comments"
+  output_csv "pinned_user_assets" "select * from pinned_user_assets"
   output_csv "whiteboard_members" "select * from whiteboard_members"
   output_csv "users" "select * from users"
 

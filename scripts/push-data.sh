@@ -47,6 +47,7 @@ declare -a tables=(courses
                    users assets asset_users comments
                    activity_types activities
                    categories assets_categories
+                   pinned_user_assets
                    whiteboards whiteboard_members asset_whiteboard_elements whiteboard_elements chats)
 
 # Prepend the canvas table only if requested.
@@ -87,6 +88,9 @@ fi
 PGPASSWORD=${db_password} psql -h ${db_host} -p ${db_port} -d ${db_database} --username ${db_username} -c "truncate courses cascade"; echo
 PGPASSWORD=${db_password} psql -h ${db_host} -p ${db_port} -d ${db_database} --username ${db_username} -c "truncate users cascade"; echo
 PGPASSWORD=${db_password} psql -h ${db_host} -p ${db_port} -d ${db_database} --username ${db_username} -c "truncate categories cascade"; echo
+
+# The events table is write-only as far as SuiteC code is concerned; it will be cleared but not refreshed.
+PGPASSWORD=${db_password} psql -h ${db_host} -p ${db_port} -d ${db_database} --username ${db_username} -c "truncate events"; echo
 
 echo "Pushing local CSV data..."; echo
 
