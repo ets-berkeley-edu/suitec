@@ -15,12 +15,12 @@
     CustomLog <%= logDirectory %>/suitec-combined_log combined
 
     RewriteEngine on
-    RewriteCond %{QUERY_STRING} transport=polling
-    RewriteRule /(.*)$ http://localhost:2000/$1 [P]
+    RewriteCond %{QUERY_STRING}        transport=websocket
+    RewriteRule /(.*)$                 ws://localhost:2000/$1 [P]
 
     # Proxy websocket connections
-    ProxyPass         /socket.io/   ws://localhost:<%= port %>/socket.io/
-    ProxyPassReverse  /socket.io/   ws://localhost:<%= port %>/socket.io/
+    ProxyPass         /socket.io/   ws://localhost:<%= port %>/socket.io/dist/
+    ProxyPassReverse  /socket.io/   ws://localhost:<%= port %>/socket.io/dist/
 
     # Proxy API & LTI calls to the application server
     ProxyPass         /api          http://localhost:<%= port %>/api retry=0
