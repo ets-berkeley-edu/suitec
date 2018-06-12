@@ -43,6 +43,8 @@
     var createLink = $scope.createLink = function() {
       assetLibraryFactory.createLink($scope.link).success(function(asset) {
         $scope.$emit('assetLibraryAddLinkDone', asset);
+      }).error(function(error, status) {
+        console.log('[ERROR] ' + error + ' (status=' + status + ')');
       });
     };
 

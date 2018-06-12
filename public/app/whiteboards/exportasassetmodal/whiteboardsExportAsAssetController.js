@@ -55,6 +55,7 @@
         $scope.isExporting = false;
         $scope.closeModal(asset);
       }).error(function(error, status) {
+        console.log('[ERROR] ' + error + ' (status=' + status + ')');
         $scope.isExporting = false;
         $scope.exportError = error;
         $scope.exportStatus = status;
