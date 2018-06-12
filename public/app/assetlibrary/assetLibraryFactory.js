@@ -153,7 +153,11 @@
         'url': utilService.getApiUrl('/assets'),
         'fields': metadata,
         'file': fileToUpload
-      }).progress(progressCallback);
+      }).then(function(response) {
+        console.log('Successfully uploaded: ' + _.get(response, 'config.file.name'));
+      }, function(error) {
+        console.log('[ERROR] ' + (error.data || error.message) + ' (status=' + error.status + ')');
+      }, progressCallback);
     };
 
     /**
