@@ -186,12 +186,10 @@
 
         // Update the progress bar
         calculateProgress(uploadedSize + loaded);
-      }).then(function(asset) {
+      }).success(function(asset) {
         uploadedFiles.push(asset);
         // Process the next file
         createFile();
-      }, function(error, status) {
-        console.log('[ERROR] ' + error + ' (status=' + status + ')');
       });
     };
 
