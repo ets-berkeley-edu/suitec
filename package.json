@@ -1,7 +1,7 @@
 {
   "name": "suitec",
   "description": "SuiteC LTI Tools",
-  "version": "2.8.6",
+  "version": "2.8.7",
   "repository": {
     "type": "git",
     "url": "git://github.com/ets-berkeley-edu/suitec.git"
@@ -63,7 +63,7 @@
     "gulp-usemin": "0.3.28",
     "ims-lti": "3.0.2",
     "joi": "10.2.0",
-    "lodash": "4.17.5",
+    "lodash": "4.17.11",
     "mime": "1.6.0",
     "mixpanel": "0.6.0",
     "mock-aws-s3": "2.6.0",
