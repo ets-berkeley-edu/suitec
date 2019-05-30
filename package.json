@@ -61,11 +61,11 @@
     "restjsdoc": "0.0.7",
     "run-sequence": "1.2.2",
     "sendgrid": "5.1.1",
-    "sequelize": "4.44.0",
-    "sequelize-cli": "^4.1.1",
+    "sequelize": "5.8.7",
+    "sequelize-cli": "^5.4.0",
     "socket.io": "2.1.1",
     "uuid": "3.2.1",
-    "validator": "10.4.0",
+    "validator": "10.11.0",
     "xml2js": "0.4.17",
     "yargs": "8.0.2"
   },
@@ -86,7 +86,8 @@
     "gulp-rev": "7.1.2",
     "gulp-rev-replace": "0.4.3",
     "gulp-uglify": "3.0.0",
-    "gulp-usemin": "0.3.28"
+    "gulp-usemin": "0.3.28",
+    "mocha": "^6.1.4"
   },
   "engines": {
     "node": ">=6.13.1"
