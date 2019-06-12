@@ -10,20 +10,24 @@ phases:
   install:
     commands:
       - chmod 755 ./scripts/generate-build-stats.sh && ./scripts/generate-build-stats.sh
+      - npm install
+      - npm install -g bower
+      - npm install -g gulp
   pre_build:
     commands:
       - echo "pre_build phase"
   build:
     commands:
-      - echo "build phase"
+      - sudo ./node_modules/.bin/bower install --allow-root
+      - sudo ./node_modules/.bin/gulp build --allow-root
   post_build:
     commands:
       - echo "post_build phase"
 
 artifacts:
   files:
-    - '.bowerrc'
     - '.ebextensions/*'
     - '.elasticbeanstalk/*'
     - '.gitignore'
+    - '.npmrc'
     - '**/*'
