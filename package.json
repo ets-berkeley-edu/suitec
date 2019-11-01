@@ -61,7 +61,7 @@
     "restjsdoc": "0.0.7",
     "run-sequence": "1.2.2",
     "sendgrid": "5.1.1",
-    "sequelize": "5.8.7",
+    "sequelize": "5.21.2",
     "sequelize-cli": "^5.4.0",
     "socket.io": "2.1.1",
     "uuid": "3.2.1",
