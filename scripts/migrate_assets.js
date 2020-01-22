@@ -1,7 +1,7 @@
 // #!/usr/bin/env node
 
 /**
- * Copyright ©2018. The Regents of the University of California (Regents). All Rights Reserved.
+ * Copyright ©2020. The Regents of the University of California (Regents). All Rights Reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its documentation
  * for educational, research, and not-for-profit purposes, without fee and without a
