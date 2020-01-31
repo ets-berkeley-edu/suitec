@@ -39,7 +39,7 @@
     "ejs": "2.5.5",
     "email-templates": "2.5.4",
     "event-stream": "3.3.4",
-    "express": "4.15.4",
+    "express": "4.17.1",
     "express-busboy": "5.0.0",
     "fabric": "1.7.3",
     "fast-csv": "2.3.1",
