@@ -50,6 +50,9 @@ module.exports = {
   'canvasPoller': {
     'enabled': false
   },
+  'cookie': {
+    'secure': false
+  },
   'previews': {
     'enabled': false
   },
