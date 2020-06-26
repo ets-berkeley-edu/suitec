@@ -100,6 +100,12 @@ npm install
 node app
 ```
 
+Newer OSX may require some added compiler flags during the installation phase.
+```
+CXXFLAGS="-mmacosx-version-min=10.9" LDFLAGS="-mmacosx-version-min=10.9" npm install
+```
+
+
 ## On the network
 
 Read [instructions on deploying SuiteC](docs/deployment.md) on a network server.

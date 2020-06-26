@@ -41,7 +41,8 @@
     "timeout": 600
   },
   "cookie": {
-    "secret": "String to encrypt the cookies with. Change me in production"
+    "secret": "String to encrypt the cookies with. Change me in production",
+    "secure": true
   },
   "db": {
     "database": "suitec",
