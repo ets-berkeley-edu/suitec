@@ -1,13 +1,9 @@
-version: 0.1
-
-eb_codebuild_settings:
-  CodeBuildServiceRole: arn:aws:iam::234923831700:role/service-role/codebuild-suitec-service-role
-  ComputeType: BUILD_GENERAL1_MEDIUM
-  Image: aws/codebuild/nodejs:6.3.1
-  Timeout: 60
+version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 6.15.1
     commands:
       - chmod 755 ./scripts/generate-build-stats.sh && ./scripts/generate-build-stats.sh
       - npm i -g npm@3.10.10
@@ -19,8 +15,8 @@ phases:
       - echo "pre_build phase"
   build:
     commands:
-      - sudo ./node_modules/.bin/bower install --allow-root
-      - sudo ./node_modules/.bin/gulp build --allow-root
+      - ./node_modules/.bin/bower install --allow-root
+      - ./node_modules/.bin/gulp build --allow-root
   post_build:
     commands:
       - echo "post_build phase"
