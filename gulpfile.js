@@ -27,13 +27,14 @@ var addsrc = require('gulp-add-src');
 var csslint = require('gulp-csslint');
 var cssmin = require('gulp-cssmin');
 var del = require('del');
-var es = require('event-stream');
+var es = require('merge-stream');
 var eslint = require('gulp-eslint');
 var exec = require('child_process').exec;
 var filter = require('gulp-filter');
 var fs = require('fs');
 var gulp = require('gulp');
 var install = require('gulp-install');
+var mergeStream = require('merge-stream');
 var minifyHtml = require('gulp-htmlmin');
 var mocha = require('gulp-mocha');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -67,7 +68,7 @@ gulp.task('copyFonts', function() {
  * javascript logic that gets copied in the bookmarks bar
  */
 gulp.task('copyBookmarkletFiles', function() {
-  return es.merge(
+  return mergeStream(
     gulp.src('public/assets/js/bookmarklet-init.js', {'base': 'public'})
       .pipe(uglify())
       .pipe(gulp.dest('target')),
@@ -83,7 +84,7 @@ gulp.task('copyBookmarkletFiles', function() {
  * should not be versioned.
  */
 gulp.task('copyEmailFiles', function() {
-  return es.merge(
+  return mergeStream(
     gulp.src('public/assets/img/*-logo.png', {'base': 'public'})
       .pipe(gulp.dest('target')),
 
