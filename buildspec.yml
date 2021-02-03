@@ -3,10 +3,10 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 6.15.1
+      nodejs: 10.22.1
     commands:
       - chmod 755 ./scripts/generate-build-stats.sh && ./scripts/generate-build-stats.sh
-      - npm i -g npm@3.10.10
+      - npm i -g npm@6.14.11
       - npm install
       - npm install -g bower
       - npm install -g gulp
