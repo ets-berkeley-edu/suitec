@@ -5,6 +5,8 @@ logs/*.log
 
 apache/suitec.conf
 
+build
+
 config/*
 !config/default.json
 !config/production.json
@@ -13,12 +15,9 @@ config/*
 !config/travis.js
 
 node_modules/*
-!node_modules/col-*
 
 # Localhost Amazon S3
 s3-bucket-*
-
-package-lock.json
 
 public/lib
 

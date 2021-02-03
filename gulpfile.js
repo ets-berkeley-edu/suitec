@@ -33,14 +33,13 @@ var exec = require('child_process').exec;
 var filter = require('gulp-filter');
 var fs = require('fs');
 var gulp = require('gulp');
-var imagemin = require('gulp-imagemin');
 var install = require('gulp-install');
 var minifyHtml = require('gulp-htmlmin');
 var mocha = require('gulp-mocha');
 var ngAnnotate = require('gulp-ng-annotate');
 var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
-var runSequence = require('run-sequence');
+var runSequence = require('gulp4-run-sequence');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
@@ -111,7 +110,7 @@ gulp.task('buildEventDrops', function(callback) {
 /**
  * Copy the bookmarklet dependencies to the build directory
  */
-gulp.task('minifyBookmarkletFiles', [ 'copyBookmarkletFiles' ], function() {
+gulp.task('minifyBookmarkletFiles', gulp.series('copyBookmarkletFiles', function() {
   // Parse the dependencies out of the bookmarklet init script
   var contents = fs.readFileSync('./public/assets/js/bookmarklet-init.js').toString('utf8');
   var re = new RegExp('baseUrl \\+ \'(.+?)"', 'g');
@@ -144,12 +143,12 @@ gulp.task('minifyBookmarkletFiles', [ 'copyBookmarkletFiles' ], function() {
     // Write out a file that maps the original filename to its hashed counterpart
     .pipe(rev.manifest('bookmarklet-rev-manifest.json'))
     .pipe(gulp.dest('target'));
-});
+}));
 
 /**
  * Replace the dependencies in the bookmarklet init file with their optimized versions
  */
-gulp.task('replaceBookmarkletDependencies', [ 'minifyBookmarkletFiles' ], function() {
+gulp.task('replaceBookmarkletDependencies', gulp.series('minifyBookmarkletFiles', function() {
   var manifest = gulp.src('./target/bookmarklet-rev-manifest.json');
 
   return gulp.src('target/assets/js/*')
@@ -158,7 +157,7 @@ gulp.task('replaceBookmarkletDependencies', [ 'minifyBookmarkletFiles' ], functi
       'prefix': '/static'
     }))
     .pipe(gulp.dest('target/assets/js'));
-});
+}));
 
 /**
  * Minify the HTML, CSS and JS assets
@@ -227,11 +226,6 @@ gulp.task('copyViewerAssets', function() {
 gulp.task('optimizeImages', function() {
   return gulp.src('public/assets/img/*', {'base': 'public'})
 
-    // Optimize the images
-    .pipe(imagemin({
-      'progressive': true
-    }))
-
     // Hash each image and append a version string at the end of the file
     .pipe(rev())
     .pipe(gulp.dest('target/static/'))
@@ -251,7 +245,7 @@ gulp.task('createFavicon', function(callback) {
 /**
  * Replace the images with their optimized versions
  */
-gulp.task('replaceImages', [ 'optimizeImages' ], function() {
+gulp.task('replaceImages', gulp.series('optimizeImages', function() {
   var manifest = gulp.src('./target/images-rev-manifest.json');
 
   return gulp.src('target/static/*')
@@ -260,12 +254,12 @@ gulp.task('replaceImages', [ 'optimizeImages' ], function() {
       'prefix': '/static'
     }))
     .pipe(gulp.dest('target/static'));
-});
+}));
 
 /**
  * Create a build
  */
-gulp.task('build', function() {
+gulp.task('build', function(done) {
   return runSequence(
     'clean',
     'buildEventDrops',
@@ -275,7 +269,8 @@ gulp.task('build', function() {
     'replaceImages',
     'createFavicon',
     'minifyViewer',
-    'copyViewerAssets'
+    'copyViewerAssets',
+    done
   );
 });
 
@@ -348,7 +343,7 @@ gulp.task('csslint', function() {
 /**
  * Run the Mocha test suite
  */
-gulp.task('mocha', function() {
+gulp.task('mocha', function(done) {
   // Use default environment if none is specified
   process.env.NODE_ENV = process.env.NODE_ENV || 'test';
 
@@ -360,6 +355,7 @@ gulp.task('mocha', function() {
       'timeout': 10000
     }))
     .once('end', function() {
+      done();
       process.exit();
     });
 });
@@ -367,19 +363,19 @@ gulp.task('mocha', function() {
 /**
  * Perform tests and run all linters
  */
-gulp.task('test', function() {
+gulp.task('test', function(done) {
   // Set the environment
   process.env.NODE_ENV = 'test';
 
-  runSequence('eslint', 'csslint', 'mocha');
+  return runSequence('eslint', 'csslint', 'mocha', done);
 });
 
 /**
  * Perform tests, run all linters and measure code coverage
  */
-gulp.task('travis', function() {
+gulp.task('travis', function(done) {
   // Set the environment
   process.env.NODE_ENV = 'travis';
 
-  runSequence('eslint', 'csslint', 'mocha');
+  return runSequence('eslint', 'csslint', 'mocha', done);
 });
