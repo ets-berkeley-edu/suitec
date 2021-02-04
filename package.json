@@ -91,7 +91,7 @@
     "growl": "1.10.2"
   },
   "engines": {
-    "node": ">=10.15.3"
+    "node": "10.15.3"
   },
   "bugs": {
     "url": "https://jira.ets.berkeley.edu/jira/browse/COL"
@@ -100,6 +100,7 @@
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
     "pretest": "echo 'Clean up old artifacts before running tests'; rm -f logs/test.log; rm -Rf s3-bucket-test",
+    "start": "node_modules/.bin/forever -a --minUptime 10000 app.js",
     "test": "gulp test"
   }
 }
