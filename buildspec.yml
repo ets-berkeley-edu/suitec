@@ -6,7 +6,7 @@ phases:
       nodejs: 10
     commands:
       - chmod 755 ./scripts/generate-build-stats.sh && ./scripts/generate-build-stats.sh
-      - yum install cairo cairo-devel giflib-devel libjpeg-turbo-devel mod24_ssl postgresql96-devel -y
+      - yum install cairo cairo-devel giflib-devel libjpeg-turbo-devel -y
       - npm i -g npm@6.14.11
       - npm install
       - npm install -g bower
