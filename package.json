@@ -91,7 +91,7 @@
     "growl": "1.10.2"
   },
   "engines": {
-    "node": ">=10.22.1"
+    "node": ">=10.15.3"
   },
   "bugs": {
     "url": "https://jira.ets.berkeley.edu/jira/browse/COL"
